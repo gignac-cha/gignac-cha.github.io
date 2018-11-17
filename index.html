@@ -1,10 +1,82 @@
 <!DOCTYPE html>
-<html lang="ko">
-    <head>
-        <meta charset="utf-8" />
-        <title>Welcome to gignac-cha.github.io</title>
-    </head>
-    <body>
-        <p>Hello, World!</p>
-    </body>
+<html lang="ko" ng-app="app">
+  <head ng-controller="head-controller">
+    <meta charset="utf-8" />
+    <title>Welcome to gignac-cha.github.io</title>
+    <script src="//unpkg.com/jquery/dist/jquery.min.js"></script>
+    <script src="//unpkg.com/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//unpkg.com/font-awesome/css/font-awesome.min.css" />
+    <script src="//unpkg.com/moment/min/moment-with-locales.min.js"></script>
+    <script src="//unpkg.com/lodash/lodash.min.js"></script>
+  </head>
+  <body>
+    <p>Hello, World!</p>
+    <div ng-controller="main-controller">
+      <div ng-controller="bubble-sort">
+        <div class="container">
+          <div class="form-group row">
+            <label for="list-length" class="col-sm-2 col-form-label">Number of elements</label>
+            <div class="col-sm-10">
+              <input id="list-length" class="form-control" placeholder="Number of elements" ng-model="length" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="maximum" class="col-sm-2 col-form-label">Maximum range of element</label>
+            <div class="col-sm-10">
+              <input id="maximum" class="form-control" placeholder="Maximum range of element" ng-model="maximum" />
+            </div>
+          </div>
+          <button class="btn btn-danger" ng-click="generate(length, maximum)" ng-disabled="comparing">Generate</button>
+          <button class="btn btn-success" ng-click="sort(list)" ng-disabled="comparing">Sort</button>
+        </div>
+        <div class="container mt-4">
+          <!-- <div class="row p-1 elements" ng-class="{ covered: comparing }">
+            <span class="badge badge-dark mr-1 element" ng-repeat="element in list">{{ element.value }}</span>
+          </div>
+          <style>
+            .elements.covered { opacity: .5; background-color: gray; }
+            .element { transition: 1s; }
+          </style>
+          <div class="row" ng-if="comparing">
+            <button class="btn btn-default compare-element" ng-class="{ left: left && !swapped, right: left && swapped }">{{ left.value }}</button>
+            <button class="btn btn-default compare-element" ng-class="{ right: right && !swapped, left: right && swapped }">{{ right.value }}</button>
+          </div>
+          <style>
+            .compare-element.left { left: 10%; }
+            .compare-element.right { right: 10%; }
+          </style> -->
+          <div class="row wrap">
+            <div class="p-1 elements" ng-class="{ covered: comparing }">
+              <span class="badge badge-dark mr-1 element" ng-repeat="element in list">{{ element.value }}</span>
+            </div>
+            <div class="cover" ng-show="comparing">
+              <div class="btn btn-light compare-element left" ng-class="{ swapped: swapped }">{{ left.value }}</div>
+              <div class="btn compare-element comparison"><h3>{{ comparison }}</h3></div>
+              <div class="btn btn-dark compare-element right" ng-class="{ swapped: swapped }">{{ right.value }}</div>
+            </div>
+          </div>
+          <style>
+            .wrap { position: relative; padding-bottom: 100px; }
+            .wrap .elements { transition: 1s; }
+            .wrap .elements.covered { opacity: .5; }
+            .wrap .cover { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background-color: rgba(0, 0, 0, .1); transition: 1s; }
+            .wrap .cover.swap { background-color: rgba(0, 0, 255, .1); }
+            .wrap .cover.pass { background-color: rgba(255, 0, 0, .1); }
+            .wrap .compare-element { position: absolute; top: 50px; transition: 1s; }
+            .wrap .compare-element.left { left: 35%; }
+            .wrap .compare-element.left.swapped { left: 65%; }
+            .wrap .compare-element.comparison { left: 50%; }
+            .wrap .compare-element.right { left: 65%; }
+            .wrap .compare-element.right.swapped { left: 35%; }
+          </style>
+        </div>
+      </div>
+    </div>
+    <script src="//unpkg.com/angular/angular.min.js"></script>
+    <script src="/app.js"></script>
+    <script src="/head.js"></script>
+    <script src="/main.js"></script>
+    <script src="/bubble-sort.js"></script>
+  </body>
 </html>
