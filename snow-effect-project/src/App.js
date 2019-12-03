@@ -112,7 +112,7 @@ class App extends React.Component {
         this.setState({ count: snows.length });
       }
 
-      _.forEach(snows, snow => {
+      _.chain(snows).map((snow, i) => {
         const { x, y, z, size, degree } = snow;
         const alpha = .75 + z * .5;
         context.beginPath();
@@ -120,13 +120,16 @@ class App extends React.Component {
         context.arc(x + 10 * Math.cos(degree / 360 * 2 * Math.PI), y, size, 0, 2 * Math.PI);
         context.fill();
         context.closePath();
-        if (y + size < height) {
+        if (y < height + size) {
           snow.y += size;
           snow.degree += 3;
           snow.degree %= 360;
+        } else {
+          return i;
         }
-        return true;
-      });
+      }).filter().reverse().forEach(i => {
+        snows.splice(i, 1);
+      }).value();
     }
     const updateTask = setTimeout(this.update, 1000 / fps, (tick + 1) % fps, snows);
     this.setState({ updateTask });
