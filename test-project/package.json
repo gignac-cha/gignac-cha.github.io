@@ -9,7 +9,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "prebuild": "bash -c 'rm -rf ../test'",
     "build": "react-scripts build",
+    "postbuild": "bash -c 'mv -f build ../test'",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
