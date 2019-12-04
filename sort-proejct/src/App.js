@@ -15,6 +15,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 library.add(fas, far, fab);
 
 
+const ALGORITHMS = [
+  { key: 'bubble', text: 'Bubble Sort' },
+  { key: 'insertion', text: 'Insertion Sort' },
+  { key: 'selection', text: 'Selection Sort' },
+  { key: 'merge', text: 'Merge Sort' },
+  { key: 'heap', text: 'Heap Sort' },
+  { key: 'quick', text: 'Quick Sort' },
+  { key: 'radix', text: 'Radix Sort' },
+  { key: 'tim', text: 'Tim Sort' },
+];
 const MARGIN = 10;
 const PADDING = 5;
 const WIDTH = 10;
@@ -30,72 +40,70 @@ class App extends React.Component {
       numbers: [],
       maximum: 0,
       minimum: 0,
-      ready: false,
       sortStart: false,
       sorting: false,
       speed: 10,
-      bubble: {
-        a: { index: -1, alpha: 0, delta: 0 },
-        b: { index: -1, alpha: 0, delta: 0 },
-        completed: -1,
-        count: 0,
+      defaults: {
+        bubble: {
+          a: { index: -1, alpha: 0, delta: 0 },
+          b: { index: -1, alpha: 0, delta: 0 },
+          completed: -1,
+          count: 0,
+        },
       },
     };
   }
   componentDidMount() {
     this.setSize(this.refSvg);
     $(this.refSvg).on('resize', e => this.setSize(e));
+
+    const { defaults } = this.state;
+    this.setState(_.chain(defaults).entries().map(([ k, v ]) => [ k, _.cloneDeep(v) ]).fromPairs().value());
   }
   render() {
-    const algorithms = [
-      { key: 'bubble', text: 'Bubble Sort' },
-      { key: 'insertion', text: 'Insertion Sort' },
-      { key: 'selection', text: 'Selection Sort' },
-      { key: 'merge', text: 'Merge Sort' },
-      { key: 'heap', text: 'Heap Sort' },
-      { key: 'quick', text: 'Quick Sort' },
-      { key: 'radix', text: 'Radix Sort' },
-      { key: 'tim', text: 'Tim Sort' },
-    ];
+    const { algorithm, numbers, sortStart, sorting, speed } = this.state;
     return (
       <div className="container">
         <div className="row mt-4">
           {algorithms.map(this.renders.algorithms)}
         </div>
         <div className="row mt-4">
+          {ALGORITHMS.map(this.renders.algorithms)}
+        </div>
+        <div className="row mt-4">
           <div className="col col-2">
-            <button className="btn btn-primary form-control" onClick={this.onClicks.generate} disabled={this.state.algorithm.length === 0 || this.state.ready}>
+            <button className="btn btn-primary form-control" onClick={this.onClicks.generate} disabled={algorithm.length === 0 || sortStart}>
               <FontAwesomeIcon icon={fas.faPlusCircle} /> Generate Data
             </button>
           </div>
           <div className="col col-2">
-            <input type="range" className="form-control custom-range" min={1} max={100} step={1} value={this.state.speed} onChange={this.onChanges.speed} />
+            <input type="range" className="form-control custom-range" min={1} max={100} step={1} value={speed} onChange={this.onChanges.speed} />
           </div>
         </div>
         <div className="row mt-4">
           <div className="col col-2">
             {this.state.sorting ? (
-            <button className="btn btn-warning form-control" onClick={this.onClicks.sort} disabled={!this.state.ready}>
+            <button className="btn btn-warning form-control" onClick={this.onClicks.sort} disabled={algorithm.length === 0 || numbers.length === 0}>
               <FontAwesomeIcon icon={fas.faPause} /> Pause
             </button>
             ) : (
-            <button className="btn btn-success form-control" onClick={this.onClicks.sort} disabled={!this.state.ready}>
+            <button className="btn btn-success form-control" onClick={this.onClicks.sort} disabled={algorithm.length === 0 || numbers.length === 0}>
               <FontAwesomeIcon icon={fas.faPlay} /> Start
             </button>
             )}
           </div>
           <div className="col col-2">
-            <button className="btn btn-danger form-control" onClick={this.onClicks.stopSort} disabled={!this.state.ready}>
+            <button className="btn btn-danger form-control" onClick={this.onClicks.stopSort} disabled={!sortStart || numbers.length === 0}>
               <FontAwesomeIcon icon={fas.faStop} /> Stop
             </button>
           </div>
           <div className="col col-2">
-            <button className="btn btn-secondary form-control" onClick={this.onClicks.shuffle} disabled={this.state.sorting || !this.state.ready}>
+            <button className="btn btn-secondary form-control" onClick={this.onClicks.shuffle} disabled={sortStart}>
               <FontAwesomeIcon icon={fas.faRandom} /> Shuffle
             </button>
           </div>
           <div className="col col-2">
-            <button className="btn btn-dark form-control" onClick={this.onClicks.resetSort} disabled={this.state.sorting || !this.state.ready}>
+            <button className="btn btn-dark form-control" onClick={this.onClicks.resetSort} disabled={sorting}>
               <FontAwesomeIcon icon={fas.faRedo} /> Reset
             </button>
           </div>
@@ -168,7 +176,7 @@ class App extends React.Component {
       const numbers = _.chain(_.range(count)).map(i => _.random(1, 100)).value();
       const maximum = _.max(numbers);
       const minimum = _.min(numbers);
-      this.setState({ numbers, maximum, minimum, ready: true });
+      this.setState({ numbers, maximum, minimum });
     },
     sort: e => {
       const { algorithm, sortStart, sorting } = this.state;
@@ -184,11 +192,11 @@ class App extends React.Component {
       this.setState({ numbers });
     },
     stopSort: e => {
-      this.sorted();
+      const { algorithm, defaults } = this.state;
+      this.setState({ sortStart: false, sorting: false, [ algorithm ]: _.cloneDeep(defaults[algorithm]) });
     },
     resetSort: e => {
-      this.sorted();
-      this.setState({ numbers: [] });
+      this.setState({ algorithm: '', numbers: [], sortStart: false, sorting: false });
     },
   }
   onChanges = {
@@ -203,18 +211,13 @@ class App extends React.Component {
     const height = $(e).height();
     this.setState({ width, height });
   }
-  sorting = algorithm => {
-    setTimeout(this.algorithms[algorithm]);
-  }
-  sorted = algorithm => {
-    this.setState({ ready: false, sorting: false });
-  }
   algorithms = {
     bubble: (step, i, j, n, count) => {
       const { algorithm, numbers, sorting, bubble } = this.state;
       const self = this.algorithms[algorithm];
 
       const selectA = (i, count) => {
+        if (this.state.sorting) {
         // console.log(algorithm, 'selectA', i, count)
         if (count < 0xff) {
           bubble.a.alpha = count;
@@ -224,8 +227,12 @@ class App extends React.Component {
           setTimeout(self, 0, 'select-b', i, j, n);
         }
         this.setState({ bubble });
+        } else if (this.state.sortStart) {
+          setTimeout(selectA, 1000 / 60, i, count);
+        }
       };
       const selectB = (j, count) => {
+        if (this.state.sorting) {
         // console.log(algorithm, 'selectB', j, count)
         if (count < 0xff) {
           bubble.b.alpha = count;
@@ -235,16 +242,24 @@ class App extends React.Component {
           setTimeout(self, 0, 'compare', i, j, n);
         }
         this.setState({ bubble });
+        } else if (this.state.sortStart) {
+          setTimeout(selectB, 1000 / 60, j, count);
+        }
       };
       const compare = (i, j) => {
+        if (this.state.sorting) {
         // console.log(algorithm, 'compare', i, j, numbers[i], numbers[j])
         if (numbers[i] > numbers[j]) {
           setTimeout(self, 0, 'swap', i, j, n);
         } else {
           setTimeout(self, 0, 'next', i, j, n);
         }
+        } else if (this.state.sortStart) {
+          setTimeout(compare, 1000 / 60, i, j);
+        }
       };
       const swap = (i, j, count) => {
+        if (this.state.sorting) {
         // console.log(algorithm, 'swap', i, j, count)
         if (count < 100) {
           bubble.a.delta = (j - i) / 100 * count;
@@ -260,10 +275,17 @@ class App extends React.Component {
           setTimeout(self, 0, 'next', i, j, n);
         }
         this.setState({ numbers, bubble });
+        } else if (this.state.sortStart) {
+          setTimeout(swap, 1000 / 60, i, j, count);
+        }
       };
       const next = (i, j, n) => {
+        if (this.state.sorting) {
         // console.log(algorithm, 'next', i, j, n)
         setTimeout(self, 0, 'select-a', i, j, n);
+        } else if (this.state.sortStart) {
+          setTimeout(next, 1000 / 60, i, j, n);
+        }
       };
 
       if (sorting) {
@@ -299,7 +321,7 @@ class App extends React.Component {
             setTimeout(next, 0, i + 1, j + 1, bubble.completed);
           } else {
             bubble.completed = 0;
-            this.sorted();
+            this.setState({ sortStart: false, sorting: false });
           }
         }
       } else {
