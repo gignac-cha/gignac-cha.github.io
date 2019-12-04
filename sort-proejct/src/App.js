@@ -65,9 +65,6 @@ class App extends React.Component {
     return (
       <div className="container">
         <div className="row mt-4">
-          {algorithms.map(this.renders.algorithms)}
-        </div>
-        <div className="row mt-4">
           {ALGORITHMS.map(this.renders.algorithms)}
         </div>
         <div className="row mt-4">
