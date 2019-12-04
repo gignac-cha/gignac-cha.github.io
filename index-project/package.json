@@ -12,7 +12,7 @@
     "start": "react-scripts start",
     "prebuild": "bash -c 'rm -rf ../index'",
     "build": "react-scripts build",
-    "postbuild": "bash -c 'mv -f build ../index'",
+    "postbuild": "bash -c 'mv -f build ../index && mv -f ../index/* ../'",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
