@@ -134,10 +134,29 @@ class App extends React.Component {
         </div>
       );
     },
-    numbers: () => <svg ref={e => this.refSvg = e} width={'100%'} height={200}>{this.state.numbers.map(this.renders.number)}</svg>,
+    numbers: () => {
+      const { numbers, maximum, algorithm } = this.state;
+      let rectSortedArea = null;
+      if (algorithm === 'bubble') {
+        const { bubble } = this.state;
+        if (bubble.completed >= 0 && bubble.completed < numbers.length) {
+          const x = (WIDTH + PADDING) * bubble.completed + PADDING;
+          const width = (WIDTH + PADDING) * numbers.length + WIDTH - x;
+          const height = maximum + PADDING * 2;
+          const color = 'rgba(0, 0, 0, .5)';
+          rectSortedArea = <rect x={x} y={PADDING} width={width} height={height} fill={color} />
+        }
+      }
+      return (
+        <svg ref={e => this.refSvg = e} width={'100%'} height={200}>
+          {rectSortedArea}
+          {this.state.numbers.map(this.renders.number)}
+        </svg>
+      );
+    },
     number: (number, i) => {
       const { maximum, algorithm } = this.state;
-      let lineX = MARGIN + (i + 1) * WIDTH + i * PADDING;
+      let lineX = (i + 1) * WIDTH + i * PADDING;
       const lineY = MARGIN + maximum - number;
       let color = '#bbb';
       if (algorithm === 'bubble') {
@@ -149,10 +168,11 @@ class App extends React.Component {
           color = `rgba(0, 0, 255, ${bubble.b.alpha / 256})`;
           lineX += bubble.b.delta * (WIDTH + PADDING);
         } else if (bubble.completed >= 0 && i >= bubble.completed) {
-          color = '#333';
+          // color = '#333';
+          lineX += PADDING;
         }
       }
-      return <line key={i} x1={lineX} y1={lineY} x2={lineX} y2={110} stroke={color} strokeWidth={WIDTH}></line>
+      return <line key={i} x1={lineX} y1={lineY} x2={lineX} y2={MARGIN + maximum} stroke={color} strokeWidth={WIDTH} />
     },
     count: () => {
       const { algorithm } = this.state;
