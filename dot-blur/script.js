@@ -1,29 +1,15 @@
-const resize = () => {
-  const canvas = document.querySelector('#canvas');
-  canvas.setAttribute('width', window.innerWidth);
-  canvas.setAttribute('height', window.innerHeight);
+import Canvas from '../modules/canvas.js';
+
+const resize = canvas => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 };
 window.addEventListener('load', e => {
-  resize();
+  const canvas = new Canvas(document.querySelector('#canvas'));
 
-  const canvas = document.querySelector('#canvas');
+  resize(canvas);
+
   const { width, height } = canvas;
-  const context = canvas.getContext('2d');
-
-  const circle = (context, x, y, r, color) => {
-    context.beginPath();
-    context.fillStyle = color;
-    context.arc(x, y, r, 0, 2 * Math.PI);
-    context.fill();
-    context.closePath();
-  };
-  const rectangle = (context, x, y, width, height, color) => {
-    context.beginPath();
-    context.fillStyle = color;
-    context.rect(x, y, width, height);
-    context.fill();
-    context.closePath();
-  };
 
   const radius = 10;
   const size = radius * 6;
@@ -38,10 +24,10 @@ window.addEventListener('load', e => {
     mouse.move = { x, y };
   });
 
-  requestAnimationFrame(update = () => {
+  requestAnimationFrame(function update() {
     requestAnimationFrame(update);
 
-    context.clearRect(0, 0, width, height);
+    canvas.clear();
 
     for (let j = 0; j < h; ++j) {
       for (let i = 0; i < w; ++i) {
@@ -55,14 +41,14 @@ window.addEventListener('load', e => {
           const cy = y + (size ** 2) * dy * (dx ** 2);
           const d = Math.abs(dx) + Math.abs(dy);
           const blur = r + 1 + size * d;
-          const rg = context.createRadialGradient(cx, cy, r, cx, cy, blur);
+          const rg = canvas.createRadialGradient(cx, cy, r, cx, cy, blur);
           const c = 0xff - d * 0x7f;
           rg.addColorStop(0, `rgba(${c}, ${c}, ${c}, 1)`);
           rg.addColorStop(.5, `rgba(${c}, ${c}, ${c}, .5)`);
           rg.addColorStop(1, `rgba(${c}, ${c}, ${c}, 0)`);
-          rectangle(context, cx - blur, cy - blur, blur * 2, blur * 2, rg);
+          canvas.rectangle(cx - blur, cy - blur, blur * 2, blur * 2, rg).fill();
         } else {
-          circle(context, x, y, radius, 'rgba(255, 255, 255, .1)');
+          canvas.circle(x, y, radius, 'rgba(255, 255, 255, .1)').fill();
         }
       }
     }

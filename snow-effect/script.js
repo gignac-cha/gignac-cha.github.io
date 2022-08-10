@@ -1,25 +1,18 @@
-const resize = () => {
-  const canvas = document.querySelector('#canvas');
-  canvas.setAttribute('width', window.innerWidth);
-  canvas.setAttribute('height', window.innerHeight);
+import Canvas from '../modules/canvas.js';
+
+const resize = canvas => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 };
 window.addEventListener('load', e => {
-  resize();
+  const canvas = new Canvas(document.querySelector('#canvas'));
 
-  const canvas = document.querySelector('#canvas');
+  resize(canvas);
+
   const { width, height } = canvas;
-  const context = canvas.getContext('2d');
 
   const getRandomReal = n => Math.random() * n;
   const getRandom = n => Math.floor(getRandomReal(n));
-
-  const circle = (context, x, y, r, color) => {
-    context.beginPath();
-    context.fillStyle = color;
-    context.arc(x, y, r, 0, 2 * Math.PI);
-    context.fill();
-    context.closePath();
-  };
 
   const global = {
     play: true,
@@ -61,17 +54,17 @@ window.addEventListener('load', e => {
   };
   const snows = new Array(global.count).fill().map(() => createSnow());
 
-  requestAnimationFrame(update = () => {
+  requestAnimationFrame(function update() {
     requestAnimationFrame(update);
 
     if (global.play) {
-      context.clearRect(0, 0, width, height);
+      canvas.clear();
 
       for (const snow of snows) {
         const r = snow.i / 360 * 2 * Math.PI;
         const cos = Math.cos(r);
         const x = cos * snow.r * 2;
-        circle(context, snow.x + x, snow.y, snow.r, `rgba(255, 255, 255, ${snow.opacity})`);
+        canvas.circle(snow.x + x, snow.y, snow.r, `rgba(255, 255, 255, ${snow.opacity})`).fill();
         snow.i++;
         snow.i %= 360;
         snow.x += global.wind / 2;
