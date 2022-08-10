@@ -1,27 +1,20 @@
-const resize = () => {
-  const canvas = document.querySelector('#canvas');
-  canvas.setAttribute('width', window.innerWidth);
-  canvas.setAttribute('height', window.innerHeight);
+import Canvas from '../modules/canvas.js';
+
+const resize = canvas => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 };
 window.addEventListener('load', e => {
-  resize();
+  const canvas = new Canvas(document.querySelector('#canvas'));
 
-  const canvas = document.querySelector('#canvas');
+  resize(canvas);
+
   const { width, height } = canvas;
-  const context = canvas.getContext('2d');
 
   const getRandomReal = n => Math.random() * n;
   const getRandom = n => Math.floor(getRandomReal(n));
   const getRandomColor = () => [getRandom(0x100), getRandom(0x100), getRandom(0x100)];
   const throttle = (n, i = 0) => () => ++i % n === 0;
-
-  const circle = (context, x, y, r, color) => {
-    context.beginPath();
-    context.fillStyle = color;
-    context.arc(x, y, r, 0, 2 * Math.PI);
-    context.fill();
-    context.closePath();
-  };
 
   const radius = 10;
   const size = radius * 2;
@@ -52,16 +45,16 @@ window.addEventListener('load', e => {
     }
   });
 
-  requestAnimationFrame(update = () => {
+  requestAnimationFrame(function update() {
     requestAnimationFrame(update);
 
-    context.clearRect(0, 0, width, height);
+    canvas.clear();
 
     for (let j = 0; j < h; ++j) {
       for (let i = 0; i < w; ++i) {
         const x = size * i + radius;
         const y = size * j + radius;
-        circle(context, x, y, 1, 'gray');
+        canvas.circle(x, y, 1, 'gray').fill();
       }
     }
 
@@ -100,7 +93,7 @@ window.addEventListener('load', e => {
         const x = (i % w) * size + radius;
         const y = Math.floor(i / w) * size + radius;
         const color = `rgba(${waveColorMap[i][0]}, ${waveColorMap[i][1]}, ${waveColorMap[i][2]}, 1)`;
-        circle(context, x, y, radius * waveMap[i], color);
+        canvas.circle(x, y, radius * waveMap[i], color).fill();
       }
     }
 
