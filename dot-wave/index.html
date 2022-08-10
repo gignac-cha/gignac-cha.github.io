@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>Wave Effect :: made by R</title>
+
+    <script src="//unpkg.com/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="//unpkg.com/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="//unpkg.com/lodash/lodash.min.js"></script>
+    <script src="//unpkg.com/uuid/dist/umd/uuidv4.min.js"></script>
+
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <div id="panel">
+      <label for="verbose">Verbose</label>
+      <input id="verbose" type="checkbox" onchange="window.options.verbose = !!this.checked" />
+      <pre></pre>
+    </div>
+    <canvas id="canvas"></canvas>
+  </body>
+</html>
