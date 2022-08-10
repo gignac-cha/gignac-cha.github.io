@@ -1,4 +1,6 @@
 import Canvas from '../modules/canvas.js';
+import { random } from '../modules/random.js';
+import { range } from '../modules/range.js';
 
 window.addEventListener('load', e => {
   const canvas = new Canvas(document.querySelector('#canvas'));
@@ -15,9 +17,6 @@ window.addEventListener('load', e => {
   canvas.width = width;
   canvas.height = height;
 
-  const getRandomReal = n => Math.random() * n;
-  const getRandom = n => Math.floor(getRandomReal(n));
-
   const STATE_EMPTY = 0;
   const STATE_WALL = 1;
   const STATE_CURRENT = 2;
@@ -27,18 +26,18 @@ window.addEventListener('load', e => {
   const STATE_GOAL = 9;
 
   const createMaze = () => {
-    const maze = new Array(w * h).fill(0);
+    const maze = range(w * h, 0);
     for (let i = 0; i < 100; ++i) {
-      const x = getRandom(w);
-      const y = getRandom(h);
-      if (getRandom(100) < 50) {
-        for (let j = 0, count = 5 + getRandom(5); j < count; ++j) {
+      const x = random(w);
+      const y = random(h);
+      if (random(100) < 50) {
+        for (let j = 0, count = random(5, 10); j < count; ++j) {
           if (x + j < w) {
             maze[y * w + x + j] = STATE_WALL;
           }
         }
       } else {
-        for (let j = 0, count = 5 + getRandom(5); j < count; ++j) {
+        for (let j = 0, count = random(5, 10); j < count; ++j) {
           if (y + j < h) {
             maze[(y + j) * h + x] = STATE_WALL;
           }

@@ -1,3 +1,6 @@
+import { shuffle } from '../modules/random.js';
+import { range } from '../modules/range.js';
+
 window.addEventListener('load', e => {
   const elements = {
     bubble: document.querySelector('#bubble'),
@@ -29,10 +32,6 @@ window.addEventListener('load', e => {
   };
 
   elements.speed.value = global.speed;
-
-  const getRandomReal = n => Math.random() * n;
-  const getRandom = n => Math.floor(getRandomReal(n));
-  const shuffle = array => array.sort(() => getRandom(2) * 2 - 1);
 
   const data = [];
 
@@ -79,7 +78,7 @@ window.addEventListener('load', e => {
   }
   elements.generate.addEventListener('click', e => {
     reset();
-    data.push(...new Array(100).fill().map((_, i) => i + 1));
+    data.push(...range(100, i => i + 1));
     shuffle(data);
     for (let i = 0; i < data.length; ++i) {
       const item = document.createElement('div');
@@ -118,7 +117,7 @@ window.addEventListener('load', e => {
     global.speed = parseInt(elements.speed.value);
   });
 
-  setTimeout(update = (state = {}) => {
+  setTimeout(function update(state = {}) {
     if (global.sorting) {
       switch (global.algorithm) {
         case 'bubble': {

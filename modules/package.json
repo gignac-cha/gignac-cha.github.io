@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "esbuild canvas.ts --outdir=."
+    "build": "esbuild canvas.ts random.ts range.ts --outdir=."
   },
   "devDependencies": {
     "esbuild": "^0.15.0"
