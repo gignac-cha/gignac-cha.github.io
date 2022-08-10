@@ -1,0 +1,45 @@
+#items {
+  position: relative;
+  height: 200px;
+}
+.item {
+  position: absolute;
+  bottom: 0px;
+  padding-left: 1px;
+  padding-right: 1px;
+  width: 12px;
+  height: 100%;
+  transition: left .2s, background-color .2s;
+}
+.item.sorted {
+  background-color: lightgray;
+}
+.item.selected {
+  background-color: pink;
+}
+.item .bar {
+  position: absolute;
+  bottom: 0px;
+  width: 10px;
+  background-color: black;
+  transition: background-color .2s;
+}
+.item .bar.selected-1 {
+  background-color: green;
+}
+.item .bar.selected-2 {
+  background-color: blue;
+}
+.item .bar.selected-3 {
+  background-color: red;
+}
+.item .bar.sorted {
+  background-color: gray;
+}
+.line {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background-color: red;
+  transition: bottom .2s;
+}
