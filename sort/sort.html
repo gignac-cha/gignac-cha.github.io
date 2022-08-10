@@ -1,0 +1,55 @@
+<style>
+  #root {
+    position: relative;
+    height: 400px;
+  }
+  .bar {
+    position: absolute;
+    bottom: 10px;
+    width: 10px;
+    background-color: black;
+    transition: left .01s, background-color .01s;
+  }
+</style>
+<div id="root"></div>
+<script>
+  window.addEventListener('load', e => {
+    const numbers = new Array(100).fill(0).map((_, i) => i + 1);
+    for (let i = 0; i < numbers.length; ++i) {
+      const random = Math.floor(Math.random() * numbers.length);
+      [ numbers[i], numbers[random] ] = [ numbers[random], numbers[i] ];
+    }
+    const root = document.querySelector('#root');
+    const bars = [];
+    for (let i = 0; i < numbers.length; ++i) {
+      const bar = document.createElement('div');
+      bar.classList.add('bar');
+      bar.style.left = `${10 + (10 + 5) * i}px`;
+      bar.style.height = `${2 * numbers[i]}`;
+      root.appendChild(bar);
+      bars.push(bar);
+    }
+    setTimeout(next = (i = 0, j = 0) => {
+      for (const bar of bars) {
+        bar.style.backgroundColor = 'black';
+      }
+      bars[j].style.backgroundColor = 'green';
+      bars[j + 1].style.backgroundColor = 'blue';
+      if (numbers[j] > numbers[j + 1]) {
+        [ numbers[j], numbers[j + 1] ] = [ numbers[j + 1], numbers[j] ];
+        [ bars[j].style.left, bars[j + 1].style.left ] = [ bars[j + 1].style.left, bars[j].style.left ];
+        [ bars[j], bars[j + 1] ] = [ bars[j + 1], bars[j] ];
+      }
+      if (j < numbers.length - 1) {
+        j++;
+      }
+      if (j === numbers.length - 1 - i) {
+        i++;
+        j = 0;
+      }
+      if (i < numbers.length) {
+        setTimeout(next, 1000 / 60, i, j);
+      }
+    });
+  });
+</script>

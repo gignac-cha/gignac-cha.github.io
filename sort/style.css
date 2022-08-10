@@ -1,0 +1,30 @@
+#items {
+  position: relative;
+  height: 200px;
+}
+.item {
+  position: absolute;
+  bottom: 0px;
+  width: 10px;
+  height: 100%;
+  transition: left .2s;
+}
+.item.sorted {
+  background-color: lightgray;
+}
+.item .bar {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  background-color: black;
+  transition: background-color .2s;
+}
+.item .bar.selected-1 {
+  background-color: green;
+}
+.item .bar.selected-2 {
+  background-color: blue;
+}
+.item .bar.sorted {
+  background-color: gray;
+}
