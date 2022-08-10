@@ -67,7 +67,7 @@ window.addEventListener('load', e => {
     for (let i = 0; i < data.length; ++i) {
       const item = document.createElement('div');
       item.classList.add('item');
-      item.style.left = `${(10 + 2) * i}px`;
+      item.style.left = `${12 * i}px`;
       elements.items.appendChild(item);
 
       const bar = document.createElement('div');
@@ -112,8 +112,8 @@ window.addEventListener('load', e => {
               state.swapOperation++;
               [data[state.j], data[state.j + 1]] = [data[state.j + 1], data[state.j]];
               [state.elements[state.j], state.elements[state.j + 1]] = [state.elements[state.j + 1], state.elements[state.j]];
-              state.elements[state.j].style.left = `${(10 + 2) * state.j}px`;
-              state.elements[state.j + 1].style.left = `${(10 + 2) * (state.j + 1)}px`;
+              state.elements[state.j].style.left = `${12 * state.j}px`;
+              state.elements[state.j + 1].style.left = `${12 * (state.j + 1)}px`;
             }
             if (state.j < data.length - 1 - state.i - 1) {
               state.j++;
