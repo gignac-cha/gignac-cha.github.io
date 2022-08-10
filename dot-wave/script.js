@@ -1,4 +1,6 @@
 import Canvas from '../modules/canvas.js';
+import { random } from '../modules/random.js';
+import { range } from '../modules/range.js';
 
 const resize = canvas => {
   canvas.width = window.innerWidth;
@@ -11,9 +13,7 @@ window.addEventListener('load', e => {
 
   const { width, height } = canvas;
 
-  const getRandomReal = n => Math.random() * n;
-  const getRandom = n => Math.floor(getRandomReal(n));
-  const getRandomColor = () => [getRandom(0x100), getRandom(0x100), getRandom(0x100)];
+  const getRandomColor = () => [random(0x100), random(0x100), random(0x100)];
   const throttle = (n, i = 0) => () => ++i % n === 0;
 
   const radius = 10;
@@ -28,7 +28,7 @@ window.addEventListener('load', e => {
     return wave;
   };
   const createRandomWave = () => {
-    return createWave(getRandom(w), getRandom(h), (Math.min(w, h) / 2 + getRandom(Math.min(w, h))) / 2, 50 + getRandom(50), getRandomColor());
+    return createWave(random(w), random(h), random(Math.min(w, h) / 2, Math.min(w, h)), random(50, 100), getRandomColor());
   };
 
   canvas.addEventListener('click', e => {
@@ -58,8 +58,8 @@ window.addEventListener('load', e => {
       }
     }
 
-    const waveMap = new Array(w * h).fill(0);
-    const waveColorMap = new Array(w * h).fill();
+    const waveMap = range(w * h, 0);
+    const waveColorMap = range(w * h);
 
     for (const wave of waves) {
       wave.i += wave.speed;
@@ -97,7 +97,7 @@ window.addEventListener('load', e => {
       }
     }
 
-    if (getRandom(100) < 10) {
+    if (random(100) < 10) {
       waves.push(createRandomWave());
     }
   });

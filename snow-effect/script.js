@@ -1,4 +1,6 @@
 import Canvas from '../modules/canvas.js';
+import { random, randomReal } from '../modules/random.js';
+import { range } from '../modules/range.js';
 
 const resize = canvas => {
   canvas.width = window.innerWidth;
@@ -10,9 +12,6 @@ window.addEventListener('load', e => {
   resize(canvas);
 
   const { width, height } = canvas;
-
-  const getRandomReal = n => Math.random() * n;
-  const getRandom = n => Math.floor(getRandomReal(n));
 
   const global = {
     play: true,
@@ -43,16 +42,16 @@ window.addEventListener('load', e => {
 
   const createSnow = () => {
     const snow = {
-      i: getRandom(360),
-      x: -width * 4 + getRandom(width * 9),
-      y: -getRandom(height / 2),
-      r: 3 + getRandomReal(5),
-      speed: 1 + getRandomReal(5),
+      i: random(360),
+      x: random(-width * 4, width * 4),
+      y: -random(height / 2),
+      r: randomReal(3, 8),
+      speed: randomReal(1, 5),
     };
     snow.opacity = snow.r / 8;
     return snow;
   };
-  const snows = new Array(global.count).fill().map(() => createSnow());
+  const snows = range(global.count, () => createSnow());
 
   requestAnimationFrame(function update() {
     requestAnimationFrame(update);
@@ -80,7 +79,7 @@ window.addEventListener('load', e => {
         }
       }
       if (snows.length < global.count) {
-        snows.push(...new Array(global.count - snows.length).fill().map(() => createSnow()));
+        snows.push(...range(global.count - snows.length, () => createSnow()));
       }
     }
 
