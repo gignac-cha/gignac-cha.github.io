@@ -96,30 +96,29 @@ window.addEventListener('load', e => {
     if (global.sorting) {
       switch (global.algorithm) {
         case 'bubble': {
+          state.elements = state.elements ?? Array.from(elements.items.querySelectorAll('.item'));
           state.comparison = state.comparison ?? 0;
           state.swapOperation = state.swapOperation ?? 0;
           state.i = state.i ?? 0;
           if (state.i < data.length) {
             state.j = state.j ?? 0;
-            for (const item of elements.items.children) {
+            for (const item of state.elements) {
               item.querySelector('.bar').classList.remove('selected-1', 'selected-2');
             }
-            const item1 = elements.items.children.item(state.j);
-            const item2 = elements.items.children.item(state.j + 1);
-            item1.querySelector('.bar').classList.add('selected-1');
-            item2.querySelector('.bar').classList.add('selected-2');
+            state.elements[state.j].querySelector('.bar').classList.add('selected-1');
+            state.elements[state.j + 1].querySelector('.bar').classList.add('selected-2');
             state.comparison++;
             if (data[state.j] > data[state.j + 1]) {
               state.swapOperation++;
               [data[state.j], data[state.j + 1]] = [data[state.j + 1], data[state.j]];
-              elements.items.insertBefore(item2, item1);
-              item1.style.left = `${(10 + 2) * (state.j + 1)}px`;
-              item2.style.left = `${(10 + 2) * (state.j)}px`;
+              [state.elements[state.j], state.elements[state.j + 1]] = [state.elements[state.j + 1], state.elements[state.j]];
+              state.elements[state.j].style.left = `${(10 + 2) * state.j}px`;
+              state.elements[state.j + 1].style.left = `${(10 + 2) * (state.j + 1)}px`;
             }
             if (state.j < data.length - 1 - state.i - 1) {
               state.j++;
             } else {
-              const item = elements.items.children.item(state.j + 1);
+              const item = state.elements[state.j + 1];
               item.classList.add('sorted');
               item.querySelector('.bar').classList.add('sorted');
               state.j = 0;
@@ -127,7 +126,7 @@ window.addEventListener('load', e => {
             }
             elements.debug.textContent = `Item count: ${data.length}\nComparison count: ${state.comparison}\nSwap operation count: ${state.swapOperation}`;
           } else {
-            const item = elements.items.children.item(0);
+            const item = state.elements[0];
             item.classList.add('sorted');
             item.querySelector('.bar').classList.add('sorted');
             global.algorithm = null;
