@@ -2,6 +2,10 @@ window.addEventListener('load', e => {
   const elements = {
     bubble: document.querySelector('#bubble'),
     selection: document.querySelector('#selection'),
+    insertion: document.querySelector('#insertion'),
+    merge: document.querySelector('#merge'),
+    heap: document.querySelector('#heap'),
+    quick: document.querySelector('#quick'),
     generate: document.querySelector('#generate'),
     reset: document.querySelector('#reset'),
     toggle: document.querySelector('#toggle'),
@@ -9,6 +13,14 @@ window.addEventListener('load', e => {
     items: document.querySelector('#items'),
     debug: document.querySelector('#debug'),
   };
+  const algorithmButtons = [
+    [elements.bubble, 'bubble'],
+    [elements.selection, 'selection'],
+    [elements.insertion, 'insertion'],
+    [elements.merge, 'merge'],
+    [elements.heap, 'heap'],
+    [elements.quick, 'quick'],
+  ];
 
   const global = {
     algorithm: null,
@@ -25,10 +37,10 @@ window.addEventListener('load', e => {
   const data = [];
 
   const resetButtons = () => {
-    elements.bubble.classList.add('btn-dark');
-    elements.bubble.classList.remove('disabled');
-    elements.selection.classList.add('btn-dark');
-    elements.selection.classList.remove('disabled');
+    for (const [button, algorithm] of algorithmButtons) {
+      button.classList.add('btn-dark');
+      button.classList.remove('disabled');
+    }
     global.algorithm = null;
   };
   const reset = () => {
@@ -57,18 +69,14 @@ window.addEventListener('load', e => {
     }
   };
 
-  elements.bubble.addEventListener('click', e => {
-    resetButtons();
-    elements.bubble.classList.remove('btn-dark');
-    elements.bubble.classList.add('disabled');
-    global.algorithm = 'bubble';
-  });
-  elements.selection.addEventListener('click', e => {
-    resetButtons();
-    elements.selection.classList.remove('btn-dark');
-    elements.selection.classList.add('disabled');
-    global.algorithm = 'selection';
-  });
+  for (const [button, algorithm] of algorithmButtons) {
+    button.addEventListener('click', e => {
+      resetButtons();
+      button.classList.remove('btn-dark');
+      button.classList.add('disabled');
+      global.algorithm = algorithm;
+    });
+  }
   elements.generate.addEventListener('click', e => {
     reset();
     data.push(...new Array(100).fill().map((_, i) => i + 1));
