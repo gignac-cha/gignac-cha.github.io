@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "build": "esbuild canvas.ts --outdir=."
+  },
+  "devDependencies": {
+    "esbuild": "^0.15.0"
+  }
+}
