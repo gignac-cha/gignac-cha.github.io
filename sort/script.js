@@ -1,6 +1,7 @@
 window.addEventListener('load', e => {
   const elements = {
     bubble: document.querySelector('#bubble'),
+    selection: document.querySelector('#selection'),
     generate: document.querySelector('#generate'),
     reset: document.querySelector('#reset'),
     toggle: document.querySelector('#toggle'),
@@ -26,6 +27,8 @@ window.addEventListener('load', e => {
   const resetButtons = () => {
     elements.bubble.classList.add('btn-dark');
     elements.bubble.classList.remove('disabled');
+    elements.selection.classList.add('btn-dark');
+    elements.selection.classList.remove('disabled');
     global.algorithm = null;
   };
   const reset = () => {
@@ -60,6 +63,12 @@ window.addEventListener('load', e => {
     elements.bubble.classList.add('disabled');
     global.algorithm = 'bubble';
   });
+  elements.selection.addEventListener('click', e => {
+    resetButtons();
+    elements.selection.classList.remove('btn-dark');
+    elements.selection.classList.add('disabled');
+    global.algorithm = 'selection';
+  });
   elements.generate.addEventListener('click', e => {
     reset();
     data.push(...new Array(100).fill().map((_, i) => i + 1));
@@ -74,6 +83,15 @@ window.addEventListener('load', e => {
       bar.classList.add('bar');
       bar.style.height = `${data[i]}%`;
       item.appendChild(bar);
+    }
+    switch (global.algorithm) {
+      case 'selection': {
+        const line = document.createElement('div');
+        line.classList.add('line');
+        line.style.bottom = `0%`;
+        elements.items.appendChild(line);
+        break;
+      }
     }
     elements.debug.textContent = `Item count: ${data.length}`;
   });
@@ -129,6 +147,60 @@ window.addEventListener('load', e => {
             const item = state.elements[0];
             item.classList.add('sorted');
             item.querySelector('.bar').classList.add('sorted');
+            global.algorithm = null;
+            global.sorting = false;
+            elements.debug.textContent = `All items sorted!\nItem count: ${data.length}\nComparison count: ${state.comparison}\nSwap operation count: ${state.swapOperation}`;
+          }
+          break;
+        }
+        case 'selection': {
+          state.elements = state.elements ?? Array.from(elements.items.querySelectorAll('.item'));
+          state.comparison = state.comparison ?? 0;
+          state.swapOperation = state.swapOperation ?? 0;
+          state.i = state.i ?? 0;
+          if (state.i < data.length) {
+            state.minimum = state.minimum ?? state.i;
+            elements.items.querySelector('.line').style.bottom = `${data[state.minimum]}%`;
+            state.j = state.j ?? state.i + 1;
+            if (state.j < data.length) {
+              for (const item of state.elements) {
+                item.classList.remove('selected');
+                item.querySelector('.bar').classList.remove('selected-1', 'selected-2', 'selected-3');
+              }
+              state.elements[state.i].querySelector('.bar').classList.add('selected-1');
+              state.elements[state.minimum].classList.add('selected');
+              state.elements[state.minimum].querySelector('.bar').classList.add('selected-3');
+              state.elements[state.j].querySelector('.bar').classList.add('selected-2');
+              state.comparison++;
+              if (data[state.j] < data[state.minimum]) {
+                state.minimum = state.j;
+              }
+              state.j++;
+            } else {
+              if (state.i < state.minimum) {
+                state.swapOperation++;
+                [data[state.i], data[state.minimum]] = [data[state.minimum], data[state.i]];
+                [state.elements[state.i], state.elements[state.minimum]] = [state.elements[state.minimum], state.elements[state.i]];
+                state.elements[state.i].style.left = `${12 * state.i}px`;
+                state.elements[state.minimum].style.left = `${12 * state.minimum}px`;
+              }
+              const item = state.elements[state.i];
+              item.classList.add('sorted');
+              item.querySelector('.bar').classList.add('sorted');
+              state.i++;
+              state.j = state.i;
+              state.minimum = state.i;
+            }
+            elements.debug.textContent = `Item count: ${data.length}\nComparison count: ${state.comparison}\nSwap operation count: ${state.swapOperation}`;
+          } else {
+            for (const item of state.elements) {
+              item.classList.remove('selected');
+              item.querySelector('.bar').classList.remove('selected-1', 'selected-2', 'selected-3');
+            }
+            const item = state.elements[0];
+            item.classList.add('sorted');
+            item.querySelector('.bar').classList.add('sorted');
+            elements.items.querySelector('.line').remove();
             global.algorithm = null;
             global.sorting = false;
             elements.debug.textContent = `All items sorted!\nItem count: ${data.length}\nComparison count: ${state.comparison}\nSwap operation count: ${state.swapOperation}`;
