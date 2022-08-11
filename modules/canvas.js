@@ -99,4 +99,7 @@ export default class Canvas {
   circle(x, y, r, color) {
     return this.getBuilder("circle" /* CIRCLE */, { x, y, r, color });
   }
+  line(start, end, color) {
+    return this.getBuilder("line" /* LINE */, { start, end, color });
+  }
 }
