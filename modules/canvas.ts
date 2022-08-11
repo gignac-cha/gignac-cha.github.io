@@ -125,4 +125,7 @@ export default class Canvas {
   circle(x: number, y: number, r: number, color: string): Builder {
     return this.getBuilder(BuilderType.CIRCLE, { x, y, r, color });
   }
+  line(start: Point, end: Point, color: string): Builder {
+    return this.getBuilder(BuilderType.LINE, { start, end, color });
+  }
 }
