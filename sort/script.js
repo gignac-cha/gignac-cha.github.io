@@ -46,6 +46,7 @@ window.addEventListener('load', e => {
     global.sorting = false;
     elements.toggle.classList.add('pause');
     toggle(false);
+    elements.toggle.setAttribute('disabled', '');
     data.length = 0;
     elements.items.innerHTML = '';
     elements.debug.innerHTML = '';
@@ -71,6 +72,7 @@ window.addEventListener('load', e => {
   for (const [button, algorithm] of algorithmButtons) {
     button.addEventListener('click', e => {
       resetButtons();
+      reset();
       button.classList.remove('btn-dark');
       button.classList.add('disabled');
       global.algorithm = algorithm;
@@ -80,6 +82,7 @@ window.addEventListener('load', e => {
     reset();
     data.push(...range(100, i => i + 1));
     shuffle(data);
+    elements.toggle.removeAttribute('disabled');
     for (let i = 0; i < data.length; ++i) {
       const item = document.createElement('div');
       item.classList.add('item');
