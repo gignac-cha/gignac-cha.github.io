@@ -214,6 +214,54 @@ window.addEventListener('load', e => {
           }
           break;
         }
+        case 'insertion': {
+          state.elements = state.elements ?? Array.from(elements.items.querySelectorAll('.item'));
+          state.comparison = state.comparison ?? 0;
+          state.swapOperation = state.swapOperation ?? 0;
+          state.i = state.i ?? 0;
+          if (state.i < data.length) {
+            state.j = state.j ?? state.i;
+            for (const item of state.elements) {
+              item.querySelector('.bar').classList.remove('selected-1', 'selected-2');
+            }
+            if (state.j > 0) {
+              state.comparison++;
+              if (data[state.j] < data[state.j - 1]) {
+                state.elements[state.j].querySelector('.bar').classList.add('selected-1');
+                state.elements[state.j - 1].querySelector('.bar').classList.add('selected-2');
+                state.swapOperation++;
+                [data[state.j], data[state.j - 1]] = [data[state.j - 1], data[state.j]];
+                [state.elements[state.j], state.elements[state.j - 1]] = [state.elements[state.j - 1], state.elements[state.j]];
+                state.elements[state.j].style.left = `${12 * state.j}px`;
+                state.elements[state.j - 1].style.left = `${12 * (state.j - 1)}px`;
+                state.j--;
+              } else {
+                state.elements[state.j].classList.add('sorted');
+                state.elements[state.j].querySelector('.bar').classList.add('sorted');
+                state.i++;
+                state.j = state.i;
+              }
+            } else {
+              state.elements[state.j].classList.add('sorted');
+              state.elements[state.j].querySelector('.bar').classList.add('sorted');
+              state.i++;
+              state.j = state.i;
+            }
+            elements.debug.textContent = `Item count: ${data.length}\nComparison count: ${state.comparison}\nSwap operation count: ${state.swapOperation}`;
+          } else {
+            for (const item of state.elements) {
+              item.classList.remove('selected');
+              item.querySelector('.bar').classList.remove('selected-1', 'selected-2');
+            }
+            const item = state.elements[0];
+            item.classList.add('sorted');
+            item.querySelector('.bar').classList.add('sorted');
+            global.algorithm = null;
+            global.sorting = false;
+            elements.debug.textContent = `All items sorted!\nItem count: ${data.length}\nComparison count: ${state.comparison}\nSwap operation count: ${state.swapOperation}`;
+          }
+          break;
+        }
       }
     }
     setTimeout(update, 1000 / global.speed, global.algorithm ? state : {});
