@@ -1,184 +1,53 @@
-(function () { var script = document.createElement('script'); script.onload = function () { var stats = new Stats(); document.body.appendChild(stats.dom); requestAnimationFrame(function loop() { stats.update(); requestAnimationFrame(loop) }); }; script.src = '//mrdoob.github.io/stats.js/build/stats.min.js'; document.head.appendChild(script); })()
+import Canvas from '../modules/canvas.js';
 
-$.fn.extend({
-  shape: function (width, height) {
-    if (typeof width === 'number' && typeof height === 'number') {
-      return this.attr({ width, height });
-    } else {
-      const width = this.width();
-      const height = this.height();
-      return { width, height };
-    }
-  },
-});
+const resize = canvas => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+};
+window.addEventListener('load', e => {
+  const canvas = new Canvas(document.querySelector('#canvas'));
 
-function resize() {
-  const { width, height } = $(window).shape();
-  $('#canvas').shape(width, height);
-}
+  resize(canvas);
 
-function getColor(rgba) {
-  const { r, g, b, a } = rgba;
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
-}
-function getRandomRGB() {
-  const r = Math.random() * 256;
-  const g = Math.random() * 256;
-  const b = Math.random() * 256;
-  return { r, g, b, a: 1 };
-}
-function getRandomColor() {
-  return getColor(getRandomRGB());
-}
+  const { width, height } = canvas;
 
-class Canvas {
-  constructor(canvas) {
-    this.canvas = canvas;
-  }
-  get width() {
-    return $(this.canvas).width();
-  }
-  get height() {
-    return $(this.canvas).height();
-  }
-  get context() {
-    return this.canvas.getContext('2d');
-  }
-  clear() {
-    this.context.clearRect(0, 0, this.width, this.height);
-  }
-  dot(x, y, color) {
-    this.rectangle(x, y, 1, 1, color);
-  }
-  line(x1, y1, x2, y2, color, width = 1) {
-    const { context } = this;
-    context.beginPath();
-    context.strokeStyle = color;
-    context.lineWidth = width;
-    context.moveTo(x1, y1);
-    context.lineTo(x2, y2);
-    context.stroke();
-    context.closePath();
-  }
-  rectangle(x, y, width, height, color, fill = true) {
-    const { context } = this;
-    context.beginPath();
-    if (fill) {
-      context.fillStyle = color;
-    } else {
-      context.strokeStyle = color;
-    }
-    context.rect(x, y, width, height);
-    if (fill) {
-      context.fill();
-    } else {
-      context.stroke();
-    }
-    context.closePath();
-  }
-  circle(x, y, r, color, fill = true) {
-    const { context } = this;
-    context.beginPath();
-    if (fill) {
-      context.fillStyle = color;
-    } else {
-      context.strokeStyle = color;
-    }
-    context.arc(x, y, r, 0, 2 * Math.PI);
-    if (fill) {
-      context.fill();
-    } else {
-      context.stroke();
-    }
-    context.closePath();
-  }
-  text(x, y, text, color, font, fill = true) {
-    const { context } = this;
-    context.beginPath();
-    if (fill) {
-      context.fillStyle = color;
-    } else {
-      context.strokeStyle = color;
-    }
-    context.font = '24px Fira Code';
-    if (fill) {
-      context.fillText(text, x, y);
-    } else {
-      context.strokeText(text, x, y);
-    }
-    context.closePath();
-  }
-}
+  const getPoint = (degree, x, y, distance) => {
+    const radian = degree / 360 * 2 * Math.PI;
+    const sine = Math.sin(radian);
+    const cosine = Math.cos(radian);
+    const dx = cosine * distance;
+    const dy = sine * distance;
+    return { x: x + dx, y: y + dy };
+  };
 
-$(window).on('load', e => {
-  resize();
-
-  // const canvas = document.getElementById('canvas');
-  const canvas = new Canvas(document.getElementById('canvas'));
-
-  requestAnimationFrame(update = () => {
+  requestAnimationFrame(function update() {
     requestAnimationFrame(update);
 
-    const { width, height } = $(window).shape();
     canvas.clear();
 
-    const radius = (Math.min(width, height) - 20) / 2;
-    const cx = width / 2;
-    const cy = height / 2;
-
-    canvas.circle(cx, cy, radius, 'white', false);
-
+    const x = width / 2;
+    const y = height / 2;
+    const radius = Math.min(width, height) / 2 - 100;
     const now = new Date();
     const hour = now.getHours();
     const minute = now.getMinutes();
     const second = now.getSeconds();
-    const ms = now.getMilliseconds();
+    const millisecond = now.getMilliseconds();
 
-    // hour
-    canvas.line(
-      cx, cy,
-      cx + (radius / 2) * Math.cos((hour % 12) / 12 * 2 * Math.PI - Math.PI / 2),
-      cy + (radius / 2) * Math.sin((hour % 12) / 12 * 2 * Math.PI - Math.PI / 2),
-      'white', 10
-    );
+    const p1 = getPoint(360 / 12 * (hour % 12) - 90, x, y, radius / 2);
+    canvas.line({ x, y }, p1, 'white', 10).stroke();
+    const p2 = getPoint(360 / 60 * minute - 90, x, y, radius / 4 * 3);
+    canvas.line({ x, y }, p2, 'white', 5).stroke();
+    const p3 = getPoint(360 / 60 * second - 90, x, y, radius - 10);
+    canvas.line({ x, y }, p3, 'white', 1).stroke();
+    const p4 = getPoint(360 / 60 * second - 90 + 360 / 60 / 1000 * millisecond, x, y, radius - 10);
+    canvas.line({ x, y }, p4, 'gray', 1).stroke();
 
-    // minute
-    canvas.line(
-      cx, cy,
-      cx + (radius / 4 * 3) * Math.cos(minute / 60 * 2 * Math.PI - Math.PI / 2),
-      cy + (radius / 4 * 3) * Math.sin(minute / 60 * 2 * Math.PI - Math.PI / 2),
-      'white', 5
-    );
-
-    // second
-    canvas.line(
-      cx, cy,
-      cx + (radius - 10) * Math.cos(second / 60 * 2 * Math.PI - Math.PI / 2),
-      cy + (radius - 10) * Math.sin(second / 60 * 2 * Math.PI - Math.PI / 2),
-      'white', 1
-    );
-
-    // second with millisecond
-    canvas.line(
-      cx, cy,
-      cx + (radius - 10) * Math.cos((second + ms / 10 ** 3) / 60 * 2 * Math.PI - Math.PI / 2),
-      cy + (radius - 10) * Math.sin((second + ms / 10 ** 3) / 60 * 2 * Math.PI - Math.PI / 2),
-      'gray', 1
-    );
-
-    canvas.text(10, height - 10, `${hour}:${minute}:${second}`, 'white', '24px Fira Code');
+    canvas.circle(x, y, radius, 'white').stroke();
+    canvas.circle(x, y, radius + 10, 'white', 3).stroke();
+    canvas.circle(x, y, 10, 'white').fill();
   });
-}).on('resize', e => {
+});
+window.addEventListener('resize', e => {
   resize();
-  // }).on('mousemove', e => {
-  //   const x = e.clientX;
-  //   const y = e.clientY;
-  //   g.mousemove = { x, y };
-  //   updatePoints(x, y);
-  // }).on('touchmove', e => {
-  //   const touch = Array.from(e.touches).shift();
-  //   const x = touch.clientX;
-  //   const y = touch.clientY;
-  //   g.touchmove = { x, y };
-  //   updatePoints(x, y);
 });
