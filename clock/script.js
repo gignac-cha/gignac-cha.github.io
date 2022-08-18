@@ -43,6 +43,18 @@ window.addEventListener('load', e => {
     const p4 = getPoint(360 / 60 * second - 90 + 360 / 60 / 1000 * millisecond, x, y, radius - 10);
     canvas.line({ x, y }, p4, 'gray', 1).stroke();
 
+    for (let i = 0; i < 60; ++i) {
+      if (i % 5 === 0) {
+        const p1 = getPoint(360 / 60 * i, x, y, radius - 10);
+        const p2 = getPoint(360 / 60 * i, x, y, radius);
+        canvas.line(p1, p2, 'white', 5).stroke();
+      } else {
+        const p1 = getPoint(360 / 60 * i, x, y, radius - 5);
+        const p2 = getPoint(360 / 60 * i, x, y, radius);
+        canvas.line(p1, p2, 'white', 1).stroke();
+      }
+    }
+
     canvas.circle(x, y, radius, 'white').stroke();
     canvas.circle(x, y, radius + 10, 'white', 3).stroke();
     canvas.circle(x, y, 10, 'white').fill();
