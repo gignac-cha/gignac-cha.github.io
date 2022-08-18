@@ -14,6 +14,7 @@ interface Point {
 interface Line {
   start: Point;
   end: Point;
+  width: number;
 }
 interface BuilderProperties {
   x: number;
@@ -82,14 +83,17 @@ export default class Canvas {
           context.rect(x, y, width, height);
           break;
         case BuilderType.CIRCLE:
+          context.lineWidth = width;
           context.arc(x, y, r, 0, 2 * Math.PI);
           break;
         case BuilderType.LINE:
+          context.lineWidth = width;
           context.moveTo(start.x, start.y);
           context.lineTo(end.x, end.y);
           break;
         case BuilderType.LINES:
           for (const line of lines) {
+            context.lineWidth = line.width;
             context.moveTo(line.start.x, line.start.y);
             context.lineTo(line.end.x, line.end.y);
           }
@@ -122,10 +126,10 @@ export default class Canvas {
   rectangle(x: number, y: number, width: number, height: number, color: string): Builder {
     return this.getBuilder(BuilderType.RECTANGLE, { x, y, width, height, color });
   }
-  circle(x: number, y: number, r: number, color: string): Builder {
-    return this.getBuilder(BuilderType.CIRCLE, { x, y, r, color });
+  circle(x: number, y: number, r: number, color: string, width: number = 1): Builder {
+    return this.getBuilder(BuilderType.CIRCLE, { x, y, r, color, width });
   }
-  line(start: Point, end: Point, color: string): Builder {
-    return this.getBuilder(BuilderType.LINE, { start, end, color });
+  line(start: Point, end: Point, color: string, width: number = 1): Builder {
+    return this.getBuilder(BuilderType.LINE, { start, end, color, width });
   }
 }
