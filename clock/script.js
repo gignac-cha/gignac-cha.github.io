@@ -34,11 +34,11 @@ window.addEventListener('load', e => {
     const second = now.getSeconds();
     const millisecond = now.getMilliseconds();
 
-    const p1 = getPoint(360 / 12 * (hour % 12) - 90, x, y, radius / 2);
+    const p1 = getPoint(360 / 12 * (hour % 12 + minute / 60 + second / 60 / 60) - 90, x, y, radius / 2);
     canvas.line({ x, y }, p1, 'white', 10).stroke();
-    const p2 = getPoint(360 / 60 * minute - 90, x, y, radius / 4 * 3);
+    const p2 = getPoint(360 / 60 * (minute + second / 60 + millisecond / 1000 / 60) - 90, x, y, radius / 5 * 4);
     canvas.line({ x, y }, p2, 'white', 5).stroke();
-    const p3 = getPoint(360 / 60 * second - 90, x, y, radius - 10);
+    const p3 = getPoint(360 / 60 * (second) - 90, x, y, radius - 10);
     canvas.line({ x, y }, p3, 'white', 1).stroke();
     const p4 = getPoint(360 / 60 * second - 90 + 360 / 60 / 1000 * millisecond, x, y, radius - 10);
     canvas.line({ x, y }, p4, 'gray', 1).stroke();
