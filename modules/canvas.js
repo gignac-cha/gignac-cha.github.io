@@ -57,14 +57,17 @@ export default class Canvas {
           context.rect(x, y, width, height);
           break;
         case "circle" /* CIRCLE */:
+          context.lineWidth = width;
           context.arc(x, y, r, 0, 2 * Math.PI);
           break;
         case "line" /* LINE */:
+          context.lineWidth = width;
           context.moveTo(start.x, start.y);
           context.lineTo(end.x, end.y);
           break;
         case "lines" /* LINES */:
           for (const line of lines) {
+            context.lineWidth = line.width;
             context.moveTo(line.start.x, line.start.y);
             context.lineTo(line.end.x, line.end.y);
           }
@@ -96,10 +99,10 @@ export default class Canvas {
   rectangle(x, y, width, height, color) {
     return this.getBuilder("rectangle" /* RECTANGLE */, { x, y, width, height, color });
   }
-  circle(x, y, r, color) {
-    return this.getBuilder("circle" /* CIRCLE */, { x, y, r, color });
+  circle(x, y, r, color, width = 1) {
+    return this.getBuilder("circle" /* CIRCLE */, { x, y, r, color, width });
   }
-  line(start, end, color) {
-    return this.getBuilder("line" /* LINE */, { start, end, color });
+  line(start, end, color, width = 1) {
+    return this.getBuilder("line" /* LINE */, { start, end, color, width });
   }
 }
