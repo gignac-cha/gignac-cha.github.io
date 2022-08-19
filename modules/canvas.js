@@ -7,6 +7,11 @@ var BuilderType = /* @__PURE__ */ ((BuilderType2) => {
   BuilderType2["TEXT"] = "text";
   return BuilderType2;
 })(BuilderType || {});
+var DrawMethod = /* @__PURE__ */ ((DrawMethod2) => {
+  DrawMethod2["STROKE"] = "stroke";
+  DrawMethod2["FILL"] = "fill";
+  return DrawMethod2;
+})(DrawMethod || {});
 export default class Canvas {
   constructor(element) {
     this.element = element;
@@ -44,7 +49,10 @@ export default class Canvas {
     start = { x: 0, y: 0 },
     end = { x: 0, y: 0 },
     lines = [],
-    color = "rgba(0, 0, 0, 0)"
+    text = "",
+    color = "rgba(0, 0, 0, 0)",
+    size = 0,
+    align = { horizontal: "start", vertical: "alphabetic" }
   }) {
     const { context } = this;
     context.beginPath();
@@ -66,12 +74,38 @@ export default class Canvas {
           context.lineTo(end.x, end.y);
           break;
         case "lines" /* LINES */:
+          context.lineWidth = width;
           for (const line of lines) {
-            context.lineWidth = line.width;
             context.moveTo(line.start.x, line.start.y);
             context.lineTo(line.end.x, line.end.y);
           }
           break;
+        case "text" /* TEXT */:
+          context.font = `${size}px 'Consolas'`;
+          context.textAlign = align.horizontal;
+          context.textBaseline = align.vertical;
+          break;
+      }
+    };
+    const draw = (method) => {
+      if (type === "text" /* TEXT */) {
+        switch (method) {
+          case "stroke" /* STROKE */:
+            context.strokeText(text, x, y);
+            return;
+          case "fill" /* FILL */:
+            context.fillText(text, x, y);
+            return;
+        }
+      } else {
+        switch (method) {
+          case "stroke" /* STROKE */:
+            context.stroke();
+            return;
+          case "fill" /* FILL */:
+            context.fill();
+            return;
+        }
       }
     };
     const clean = () => context.closePath();
@@ -79,13 +113,13 @@ export default class Canvas {
       stroke() {
         context.strokeStyle = color;
         work();
-        context.stroke();
+        draw("stroke" /* STROKE */);
         clean();
       },
       fill() {
         context.fillStyle = color;
         work();
-        context.fill();
+        draw("fill" /* FILL */);
         clean();
       }
     };
@@ -104,5 +138,11 @@ export default class Canvas {
   }
   line(start, end, color, width = 1) {
     return this.getBuilder("line" /* LINE */, { start, end, color, width });
+  }
+  lines(lines, color, width = 1) {
+    return this.getBuilder("lines" /* LINES */, { lines, color, width });
+  }
+  text(text, x, y, color, size, align) {
+    return this.getBuilder("text" /* TEXT */, { text, x, y, color, size, align });
   }
 }
