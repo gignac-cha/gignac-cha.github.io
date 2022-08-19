@@ -6,6 +6,10 @@ enum BuilderType {
   LINES = 'lines',
   TEXT = 'text',
 }
+enum DrawMethod {
+  STROKE = 'stroke',
+  FILL = 'fill',
+}
 
 interface Point {
   x: number;
@@ -14,7 +18,10 @@ interface Point {
 interface Line {
   start: Point;
   end: Point;
-  width: number;
+}
+interface TextAlign {
+  horizontal: CanvasTextAlign;
+  vertical: CanvasTextBaseline;
 }
 interface BuilderProperties {
   x: number;
@@ -25,7 +32,10 @@ interface BuilderProperties {
   start: Point;
   end: Point;
   lines: Line[];
+  text: string;
   color: string;
+  size: number;
+  align: TextAlign;
 }
 interface Builder {
   stroke(): void;
@@ -70,7 +80,10 @@ export default class Canvas {
     x = 0, y = 0, r = 0, width = 0, height = 0,
     start = { x: 0, y: 0 }, end = { x: 0, y: 0},
     lines = [],
+    text = '',
     color = 'rgba(0, 0, 0, 0)',
+    size = 0,
+    align = { horizontal: 'start', vertical: 'alphabetic' }
   }: Partial<BuilderProperties>): Builder {
     const { context }: Canvas = this;
     context.beginPath();
@@ -92,26 +105,52 @@ export default class Canvas {
           context.lineTo(end.x, end.y);
           break;
         case BuilderType.LINES:
+          context.lineWidth = width;
           for (const line of lines) {
-            context.lineWidth = line.width;
             context.moveTo(line.start.x, line.start.y);
             context.lineTo(line.end.x, line.end.y);
           }
           break;
+        case BuilderType.TEXT:
+          context.font = `${size}px 'Consolas'`;
+          context.textAlign = align.horizontal;
+          context.textBaseline = align.vertical;
+          break;
       }
     };
+    const draw = (method: DrawMethod) => {
+      if (type === BuilderType.TEXT) {
+        switch (method) {
+          case DrawMethod.STROKE:
+            context.strokeText(text, x, y);
+            return;
+          case DrawMethod.FILL:
+            context.fillText(text, x, y);
+            return;
+        }
+      } else {
+        switch (method) {
+          case DrawMethod.STROKE:
+            context.stroke();
+            return;
+          case DrawMethod.FILL:
+            context.fill();
+            return;
+        }
+      }
+    }
     const clean = () => context.closePath();
     return {
       stroke() {
         context.strokeStyle = color;
         work();
-        context.stroke();
+        draw(DrawMethod.STROKE);
         clean();
       },
       fill() {
         context.fillStyle = color;
         work();
-        context.fill();
+        draw(DrawMethod.FILL);
         clean();
       },
     };
@@ -131,5 +170,11 @@ export default class Canvas {
   }
   line(start: Point, end: Point, color: string, width: number = 1): Builder {
     return this.getBuilder(BuilderType.LINE, { start, end, color, width });
+  }
+  lines(lines: Line[], color: string, width: number = 1): Builder {
+    return this.getBuilder(BuilderType.LINES, { lines, color, width });
+  }
+  text(text: string, x: number, y: number, color: string, size: number, align: TextAlign): Builder {
+    return this.getBuilder(BuilderType.TEXT, { text, x, y, color, size, align });
   }
 }
