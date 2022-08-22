@@ -2,14 +2,16 @@ import Canvas from '../modules/canvas.js';
 import { random } from '../modules/random.js';
 import { range } from '../modules/range.js';
 
-const resize = canvas => {
+const canvas = new Canvas();
+
+const resize = () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 };
 window.addEventListener('load', e => {
-  const canvas = new Canvas(document.querySelector('#canvas'));
+  canvas.element = document.querySelector('#canvas');
 
-  resize(canvas);
+  resize();
 
   const { width, height } = canvas;
 
@@ -74,8 +76,8 @@ window.addEventListener('load', e => {
   const addNode = () => {
     const node1 = {
       i: nodes.length,
-      x: random(width / 10, width / 10 * 9),
-      y: random(height / 10, height / 10 * 9),
+      x: random(canvas.width / 10, canvas.width / 10 * 9),
+      y: random(canvas.height / 10, canvas.height / 10 * 9),
     };
     nodes.push(node1);
     range(distances.length).forEach(i => distances[i].push(getDistance(node1, nodes[i])));

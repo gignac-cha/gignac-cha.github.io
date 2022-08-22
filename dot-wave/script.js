@@ -2,33 +2,28 @@ import Canvas from '../modules/canvas.js';
 import { random } from '../modules/random.js';
 import { range } from '../modules/range.js';
 
-const resize = canvas => {
+const canvas = new Canvas();
+
+const resize = () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 };
 window.addEventListener('load', e => {
-  const canvas = new Canvas(document.querySelector('#canvas'));
+  canvas.element = document.querySelector('#canvas');
 
-  resize(canvas);
-
-  const { width, height } = canvas;
+  resize();
 
   const getRandomColor = () => [random(0x100), random(0x100), random(0x100)];
   const throttle = (n, i = 0) => () => ++i % n === 0;
 
   const radius = 10;
   const size = radius * 2;
-  const w = Math.floor(width / size + 1);
-  const h = Math.floor(height / size + 1);
   const waves = [];
 
   const createWave = (x, y, r, speed, color) => {
     const wave = { i: 0, x, y, r, speed, color };
     wave.maximum = speed * (speed + 1) / 2;
     return wave;
-  };
-  const createRandomWave = () => {
-    return createWave(random(w), random(h), random(Math.min(w, h) / 2, Math.min(w, h)), random(50, 100), getRandomColor());
   };
 
   canvas.addEventListener('click', e => {
@@ -47,6 +42,10 @@ window.addEventListener('load', e => {
 
   requestAnimationFrame(function update() {
     requestAnimationFrame(update);
+
+    const { width, height } = canvas;
+    const w = Math.floor(width / size + 1);
+    const h = Math.floor(height / size + 1);
 
     canvas.clear();
 
@@ -98,7 +97,8 @@ window.addEventListener('load', e => {
     }
 
     if (random(100) < 10) {
-      waves.push(createRandomWave());
+      const wave = createWave(random(w), random(h), random(Math.min(w, h) / 2, Math.min(w, h)), random(50, 100), getRandomColor());
+      waves.push(wave);
     }
   });
 });

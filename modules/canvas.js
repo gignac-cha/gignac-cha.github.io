@@ -14,10 +14,16 @@ var DrawMethod = /* @__PURE__ */ ((DrawMethod2) => {
 })(DrawMethod || {});
 export default class Canvas {
   constructor(element) {
-    this.element = element;
+    this._element = element;
+  }
+  setContext() {
+    const context = this._element.getContext("2d");
+    if (context) {
+      this._context = context;
+    }
   }
   addEventListener(...args) {
-    this.element.addEventListener(...args);
+    this._element.addEventListener(...args);
   }
   createLinearGradient(...args) {
     return this._context.createLinearGradient(...args);
@@ -25,20 +31,25 @@ export default class Canvas {
   createRadialGradient(...args) {
     return this._context.createRadialGradient(...args);
   }
+  set element(_element) {
+    this._element = _element;
+  }
   get context() {
-    return this._context ?? (this._context = this.element.getContext("2d"));
+    return this._context;
   }
   get width() {
-    return this.element.width;
+    return this._element.width;
   }
   set width(value) {
-    this.element.setAttribute("width", `${value}`);
+    this._element.setAttribute("width", `${value}`);
+    this.setContext();
   }
   get height() {
-    return this.element.height;
+    return this._element.height;
   }
   set height(value) {
-    this.element.setAttribute("height", `${value}`);
+    this._element.setAttribute("height", `${value}`);
+    this.setContext();
   }
   getBuilder(type, {
     x = 0,

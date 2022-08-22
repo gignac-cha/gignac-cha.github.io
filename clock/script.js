@@ -1,15 +1,15 @@
 import Canvas from '../modules/canvas.js';
 
-const resize = canvas => {
+const canvas = new Canvas();
+
+const resize = () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 };
 window.addEventListener('load', e => {
-  const canvas = new Canvas(document.querySelector('#canvas'));
+  canvas.element = document.querySelector('#canvas');
 
-  resize(canvas);
-
-  const { width, height } = canvas;
+  resize();
 
   const getPoint = (degree, x, y, distance) => {
     const radian = degree / 360 * 2 * Math.PI;
@@ -22,6 +22,8 @@ window.addEventListener('load', e => {
 
   requestAnimationFrame(function update() {
     requestAnimationFrame(update);
+
+    const { width, height } = canvas;
 
     canvas.clear();
 

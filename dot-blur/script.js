@@ -1,20 +1,15 @@
 import Canvas from '../modules/canvas.js';
 
-const resize = canvas => {
+const canvas = new Canvas();
+
+const resize = () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 };
 window.addEventListener('load', e => {
-  const canvas = new Canvas(document.querySelector('#canvas'));
+  canvas.element = document.querySelector('#canvas');
 
-  resize(canvas);
-
-  const { width, height } = canvas;
-
-  const radius = 10;
-  const size = radius * 6;
-  const w = Math.floor(width / size + 1);
-  const h = Math.floor(height / size + 1);
+  resize();
 
   const mouse = {};
 
@@ -26,6 +21,13 @@ window.addEventListener('load', e => {
 
   requestAnimationFrame(function update() {
     requestAnimationFrame(update);
+
+    const { width, height } = canvas;
+
+    const radius = 5;
+    const size = radius * 7;
+    const w = Math.floor(width / size + 1);
+    const h = Math.floor(height / size + 1);
 
     canvas.clear();
 

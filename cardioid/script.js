@@ -1,22 +1,22 @@
 import Canvas from '../modules/canvas.js';
 
-const resize = canvas => {
+const canvas = new Canvas();
+
+const resize = () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 };
 window.addEventListener('load', e => {
-  const canvas = new Canvas(document.querySelector('#canvas'));
+  canvas.element = document.querySelector('#canvas');
 
-  resize(canvas);
+  resize();
 
   const elements = {
     debug: document.querySelector('#debug'),
   };
 
-  const { width, height } = canvas;
-
   const mouse = {
-    move: { x: width / 2, y: height / 2 },
+    move: { x: canvas.width / 2, y: canvas.height / 2 },
   };
 
   canvas.addEventListener('mousemove', e => {
@@ -40,6 +40,8 @@ window.addEventListener('load', e => {
 
   requestAnimationFrame(function update() {
     requestAnimationFrame(update);
+
+    const { width, height } = canvas;
 
     canvas.clear();
 

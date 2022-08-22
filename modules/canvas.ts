@@ -43,14 +43,22 @@ interface Builder {
 }
 
 export default class Canvas {
+  private _element: HTMLCanvasElement;
   private _context: CanvasRenderingContext2D;
 
-  constructor(private element: HTMLCanvasElement) {
-
+  constructor(element: HTMLCanvasElement) {
+    this._element = element;
   }
 
-  addEventListener(...args: Parameters<typeof this.element.addEventListener>) {
-    this.element.addEventListener(...args);
+  private setContext() {
+    const context: CanvasRenderingContext2D | null = this._element.getContext('2d');
+    if (context) {
+      this._context = context;
+    }
+  }
+
+  addEventListener(...args: Parameters<typeof this._element.addEventListener>) {
+    this._element.addEventListener(...args);
   }
   createLinearGradient(...args: Parameters<typeof this._context.createLinearGradient>) {
     return this._context.createLinearGradient(...args);
@@ -59,21 +67,26 @@ export default class Canvas {
     return this._context.createRadialGradient(...args);
   }
 
+  set element(_element: HTMLCanvasElement) {
+    this._element = _element;
+  }
   private get context(): CanvasRenderingContext2D {
-    return this._context ?? (this._context = this.element.getContext('2d')!);
+    return this._context;
   }
 
   get width(): number {
-    return this.element.width;
+    return this._element.width;
   }
   set width(value: number) {
-    this.element.setAttribute('width', `${value}`);
+    this._element.setAttribute('width', `${value}`);
+    this.setContext();
   }
   get height(): number {
-    return this.element.height;
+    return this._element.height;
   }
   set height(value: number) {
-    this.element.setAttribute('height', `${value}`);
+    this._element.setAttribute('height', `${value}`);
+    this.setContext();
   }
 
   private getBuilder(type: BuilderType, {
