@@ -7,12 +7,23 @@ var BuilderType = /* @__PURE__ */ ((BuilderType2) => {
   BuilderType2["TEXT"] = "text";
   return BuilderType2;
 })(BuilderType || {});
+var DrawMethod = /* @__PURE__ */ ((DrawMethod2) => {
+  DrawMethod2["STROKE"] = "stroke";
+  DrawMethod2["FILL"] = "fill";
+  return DrawMethod2;
+})(DrawMethod || {});
 export default class Canvas {
   constructor(element) {
-    this.element = element;
+    this._element = element;
+  }
+  setContext() {
+    const context = this._element.getContext("2d");
+    if (context) {
+      this._context = context;
+    }
   }
   addEventListener(...args) {
-    this.element.addEventListener(...args);
+    this._element.addEventListener(...args);
   }
   createLinearGradient(...args) {
     return this._context.createLinearGradient(...args);
@@ -20,20 +31,25 @@ export default class Canvas {
   createRadialGradient(...args) {
     return this._context.createRadialGradient(...args);
   }
+  set element(_element) {
+    this._element = _element;
+  }
   get context() {
-    return this._context ?? (this._context = this.element.getContext("2d"));
+    return this._context;
   }
   get width() {
-    return this.element.width;
+    return this._element.width;
   }
   set width(value) {
-    this.element.setAttribute("width", `${value}`);
+    this._element.setAttribute("width", `${value}`);
+    this.setContext();
   }
   get height() {
-    return this.element.height;
+    return this._element.height;
   }
   set height(value) {
-    this.element.setAttribute("height", `${value}`);
+    this._element.setAttribute("height", `${value}`);
+    this.setContext();
   }
   getBuilder(type, {
     x = 0,
@@ -44,7 +60,10 @@ export default class Canvas {
     start = { x: 0, y: 0 },
     end = { x: 0, y: 0 },
     lines = [],
-    color = "rgba(0, 0, 0, 0)"
+    text = "",
+    color = "rgba(0, 0, 0, 0)",
+    size = 0,
+    align = { horizontal: "start", vertical: "alphabetic" }
   }) {
     const { context } = this;
     context.beginPath();
@@ -57,18 +76,47 @@ export default class Canvas {
           context.rect(x, y, width, height);
           break;
         case "circle" /* CIRCLE */:
+          context.lineWidth = width;
           context.arc(x, y, r, 0, 2 * Math.PI);
           break;
         case "line" /* LINE */:
+          context.lineWidth = width;
           context.moveTo(start.x, start.y);
           context.lineTo(end.x, end.y);
           break;
         case "lines" /* LINES */:
+          context.lineWidth = width;
           for (const line of lines) {
             context.moveTo(line.start.x, line.start.y);
             context.lineTo(line.end.x, line.end.y);
           }
           break;
+        case "text" /* TEXT */:
+          context.font = `${size}px 'Consolas'`;
+          context.textAlign = align.horizontal;
+          context.textBaseline = align.vertical;
+          break;
+      }
+    };
+    const draw = (method) => {
+      if (type === "text" /* TEXT */) {
+        switch (method) {
+          case "stroke" /* STROKE */:
+            context.strokeText(text, x, y);
+            return;
+          case "fill" /* FILL */:
+            context.fillText(text, x, y);
+            return;
+        }
+      } else {
+        switch (method) {
+          case "stroke" /* STROKE */:
+            context.stroke();
+            return;
+          case "fill" /* FILL */:
+            context.fill();
+            return;
+        }
       }
     };
     const clean = () => context.closePath();
@@ -76,13 +124,13 @@ export default class Canvas {
       stroke() {
         context.strokeStyle = color;
         work();
-        context.stroke();
+        draw("stroke" /* STROKE */);
         clean();
       },
       fill() {
         context.fillStyle = color;
         work();
-        context.fill();
+        draw("fill" /* FILL */);
         clean();
       }
     };
@@ -96,10 +144,16 @@ export default class Canvas {
   rectangle(x, y, width, height, color) {
     return this.getBuilder("rectangle" /* RECTANGLE */, { x, y, width, height, color });
   }
-  circle(x, y, r, color) {
-    return this.getBuilder("circle" /* CIRCLE */, { x, y, r, color });
+  circle(x, y, r, color, width = 1) {
+    return this.getBuilder("circle" /* CIRCLE */, { x, y, r, color, width });
   }
-  line(start, end, color) {
-    return this.getBuilder("line" /* LINE */, { start, end, color });
+  line(start, end, color, width = 1) {
+    return this.getBuilder("line" /* LINE */, { start, end, color, width });
+  }
+  lines(lines, color, width = 1) {
+    return this.getBuilder("lines" /* LINES */, { lines, color, width });
+  }
+  text(text, x, y, color, size, align) {
+    return this.getBuilder("text" /* TEXT */, { text, x, y, color, size, align });
   }
 }

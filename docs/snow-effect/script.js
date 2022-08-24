@@ -2,20 +2,20 @@ import Canvas from '../modules/canvas.js';
 import { random, randomReal } from '../modules/random.js';
 import { range } from '../modules/range.js';
 
-const resize = canvas => {
+const canvas = new Canvas();
+
+const resize = () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 };
 window.addEventListener('load', e => {
-  const canvas = new Canvas(document.querySelector('#canvas'));
+  canvas.element = document.querySelector('#canvas');
 
-  resize(canvas);
-
-  const { width, height } = canvas;
+  resize();
 
   const global = {
     play: true,
-    count: Math.floor(width / 10),
+    count: Math.floor(canvas.width / 10),
     wind: 0,
   };
 
@@ -31,7 +31,7 @@ window.addEventListener('load', e => {
     global.play = elements.play.checked;
   });
   elements.count.value = global.count;
-  elements.count.max = width;
+  elements.count.max = canvas.width;
   elements.count.addEventListener('change', e => {
     global.count = parseInt(elements.count.value);
   });
@@ -43,8 +43,8 @@ window.addEventListener('load', e => {
   const createSnow = () => {
     const snow = {
       i: random(360),
-      x: random(-width * 4, width * 4),
-      y: -random(height / 2),
+      x: random(-canvas.width * 4, canvas.width * 4),
+      y: -random(canvas.height / 2),
       r: randomReal(3, 8),
       speed: randomReal(1, 5),
     };
@@ -57,6 +57,8 @@ window.addEventListener('load', e => {
     requestAnimationFrame(update);
 
     if (global.play) {
+      const { width, height } = canvas;
+
       canvas.clear();
 
       for (const snow of snows) {

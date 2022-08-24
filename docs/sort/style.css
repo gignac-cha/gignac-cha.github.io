@@ -24,6 +24,9 @@
   background-color: black;
   transition: background-color .2s;
 }
+.item .bar.sorted {
+  background-color: gray;
+}
 .item .bar.selected-1 {
   background-color: green;
 }
@@ -32,9 +35,6 @@
 }
 .item .bar.selected-3 {
   background-color: red;
-}
-.item .bar.sorted {
-  background-color: gray;
 }
 .line {
   position: absolute;

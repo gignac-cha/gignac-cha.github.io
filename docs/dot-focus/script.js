@@ -2,22 +2,18 @@ import Canvas from '../modules/canvas.js';
 import { random } from '../modules/random.js';
 import { range } from '../modules/range.js';
 
-const resize = canvas => {
+const canvas = new Canvas();
+
+const resize = () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 };
 window.addEventListener('load', e => {
-  const canvas = new Canvas(document.querySelector('#canvas'));
+  canvas.element = document.querySelector('#canvas');
 
-  resize(canvas);
-
-  const { width, height } = canvas;
+  resize();
 
   const getRandomColor = () => [random(0x80, 0x100), random(0x80, 0x100), random(0x80, 0x100)];
-
-  const size = 20;
-  const w = Math.floor(width / size + 1);
-  const h = Math.floor(height / size + 1);
 
   const mouse = {};
 
@@ -27,18 +23,20 @@ window.addEventListener('load', e => {
     mouse.move = { x, y };
   });
 
-  const colors = range(w * h, () => getRandomColor());
-  for (let j = 0; j < h + 1; ++j) {
-    for (let i = 0; i < w + 1; ++i) {
-      const x = i * size;
-      const y = j * size;
-      const key = y * w + x;
-      colors[key] = getRandomColor();
-    }
-  }
+  const colors = [];
 
   requestAnimationFrame(function update() {
     requestAnimationFrame(update);
+
+    const { width, height } = canvas;
+
+    const size = 20;
+    const w = Math.floor(width / size + 1);
+    const h = Math.floor(height / size + 1);
+
+    while (colors.length < (w + 1) * (h + 1)) {
+      colors.push(getRandomColor());
+    }
 
     canvas.clear();
 
@@ -46,7 +44,7 @@ window.addEventListener('load', e => {
       for (let i = 0; i < w + 1; ++i) {
         const x = i * size;
         const y = j * size;
-        const key = y * w + x;
+        const key = j * w + i;
         const [r, g, b] = colors[key];
         if (mouse.move) {
           const distance = Math.min(width, height) / 2;
