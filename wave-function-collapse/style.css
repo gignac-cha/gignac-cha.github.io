@@ -1,0 +1,15 @@
+html, body {
+  margin: 0px;
+  padding: 0px;
+  background-color: #333;
+}
+#canvas {
+  width: 100%;
+  height: 100%;
+}
+.fps {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  z-index: 9999;
+}
