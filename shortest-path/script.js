@@ -1,6 +1,7 @@
 import Canvas from '../modules/canvas.js';
 import { random } from '../modules/random.js';
 import { range } from '../modules/range.js';
+import FPS from '../modules/fps.js';
 
 const canvas = new Canvas();
 
@@ -10,6 +11,10 @@ const resize = () => {
 };
 window.addEventListener('load', e => {
   canvas.element = document.querySelector('#canvas');
+
+  const fps = new FPS();
+  fps.element.classList.add('fps');
+  document.body.appendChild(fps.element);
 
   resize();
 
