@@ -156,4 +156,18 @@ export default class Canvas {
   text(text, x, y, color, size, align) {
     return this.getBuilder("text" /* TEXT */, { text, x, y, color, size, align });
   }
+  setImageData(a) {
+    const imageData = this.context.getImageData(0, 0, this.width, this.height);
+    const data1 = imageData.data;
+    if (Array.isArray(a)) {
+      const data2 = a;
+      for (let i = 0; i < Math.min(data1.length, data2.length); ++i) {
+        data1[i] = data2[i];
+      }
+    } else if (typeof a === "function") {
+      const task = a;
+      task(data1);
+    }
+    this.context.putImageData(imageData, 0, 0);
+  }
 }
