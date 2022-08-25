@@ -42,6 +42,8 @@ interface Builder {
   fill(): void;
 }
 
+type ImageDataTask = (data: Uint8ClampedArray) => void;
+
 export default class Canvas {
   private _element: HTMLCanvasElement;
   private _context: CanvasRenderingContext2D;
@@ -189,5 +191,20 @@ export default class Canvas {
   }
   text(text: string, x: number, y: number, color: string, size: number, align: TextAlign): Builder {
     return this.getBuilder(BuilderType.TEXT, { text, x, y, color, size, align });
+  }
+
+  setImageData(a: Uint8ClampedArray | ImageDataTask) {
+    const imageData: ImageData = this.context.getImageData(0, 0, this.width, this.height);
+    const data1: Uint8ClampedArray = imageData.data;
+    if (Array.isArray(a)) {
+      const data2 = a as Uint8ClampedArray;
+      for (let i = 0; i < Math.min(data1.length, data2.length); ++i) {
+        data1[i] = data2[i];
+      }
+    } else if (typeof a === 'function') {
+      const task: ImageDataTask = a;
+      task(data1);
+    }
+    this.context.putImageData(imageData, 0, 0);
   }
 }
