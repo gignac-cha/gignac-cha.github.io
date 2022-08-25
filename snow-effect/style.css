@@ -18,3 +18,9 @@ html, body {
   background-color: rgba(0, 0, 0, .2);
   border-radius: 10px;
 }
+.fps {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  z-index: 9999;
+}
