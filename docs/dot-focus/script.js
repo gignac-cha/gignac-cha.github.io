@@ -8,7 +8,7 @@ const resize = () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 };
-window.addEventListener('load', e => {
+window.addEventListener('load', (e) => {
   canvas.element = document.querySelector('#canvas');
 
   resize();
@@ -17,10 +17,18 @@ window.addEventListener('load', e => {
 
   const mouse = {};
 
-  canvas.addEventListener('mousemove', e => {
+  canvas.addEventListener('mousemove', (e) => {
     const x = e.clientX;
     const y = e.clientY;
     mouse.move = { x, y };
+  });
+  canvas.addEventListener('touchmove', (e) => {
+    for (const touch of e.touches) {
+      const x = touch.clientX;
+      const y = touch.clientY;
+      mouse.move = { x, y };
+      break;
+    }
   });
 
   const colors = [];
@@ -48,8 +56,8 @@ window.addEventListener('load', e => {
         const [r, g, b] = colors[key];
         if (mouse.move) {
           const distance = Math.min(width, height) / 2;
-          const length = ((mouse.move.x - x) ** 2 + (mouse.move.y - y) ** 2) ** .5;
-          const ratio = Math.min(1, Math.max(0, (distance - length)) / length);
+          const length = ((mouse.move.x - x) ** 2 + (mouse.move.y - y) ** 2) ** 0.5;
+          const ratio = Math.min(1, Math.max(0, distance - length) / length);
           const radius = 2 + (1 - ratio) * 3;
           const color = `rgba(${r}, ${g}, ${b}, ${ratio})`;
           canvas.circle(x, y, radius, color).fill();
@@ -65,6 +73,6 @@ window.addEventListener('load', e => {
     }
   });
 });
-window.addEventListener('resize', e => {
+window.addEventListener('resize', (e) => {
   resize();
 });
