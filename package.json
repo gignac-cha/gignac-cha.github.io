@@ -1,0 +1,22 @@
+{
+  "name": "gignac-cha.github.io",
+  "description": "Personal blog and collections of serverless page projects.",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gignac-cha/gignac-cha.github.io.git"
+  },
+  "author": "Jin-Hyeok, Cha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gignac-cha/gignac-cha.github.io/issues"
+  },
+  "homepage": "https://github.com/gignac-cha/gignac-cha.github.io#readme",
+  "devDependencies": {
+    "eslint": "^8.26.0",
+    "prettier": "^2.7.1"
+  }
+}
