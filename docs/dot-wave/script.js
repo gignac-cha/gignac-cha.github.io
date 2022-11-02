@@ -8,13 +8,16 @@ const resize = () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 };
-window.addEventListener('load', e => {
+window.addEventListener('load', (e) => {
   canvas.element = document.querySelector('#canvas');
 
   resize();
 
   const getRandomColor = () => [random(0x100), random(0x100), random(0x100)];
-  const throttle = (n, i = 0) => () => ++i % n === 0;
+  const throttle =
+    (n, i = 0) =>
+    () =>
+      ++i % n === 0;
 
   const radius = 10;
   const size = radius * 2;
@@ -22,21 +25,31 @@ window.addEventListener('load', e => {
 
   const createWave = (x, y, r, speed, color) => {
     const wave = { i: 0, x, y, r, speed, color };
-    wave.maximum = speed * (speed + 1) / 2;
+    wave.maximum = (speed * (speed + 1)) / 2;
     return wave;
   };
 
-  canvas.addEventListener('click', e => {
+  canvas.addEventListener('click', (e) => {
     const x = Math.floor(e.clientX / size);
     const y = Math.floor(e.clientY / size);
     waves.push(createWave(x, y, 10, 10, [0xff, 0xff, 0xff]));
   });
   const mouseMoveTrigger = throttle(50);
-  canvas.addEventListener('mousemove', e => {
+  canvas.addEventListener('mousemove', (e) => {
     if (mouseMoveTrigger()) {
       const x = Math.floor(e.clientX / size);
       const y = Math.floor(e.clientY / size);
       waves.push(createWave(x, y, 5, 10, [0xbf, 0xbf, 0xbf]));
+    }
+  });
+  canvas.addEventListener('touchmove', (e) => {
+    if (mouseMoveTrigger()) {
+      for (const touch of e.touches) {
+        const x = Math.floor(touch.clientX / size);
+        const y = Math.floor(touch.clientY / size);
+        waves.push(createWave(x, y, 5, 10, [0xbf, 0xbf, 0xbf]));
+        break;
+      }
     }
   });
 
@@ -64,17 +77,17 @@ window.addEventListener('load', e => {
       wave.i += wave.speed;
       wave.speed--;
       for (let i = 0; i < 360; ++i) {
-        const r = i / 360 * 2 * Math.PI;
+        const r = (i / 360) * 2 * Math.PI;
         const sin = Math.sin(r);
         const cos = Math.cos(r);
-        for (let j = -.2; j <= .2; j += .1) {
-          const x = wave.x + Math.floor(cos * (wave.r * wave.i / wave.maximum + j));
-          const y = wave.y + Math.floor(sin * (wave.r * wave.i / wave.maximum + j));
+        for (let j = -0.2; j <= 0.2; j += 0.1) {
+          const x = wave.x + Math.floor(cos * ((wave.r * wave.i) / wave.maximum + j));
+          const y = wave.y + Math.floor(sin * ((wave.r * wave.i) / wave.maximum + j));
           if (0 <= x && x < w && 0 <= y && y < h) {
             const k = y * w + x;
             waveMap[k] += wave.speed / wave.maximum;
-            if (waveMap[k] > .5) {
-              waveMap[k] = .5;
+            if (waveMap[k] > 0.5) {
+              waveMap[k] = 0.5;
             }
             waveColorMap[k] = wave.color;
           }
@@ -97,11 +110,17 @@ window.addEventListener('load', e => {
     }
 
     if (random(100) < 10) {
-      const wave = createWave(random(w), random(h), random(Math.min(w, h) / 2, Math.min(w, h)), random(50, 100), getRandomColor());
+      const wave = createWave(
+        random(w),
+        random(h),
+        random(Math.min(w, h) / 2, Math.min(w, h)),
+        random(50, 100),
+        getRandomColor(),
+      );
       waves.push(wave);
     }
   });
 });
-window.addEventListener('resize', e => {
+window.addEventListener('resize', (e) => {
   resize();
 });
