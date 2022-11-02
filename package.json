@@ -3,6 +3,7 @@
   "description": "Personal blog and collections of serverless page projects.",
   "version": "1.0.0",
   "scripts": {
+    "page": "node scripts/copy-projects.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,7 +17,9 @@
   },
   "homepage": "https://github.com/gignac-cha/gignac-cha.github.io#readme",
   "devDependencies": {
+    "@types/shelljs": "^0.8.11",
     "eslint": "^8.26.0",
-    "prettier": "^2.7.1"
+    "prettier": "^2.7.1",
+    "shx": "^0.3.4"
   }
 }
