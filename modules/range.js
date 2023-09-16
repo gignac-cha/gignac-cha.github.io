@@ -4,5 +4,7 @@ export const range = (n, defaultValue) => {
   } else if (typeof defaultValue !== "undefined") {
     return new Array(n).fill(defaultValue);
   }
-  return new Array(n).fill(null).map((_, i) => i);
+  return Array.from(new Array(n).keys());
 };
+const defaultComparator = (a, b, c) => a < b && b < c;
+export const isInRange = (start, v, end, comparator = defaultComparator) => comparator ? comparator(start, v, end) : defaultComparator(start, v, end);
