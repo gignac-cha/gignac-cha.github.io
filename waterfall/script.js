@@ -52,6 +52,7 @@ window.addEventListener('load', async (event) => {
   const settlement = new Map();
   const locked = new Uint8Array(objectCount);
   const initialForce = (3 * defaultRadius) / step;
+  /** @param {number} index */
   const resetState = (index) => {
     positions.current.y[index] = height + height / 4 - defaultRadius * 2;
     positions.current.x[index] = index % 2 === 0 ? defaultRadius * 2 : width - defaultRadius * 2;
@@ -75,6 +76,7 @@ window.addEventListener('load', async (event) => {
     }
     locked.fill(0);
   };
+  /** @param {number} index */
   const createObject = (index) => {
     const color = getColorCode(...getRandomColor());
     radiusArray[index] = defaultRadius;
@@ -91,6 +93,7 @@ window.addEventListener('load', async (event) => {
   let elapsedTime = 0;
   let collisionCount = 0;
 
+  /** @param {number} index */
   const drawObject = (index) => {
     const x = positions.current.x[index];
     const y = positions.current.y[index];
@@ -107,6 +110,7 @@ window.addEventListener('load', async (event) => {
     range(currentIndex).forEach((i) => drawObject(i));
   };
 
+  /** @type {FrameRequestCallback} */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const update = (time) => {
     requestAnimationFrame(update);
@@ -124,7 +128,7 @@ window.addEventListener('load', async (event) => {
 
   requestAnimationFrame(update);
 
-  worker.addEventListener('message', (event) => {
+  worker.addEventListener('message', (/** @type {MessageEvent<MessageEventData>} */ event) => {
     switch (event.data.type) {
       case 'next': {
         positions.current.x.set(event.data.x);
@@ -137,6 +141,7 @@ window.addEventListener('load', async (event) => {
     }
   });
 
+  /** @param {MessageEventDataType} type */
   const postMessage = (type) => {
     switch (type) {
       case 'initialize': {

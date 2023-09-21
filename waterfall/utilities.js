@@ -1,25 +1,30 @@
 export const gravity = { x: 0, y: -1000 };
 
-const applyForce = ({ index, x, y, force }) => {
-  x[index] += force.x;
-  y[index] += force.y;
+/** @param {ApplyForceParameters} */
+const applyForce = ({ index, accelerations, force }) => {
+  accelerations.x[index] += force.x;
+  accelerations.y[index] += force.y;
 };
-export const applyForces = ({ currentIndex, x, y, force }) => {
+/** @param {ApplyForcesParameters} */
+export const applyForces = ({ currentIndex, accelerations, force }) => {
   for (let i = 0; i < currentIndex; ++i) {
-    applyForce({ index: i, x, y, force });
+    applyForce({ index: i, accelerations, force });
   }
 };
 
+/** @param {GetGridPositionParameters} */
 const getGridPosition = ({ x, y, gridSize, rowCount, columnCount }) => {
   const rowIndex = Math.floor(Math.max(0, Math.min(y / gridSize, rowCount)));
   const columnIndex = Math.floor(Math.max(0, Math.min(x / gridSize, columnCount)));
   return { rowIndex, columnIndex };
 };
+/** @param {GetKeyByIndexParameters} */
 export const getKeyByIndex = ({ index, positions, settlement, gridSize, rowCount, columnCount }) => {
   const x = positions.current.x[index];
   const y = positions.current.y[index];
   return getKeyByPosition({ x, y, settlement, gridSize, rowCount, columnCount });
 };
+/** @param {GetKeyByPositionParameters} */
 const getKeyByPosition = ({ x, y, settlement, gridSize, rowCount, columnCount }) => {
   const { rowIndex, columnIndex } = getGridPosition({ x, y, gridSize, rowCount, columnCount });
   if (!settlement.has(`${columnIndex}:${rowIndex}`)) {
@@ -28,6 +33,7 @@ const getKeyByPosition = ({ x, y, settlement, gridSize, rowCount, columnCount })
   return `${columnIndex}:${rowIndex}`;
 };
 
+/** @param {UpdatePositionParameters} */
 const updatePosition = ({
   index,
   positions,
@@ -56,6 +62,7 @@ const updatePosition = ({
   accelerations.x[index] = 0;
   accelerations.y[index] = 0;
 };
+/** @param {UpdatePositionsParameters} */
 export const updatePositions = ({
   currentIndex,
   positions,
@@ -86,6 +93,7 @@ export const updatePositions = ({
   }
 };
 
+/** @type {Point[]} */
 const directions = [
   { x: 0, y: 0 },
   { x: -1, y: 0 },
@@ -97,7 +105,9 @@ const directions = [
   { x: -1, y: 1 },
   { x: 1, y: 1 },
 ];
+/** @param {GetGridObjectIndicesParameters} */
 const getGridObjectIndices = ({ index, positions, settlement, gridSize, rowCount, columnCount }) => {
+  /** @type {number[]} */
   const indices = [];
   for (const direction of directions) {
     const gridPosition = {
@@ -117,6 +127,7 @@ const getGridObjectIndices = ({ index, positions, settlement, gridSize, rowCount
   }
   return indices;
 };
+/** @param {ResolveCollisionParameters} */
 export const resolveCollision = ({ index: i, indices, positions, radiusArray }) => {
   let collisionCount = 0;
   for (const j of indices) {
@@ -144,6 +155,7 @@ export const resolveCollision = ({ index: i, indices, positions, radiusArray }) 
   }
   return collisionCount;
 };
+/** @param {ResolveCollisionsParameters} */
 export const resolveCollisions = ({
   currentIndex,
   positions,
@@ -177,6 +189,7 @@ export const resolveCollisions = ({
   return { elapsedTime, collisionCount };
 };
 
+/** @param {ApplyConstraintParameters} */
 const applyConstraint = ({ index, positions, radiusArray, locked, width, height }) => {
   const radius = radiusArray[index];
   if (positions.current.x[index] - radius < 0) {
@@ -200,6 +213,7 @@ const applyConstraint = ({ index, positions, radiusArray, locked, width, height 
     locked[index] = 1;
   }
 };
+/** @param {ApplyConstraintsParameters} */
 export const applyConstraints = ({ currentIndex, positions, radiusArray, locked, width, height }) => {
   for (let i = 0; i < currentIndex; ++i) {
     applyConstraint({

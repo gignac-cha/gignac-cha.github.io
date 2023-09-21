@@ -4,18 +4,31 @@ const variables = {
   initialized: false,
   running: false,
 
+  /** @type {Positions} */
   positions: null,
+  /** @type {PointArray} */
   accelerations: null,
+  /** @type {Float64Array}  */
   radiusArray: null,
+  /** @type {Settlement}  */
   settlement: null,
+  /** @type {Uint8Array}  */
   locked: null,
+  /** @type {number}  */
   width: null,
+  /** @type {number}  */
   height: null,
+  /** @type {number}  */
   gridSize: null,
+  /** @type {number}  */
   rowCount: null,
+  /** @type {number}  */
   columnCount: null,
+  /** @type {number}  */
   objectCount: null,
+  /** @type {number}  */
   step: null,
+  /** @type {number}  */
   stepDeltaTime: null,
 
   currentIndex: 0,
@@ -23,9 +36,11 @@ const variables = {
   elapsedTime: 0,
   collisionCount: 0,
 
+  /** @type {number} */
   intervalId: null,
 };
 
+/** @param {InitializeParameters} */
 const initialize = ({
   positions,
   accelerations,
@@ -72,7 +87,7 @@ const postMessage = () => {
 };
 
 const update = (forceUpdate = false) => {
-  const { initialized, running, currentIndex, accelerations, objectCount, step, stepDeltaTime } = variables;
+  const { initialized, running, currentIndex, objectCount, step, stepDeltaTime } = variables;
 
   if (initialized && (forceUpdate || running)) {
     variables.totalTime += stepDeltaTime * step;
@@ -84,7 +99,7 @@ const update = (forceUpdate = false) => {
     }
 
     for (let i = 0; i < variables.step; ++i) {
-      applyForces({ currentIndex: variables.currentIndex, x: accelerations.x, y: accelerations.y, force: gravity });
+      applyForces({ ...variables, force: gravity });
       updatePositions(variables);
       const { elapsedTime, collisionCount } = resolveCollisions(variables);
       variables.elapsedTime += elapsedTime;
@@ -96,7 +111,7 @@ const update = (forceUpdate = false) => {
   }
 };
 
-self.addEventListener('message', (event) => {
+self.addEventListener('message', (/** @type {MessageEvent<MessageEventData>} */ event) => {
   switch (event.data.type) {
     case 'initialize': {
       if (variables.intervalId) {
