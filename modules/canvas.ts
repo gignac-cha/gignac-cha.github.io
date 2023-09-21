@@ -91,16 +91,25 @@ export default class Canvas {
     this.setContext();
   }
 
-  private getBuilder(type: BuilderType, {
-    x = 0, y = 0, r = 0, width = 0, height = 0,
-    start = { x: 0, y: 0 }, end = { x: 0, y: 0},
-    lines = [],
-    text = '',
-    color = 'rgba(0, 0, 0, 0)',
-    size = 0,
-    align = { horizontal: 'start', vertical: 'alphabetic' }
-  }: Partial<BuilderProperties>): Builder {
+  private getBuilder(
+    type: BuilderType,
+    {
+      x = 0,
+      y = 0,
+      r = 0,
+      width = 0,
+      height = 0,
+      start = { x: 0, y: 0 },
+      end = { x: 0, y: 0 },
+      lines = [],
+      text = '',
+      color = 'rgba(0, 0, 0, 0)',
+      size = 0,
+      align = { horizontal: 'start', vertical: 'alphabetic' },
+    }: Partial<BuilderProperties>,
+  ): Builder {
     const { context }: Canvas = this;
+    context.save();
     context.beginPath();
     const work = () => {
       switch (type) {
@@ -153,16 +162,19 @@ export default class Canvas {
             return;
         }
       }
-    }
-    const clean = () => context.closePath();
+    };
+    const clean = () => {
+      context.closePath();
+      context.restore();
+    };
     return {
-      stroke() {
+      stroke: () => {
         context.strokeStyle = color;
         work();
         draw(DrawMethod.STROKE);
         clean();
       },
-      fill() {
+      fill: () => {
         context.fillStyle = color;
         work();
         draw(DrawMethod.FILL);
@@ -193,17 +205,44 @@ export default class Canvas {
     return this.getBuilder(BuilderType.TEXT, { text, x, y, color, size, align });
   }
 
-  setImageData(a: Uint8ClampedArray | ImageDataTask) {
+  setImageData(data: Uint8ClampedArray | ImageDataTask) {
     const imageData: ImageData = this.context.getImageData(0, 0, this.width, this.height);
-    const data1: Uint8ClampedArray = imageData.data;
-    if (Array.isArray(a)) {
-      const data2 = a as Uint8ClampedArray;
-      for (let i = 0; i < Math.min(data1.length, data2.length); ++i) {
-        data1[i] = data2[i];
+    if (data instanceof Uint8ClampedArray) {
+      const count: number = Math.floor((navigator.hardwareConcurrency ?? 4) / 4) * 4;
+      for (let i = 0; i < Math.min(imageData.data.length, data.length); i += count) {
+        imageData.data[i + 0x00] = data[i + 0x00];
+        imageData.data[i + 0x01] = data[i + 0x01];
+        imageData.data[i + 0x02] = data[i + 0x02];
+        imageData.data[i + 0x03] = data[i + 0x03];
+        if (0x04 <= count && count < 0x08) {
+          imageData.data[i + 0x04] = data[i + 0x04];
+          imageData.data[i + 0x05] = data[i + 0x05];
+          imageData.data[i + 0x06] = data[i + 0x06];
+          imageData.data[i + 0x07] = data[i + 0x07];
+        }
+        if (0x08 <= count && count < 0x0c) {
+          imageData.data[i + 0x08] = data[i + 0x08];
+          imageData.data[i + 0x09] = data[i + 0x09];
+          imageData.data[i + 0x0a] = data[i + 0x0a];
+          imageData.data[i + 0x0b] = data[i + 0x0b];
+        }
+        if (0x0c <= count && count < 0x10) {
+          imageData.data[i + 0x0c] = data[i + 0x0c];
+          imageData.data[i + 0x0d] = data[i + 0x0d];
+          imageData.data[i + 0x0e] = data[i + 0x0e];
+          imageData.data[i + 0x0f] = data[i + 0x0f];
+        }
       }
-    } else if (typeof a === 'function') {
-      const task: ImageDataTask = a;
-      task(data1);
+      for (
+        let i = Math.floor(imageData.data.length / count) * count;
+        count < Math.min(imageData.data.length, data.length);
+        ++i
+      ) {
+        imageData.data[i] = data[i];
+      }
+    } else if (typeof data === 'function') {
+      const task: ImageDataTask = data;
+      task(imageData.data);
     }
     this.context.putImageData(imageData, 0, 0);
   }
