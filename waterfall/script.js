@@ -1,8 +1,7 @@
 import Canvas from '../modules/canvas.js';
 import FPS from '../modules/fps.js';
 import { random } from '../modules/random.js';
-import { isInRange, range } from '../modules/range.js';
-import { applyConstraints, resolveCollisions, updatePositions } from './utilities.js';
+import { range } from '../modules/range.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 window.addEventListener('load', async (event) => {
@@ -22,6 +21,7 @@ window.addEventListener('load', async (event) => {
     /** @type {HTMLButtonElement} */ record: document.querySelector('#record'),
     /** @type {HTMLCanvasElement} */ headerCanvas: document.querySelector('#header-canvas'),
     /** @type {HTMLCanvasElement} */ mainCanvas: document.querySelector('#main-canvas'),
+    /** @type {HTMLPreElement} */ debug: document.querySelector('#debug'),
   };
 
   const headerCanvas = new Canvas(elements.headerCanvas);
