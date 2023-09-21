@@ -66,6 +66,7 @@ export default class Canvas {
     align = { horizontal: "start", vertical: "alphabetic" }
   }) {
     const { context } = this;
+    context.save();
     context.beginPath();
     const work = () => {
       switch (type) {
@@ -119,15 +120,18 @@ export default class Canvas {
         }
       }
     };
-    const clean = () => context.closePath();
+    const clean = () => {
+      context.closePath();
+      context.restore();
+    };
     return {
-      stroke() {
+      stroke: () => {
         context.strokeStyle = color;
         work();
         draw("stroke" /* STROKE */);
         clean();
       },
-      fill() {
+      fill: () => {
         context.fillStyle = color;
         work();
         draw("fill" /* FILL */);
@@ -156,17 +160,40 @@ export default class Canvas {
   text(text, x, y, color, size, align) {
     return this.getBuilder("text" /* TEXT */, { text, x, y, color, size, align });
   }
-  setImageData(a) {
+  setImageData(data) {
     const imageData = this.context.getImageData(0, 0, this.width, this.height);
-    const data1 = imageData.data;
-    if (Array.isArray(a)) {
-      const data2 = a;
-      for (let i = 0; i < Math.min(data1.length, data2.length); ++i) {
-        data1[i] = data2[i];
+    if (data instanceof Uint8ClampedArray) {
+      const count = Math.floor((navigator.hardwareConcurrency ?? 4) / 4) * 4;
+      for (let i = 0; i < Math.min(imageData.data.length, data.length); i += count) {
+        imageData.data[i + 0] = data[i + 0];
+        imageData.data[i + 1] = data[i + 1];
+        imageData.data[i + 2] = data[i + 2];
+        imageData.data[i + 3] = data[i + 3];
+        if (4 <= count && count < 8) {
+          imageData.data[i + 4] = data[i + 4];
+          imageData.data[i + 5] = data[i + 5];
+          imageData.data[i + 6] = data[i + 6];
+          imageData.data[i + 7] = data[i + 7];
+        }
+        if (8 <= count && count < 12) {
+          imageData.data[i + 8] = data[i + 8];
+          imageData.data[i + 9] = data[i + 9];
+          imageData.data[i + 10] = data[i + 10];
+          imageData.data[i + 11] = data[i + 11];
+        }
+        if (12 <= count && count < 16) {
+          imageData.data[i + 12] = data[i + 12];
+          imageData.data[i + 13] = data[i + 13];
+          imageData.data[i + 14] = data[i + 14];
+          imageData.data[i + 15] = data[i + 15];
+        }
       }
-    } else if (typeof a === "function") {
-      const task = a;
-      task(data1);
+      for (let i = Math.floor(imageData.data.length / count) * count; count < Math.min(imageData.data.length, data.length); ++i) {
+        imageData.data[i] = data[i];
+      }
+    } else if (typeof data === "function") {
+      const task = data;
+      task(imageData.data);
     }
     this.context.putImageData(imageData, 0, 0);
   }

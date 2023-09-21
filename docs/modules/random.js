@@ -8,7 +8,7 @@ export const randomReal = (x, y) => {
   return r;
 };
 export const random = (x, y) => {
-  if (typeof x === void 0 && typeof y === void 0) {
+  if (typeof x === "undefined" && typeof y === "undefined") {
     return randomReal();
   }
   return Math.floor(randomReal(x, y));

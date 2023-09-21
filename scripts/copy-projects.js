@@ -13,6 +13,8 @@ const projects = [
   'shortest-path',
   'snow-effect',
   'sort',
+  'video-shadow',
+  'waterfall',
   'wave-function-collapse',
 ];
 for (const project of projects) {
