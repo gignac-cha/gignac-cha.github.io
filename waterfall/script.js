@@ -284,4 +284,47 @@ window.addEventListener('load', async (event) => {
       break;
     }
   });
+
+  /** @type {MediaRecorder} */
+  let mediaRecorder = null;
+  let recording = false;
+  let chunks = [];
+
+  const startRecord = () => {
+    chunks = [];
+    const mediaStream = elements.mainCanvas.captureStream(60);
+    mediaRecorder = new MediaRecorder(mediaStream, { mimeType: 'video/webm' });
+    mediaRecorder.addEventListener('dataavailable', (event) => {
+      if (event.data.size > 0) {
+        chunks.push(event.data);
+      }
+    });
+    mediaRecorder.start();
+  };
+  /** @param {Blob[]} chunks */
+  const downloadRecord = (chunks) => {
+    const url = URL.createObjectURL(new Blob(chunks, { type: 'video/webm' }));
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', `recording-${Date.now()}.webm`);
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const stopRecord = () => {
+    mediaRecorder.stop();
+    mediaRecorder = null;
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  elements.record.addEventListener('click', async (event) => {
+    if (recording) {
+      elements.record.textContent = '|> Start Record';
+      stopRecord();
+      setTimeout(() => downloadRecord(chunks));
+    } else {
+      elements.record.textContent = '[_] Stop Record';
+      startRecord();
+    }
+    recording = !recording;
+  });
 });
