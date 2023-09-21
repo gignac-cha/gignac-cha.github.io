@@ -14,8 +14,18 @@ window.addEventListener('load', async (event) => {
   fps.element.classList.add('fps');
   document.body.appendChild(fps.element);
 
-  const headerCanvas = new Canvas(document.querySelector('#header-canvas'));
-  const mainCanvas = new Canvas(document.querySelector('#main-canvas'));
+  const elements = {
+    /** @type {HTMLButtonElement} */ play: document.querySelector('#play'),
+    /** @type {HTMLButtonElement} */ next: document.querySelector('#next'),
+    /** @type {HTMLInputElement} */ image: document.querySelector('#image'),
+    /** @type {HTMLButtonElement} */ replay: document.querySelector('#replay'),
+    /** @type {HTMLButtonElement} */ record: document.querySelector('#record'),
+    /** @type {HTMLCanvasElement} */ headerCanvas: document.querySelector('#header-canvas'),
+    /** @type {HTMLCanvasElement} */ mainCanvas: document.querySelector('#main-canvas'),
+  };
+
+  const headerCanvas = new Canvas(elements.headerCanvas);
+  const mainCanvas = new Canvas(elements.mainCanvas);
 
   const width = 640;
   const height = 640;
@@ -119,7 +129,7 @@ window.addEventListener('load', async (event) => {
     mainCanvas.clear();
     drawObjects();
 
-    document.querySelector('#debug').textContent = JSON.stringify(
+    elements.debug.textContent = JSON.stringify(
       { currentIndex, totalTime: Math.floor(totalTime * 1000), elapsedTime, collisionCount },
       null,
       2,
@@ -181,66 +191,97 @@ window.addEventListener('load', async (event) => {
 
   postMessage('initialize');
 
+  let playing = false;
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  document.querySelector('#pause').addEventListener('click', (event) => {
-    document.querySelector('#pause').setAttribute('disabled', '');
-    document.querySelector('#resume').removeAttribute('disabled');
+  elements.play.addEventListener('click', (event) => {
+    if (playing) {
+      elements.play.textContent = '|> Play';
+      postMessage('pause');
+    } else {
+      elements.play.textContent = '|| Pause';
+      postMessage('resume');
+    }
+    playing = !playing;
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  elements.next.addEventListener('click', (event) => {
+    playing = false;
+    elements.play.textContent = '|> Play';
     postMessage('pause');
-  });
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  document.querySelector('#resume').addEventListener('click', (event) => {
-    document.querySelector('#pause').removeAttribute('disabled');
-    document.querySelector('#resume').setAttribute('disabled', '');
-    postMessage('resume');
-  });
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  document.querySelector('#next').addEventListener('click', (event) => {
     postMessage('next');
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  document.querySelector('#replay').addEventListener('click', async (event) => {
+  elements.replay.addEventListener('click', async (event) => {
     resetStates();
     postMessage('initialize');
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  document.querySelector('#image').addEventListener('change', (event) => {
-    const image = document.querySelector('#image');
-    for (const file of image.files) {
+  /**
+   *
+   * @param {File} file
+   * @returns {Promise<string>}
+   */
+  const readImageDataURL = async (file) =>
+    new Promise((resolve) => {
       const fileReader = new FileReader();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      fileReader.addEventListener('load', (event) => {
-        const img = document.createElement('img');
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        img.addEventListener('load', (event) => {
-          const canvas = document.createElement('canvas');
-          canvas.setAttribute('width', `${width}`);
-          canvas.setAttribute('height', `${height}`);
-          const context = canvas.getContext('2d');
-          const imageSize = { x: 0, y: 0, width: img.width, height: img.height };
-          if (width / height > imageSize.width / imageSize.height) {
-            imageSize.height = height * (imageSize.width / width);
-            imageSize.y = (img.height - imageSize.height) / 2;
-          } else {
-            imageSize.width = width * (imageSize.height / height);
-            imageSize.x = (img.width - imageSize.width) / 2;
-          }
-          context.drawImage(img, imageSize.x, imageSize.y, imageSize.width, imageSize.height, 0, 0, width, height);
-          const { data } = context.getImageData(0, 0, width, height);
-          for (const object of objects) {
-            const x = Math.floor(positions.current.x[object.index]);
-            const y = height - 1 - Math.floor(positions.current.y[object.index]);
-            const index = y * width * 4 + x * 4;
-            const [r, g, b] = data.slice(index, index + 3);
-            object.color = getColorCode(r, g, b);
-          }
-        });
-        img.setAttribute('src', fileReader.result);
-      });
+      fileReader.addEventListener('load', (event) => resolve(fileReader.result));
       fileReader.readAsDataURL(file);
+    });
+
+  /**
+   *
+   * @param {string} dataURL
+   * @returns {Promise<HTMLCanvasElement>}
+   */
+  const copyImageToCanvas = async (dataURL) =>
+    new Promise((resolve) => {
+      const img = document.createElement('img');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      img.addEventListener('load', (event) => {
+        const canvas = document.createElement('canvas');
+        canvas.setAttribute('width', `${width}`);
+        canvas.setAttribute('height', `${height}`);
+        const context = canvas.getContext('2d');
+        const imageSize = { x: 0, y: 0, width: img.width, height: img.height };
+        if (width / height > imageSize.width / imageSize.height) {
+          imageSize.height = height * (imageSize.width / width);
+          imageSize.y = (img.height - imageSize.height) / 2;
+        } else {
+          imageSize.width = width * (imageSize.height / height);
+          imageSize.x = (img.width - imageSize.width) / 2;
+        }
+        context.drawImage(img, imageSize.x, imageSize.y, imageSize.width, imageSize.height, 0, 0, width, height);
+        resolve(canvas);
+      });
+      img.setAttribute('src', dataURL);
+    });
+
+  /** @param {HTMLCanvasElement} */
+  const copyImageToObjects = (canvas) => {
+    const context = canvas.getContext('2d');
+    const { data } = context.getImageData(0, 0, width, height);
+    for (const object of objects) {
+      const x = Math.floor(positions.current.x[object.index]);
+      const y = height - 1 - Math.floor(positions.current.y[object.index]);
+      const index = y * width * 4 + x * 4;
+      const [r, g, b] = data.slice(index, index + 3);
+      object.color = getColorCode(r, g, b);
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  elements.image.addEventListener('change', async (event) => {
+    /** @type {HTMLInputElement} */
+    const image = elements.image;
+    for (const file of image.files) {
+      const dataURL = await readImageDataURL(file);
+      const canvas = await copyImageToCanvas(dataURL);
+      copyImageToObjects(canvas);
       break;
     }
   });
 });
-
