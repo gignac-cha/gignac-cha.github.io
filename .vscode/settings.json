@@ -1,0 +1,16 @@
+{
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "[javascript][javascriptreact][typescript][typescriptreact][html][css][scss][json][jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "emmet.showAbbreviationSuggestions": false,
+  "emmet.showExpandedAbbreviation": "never",
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "cmd": "sh .vscode/scripts/git-auto-synchronize.sh"
+      }
+    ]
+  }
+}
