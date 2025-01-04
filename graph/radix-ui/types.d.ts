@@ -39,4 +39,5 @@ declare namespace Radix.Number {
   type Negative = -1 | -2 | -3 | -4 | -5 | -6 | -7 | -8 | -9;
   type PositiveOne = 1;
   type PositiveThree = 1 | 2 | 3;
+  type PositiveFour = 1 | 2 | 3 | 4;
 }

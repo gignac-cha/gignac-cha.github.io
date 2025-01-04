@@ -5,7 +5,7 @@ import { entries } from './utilities.js';
  * @template {keyof HTMLElementTagNameMap} N
  * @param {N} tagName
  */
-const createElement = (tagName) => {
+export const createElement = (tagName) => {
   /**
    *
    * @template {HTMLElementTagNameMap[N]} E

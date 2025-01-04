@@ -1,3 +1,4 @@
+import { Button } from './radix-ui/Button.js';
 import { Code } from './radix-ui/Code.js';
 import { Flex } from './radix-ui/Flex.js';
 import { TextField } from './radix-ui/TextField.js';
@@ -10,6 +11,7 @@ window.addEventListener('load', () => {
         Flex.Column({ gapX: 4, align: 'center' })(
           Code({ size: 9, variant: 'outline' })('y'),
           Code({ size: 9, variant: 'ghost' })('='),
+          Button({ size: 4, variant: 'soft', p: 4, disabled: true })('+'),
           Flex.Column({ maxWidth: '4rem' })(
             TextField.Root({ id: 'coefficient-0', type: 'number', value: '0', size: 3, variant: 'surface' })(),
           ),

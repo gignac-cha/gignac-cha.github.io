@@ -11,7 +11,7 @@ export const TextField = {
    * } & Omit<HTMLInputElement, 'classList'>>} options
    * @returns
    */
-  Root: ({ size, variant, color, radius, ...restOptions }) => {
+  Root: ({ size, variant, color, radius, ...restOptions } = {}) => {
     /**
      *
      * @param {(string | HTMLElement)[]} children

@@ -1,24 +1,25 @@
+import { button } from '../element.js';
+import { convertToClassNames } from './layout.js';
 
 /**
  *
  * @param {Partial<{
- * size: Radix.Number.Positive
- * variant: 'solid' | 'soft' | 'outline' | 'ghost'
- * weight: Responsive<'light' | 'regular' | 'medium' | 'bold'>
+ * size: Radix.Number.PositiveFour
+ * variant: 'classic' | 'solid' | 'soft' | 'surface' | 'outline' | 'ghost'
  * color: Radix.Color
- * wrap: Responsive<'wrap' | 'nowrap' | 'pretty' | 'balance'>
- * }>} options
+ * radius: 'none' | 'small' | 'medium' | 'large' | 'full'
+ * } & HTMLButtonElement & Radix.LayoutOptions>} options
  */
-export const Button = ({ size, variant, weight, color, wrap }) => {
-  return code({
+export const Button = ({ size, variant, color, radius, ...layoutOptions } = {}) => {
+  return button({
     classList: [
       'rt-reset',
-      'rt-Code',
+      'rt-BaseButton',
+      'rt-Button',
       size && `rt-r-size-${size}`,
       variant && `rt-variant-${variant}`,
-      weight && `rt-r-weight-${weight}`,
-      wrap && `rt-r-tw-${wrap}`,
+      ...convertToClassNames(layoutOptions),
     ],
-    dataset: { accentColor: color },
+    dataset: { accentColor: color, radius },
   });
 };

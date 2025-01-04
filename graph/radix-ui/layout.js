@@ -1,5 +1,5 @@
 import { css } from '../styleManager.js';
-import { keys } from '../utilities.js';
+import { keyIn, keys } from '../utilities.js';
 
 /** @type {Record<keyof Radix.LayoutOptions, string>} */
 const keyMap = {
@@ -36,6 +36,26 @@ const keyMap = {
   gridRowStart: 'grs',
   gridRowEnd: 'gre',
 };
+
+/**
+ *
+ * @param {Partial<Radix.LayoutOptions & Record<string, unknown>>} options
+ * @returns {{ layoutOptions: Partial<Radix.LayoutOptions>; restOptions: Partial<Record<string, unknown>> }}
+ */
+export const extractLayoutOptions = (options) => {
+  /** @type {Partial<Radix.LayoutOptions>} */
+  const layoutOptions = {}
+  /** @type {Partial<Record<string, unknown>>} */
+  const restOptions = {}
+  for (const key of keys(options)) {
+    if (keyIn(keyMap, key)) {
+      layoutOptions[''] = options[key]
+    } else {
+      restOptions[key] = options[key]
+    }
+  }
+  return { layoutOptions, restOptions }
+}
 
 /**
  *
