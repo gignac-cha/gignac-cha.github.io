@@ -49,7 +49,7 @@ export const extractLayoutOptions = (options) => {
   const restOptions = {}
   for (const key of keys(options)) {
     if (keyIn(keyMap, key)) {
-      layoutOptions[''] = options[key]
+      layoutOptions[key] = options[key]
     } else {
       restOptions[key] = options[key]
     }
