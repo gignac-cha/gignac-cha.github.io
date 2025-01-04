@@ -8,6 +8,7 @@ import { Theme } from './radix-ui/Theme.js';
 window.addEventListener('load', () => {
   /** @type {number[]} */
   const equation = [0];
+  const createEquationPane
   const onClicks = {
     plusCoefficient: () => {
       equationsPanel.insertBefore(
