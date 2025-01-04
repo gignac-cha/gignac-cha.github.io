@@ -3,8 +3,40 @@ const breakpoints = ['initial', 'xs', 'sm', 'md', 'lg', 'xl'] as const;
 type Breakpoint = (typeof breakpoints)[number];
 declare type Responsive<T> = T | Partial<Record<Breakpoint, T>>;
 
+declare namespace Radix {
+  type Color =
+    | 'gray'
+    | 'gold'
+    | 'bronze'
+    | 'brown'
+    | 'yellow'
+    | 'amber'
+    | 'orange'
+    | 'tomato'
+    | 'red'
+    | 'ruby'
+    | 'crimson'
+    | 'pink'
+    | 'plum'
+    | 'purple'
+    | 'violet'
+    | 'iris'
+    | 'indigo'
+    | 'blue'
+    | 'cyan'
+    | 'teal'
+    | 'jade'
+    | 'green'
+    | 'grass'
+    | 'lime'
+    | 'mint'
+    | 'sky';
+}
+
 declare namespace Radix.Number {
   type Zero = 0;
   type Positive = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
   type Negative = -1 | -2 | -3 | -4 | -5 | -6 | -7 | -8 | -9;
+  type PositiveOne = 1;
+  type PositiveThree = 1 | 2 | 3;
 }

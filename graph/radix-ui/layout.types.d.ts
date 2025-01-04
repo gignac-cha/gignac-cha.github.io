@@ -175,8 +175,8 @@ declare namespace Radix {
     overflowX: Responsive<'visible' | 'hidden' | 'clip' | 'scroll' | 'auto'>;
     overflowY: Responsive<'visible' | 'hidden' | 'clip' | 'scroll' | 'auto'>;
     flexBasis: Responsive<string>;
-    flexShrink: Responsive<Union<string, '0' | '1'>>;
-    flexGrow: Responsive<Union<string, '0' | '1'>>;
+    flexShrink: Responsive<Union<string, Number.Zero | Number.PositiveOne>>;
+    flexGrow: Responsive<Union<string, Number.Zero | Number.PositiveOne>>;
     gridArea: Responsive<string>;
     gridColumn: Responsive<string>;
     gridColumnStart: Responsive<string>;

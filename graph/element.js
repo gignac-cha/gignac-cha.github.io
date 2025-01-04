@@ -24,6 +24,11 @@ const createElement = (tagName) => {
         }
       } else if (key.startsWith('on') && typeof value === 'function') {
         element.addEventListener(key.slice(2).toLowerCase(), () => value());
+      } else if (key === 'dataset' && typeof value === 'object' && value !== null) {
+        Object.assign(
+          element.dataset,
+          Object.fromEntries(Object.entries(value).filter(([key, value]) => typeof value !== 'undefined')),
+        );
       } else {
         element.setAttribute(key, `${value}`);
       }
