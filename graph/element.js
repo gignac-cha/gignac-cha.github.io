@@ -1,38 +1,15 @@
-/**
- *
- * @template {object} T
- * @param {T} object
- * @returns {Extract<keyof T, string>[]}
- */
-const keys = (object) => {
-  /** @type {Extract<keyof T, string>[]} */
-  const keys = [];
-  for (const key in object) {
-    keys.push(key);
-  }
-  return keys;
-};
-
-/**
- *
- * @template {object} T
- * @param {T} object
- * @returns {[keyof T, T[keyof T]][]}
- */
-const entries = (object) => keys(object).map((key) => [key, object[key]]);
+import { entries } from './utilities.js';
 
 /**
  *
  * @template {keyof HTMLElementTagNameMap} N
  * @param {N} tagName
- * @returns
  */
 const createElement = (tagName) => {
   /**
    *
    * @template {HTMLElementTagNameMap[N]} E
    * @param {Partial<Omit<{ [K in Extract<keyof E, string>]: E[K] }, 'style' | 'classList'> & { style: Partial<CSSStyleDeclaration>; classList: unknown[] }> | undefined} attributes
-   * @returns
    */
   return (attributes = {}) => {
     const element = document.createElement(tagName);

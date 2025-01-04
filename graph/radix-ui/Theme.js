@@ -3,10 +3,9 @@ import { fragment, main } from '../element.js';
 /**
  *
  * @param  {(string | HTMLElement)[]} children
- * @returns
  */
 export const Theme = (...children) => {
-  const element = main({ classList: ['rt-Flex', 'rt-r-direction-column'] })(...children);
+  const element = main({ classList: ['rt-Flex'] })(...children);
 
   /**
    *
