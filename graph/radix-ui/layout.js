@@ -44,18 +44,19 @@ const keyMap = {
  */
 export const extractLayoutOptions = (options) => {
   /** @type {Partial<Radix.LayoutOptions>} */
-  const layoutOptions = {}
+  const layoutOptions = {};
   /** @type {Partial<Record<string, unknown>>} */
-  const restOptions = {}
+  const restOptions = {};
   for (const key of keys(options)) {
     if (keyIn(keyMap, key)) {
-      layoutOptions[key] = options[key]
+      // @ts-ignore
+      layoutOptions[key] = options[key];
     } else {
-      restOptions[key] = options[key]
+      restOptions[key] = options[key];
     }
   }
-  return { layoutOptions, restOptions }
-}
+  return { layoutOptions, restOptions };
+};
 
 /**
  *

@@ -1,5 +1,5 @@
 import { button } from '../element.js';
-import { convertToClassNames } from './layout.js';
+import { convertToClassNames, extractLayoutOptions } from './layout.js';
 
 /**
  *
@@ -8,9 +8,12 @@ import { convertToClassNames } from './layout.js';
  * variant: 'classic' | 'solid' | 'soft' | 'surface' | 'outline' | 'ghost'
  * color: Radix.Color
  * radius: 'none' | 'small' | 'medium' | 'large' | 'full'
- * } & HTMLButtonElement & Radix.LayoutOptions>} options
+ * } & Omit<HTMLButtonElement, 'classList'> & Radix.LayoutOptions>} options
  */
-export const Button = ({ size, variant, color, radius, ...layoutOptions } = {}) => {
+export const Button = ({ size, variant, color, radius, ...restOptions } = {}) => {
+  const options = extractLayoutOptions(restOptions);
+  const layoutOptions = options.layoutOptions;
+  restOptions = options.restOptions;
   return button({
     classList: [
       'rt-reset',
@@ -21,5 +24,6 @@ export const Button = ({ size, variant, color, radius, ...layoutOptions } = {}) 
       ...convertToClassNames(layoutOptions),
     ],
     dataset: { accentColor: color, radius },
+    ...restOptions,
   });
 };
