@@ -22,13 +22,13 @@ export const keys = (object) => {
 export const entries = (object) => keys(object).map((key) => [key, object[key]]);
 
 /**
- * 
+ *
  * @template {object} T
- * @param {T} object 
- * @param {string} key 
+ * @param {T} object
+ * @param {string} key
  * @returns {key is keyof T}
  */
-export const keyIn = (object, key) => key in object
+export const keyIn = (object, key) => key in object;
 
 /**
  *

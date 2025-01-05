@@ -9,21 +9,30 @@ export const createElement = (tagName) => {
   /**
    *
    * @template {HTMLElementTagNameMap[N]} E
-   * @param {Partial<Omit<{ [K in Extract<keyof E, string>]: E[K] }, 'style' | 'classList'> & { style: Partial<CSSStyleDeclaration>; classList: unknown[] }> | undefined} attributes
+   * @param {Partial<Omit<{ [K in Extract<keyof E, string>]: E[K] }, 'style' | 'classList'> & { style: Partial<CSSStyleDeclaration>; classList: (string | false | undefined)[] }> | undefined} attributes
    */
   return (attributes = {}) => {
     const element = document.createElement(tagName);
     for (const [key, value] of entries(attributes)) {
       if (key === 'style') {
         if (typeof value === 'object' && value !== null) {
-          Object.assign(element.style, value);
+          for (const key in value) {
+            if (key.startsWith('--')) {
+              // @ts-ignore
+              element.style.setProperty(key, value[key]);
+            } else {
+              // @ts-ignore
+              element.style[key] = value[key];
+            }
+          }
+          // Object.assign(element.style, value);
         }
       } else if (key === 'classList') {
         if (Array.isArray(value)) {
           element.classList.add(...value.filter((item) => typeof item === 'string'));
         }
       } else if (key.startsWith('on') && typeof value === 'function') {
-        element.addEventListener(key.slice(2).toLowerCase(), () => value());
+        element.addEventListener(key.slice(2).toLowerCase(), (event) => value(event));
       } else if (key === 'dataset' && typeof value === 'object' && value !== null) {
         Object.assign(
           element.dataset,

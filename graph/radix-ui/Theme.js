@@ -1,11 +1,23 @@
 import { fragment, main } from '../element.js';
+import { css } from '../styleManager.js';
 
 /**
  *
  * @param  {(string | HTMLElement)[]} children
  */
 export const Theme = (...children) => {
-  const element = main({ classList: ['rt-Flex'] })(...children);
+  const element = main({
+    classList: [
+      'rt-Flex',
+      'rt-r-w',
+      'rt-r-h',
+      css({
+        // @ts-ignore
+        '--width': '100vw',
+        '--height': '100vh',
+      }),
+    ],
+  })(...children);
 
   /**
    *
