@@ -7,6 +7,21 @@ import { TextField } from './radix-ui/TextField.js';
 import { Theme } from './radix-ui/Theme.js';
 
 window.addEventListener('load', () => {
+  const state = {
+    /**
+     *
+     * @param {number} x
+     */
+    f: (x) => Math.sin((x / 360) * 2 * Math.PI) * 100,
+
+    /** @type {{ x: number, y: number }[]} */
+    previewPoints: [],
+    /** @type {{ x: number, y: number }[]} */
+    points: [],
+
+    index: 0,
+  };
+
   /** @type {number[]} */
   const equation = [0];
   const onClicks = {
@@ -42,7 +57,15 @@ window.addEventListener('load', () => {
           variant: 'surface',
           onchange: (event) => {
             if (event.currentTarget instanceof HTMLInputElement) {
-              console.log(event.currentTarget.value);
+              equation[index] = parseFloat(event.currentTarget.value);
+              state.f = (x) => {
+                // x = (x - previousTime) / 1000;
+                return equation.entries().reduce((y, [index, coefficent]) => y + coefficent * x ** index, 0) / 1000;
+              };
+              state.previewPoints.length = 0;
+              state.previewPoints.push(...makePreview());
+              state.points.length = 0;
+              state.index = 0;
             }
           },
         })(),
@@ -60,53 +83,71 @@ window.addEventListener('load', () => {
           Code({ size: 8, variant: 'ghost' })('🟰'),
           equationPanel,
         ),
+        Button
         canvasElement,
       ),
     ),
   );
 
+  /**
+   *
+   * @param {number} x
+   * @returns {number}
+   */
+  const f = (x) => Math.sin(x);
+  /**
+   *
+   * @param {number} x
+   * @returns {number}
+   */
+  const g = (x) => Math.cos(x);
+  state.f = (x) => {
+    x = (x / 360) * 2 * Math.PI;
+    const y = f(g(x - 1) + 2) * 3 * g(f(x + 4) - 5) * 6;
+    return y * 10;
+  };
+
+  const makePreview = () => new Array(window.innerWidth).fill(0).map((_, x) => ({ x, y: state.f(x) }));
+  state.previewPoints.push(...makePreview());
+
+  let previousTime = 0;
   requestAnimationFrame(() => {
     const canvas = new Canvas(canvasElement);
     canvas.width = canvasElement.clientWidth;
     canvas.height = canvasElement.clientHeight;
-    let previousTime = 0;
     /**
      *
-     * @param {number} x
+     * @param {{ x: number, y: number }} param0
+     * @returns {{ x: number, y: number }}
      */
-    const f = (x) => 200 + Math.sin(x / 100) * 100;
-    /** @type {{ x: number, y: number }[]} */
-    const previewPoints = [];
-    for (let x = 0; x < canvas.width; ++x) {
-      previewPoints.push({ x, y: f(x) });
-    }
-    /** @type {{ x: number, y: number }[]} */
-    const points = [];
+    const convertPoint = ({ x, y }) => ({ x: x, y: window.innerHeight / 2 - y });
     /** @type {FrameRequestCallback} */
     const update = (time) => {
       requestAnimationFrame(update);
       canvas.clear();
-      const x = time / 10;
-      const y = f(x);
-      points.push({ x, y });
-      for (const [index, { x, y }] of previewPoints.entries()) {
+      const x = state.index;
+      const y = state.f(x);
+      state.points.push({ x, y });
+      for (const [index, end] of state.previewPoints.entries()) {
         if (index > 0) {
-          const start = previewPoints.at(index - 1);
+          const start = state.previewPoints.at(index - 1);
           if (start) {
-            canvas.line(start, { x, y }, 'gray').stroke();
+            canvas.line(convertPoint(start), convertPoint(end), 'gray').stroke();
           }
         }
       }
-      for (const [index, { x, y }] of points.entries()) {
+      for (const [index, end] of state.points.entries()) {
         if (index > 0) {
-          const start = points.at(index - 1);
+          const start = state.points.at(index - 1);
           if (start) {
-            canvas.line(start, { x, y }, '#0f0').stroke();
+            canvas.line(convertPoint(start), convertPoint(end), '#0f0').stroke();
           }
         }
       }
-      canvas.circle(x, y, 5, 'red').stroke();
+      const convertedPoint = convertPoint({ x, y });
+      canvas.circle(convertedPoint.x, convertedPoint.y, 5, 'red').stroke();
       previousTime = time;
+      state.index++;
     };
     requestAnimationFrame(update);
   });
