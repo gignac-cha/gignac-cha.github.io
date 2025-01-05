@@ -83,7 +83,7 @@ window.addEventListener('load', () => {
           Code({ size: 8, variant: 'ghost' })('🟰'),
           equationPanel,
         ),
-        Button
+        Button({ size: 4, variant: 'soft', onclick: () => (state.index = 0) })('Reset'),
         canvasElement,
       ),
     ),
@@ -101,6 +101,11 @@ window.addEventListener('load', () => {
    * @returns {number}
    */
   const g = (x) => Math.cos(x);
+  /**
+   *
+   * @param {number} x
+   * @returns {number}
+   */
   state.f = (x) => {
     x = (x / 360) * 2 * Math.PI;
     const y = f(g(x - 1) + 2) * 3 * g(f(x + 4) - 5) * 6;
@@ -123,30 +128,78 @@ window.addEventListener('load', () => {
     const convertPoint = ({ x, y }) => ({ x: x, y: window.innerHeight / 2 - y });
     /** @type {FrameRequestCallback} */
     const update = (time) => {
-      requestAnimationFrame(update);
-      canvas.clear();
-      const x = state.index;
-      const y = state.f(x);
-      state.points.push({ x, y });
-      for (const [index, end] of state.previewPoints.entries()) {
-        if (index > 0) {
-          const start = state.previewPoints.at(index - 1);
-          if (start) {
-            canvas.line(convertPoint(start), convertPoint(end), 'gray').stroke();
-          }
-        }
+      // requestAnimationFrame(update);
+
+      // canvas.clear();
+
+      // const x = state.index;
+      // const y = state.f(x);
+      // state.points.push({ x, y });
+      // for (const [index, end] of state.previewPoints.entries()) {
+      //   if (index > 0) {
+      //     const start = state.previewPoints.at(index - 1);
+      //     if (start) {
+      //       canvas.line(convertPoint(start), convertPoint(end), 'gray').stroke();
+      //     }
+      //   }
+      // }
+      // for (const [index, end] of state.points.entries()) {
+      //   if (index > 0) {
+      //     const start = state.points.at(index - 1);
+      //     if (start) {
+      //       canvas.line(convertPoint(start), convertPoint(end), '#0f0').stroke();
+      //     }
+      //   }
+      // }
+      // const convertedPoint = convertPoint({ x, y });
+      // canvas.circle(convertedPoint.x, convertedPoint.y, 5, 'red').stroke();
+      // previousTime = time;
+
+      /**
+       *
+       * @param {{ x: number, y: number }} param0
+       * @returns {{ x: number, y: number }}
+       */
+      const convertPoint = ({ x, y }) => ({ x: canvas.width / 2 + x, y: canvas.height / 2 - y });
+
+      // const x = state.index;
+      // const r = (x / 360) * 2 * Math.PI;
+      // {
+      //   const y = Math.sin(r) * 100 + 100;
+      //   const p = convertPoint({ x, y });
+      //   canvas.dot(p.x, p.y - canvas.height / 4, '#0f0').fill();
+      // }
+      // {
+      //   const l = Math.sin(r * 1.22) * 100 + 100;
+      //   const x = Math.cos(r) * l;
+      //   const y = Math.sin(r) * l;
+      //   const p = convertPoint({ x, y });
+      //   canvas.dot(p.x - canvas.width / 4, p.y, '#0f0').fill();
+      // }
+      // {
+      //   const y = Math.cos(2 * r) * 100;
+      //   const p = convertPoint({ x, y });
+      //   canvas.dot(p.x, p.y, '#0f0').fill();
+      // }
+      // {
+      //   const y = (Math.sin(r) + Math.cos(2 * r)) * 100;
+      //   const p = convertPoint({ x, y });
+      //   canvas.dot(p.x, p.y + canvas.height / 4, '#0f0').fill();
+      // }
+      for (let x = -canvas.width; x < canvas.width; ++x) {
+        const r = (x / 360) * 2 * Math.PI;
+        const y = Math.sin(3 * r) * 100;
+        const p = convertPoint({ x, y });
+        canvas.dot(p.x, p.y - canvas.height / 4, '#0f0').fill();
       }
-      for (const [index, end] of state.points.entries()) {
-        if (index > 0) {
-          const start = state.points.at(index - 1);
-          if (start) {
-            canvas.line(convertPoint(start), convertPoint(end), '#0f0').stroke();
-          }
-        }
+
+      for (let x = -canvas.width; x < canvas.width; ++x) {
+        const r = (x / 360) * 2 * Math.PI;
+        const y = Math.sin(r) * 100;
+        const p = convertPoint({ x, y });
+        canvas.dot(p.x, p.y - canvas.height / 4, '#0f0').fill();
       }
-      const convertedPoint = convertPoint({ x, y });
-      canvas.circle(convertedPoint.x, convertedPoint.y, 5, 'red').stroke();
-      previousTime = time;
+
       state.index++;
     };
     requestAnimationFrame(update);
