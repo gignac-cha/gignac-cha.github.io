@@ -194,6 +194,11 @@ window.addEventListener('load', () => {
       }
 
       for (let x = -canvas.width; x < canvas.width; ++x) {
+        //   const l = Math.sin(r * 1.22) * 100 + 100;
+        //   const x = Math.cos(r) * l;
+        //   const y = Math.sin(r) * l;
+        //   const p = convertPoint({ x, y });
+        //   canvas.dot(p.x - canvas.width / 4, p.y, '#0f0').fill();
         const r = (x / 360) * 2 * Math.PI;
         const y = Math.sin(r) * 100;
         const p = convertPoint({ x, y });
