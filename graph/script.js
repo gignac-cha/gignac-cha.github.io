@@ -2,8 +2,10 @@ import Canvas from '../modules/canvas.js';
 import { canvas, fragment, sup } from './element.js';
 import { Button } from './radix-ui/Button.js';
 import { Code } from './radix-ui/Code.js';
+import { Container } from './radix-ui/Container.js';
 import { Flex } from './radix-ui/Flex.js';
 import { Slider } from './radix-ui/Slider.js';
+import { Text } from './radix-ui/Text.js';
 import { TextField } from './radix-ui/TextField.js';
 import { Theme } from './radix-ui/Theme.js';
 
@@ -23,27 +25,13 @@ window.addEventListener('load', () => {
     index: 0,
 
     signalFrequency: 3,
-    frequencyWinding: 0.5,
+    windingFrequency: 0.5,
+    /** @type {HTMLLabelElement | undefined} */
+    windingFrequencyText: undefined,
   };
 
   /** @type {number[]} */
   const equation = [0];
-  const onClicks = {
-    /**
-     *
-     * @param {MouseEvent} event
-     * @returns
-     */
-    addCoefficient: (event) => {
-      equationPanel.insertBefore(createCoefficientPanel(equation.length), equationPanel.firstElementChild);
-      equation.push(0);
-      if (event.currentTarget instanceof HTMLButtonElement) {
-        event.currentTarget.setAttribute('disabled', '');
-        event.currentTarget.classList.remove('rt-variant-soft');
-        event.currentTarget.classList.add('rt-variant-outline');
-      }
-    },
-  };
   /**
    *
    * @param {number} index
@@ -51,7 +39,20 @@ window.addEventListener('load', () => {
    */
   const createCoefficientPanel = (index) =>
     fragment(
-      Button({ size: 4, variant: 'soft', p: 4, onclick: onClicks.addCoefficient })('➕'),
+      Button({
+        size: 4,
+        variant: 'soft',
+        p: 4,
+        onclick: (event) => {
+          equationPanel.insertBefore(createCoefficientPanel(equation.length), equationPanel.firstElementChild);
+          equation.push(0);
+          if (event.currentTarget instanceof HTMLButtonElement) {
+            event.currentTarget.setAttribute('disabled', '');
+            event.currentTarget.classList.remove('rt-variant-soft');
+            event.currentTarget.classList.add('rt-variant-outline');
+          }
+        },
+      })('➕'),
       Flex.Column({ maxWidth: '4rem' })(
         TextField.Root({
           id: `coefficient-${index}`,
@@ -87,9 +88,14 @@ window.addEventListener('load', () => {
           Code({ size: 8, variant: 'ghost' })('🟰'),
           equationPanel,
         ),
-        Flex.Row({ gapY: 4 })(
-          Slider({ size: 3, variant: 'surface', onChange: (value) => (state.frequencyWinding = value) }),
-          Button({ size: 4, variant: 'soft', onclick: () => (state.index = 0) })('Reset'),
+        Container({ size: 4 })(
+          Flex.Row({ gapY: 4 })(
+            Flex.Column()(
+              state.windingFrequencyText = Text({ as: 'label'})(`${state.windingFrequency}`),
+              Slider({ size: 3, variant: 'surface', onChange: (value) => (state.windingFrequency = value) }),
+            ),
+            Button({ size: 4, variant: 'soft', onclick: () => (state.index = 0) })('Reset'),
+          ),
         ),
         canvasElement,
       ),
@@ -202,7 +208,7 @@ window.addEventListener('load', () => {
 
       for (let d = -canvas.width; d < canvas.width; ++d) {
         const r = (d / 360) * 2 * Math.PI;
-        const l = Math.sin((state.signalFrequency * r) / state.frequencyWinding) * 100 + 100;
+        const l = Math.sin((state.signalFrequency * r) / state.windingFrequency) * 100 + 100;
         const x = Math.cos(r) * l;
         const y = Math.sin(r) * l;
         const p = convertPoint({ x, y });

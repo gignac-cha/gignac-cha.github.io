@@ -1,6 +1,12 @@
 import { entries } from './utilities.js';
 
 /**
+ * @typedef {string | HTMLElement | DocumentFragment} Child
+ * 
+ * @typedef {<N extends keyof HTMLElementTagNameMap>(...children: Child[]) => HTMLElementTagNameMap[N]} Component
+ */
+
+/**
  *
  * @template {keyof HTMLElementTagNameMap} N
  * @param {N} tagName
@@ -8,8 +14,8 @@ import { entries } from './utilities.js';
 export const createElement = (tagName) => {
   /**
    *
-   * @template {HTMLElementTagNameMap[N]} E
-   * @param {Partial<Omit<{ [K in Extract<keyof E, string>]: E[K] }, 'style' | 'classList'> & { style: Partial<CSSStyleDeclaration>; classList: (string | 0 | false | undefined)[] }> | undefined} attributes
+   * @param {Partial<Omit<{ [K in Extract<keyof HTMLElementTagNameMap[N], string>]: HTMLElementTagNameMap[N][K] }, 'style' | 'classList'> & { style: Partial<CSSStyleDeclaration>; classList: (string | 0 | false | undefined)[] }> | undefined} attributes
+   * @returns {Component}
    */
   return (attributes = {}) => {
     const element = document.createElement(tagName);
@@ -44,7 +50,7 @@ export const createElement = (tagName) => {
     }
     /**
      *
-     * @param {(string | HTMLElement | DocumentFragment)[]} children
+     * @param {Child[]} children
      */
     return (...children) => {
       for (const child of children) {
