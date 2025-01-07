@@ -8,7 +8,7 @@ const valueKeyMap = new Map();
 
 /**
  *
- * @param {CSSStyleDeclaration} styles
+ * @param {Partial<CSSStyleDeclaration>} styles
  */
 export const css = (styles) => {
   if (keys(styles).length === 0) {

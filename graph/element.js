@@ -9,7 +9,7 @@ export const createElement = (tagName) => {
   /**
    *
    * @template {HTMLElementTagNameMap[N]} E
-   * @param {Partial<Omit<{ [K in Extract<keyof E, string>]: E[K] }, 'style' | 'classList'> & { style: Partial<CSSStyleDeclaration>; classList: (string | false | undefined)[] }> | undefined} attributes
+   * @param {Partial<Omit<{ [K in Extract<keyof E, string>]: E[K] }, 'style' | 'classList'> & { style: Partial<CSSStyleDeclaration>; classList: (string | 0 | false | undefined)[] }> | undefined} attributes
    */
   return (attributes = {}) => {
     const element = document.createElement(tagName);

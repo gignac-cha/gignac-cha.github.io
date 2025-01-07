@@ -3,6 +3,7 @@ import { canvas, fragment, sup } from './element.js';
 import { Button } from './radix-ui/Button.js';
 import { Code } from './radix-ui/Code.js';
 import { Flex } from './radix-ui/Flex.js';
+import { Slider } from './radix-ui/Slider.js';
 import { TextField } from './radix-ui/TextField.js';
 import { Theme } from './radix-ui/Theme.js';
 
@@ -20,6 +21,9 @@ window.addEventListener('load', () => {
     points: [],
 
     index: 0,
+
+    signalFrequency: 3,
+    frequencyWinding: 0.5,
   };
 
   /** @type {number[]} */
@@ -83,7 +87,10 @@ window.addEventListener('load', () => {
           Code({ size: 8, variant: 'ghost' })('🟰'),
           equationPanel,
         ),
-        Button({ size: 4, variant: 'soft', onclick: () => (state.index = 0) })('Reset'),
+        Flex.Row({ gapY: 4 })(
+          Slider({ size: 3, variant: 'surface', onChange: (value) => (state.frequencyWinding = value) }),
+          Button({ size: 4, variant: 'soft', onclick: () => (state.index = 0) })('Reset'),
+        ),
         canvasElement,
       ),
     ),
@@ -128,9 +135,9 @@ window.addEventListener('load', () => {
     const convertPoint = ({ x, y }) => ({ x: x, y: window.innerHeight / 2 - y });
     /** @type {FrameRequestCallback} */
     const update = (time) => {
-      // requestAnimationFrame(update);
+      requestAnimationFrame(update);
 
-      // canvas.clear();
+      canvas.clear();
 
       // const x = state.index;
       // const y = state.f(x);
@@ -188,21 +195,18 @@ window.addEventListener('load', () => {
       // }
       for (let x = -canvas.width; x < canvas.width; ++x) {
         const r = (x / 360) * 2 * Math.PI;
-        const y = Math.sin(3 * r) * 100;
+        const y = Math.sin(state.signalFrequency * r) * 100;
         const p = convertPoint({ x, y });
         canvas.dot(p.x, p.y - canvas.height / 4, '#0f0').fill();
       }
 
-      for (let x = -canvas.width; x < canvas.width; ++x) {
-        //   const l = Math.sin(r * 1.22) * 100 + 100;
-        //   const x = Math.cos(r) * l;
-        //   const y = Math.sin(r) * l;
-        //   const p = convertPoint({ x, y });
-        //   canvas.dot(p.x - canvas.width / 4, p.y, '#0f0').fill();
-        const r = (x / 360) * 2 * Math.PI;
-        const y = Math.sin(r) * 100;
+      for (let d = -canvas.width; d < canvas.width; ++d) {
+        const r = (d / 360) * 2 * Math.PI;
+        const l = Math.sin((state.signalFrequency * r) / state.frequencyWinding) * 100 + 100;
+        const x = Math.cos(r) * l;
+        const y = Math.sin(r) * l;
         const p = convertPoint({ x, y });
-        canvas.dot(p.x, p.y - canvas.height / 4, '#0f0').fill();
+        canvas.dot(p.x - canvas.width / 4, p.y + canvas.height / 4, '#0f0').fill();
       }
 
       state.index++;
