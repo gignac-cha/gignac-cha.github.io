@@ -24,9 +24,11 @@ window.addEventListener('load', () => {
 
     index: 0,
 
-    signalFrequency: 3,
-    windingFrequency: 0.5,
-    /** @type {HTMLLabelElement | undefined} */
+    signalFrequency: 1,
+    windingFrequency: 1,
+    /** @type {HTMLSpanElement | undefined} */
+    signalFrequencyText: undefined,
+    /** @type {HTMLSpanElement | undefined} */
     windingFrequencyText: undefined,
   };
 
@@ -90,9 +92,41 @@ window.addEventListener('load', () => {
         ),
         Container({ size: 4 })(
           Flex.Row({ gapY: 4 })(
-            Flex.Column()(
-              state.windingFrequencyText = Text({ as: 'label'})(`${state.windingFrequency}`),
-              Slider({ size: 3, variant: 'surface', onChange: (value) => (state.windingFrequency = value) }),
+            Flex.Row({ gapY: 2 })(
+              Flex.Column({ gapX: 2 })(
+                Text()('Signal Frequency'),
+                (state.signalFrequencyText = Text({ align: 'right', style: { flexGrow: '1' } })(
+                  `${state.signalFrequency}`,
+                )),
+              ),
+              Slider({
+                size: 3,
+                variant: 'surface',
+                onChange: (value) => {
+                  state.signalFrequency = value;
+                  if (state.signalFrequencyText) {
+                    state.signalFrequencyText.textContent = value.toFixed(2);
+                  }
+                },
+              }),
+            ),
+            Flex.Row({ gapY: 2 })(
+              Flex.Column({ gapX: 2 })(
+                Text()('Winding Frequency'),
+                (state.windingFrequencyText = Text({ align: 'right', style: { flexGrow: '1' } })(
+                  `${state.windingFrequency}`,
+                )),
+              ),
+              Slider({
+                size: 3,
+                variant: 'surface',
+                onChange: (value) => {
+                  state.windingFrequency = value;
+                  if (state.windingFrequencyText) {
+                    state.windingFrequencyText.textContent = value.toFixed(2);
+                  }
+                },
+              }),
             ),
             Button({ size: 4, variant: 'soft', onclick: () => (state.index = 0) })('Reset'),
           ),
@@ -120,9 +154,10 @@ window.addEventListener('load', () => {
    * @returns {number}
    */
   state.f = (x) => {
-    x = (x / 360) * 2 * Math.PI;
-    const y = f(g(x - 1) + 2) * 3 * g(f(x + 4) - 5) * 6;
-    return y * 10;
+    // x = (x / 360) * 2 * Math.PI;
+    // const y = f(g(x - 1) + 2) * 3 * g(f(x + 4) - 5) * 6;
+    // return y * 10;
+    return Math.sin(2 * x) + Math.sin(3 * x);
   };
 
   const makePreview = () => new Array(window.innerWidth).fill(0).map((_, x) => ({ x, y: state.f(x) }));
@@ -131,8 +166,6 @@ window.addEventListener('load', () => {
   let previousTime = 0;
   requestAnimationFrame(() => {
     const canvas = new Canvas(canvasElement);
-    canvas.width = canvasElement.clientWidth;
-    canvas.height = canvasElement.clientHeight;
     /**
      *
      * @param {{ x: number, y: number }} param0
@@ -142,6 +175,9 @@ window.addEventListener('load', () => {
     /** @type {FrameRequestCallback} */
     const update = (time) => {
       requestAnimationFrame(update);
+
+      canvas.width = canvasElement.clientWidth;
+      canvas.height = canvasElement.clientHeight;
 
       canvas.clear();
 
@@ -201,18 +237,33 @@ window.addEventListener('load', () => {
       // }
       for (let x = -canvas.width; x < canvas.width; ++x) {
         const r = (x / 360) * 2 * Math.PI;
-        const y = Math.sin(state.signalFrequency * r) * 100;
+        const y = state.f(state.signalFrequency * r) * 100;
         const p = convertPoint({ x, y });
         canvas.dot(p.x, p.y - canvas.height / 4, '#0f0').fill();
       }
 
-      for (let d = -canvas.width; d < canvas.width; ++d) {
+      for (let d = 0; d < 360; ++d) {
         const r = (d / 360) * 2 * Math.PI;
-        const l = Math.sin((state.signalFrequency * r) / state.windingFrequency) * 100 + 100;
-        const x = Math.cos(r) * l;
-        const y = Math.sin(r) * l;
+        const l = state.f((state.signalFrequency * r) / state.windingFrequency) + 1;
+        const x = Math.cos(r) * l * 100;
+        const y = Math.sin(r) * l * 100;
         const p = convertPoint({ x, y });
         canvas.dot(p.x - canvas.width / 4, p.y + canvas.height / 4, '#0f0').fill();
+      }
+
+      for (let x = 0; x < canvas.width; ++x) {
+        const windingFrequency = x / 100;
+        /** @type {number[]} */
+        const values = [];
+        for (let d = 0; d < 360; ++d) {
+          const r = (d / 360) * 2 * Math.PI;
+          const l = state.f((state.signalFrequency * r) / windingFrequency) + 1;
+          const x = Math.cos(r) * l;
+          values.push(x);
+        }
+        const y = (values.reduce((previousValue, currentValue) => previousValue + currentValue) / values.length) * 200;
+        const p = convertPoint({ x, y });
+        canvas.dot(p.x, p.y - (canvas.height / 4) * 0, '#f0f').fill();
       }
 
       state.index++;

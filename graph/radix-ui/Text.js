@@ -1,4 +1,5 @@
 import { div, label, p, span } from '../element.js';
+import { css } from '../styleManager.js';
 
 /**
  *
@@ -10,23 +11,29 @@ import { div, label, p, span } from '../element.js';
  * align: Responsive<'left' | 'center' | 'right'>
  * wrap: Responsive<'wrap' | 'nowrap' | 'pretty' | 'balance'>
  * color: Radix.Color
- * } & Omit<HTMLInputElement, 'classList'>>} options
- * @returns {N extends 'span' ? HTMLSpanElement : N extends 'div' ? HTMLDivElement : N extends 'label' ? HTMLLabelElement : N extends 'p' ? HTMLParagraphElement : never}
+ * } & import('../element.js').Attributes<HTMLElement>>} options
  */
-export const Text = ({ as, size, weight, align, wrap, color }) => {
+export const Text = ({ as, size, weight, align, wrap, color, style } = {}) => {
   const attributes = {
-    classList: ['rt-Text', `rt-r-size-${size}`, `rt-r-weight-${weight}`, `rt-r-ta-${align}`, `rt-r-tw-${wrap}`],
+    classList: [
+      'rt-Text',
+      `rt-r-size-${size}`,
+      `rt-r-weight-${weight}`,
+      `rt-r-ta-${align}`,
+      `rt-r-tw-${wrap}`,
+      style && css(style),
+    ],
     dataset: { accentColor: color },
   };
   switch (as) {
     default:
     case 'span':
-      return span(attributes)();
+      return span(attributes);
     case 'div':
-      return div(attributes)();
+      return div(attributes);
     case 'label':
-      return label(attributes)();
+      return label(attributes);
     case 'p':
-      return p(attributes)();
+      return p(attributes);
   }
 };
