@@ -2,10 +2,10 @@
  *
  * @template {object} T
  * @param {T} object
- * @returns {Extract<keyof T, string>[]}
+ * @returns {(keyof T)[]}
  */
 export const keys = (object) => {
-  /** @type {Extract<keyof T, string>[]} */
+  /** @type {(keyof T)[]} */
   const keys = [];
   for (const key in object) {
     keys.push(key);
@@ -17,7 +17,7 @@ export const keys = (object) => {
  *
  * @template {object} T
  * @param {T} object
- * @returns {[keyof T, T[keyof T]][]}
+ * @returns {{ [K in keyof T]: [K, T[K]] }[keyof T][]}
  */
 export const entries = (object) => keys(object).map((key) => [key, object[key]]);
 
@@ -45,3 +45,7 @@ export const camelCaseToKebabCase = (camelCase) =>
  */
 export const kebabCaseToCamelCase = (kebabCase) =>
   kebabCase.replace(/([a-z])\-([a-z])/g, (capture) => `${capture.at(0)}${capture.at(1)?.toUpperCase()}`).toLowerCase();
+
+for (const[key, value]of entries({a:1,b:2})) {
+  
+}

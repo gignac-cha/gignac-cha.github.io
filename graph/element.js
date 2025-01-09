@@ -1,14 +1,37 @@
-import { entries } from './utilities.js';
+import { entries, keys } from './utilities.js';
 
-/** @typedef {string | HTMLElement | DocumentFragment} Child */
-/**
- * @template {keyof HTMLElementTagNameMap} N
- * @typedef {(...children: Child[]) => HTMLElementTagNameMap[N]} Component<N>
- */
-/**
- * @template {HTMLElementTagNameMap[keyof HTMLElementTagNameMap]} E
- * @typedef {Partial<Omit<{ [K in Extract<keyof E, string>]: E[K] }, 'style' | 'classList'> & { style: Partial<CSSStyleDeclaration>; classList: (string | 0 | false | undefined)[] }>} Attributes<E>
- */
+// /** @typedef {string | HTMLElement | DocumentFragment} Child */
+// /**
+//  * @template {keyof HTMLElementTagNameMap} N
+//  * @typedef {(...children: Child[]) => HTMLElementTagNameMap[N]} Component<N>
+//  */
+// /**
+//  * @template {HTMLElementTagNameMap[keyof HTMLElementTagNameMap]} E
+//  * @typedef {Partial<Omit<{ [K in Extract<keyof E, string>]: E[K] }, 'style' | 'classList'> & { style: Partial<CSSStyleDeclaration>; classList: (string | 0 | false | undefined)[] }>} Attributes<E>
+//  */
+
+/** @type {CreateElementGeneralFunction} */
+const createElement2 = (tagName) => {
+  return (attributes = {}) => {
+    const element = document.createElement(tagName)
+    const e = entries(attributes)
+    for (const key of keys(attributes)) {
+      if (key === 'style') {
+        const value = attributes[key]
+      }
+    }
+    for (const [key, value] of entries(attributes)) {
+      if (key === 'style') {
+        value
+      }
+    }
+    return () => {
+      return element
+    }
+  }
+}
+const a2 = createElement2('a')
+a2({})
 
 /**
  *
