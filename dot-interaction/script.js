@@ -13,7 +13,12 @@ window.addEventListener('load', (e) => {
 
   resize();
 
-  const getRandomColor = () => [random(0x100), random(0x100), random(0x100)];
+  const getRandomColor = () => [
+    random(0x40, 0x100),
+    random(0x40, 0x100),
+    random(0x40, 0x100),
+  ];
+  const getColorCode = (r, g, b, a = 1) => `rgba(${r}, ${g}, ${b}, ${a})`;
   // const throttle =
   //   (n, i = 0) =>
   //   () =>
@@ -128,12 +133,11 @@ window.addEventListener('load', (e) => {
   }));
 
   requestAnimationFrame(function update() {
-    requestAnimationFrame(update);
+    // requestAnimationFrame(update);
 
     for (const dot of dots) {
-      dot
+      canvas.circle(dot.x, dot.y, 3, getColorCode(...dot.color)).fill();
     }
-    canvas.circle();
   });
 });
 window.addEventListener('resize', (e) => {
