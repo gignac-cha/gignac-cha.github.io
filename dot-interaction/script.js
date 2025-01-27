@@ -131,6 +131,7 @@ window.addEventListener('load', (e) => {
     requestAnimationFrame(update);
 
     for (const dot of dots) {
+      dot
     }
     canvas.circle();
   });
