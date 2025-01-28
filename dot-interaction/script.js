@@ -159,7 +159,8 @@ window.addEventListener('load', (e) => {
           //     (dot2.color[2] + dot2.color[0] - 2 * dot2.color[1])) +
           //   (dot1.color[2] -
           //     (dot2.color[0] + dot2.color[1] - 2 * dot2.color[2]));
-          const value = dot2.color[0] - dot1.color[0];
+          // const value = dot2.color[0] - dot1.color[0];
+          if ()
           const delta = { x: dot2.x - dot1.x, y: dot2.y - dot1.y };
           const length = (delta.x ** 2 + delta.y ** 2) ** 0.5;
           if (length > 0) {
