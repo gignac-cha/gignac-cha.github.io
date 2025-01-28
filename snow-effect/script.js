@@ -1,5 +1,5 @@
 import Canvas from '../modules/canvas.js';
-import { random, randomReal } from '../modules/random.js';
+import { random } from '../modules/random.js';
 import { range } from '../modules/range.js';
 import FPS from '../modules/fps.js';
 
@@ -50,8 +50,8 @@ window.addEventListener('load', e => {
       i: random(360),
       x: random(-canvas.width * 4, canvas.width * 4),
       y: -random(canvas.height / 2),
-      r: randomReal(3, 8),
-      speed: randomReal(1, 5),
+      r: random.real(3, 8),
+      speed: random.real(1, 5),
     };
     snow.opacity = snow.r / 8;
     return snow;

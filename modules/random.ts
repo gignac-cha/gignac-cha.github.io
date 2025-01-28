@@ -1,17 +1,41 @@
-export const randomReal = (x?: number, y?: number): number => {
-  const r: number = Math.random();
-  if (typeof x !== 'undefined' && typeof y !== 'undefined') {
-    return x + r * (y - x);
-  } else if (typeof x !== 'undefined' && typeof y === 'undefined') {
-    return r * x;
+const randomReal = (start?: number, end?: number) => {
+  const random = Math.random();
+  if (typeof start === 'undefined' && typeof end === 'undefined') {
+    return random;
   }
-  return r;
-};
-export const random = (x?: number, y?: number): number => {
-  if (typeof x === 'undefined' && typeof y === 'undefined') {
-    return randomReal();
+  if (typeof start === 'number' && typeof end === 'undefined') {
+    end = start;
+    return random * end;
   }
-  return Math.floor(randomReal(x, y));
+  if (typeof start === 'number' && typeof end === 'number') {
+    return start + random * end;
+  }
+  throw Error('Unexpected error.');
 };
+export const random = Object.assign(
+  new (class {
+    random(): number;
+    random(end: number): number;
+    random(start: number, end: number): number;
+    random(start?: number, end?: number) {
+      if (typeof start === 'undefined' && typeof end === 'undefined') {
+        return randomReal();
+      }
+      return Math.floor(randomReal(start, end));
+    }
+  })().random,
+  {
+    real: new (class {
+      real(): number;
+      real(end: number): number;
+      real(start: number, end: number): number;
+      real(start?: number, end?: number) {
+        return randomReal(start, end);
+      }
+    })().real,
+  }
+);
+
 export const choice = <T>(array: T[]): T => array[random(array.length)];
 export const shuffle = <T>(array: T[]): T[] => array.sort(() => random(2) * 2 - 1);
+export const toShuffled = <T>(array: T[]): T[] => shuffle([...array]);
