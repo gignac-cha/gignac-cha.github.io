@@ -126,17 +126,49 @@ window.addEventListener('load', (e) => {
   //   }
   // });
 
-  const dots = range(100, () => ({
-    x: random(canvas.width),
-    y: random(canvas.height),
-    color: getRandomColor(),
-  }));
+  // const dots = range(100, () => ({
+  //   x: random(canvas.width),
+  //   y: random(canvas.height),
+  //   color: getRandomColor(),
+  // }));
+
+  const dots = [
+    { x: 400, y: 400, color: [255, 255, 0] },
+    { x: 500, y: 400, color: [255, 0, 0] },
+    // { x: 600, y: 400, color: [0, 255, 0] },
+  ];
 
   requestAnimationFrame(function update() {
-    // requestAnimationFrame(update);
+    requestAnimationFrame(update);
+
+    canvas.clear();
 
     for (const dot of dots) {
       canvas.circle(dot.x, dot.y, 3, getColorCode(...dot.color)).fill();
+    }
+
+    for (const dot1 of dots) {
+      for (const dot2 of dots) {
+        if (dot1 !== dot2) {
+          // const value =
+          //   dot1.color[0] -
+          //   (dot2.color[1] + dot2.color[2] - 2 * dot2.color[0]) +
+          //   (dot1.color[1] -
+          //     (dot2.color[2] + dot2.color[0] - 2 * dot2.color[1])) +
+          //   (dot1.color[2] -
+          //     (dot2.color[0] + dot2.color[1] - 2 * dot2.color[2]));
+          const value = dot2.color[0] - dot1.color[0];
+          const delta = { x: dot2.x - dot1.x, y: dot2.y - dot1.y };
+          const length = (delta.x ** 2 + delta.y ** 2) ** 0.5;
+          if (length > 0) {
+            dot1.x += ((delta.x / length) * value) / 255;
+            dot1.y += ((delta.y / length) * value) / 255;
+          } else {
+            dot1.x += value / 255;
+            dot1.y += value / 255;
+          }
+        }
+      }
     }
   });
 });
