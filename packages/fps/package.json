@@ -1,0 +1,15 @@
+{
+  "name": "@packages/fps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild fps.ts --outfile=fps.js --platform=browser --target=esnext --format=esm",
+    "copy": "rsync fps.js ../../page/modules/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.11.0"
+}
