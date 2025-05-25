@@ -1,31 +1,9 @@
 type TextMap = { [key: string]: number[][] };
 const textMap: TextMap = {
-  F: [
-    [1, 1, 1],
-    [1],
-    [1, 1, 1],
-    [1],
-    [1],
-  ],
-  P: [
-    [1, 1, 1],
-    [1, 0, 1],
-    [1, 1, 1],
-    [1],
-    [1],
-  ],
-  S: [
-    [1, 1, 1],
-    [1],
-    [1, 1, 1],
-    [0, 0, 1],
-    [1, 1, 1],
-  ],
-  ':': [
-    [1],
-    [],
-    [1],
-  ],
+  F: [[1, 1, 1], [1], [1, 1, 1], [1], [1]],
+  P: [[1, 1, 1], [1, 0, 1], [1, 1, 1], [1], [1]],
+  S: [[1, 1, 1], [1], [1, 1, 1], [0, 0, 1], [1, 1, 1]],
+  ':': [[1], [], [1]],
   0: [
     [1, 1, 1],
     [1, 0, 1],
@@ -40,13 +18,7 @@ const textMap: TextMap = {
     [0, 1],
     [1, 1, 1],
   ],
-  2: [
-    [1, 1, 1],
-    [1, 0, 1],
-    [0, 1],
-    [1],
-    [1, 1, 1],
-  ],
+  2: [[1, 1, 1], [1, 0, 1], [0, 1], [1], [1, 1, 1]],
   3: [
     [1, 1, 1],
     [0, 0, 1],
@@ -68,13 +40,7 @@ const textMap: TextMap = {
     [0, 0, 1],
     [1, 1, 1],
   ],
-  6: [
-    [0, 1],
-    [1],
-    [1, 1, 1],
-    [1, 0, 1],
-    [1, 1, 1],
-  ],
+  6: [[0, 1], [1], [1, 1, 1], [1, 0, 1], [1, 1, 1]],
   7: [
     [1, 1, 1],
     [0, 0, 1],
@@ -108,10 +74,15 @@ export default class FPS {
   private timestamps: number[] = [];
   private fps: number = 1;
   private paddingTop: number = 10;
+  private width: number = 80;
+  private height: number = 60;
 
-  constructor(private width: number = 80, private height: number = 60) {
-    this.canvas.setAttribute('width', `${width}`);
-    this.canvas.setAttribute('height', `${height}`);
+  constructor(options: { width?: number; height?: number; style?: Partial<CSSStyleDeclaration> } = {}) {
+    this.width = options.width ?? 80;
+    this.height = options.height ?? 60;
+    this.canvas.setAttribute('width', `${this.width}`);
+    this.canvas.setAttribute('height', `${this.height}`);
+    Object.assign(this.canvas.style, options.style ?? {});
     requestAnimationFrame(this.update);
   }
 
@@ -150,7 +121,7 @@ export default class FPS {
       for (let i = 0; i < counts.length - 1; ++i) {
         const value: number = counts[i].value * this.fps;
         const x: number = this.width - (counts.length - 1) + i;
-        const height: number = Math.floor(value / maximum * (this.height - this.paddingTop));
+        const height: number = Math.floor((value / maximum) * (this.height - this.paddingTop));
         const y: number = this.height - height;
         data[y * this.width * 4 + x * 4 + 0] = 0xff;
         data[y * this.width * 4 + x * 4 + 1] = 0xff;
@@ -179,7 +150,7 @@ export default class FPS {
 
       context.putImageData(imageData, 0, 0);
     }
-  }
+  };
 
   drawText(data: Uint8ClampedArray, map: number[][], x: number, y: number) {
     if (map) {
