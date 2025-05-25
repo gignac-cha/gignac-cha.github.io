@@ -10,16 +10,24 @@
     "type": "git",
     "url": "git+https://github.com/gignac-cha/gignac-cha.github.io.git"
   },
-  "author": "Jin-Hyeok, Cha",
+  "author": "Jin-Hyeok Cha",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/gignac-cha/gignac-cha.github.io/issues"
   },
   "homepage": "https://github.com/gignac-cha/gignac-cha.github.io#readme",
+  "keywords": [
+    "blog"
+  ],
+  "engines": {
+    "node": ">=24.1.0"
+  },
+  "packageManager": "pnpm@10.11.0",
   "devDependencies": {
-    "@types/shelljs": "^0.8.11",
-    "eslint": "^8.26.0",
-    "prettier": "^2.7.1",
-    "shx": "^0.3.4"
+    "@types/node": "^22.15.21",
+    "esbuild": "^0.25.4",
+    "eslint": "^9.27.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
   }
 }
