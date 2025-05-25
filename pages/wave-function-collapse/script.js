@@ -76,9 +76,9 @@ window.addEventListener('load', e => {
     if (superpositions[key]) {
       const [r1, g1, b1] = getRGBFromColor(superpositions[key].minimum);
       const [r2, g2, b2] = getRGBFromColor(superpositions[key].maximum);
-      const r = random(r1, r2);
-      const g = random(g1, g2);
-      const b = random(b1, b2);
+      const r = random(r1, r2 + 1);
+      const g = random(g1, g2 + 1);
+      const b = random(b1, b2 + 1);
       map[key] = getColorFromRGB(r, g, b);
     } else {
       map[key] = getColorFromRGB(...getRandomColor());
