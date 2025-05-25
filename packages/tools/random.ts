@@ -8,7 +8,7 @@ const randomReal = (start?: number, end?: number) => {
     return random * end;
   }
   if (typeof start === 'number' && typeof end === 'number') {
-    return start + random * end;
+    return start + random * (end - start);
   }
   throw Error('Unexpected error.');
 };
@@ -33,7 +33,7 @@ export const random = Object.assign(
         return randomReal(start, end);
       }
     })().real,
-  }
+  },
 );
 
 export const choice = <T>(array: T[]): T => array[random(array.length)];
