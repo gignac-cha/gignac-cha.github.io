@@ -3,6 +3,8 @@
   "description": "Personal blog and collections of serverless page projects.",
   "version": "1.0.0",
   "scripts": {
+    "build": "turbo run build",
+    "copy": "turbo run copy",
     "page": "node scripts/copy-projects.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -28,6 +30,7 @@
     "esbuild": "^0.25.4",
     "eslint": "^9.27.0",
     "prettier": "^3.5.3",
+    "turbo": "^2.5.3",
     "typescript": "^5.8.3"
   }
 }
