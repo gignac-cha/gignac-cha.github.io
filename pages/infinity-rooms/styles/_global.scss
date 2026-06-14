@@ -1,0 +1,210 @@
+@use './variables' as vars;
+
+// ============================================================================
+// 페이지 전역 — Calm Light 배경, 960px 중앙 칼럼, 진입 모션, 페이지 골격 요소
+// ============================================================================
+
+html {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background-color: vars.$color-background;
+  color: vars.$color-text-primary;
+  font-family: vars.$font-sans;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  gap: vars.$spacing-6;
+  max-width: vars.$column-width;
+  margin: 0 auto;
+  padding: vars.$spacing-8 vars.$spacing-6;
+
+  @media (max-width: vars.$breakpoint-mobile) {
+    padding: vars.$spacing-6 vars.$spacing-4;
+    gap: vars.$spacing-4;
+  }
+
+  @media (max-width: vars.$breakpoint-narrow) {
+    padding: vars.$spacing-4 vars.$spacing-3;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 진입 모션 — 섹션별 fade + 6px rise 스태거
+// ----------------------------------------------------------------------------
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-header,
+.status-cards-container,
+.stage,
+.controls-hint,
+.page-footer {
+  animation: rise-in 0.4s ease-out backwards;
+}
+
+.status-cards-container {
+  animation-delay: 0.06s;
+}
+
+.stage {
+  animation-delay: 0.12s;
+}
+
+.controls-hint {
+  animation-delay: 0.18s;
+}
+
+.page-footer {
+  animation-delay: 0.24s;
+}
+
+// ----------------------------------------------------------------------------
+// ① 페이지 헤더 — 모노 eyebrow + 한국어 주도 타이틀 + 강조 설명문
+// ----------------------------------------------------------------------------
+.page-header {
+  .page-eyebrow {
+    margin: 0;
+    font-family: vars.$font-mono;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: vars.$color-accent;
+  }
+
+  .page-title {
+    margin: vars.$spacing-2 0 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: vars.$color-text-primary;
+  }
+
+  // 한국어 UI 이므로 '무한의 방'이 주 타이틀, 라틴 표기는 보조로 따라붙습니다.
+  .title-latin {
+    margin-left: vars.$spacing-2;
+    font-size: 20px;
+    font-weight: 500;
+    color: vars.$color-text-secondary;
+  }
+
+  .page-description {
+    margin: vars.$spacing-2 0 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: vars.$color-text-secondary;
+    max-width: 620px;
+
+    // 'Gemini Nano' 강조: 평면 단색 액센트 + 굵게.
+    strong {
+      font-weight: 600;
+      color: vars.$color-accent;
+    }
+  }
+
+  @media (max-width: vars.$breakpoint-mobile) {
+    .page-title {
+      font-size: 24px;
+    }
+
+    .title-latin {
+      display: block;
+      margin-left: 0;
+      margin-top: vars.$spacing-1;
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: vars.$breakpoint-narrow) {
+    .page-title {
+      font-size: 21px;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// ⑥ 조작법 안내 행 — 키캡 + 마우스 드래그 + 핵심 가치 한 줄
+// ----------------------------------------------------------------------------
+.controls-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: vars.$spacing-2 vars.$spacing-4;
+  font-size: 12px;
+  color: vars.$color-text-muted;
+
+  .controls-group {
+    display: inline-flex;
+    align-items: center;
+    gap: vars.$spacing-2;
+  }
+
+  .keycap {
+    font-family: vars.$font-mono;
+    font-size: 11px;
+    color: vars.$color-text-secondary;
+    background-color: vars.$color-keycap-surface;
+    border: 1px solid vars.$color-border;
+    border-bottom-width: 2px;
+    border-radius: vars.$radius-small;
+    padding: 2px 7px;
+    min-width: 22px;
+    text-align: center;
+  }
+}
+
+// 터치 전용 기기에서는 키보드/마우스 안내를 숨깁니다. (WASD 힌트 무의미)
+@media (pointer: coarse) {
+  .controls-hint .controls-group.is-pointer-device {
+    display: none;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 푸터
+// ----------------------------------------------------------------------------
+.page-footer {
+  margin: 0;
+  font-size: 12px;
+  color: vars.$color-text-muted;
+  text-align: center;
+  padding-top: vars.$spacing-2;
+}
+
+// ----------------------------------------------------------------------------
+// 모션 감소 환경 — 페이지의 모든 장식성 모션을 비활성화합니다.
+// ----------------------------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  .page-header,
+  .status-cards-container,
+  .stage,
+  .controls-hint,
+  .page-footer {
+    animation: none;
+  }
+}

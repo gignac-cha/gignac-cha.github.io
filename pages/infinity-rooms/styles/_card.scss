@@ -1,0 +1,1062 @@
+@use './variables' as vars;
+
+// ============================================================================
+// 카드 계층 — ② 상태 카드 / ③ 스테이지(캔버스 + HUD) / ④ 경고 카드 / ⑤ 미니맵
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// ② 상태 진단 스트립 — 카드 2장 (제목+알약 행이 먼저, 문서 링크는 메타로 아래)
+// ----------------------------------------------------------------------------
+.status-cards-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: vars.$spacing-4;
+  width: 100%;
+
+  // 좁은 화면에서 두 열이 제목과 알약을 짓누르지 않도록 한 열로 전환합니다.
+  @media (max-width: vars.$breakpoint-mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card-panel {
+  position: relative;
+  background-color: vars.$color-surface;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius-medium;
+  padding: vars.$spacing-4;
+  box-shadow: vars.$shadow-weak;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  // 비클릭 카드이므로 transform lift 없이 보더·그림자만 옅게 반응합니다.
+  &:hover {
+    border-color: vars.$color-border-strong;
+    box-shadow: vars.$shadow-hover;
+  }
+
+  .panel-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: vars.$spacing-3;
+    min-width: 0;
+  }
+
+  // 좁은 카드에서는 알약이 아니라 제목이 줄어들어야 합니다. (알약 라벨 잘림 방지)
+  .panel-title {
+    flex: 0 1 auto;
+    min-width: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: vars.$color-text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // 문서 링크는 짧은 메타 한 줄로 제목 행 아래에 둡니다.
+  .panel-document-link {
+    display: inline-block;
+    max-width: 100%;
+    margin-top: vars.$spacing-2;
+    font-size: 12px;
+    font-weight: 400;
+    color: vars.$color-text-muted;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+      color: vars.$color-link;
+    }
+
+    &:focus-visible {
+      outline: 2px solid vars.$color-accent;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// ③ 스테이지 — 캔버스(주인공) + 미니맵 HUD 를 묶는 그리드
+// ----------------------------------------------------------------------------
+.stage {
+  display: grid;
+  grid-template-columns: 1fr vars.$minimap-column-width;
+  gap: vars.$spacing-4;
+  align-items: stretch;
+
+  @media (max-width: vars.$breakpoint-minimap) {
+    grid-template-columns: 1fr;
+  }
+
+  // 방 카드가 경고 상태이면 빈 미니맵을 숨기고 경고 카드를 전체 폭으로 펼칩니다.
+  &:has(.new-card.is-warning) {
+    grid-template-columns: 1fr;
+
+    .minimap-card {
+      display: none;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 방 카드 — 활성 시 패딩 0 의 캔버스 카드, 비가용 시 액션 있는 경고 카드
+// ----------------------------------------------------------------------------
+.new-card {
+  position: relative;
+  background-color: vars.$color-surface;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius-large;
+  padding: vars.$spacing-6;
+  overflow: hidden;
+  box-shadow: vars.$shadow-weak;
+  transition: border-color 0.2s ease;
+
+  // 진단 결과 대기 중 안내 문구입니다.
+  .new-card-message {
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: center;
+    width: 100%;
+    color: vars.$color-text-secondary;
+  }
+
+  // 경고 본문은 활성/대기 상태에서는 숨깁니다.
+  .warning-card-content {
+    display: none;
+  }
+
+  .webgpu-canvas-container {
+    display: none; // 활성화 전에는 캔버스 영역을 숨깁니다.
+    position: relative;
+    width: 100%;
+    height: 420px;
+    background-color: vars.$color-surface-sunken;
+    overflow: hidden;
+
+    // 렌더러 캔버스의 인라인 베이스라인 틈을 제거합니다.
+    .room-renderer-canvas {
+      display: block;
+    }
+
+    @media (max-width: vars.$breakpoint-mobile) {
+      height: 320px;
+    }
+
+    @media (max-width: vars.$breakpoint-narrow) {
+      height: 260px;
+    }
+
+    // 전체화면(F 키)에서는 고정 높이를 버리고 화면을 꽉 채웁니다. 반응형 높이 미디어쿼리보다
+    // 우선하도록 :fullscreen 규칙을 컨테이너 내부에 둡니다(렌더러는 ResizeObserver 로 자동 리사이즈).
+    &:fullscreen {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  // 활성화: 장면이 곧 카드 — 패딩을 없애고 평범한 옅은 그림자로 무대를 만듭니다.
+  &.is-active {
+    padding: 0;
+    box-shadow: vars.$shadow-stage;
+
+    .new-card-message {
+      display: none;
+    }
+
+    .webgpu-canvas-container {
+      display: block;
+    }
+  }
+
+  // 경고: 빈약한 알림이 아니라 아이콘 + 제목 + 본문 + 액션이 있는 빈 상태입니다.
+  &.is-warning {
+    border-color: vars.$color-error-border-soft;
+
+    .new-card-message {
+      display: none;
+    }
+
+    .warning-card-content {
+      display: flex;
+    }
+  }
+
+  @media (max-width: vars.$breakpoint-mobile) {
+    padding: vars.$spacing-4;
+
+    &.is-active {
+      padding: 0;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 캔버스 위 HUD 칩 3종 — 테마 칩 / 좌표 칩 / 생성 칩
+// 캔버스는 다크 콘텐츠이므로 칩은 불투명 화이트 표면 + 어두운 텍스트 + 옅은 보더·그림자로
+// 가독성을 확보합니다(블러 없음).
+// ----------------------------------------------------------------------------
+.hud-chip {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: vars.$spacing-2;
+  background-color: vars.$color-surface;
+  border: 1px solid vars.$color-border-strong;
+  border-radius: vars.$radius-pill;
+  padding: 6px vars.$spacing-3;
+  font-size: 12px;
+  color: vars.$color-text-primary;
+  box-shadow: vars.$shadow-weak;
+  z-index: 5;
+}
+
+// 생성 테마 칩: 현재 방의 AI 생성 테마명을 단순 텍스트로 크롬에 노출합니다.
+.theme-chip {
+  bottom: vars.$spacing-3;
+  left: vars.$spacing-3;
+  max-width: calc(100% - #{vars.$spacing-3 * 2});
+  display: none;
+
+  &.is-visible {
+    display: inline-flex;
+  }
+
+  .theme-label {
+    flex: none;
+    font-size: 11px;
+    color: vars.$color-text-secondary;
+  }
+
+  .theme-name {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// 현재 방 좌표 칩 (HUD 어휘: 모노)
+.coordinate-chip {
+  top: vars.$spacing-3;
+  right: vars.$spacing-3;
+  font-family: vars.$font-mono;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: vars.$color-text-secondary;
+}
+
+// 방 생성 중 칩: 시야 중앙을 가리지 않도록 하단 중앙에 띄우는 슬림한 상태 토스트입니다.
+// (생성 중에도 이동·시점 회전이 가능하므로 모달처럼 중앙을 덮지 않습니다.)
+.generating-chip {
+  display: none;
+  left: 50%;
+  bottom: vars.$spacing-3;
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: vars.$radius-medium;
+  padding: vars.$spacing-2 vars.$spacing-3;
+  min-width: 160px;
+  max-width: calc(100% - #{vars.$spacing-3 * 2});
+
+  &.is-visible {
+    display: inline-flex;
+  }
+
+  @media (max-width: vars.$breakpoint-narrow) {
+    min-width: 140px;
+  }
+
+  .generating-row {
+    display: flex;
+    align-items: center;
+    gap: vars.$spacing-2;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .generating-spinner {
+    width: 14px;
+    height: 14px;
+    flex: none;
+    border-radius: 50%;
+    border: 2px solid vars.$color-spinner-track;
+    border-top-color: vars.$color-accent;
+    animation: spin 0.9s linear infinite;
+  }
+
+  // 미정형 진행 표시: 단색 액센트 슬라이더가 트랙을 좌우로 가로지릅니다(그라디언트 없음).
+  .generating-bar {
+    height: 3px;
+    border-radius: vars.$radius-pill;
+    overflow: hidden;
+    background-color: vars.$color-track-surface;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 40%;
+      border-radius: vars.$radius-pill;
+      background-color: vars.$color-accent;
+      animation: indeterminate-slide 1.8s ease-in-out infinite;
+    }
+  }
+}
+
+// 생성 실패 칩: 현재 방의 테마 생성이 실패했을 때 하단 중앙에 띄우는 error 톤 알림입니다.
+// 문구 + 재시도 버튼 + 안내 한 줄로 구성하며, 생성 칩과 같은 위치 규약을 따릅니다.
+.failure-chip {
+  display: none;
+  left: 50%;
+  bottom: vars.$spacing-3;
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: stretch;
+  gap: vars.$spacing-2;
+  border-radius: vars.$radius-medium;
+  padding: vars.$spacing-2 vars.$spacing-3;
+  min-width: 180px;
+  max-width: calc(100% - #{vars.$spacing-3 * 2});
+  background-color: vars.$color-error-surface;
+  border-color: vars.$color-error-border;
+  color: vars.$color-error;
+
+  &.is-visible {
+    display: inline-flex;
+  }
+
+  @media (max-width: vars.$breakpoint-narrow) {
+    min-width: 160px;
+  }
+
+  .failure-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: vars.$spacing-3;
+  }
+
+  .failure-message {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .failure-hint {
+    font-size: 11px;
+    color: vars.$color-error;
+    opacity: 0.85;
+  }
+
+  .failure-retry-button {
+    flex: none;
+    font-family: vars.$font-sans;
+    font-size: 12px;
+    font-weight: 600;
+    color: vars.$color-text-inverse;
+    background-color: vars.$color-error;
+    border: 1px solid vars.$color-error;
+    border-radius: vars.$radius-small;
+    padding: vars.$spacing-1 vars.$spacing-3;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: vars.$color-error-detail-text;
+    }
+
+    &:focus-visible {
+      outline: 2px solid vars.$color-error;
+      outline-offset: 2px;
+    }
+  }
+}
+
+// 자동 생성 컨트롤 칩 — 좌상단 라이트 패널(토글 + 생성 버튼)
+.generation-controls {
+  top: vars.$spacing-3;
+  left: vars.$spacing-3;
+  gap: vars.$spacing-3;
+  padding: 6px vars.$spacing-3;
+}
+
+// 자동 생성 토글: 체크박스를 시각적으로 숨기고 트랙/노브로 표현하되, 텍스트 라벨로 색 외 단서를 유지합니다.
+.auto-generate-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: vars.$spacing-2;
+  cursor: pointer;
+  user-select: none;
+
+  .auto-generate-checkbox {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .auto-generate-track {
+    position: relative;
+    flex: none;
+    width: 32px;
+    height: 18px;
+    border-radius: vars.$radius-pill;
+    background-color: vars.$color-toggle-track-off;
+    transition: background-color 0.2s ease;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: vars.$color-toggle-knob;
+      transition: transform 0.2s ease;
+    }
+  }
+
+  .auto-generate-text {
+    font-size: 12px;
+    color: vars.$color-text-secondary;
+  }
+
+  // 체크 시 트랙을 액센트 톤으로, 노브를 우측으로 이동합니다.
+  .auto-generate-checkbox:checked + .auto-generate-track {
+    background-color: vars.$color-toggle-track-on;
+
+    &::after {
+      transform: translateX(14px);
+    }
+  }
+
+  // 키보드 포커스 시 액센트 포커스 링을 유지합니다.
+  .auto-generate-checkbox:focus-visible + .auto-generate-track {
+    outline: 2px solid vars.$color-accent;
+    outline-offset: 2px;
+  }
+}
+
+// 수동 생성 버튼 — 중립 칩 톤(주요 CTA 와 구분되는 보조 동작)
+.generate-button {
+  font-family: vars.$font-sans;
+  font-size: 12px;
+  font-weight: 600;
+  color: vars.$color-text-primary;
+  background-color: vars.$color-chip-surface;
+  border: 1px solid vars.$color-border-strong;
+  border-radius: vars.$radius-small;
+  padding: vars.$spacing-1 vars.$spacing-3;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+
+  &:hover {
+    background-color: vars.$color-track-surface;
+    border-color: vars.$color-accent;
+  }
+
+  &:focus-visible {
+    outline: 2px solid vars.$color-accent;
+    outline-offset: 2px;
+  }
+}
+
+// 생성 풀 상태 칩 — 좌상단 컨트롤 아래에 두 행(수동/자동)으로 활성·대기 수를 표시합니다.
+// 풀이 완전히 idle 일 때는 숨겨 잡음을 줄입니다(.is-visible 토글).
+.pool-status-chip {
+  top: calc(#{vars.$spacing-3} + 44px); // 컨트롤 칩 아래로 내립니다.
+  left: vars.$spacing-3;
+  flex-direction: column;
+  align-items: stretch;
+  gap: vars.$spacing-1;
+  border-radius: vars.$radius-medium;
+  padding: vars.$spacing-2 vars.$spacing-3;
+  display: none;
+
+  &.is-visible {
+    display: inline-flex;
+  }
+
+  .pool-row {
+    display: flex;
+    align-items: center;
+    gap: vars.$spacing-2;
+  }
+
+  .pool-label {
+    flex: none;
+    font-size: 11px;
+    font-weight: 600;
+    color: vars.$color-text-secondary;
+    min-width: 28px;
+  }
+
+  .pool-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    flex: none;
+  }
+
+  .pool-dot {
+    width: 6px;
+    height: 6px;
+    flex: none;
+    border-radius: 50%;
+    background-color: vars.$color-track-surface;
+    transition: background-color 0.2s ease;
+
+    // 활성 슬롯은 액센트 톤으로 채우고 펄스로 생성 진행을 알립니다.
+    &.is-active {
+      background-color: vars.$color-accent;
+      animation: pulse-dot 1.6s ease-in-out infinite;
+    }
+  }
+
+  .pool-text {
+    margin-left: auto;
+    font-family: vars.$font-mono;
+    font-size: 11px;
+    color: vars.$color-text-muted;
+    white-space: nowrap;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 미정형 진행 표시용 슬라이드: 40% 폭 막대가 트랙 왼쪽 밖에서 오른쪽 밖으로 이동합니다.
+@keyframes indeterminate-slide {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(250%);
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 로딩 오버레이 — 장면 시작(WebGPU 초기화 + 첫 방 생성) 동안 캔버스를 덮는 라이트 스크림
+// 캔버스(다크) 위 가독성을 위해 불투명에 가까운 화이트 스크림을 덮습니다(블러 없음).
+// ----------------------------------------------------------------------------
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background-color: vars.$color-loading-scrim;
+
+  &.is-visible {
+    display: flex;
+  }
+
+  .loading-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: vars.$spacing-3;
+    padding: vars.$spacing-6;
+    max-width: 280px;
+    text-align: center;
+  }
+
+  // 생성 칩과 동일한 스피너 어휘를 키워서 사용합니다.
+  .loading-spinner {
+    width: 32px;
+    height: 32px;
+    flex: none;
+    border-radius: 50%;
+    border: 3px solid vars.$color-spinner-track;
+    border-top-color: vars.$color-accent;
+    animation: spin 0.9s linear infinite;
+  }
+
+  .loading-message {
+    font-size: 14px;
+    font-weight: 600;
+    color: vars.$color-text-primary;
+  }
+
+  .loading-detail {
+    font-size: 12px;
+    line-height: 1.6;
+    color: vars.$color-text-secondary;
+  }
+
+  .loading-bar {
+    width: 160px;
+    height: 3px;
+    border-radius: vars.$radius-pill;
+    overflow: hidden;
+    background-color: vars.$color-track-surface;
+    position: relative;
+
+    // 생성 칩과 동일한 단색 미정형 진행 슬라이더를 사용합니다(그라디언트 없음).
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 40%;
+      border-radius: vars.$radius-pill;
+      background-color: vars.$color-accent;
+      animation: indeterminate-slide 1.8s ease-in-out infinite;
+    }
+  }
+
+  @media (max-width: vars.$breakpoint-narrow) {
+    .loading-panel {
+      padding: vars.$spacing-4;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 시점 중앙 레티클 — 캔버스 정중앙 조준점. 포커스가 있으면 액센트로 강조합니다.
+// ----------------------------------------------------------------------------
+.focus-reticle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .focus-reticle-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: vars.$color-reticle;
+    // 다크 캔버스 위 가독성을 위한 얇은 윤곽입니다.
+    box-shadow: 0 0 0 1px vars.$color-reticle-outline;
+    transition:
+      background-color 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  // 포커스가 잡히면 점을 액센트색으로 키워 강조합니다.
+  &.is-focused .focus-reticle-dot {
+    background-color: vars.$color-reticle-focused;
+    transform: scale(1.6);
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 가구 디테일 패널 — 캔버스 우상단 코너 오버레이 카드(라이트 토큰).
+// 종류(한국어)·변형·색상 팔레트를 보여 줍니다. 좌표·테마명은 표시하지 않습니다.
+// ----------------------------------------------------------------------------
+.furniture-detail-panel {
+  position: absolute;
+  top: vars.$spacing-3;
+  right: vars.$spacing-3;
+  z-index: 7;
+  display: none;
+  flex-direction: column;
+  gap: vars.$spacing-2;
+  width: 220px;
+  max-width: calc(100% - #{vars.$spacing-3 * 2});
+  background-color: vars.$color-surface;
+  border: 1px solid vars.$color-border-strong;
+  border-radius: vars.$radius-medium;
+  padding: vars.$spacing-3;
+  box-shadow: vars.$shadow-card;
+
+  &.is-open {
+    display: flex;
+  }
+
+  .detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: vars.$spacing-2;
+  }
+
+  .detail-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: vars.$color-text-primary;
+  }
+
+  .detail-close {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    line-height: 1;
+    font-size: 16px;
+    color: vars.$color-text-secondary;
+    background-color: transparent;
+    border: none;
+    border-radius: vars.$radius-small;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+
+    &:hover {
+      background-color: vars.$color-chip-surface;
+      color: vars.$color-text-primary;
+    }
+
+    &:focus-visible {
+      outline: 2px solid vars.$color-accent;
+      outline-offset: 2px;
+    }
+  }
+
+  .detail-variant {
+    font-size: 12px;
+    color: vars.$color-text-secondary;
+  }
+
+  .detail-palette {
+    display: flex;
+    flex-direction: column;
+    gap: vars.$spacing-1;
+  }
+
+  .detail-color-row {
+    display: flex;
+    align-items: center;
+    gap: vars.$spacing-2;
+  }
+
+  .detail-color-swatch {
+    width: 14px;
+    height: 14px;
+    flex: none;
+    border-radius: vars.$radius-small;
+    border: 1px solid vars.$color-border-strong;
+  }
+
+  .detail-color-label {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    color: vars.$color-text-secondary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .detail-color-hex {
+    flex: none;
+    font-family: vars.$font-mono;
+    font-size: 11px;
+    color: vars.$color-text-muted;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 경고 카드 본문 — 아이콘 + 제목 + 설명 + AI CTA + 힌트 (초기화 실패 카드와 공유)
+// ----------------------------------------------------------------------------
+.warning-card-content {
+  display: flex;
+  gap: vars.$spacing-4;
+  align-items: flex-start;
+
+  .warning-icon {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: vars.$radius-medium;
+    background-color: vars.$color-error-surface;
+    border: 1px solid vars.$color-error-border-soft;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: vars.$color-error;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .warning-body {
+    min-width: 0;
+  }
+
+  .warning-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: vars.$color-text-primary;
+  }
+
+  .warning-description {
+    margin: vars.$spacing-2 0 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: vars.$color-text-secondary;
+    max-width: 560px;
+    word-break: break-word;
+  }
+
+  .warning-actions {
+    margin-top: vars.$spacing-4;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: vars.$spacing-3;
+  }
+
+  .warning-hint {
+    font-size: 12px;
+    color: vars.$color-text-muted;
+  }
+}
+
+// 주요 CTA 버튼 (경고 카드 '해결 방법 보기' 등) — 평면 단색 액센트
+.button-ai {
+  font-family: vars.$font-sans;
+  font-size: 13px;
+  font-weight: 600;
+  color: vars.$color-text-inverse;
+  background-color: vars.$color-accent;
+  border: none;
+  border-radius: vars.$radius-small;
+  padding: vars.$spacing-2 vars.$spacing-4;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+
+  &:hover {
+    filter: brightness(0.92);
+  }
+
+  &:focus-visible {
+    outline: 2px solid vars.$color-accent;
+    outline-offset: 2px;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// ⑤ 미니맵 — 제목·좌표·범례를 갖춘 라이트 패널 (페이지 크롬)
+// ----------------------------------------------------------------------------
+.minimap-card {
+  background-color: vars.$color-surface;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius-medium;
+  padding: vars.$spacing-3;
+  display: flex;
+  flex-direction: column;
+  gap: vars.$spacing-3;
+  box-shadow: vars.$shadow-weak;
+
+  // 전체화면 동안 캔버스 위에 띄우는 오버레이 위치/크기입니다(미니맵이 캔버스 밖이라 가려지는 문제 해소).
+  &.is-canvas-overlay {
+    position: absolute;
+    right: vars.$spacing-3;
+    bottom: vars.$spacing-3;
+    width: 208px;
+    z-index: 6;
+    box-shadow: vars.$shadow-hover;
+  }
+
+  .minimap-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: vars.$spacing-2;
+  }
+
+  .minimap-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: vars.$color-text-secondary;
+  }
+
+  .minimap-coordinate {
+    font-family: vars.$font-mono;
+    font-size: 11px;
+    color: vars.$color-text-muted;
+  }
+
+  .minimap-svg-wrap {
+    background-color: vars.$minimap-surface;
+    border: 1px solid vars.$color-border;
+    border-radius: vars.$radius-small;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: vars.$spacing-2;
+    flex: 1;
+  }
+
+  .minimap-svg {
+    display: block;
+  }
+
+  .minimap-legend {
+    display: flex;
+    flex-direction: column;
+    gap: vars.$spacing-1;
+    font-size: 11px;
+    color: vars.$color-text-secondary;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: vars.$spacing-2;
+  }
+
+  .legend-swatch {
+    width: 10px;
+    height: 10px;
+    flex: none;
+    border-radius: 3px;
+    border: 1px solid;
+  }
+
+  .legend-current {
+    border-color: vars.$color-accent;
+    background-color: vars.$color-accent-soft;
+  }
+
+  .legend-explored {
+    border-color: vars.$minimap-room-explored-border;
+    background-color: vars.$minimap-room-explored-surface;
+  }
+
+  // 생성 진행 중인 방: pending 톤 채움 + 펄스로 "탐험한 방"과 구분합니다.
+  .legend-generating {
+    border-color: vars.$minimap-room-generating-border;
+    background-color: vars.$minimap-room-generating-surface;
+    animation: pulse-dot 1.6s ease-in-out infinite;
+  }
+
+  .legend-pending {
+    border-color: vars.$minimap-room-pending-border;
+    border-style: dashed;
+    background: none;
+  }
+
+  // 미니맵 SVG 내부 도형 색상 규칙입니다. 동적인 방 테마색만 인라인 스타일로 칠해집니다.
+  .minimap-room {
+    fill: none;
+    stroke: vars.$minimap-room-pending-border;
+    stroke-width: 1;
+    stroke-dasharray: 3 2; // 아직 생성되지 않은 방은 점선 윤곽으로 표시합니다.
+  }
+
+  .minimap-room.is-generated {
+    stroke: vars.$minimap-room-explored-border;
+    stroke-dasharray: none;
+  }
+
+  // 생성 진행 중(미생성)인 방: pending 톤 점선 윤곽 + 채움 + 펄스로 생성 완료 방과 구분합니다.
+  .minimap-room.is-generating {
+    stroke: vars.$minimap-room-generating-border;
+    fill: vars.$minimap-room-generating-surface;
+    stroke-width: 1.5;
+    animation: pulse-dot 1.4s ease-in-out infinite;
+  }
+
+  .minimap-room.is-active {
+    fill: vars.$color-accent-soft;
+    stroke: vars.$color-accent;
+    stroke-width: 1.5;
+  }
+
+  .minimap-vision-cone {
+    fill: vars.$minimap-vision-cone-surface;
+    stroke: vars.$minimap-vision-cone-border;
+    stroke-width: 1;
+  }
+
+  .minimap-player-dot {
+    fill: vars.$color-accent;
+    stroke: vars.$color-text-primary;
+    stroke-width: 1;
+  }
+
+  .minimap-direction-line {
+    stroke: vars.$color-accent;
+    stroke-width: 1.5;
+  }
+
+  // 미니맵이 캔버스 아래로 내려가는 구간: 지도/범례를 가로로 배치합니다.
+  @media (max-width: vars.$breakpoint-minimap) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    .minimap-title-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: vars.$spacing-1;
+    }
+
+    .minimap-svg-wrap {
+      flex: none;
+    }
+  }
+
+  // 모바일: 다시 세로 스택으로 정리합니다.
+  @media (max-width: vars.$breakpoint-mobile) {
+    flex-direction: column;
+    align-items: stretch;
+
+    .minimap-title-row {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .minimap-svg-wrap {
+      flex: 1;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 모션 감소 환경 — 스피너/진행 슬라이더를 정지합니다.
+// ----------------------------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  .generating-chip .generating-spinner,
+  .generating-chip .generating-bar::after {
+    animation: none;
+  }
+
+  .auto-generate-toggle .auto-generate-track,
+  .auto-generate-toggle .auto-generate-track::after {
+    transition: none;
+  }
+
+  // 풀 슬롯 도트·미니맵 생성 펄스·로딩 오버레이 모션을 정지합니다.
+  .pool-status-chip .pool-dot.is-active,
+  .minimap-card .legend-generating,
+  .minimap-card .minimap-room.is-generating,
+  .loading-overlay .loading-spinner,
+  .loading-overlay .loading-bar::after {
+    animation: none;
+  }
+}
