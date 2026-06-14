@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Infinity Rooms</title>
+    <link rel="icon" type="image/png" href="./favicon.png" />
+    <!-- 페이지 본문 폰트: Pretendard Variable (three/d3 와 동일한 jsdelivr CDN 패턴) -->
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    <link rel="stylesheet" href="./style.scss" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://fastly.jsdelivr.net/npm/three@latest/build/three.webgpu.js",
+          "three/webgpu": "https://fastly.jsdelivr.net/npm/three@latest/build/three.webgpu.js",
+          "d3": "https://fastly.jsdelivr.net/npm/d3@7/+esm"
+        }
+      }
+    </script>
+    <script type="module" src="./script.ts"></script>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>

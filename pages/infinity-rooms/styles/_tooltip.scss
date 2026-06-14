@@ -1,0 +1,281 @@
+@use './variables' as vars;
+
+// ============================================================================
+// 상태 툴팁 — 알약 아래에 붙는 라이트 패널 (popover, 화살표 포함)
+// 제목은 한국어 단독 + 상태 톤 색, 원문(RAW)은 모노 칩으로 분리합니다.
+// ============================================================================
+
+.status-tooltip {
+  // 브라우저 기본 포지셔닝 및 여백 리셋 (위치는 JS 가 알약 기준으로 계산합니다)
+  position: absolute;
+  margin: 0;
+  background-color: vars.$color-surface;
+  border: 1px solid vars.$color-border-strong;
+  border-radius: vars.$radius-medium;
+  padding: vars.$spacing-4;
+  box-shadow: vars.$shadow-card;
+  color: vars.$color-text-primary;
+
+  // 텍스트 스타일 규격화
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
+  width: max-content;
+  max-width: min(340px, calc(100vw - #{vars.$spacing-4 * 2}));
+  word-break: keep-all;
+  overflow: visible; // 화살표가 튀어나와 보여야 합니다.
+
+  // 부드러운 전환 효과 설정
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    display 0.15s ease allow-discrete,
+    overlay 0.15s ease allow-discrete;
+
+  &:popover-open {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  // 알약을 가리키는 화살표입니다. 수평 위치는 JS 가 --tooltip-arrow-left 로 보정합니다.
+  &::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: var(--tooltip-arrow-left, 50%);
+    width: 9px;
+    height: 9px;
+    transform: translateX(-50%) rotate(45deg);
+    background-color: vars.$color-surface-raised;
+    border-left: 1px solid vars.$color-border-strong;
+    border-top: 1px solid vars.$color-border-strong;
+  }
+
+  // 상태 제목: 도트 + 한국어 제목, 상태 톤으로 채색합니다.
+  .tooltip-title {
+    display: flex;
+    align-items: center;
+    gap: vars.$spacing-2;
+    margin: 0 0 vars.$spacing-2;
+    font-size: 13px;
+    font-weight: 700;
+    color: vars.$color-text-primary;
+
+    .tooltip-title-dot {
+      width: 7px;
+      height: 7px;
+      flex: none;
+      border-radius: 50%;
+      background-color: currentColor;
+    }
+
+    &.is-tone-ready {
+      color: vars.$color-ready;
+    }
+
+    &.is-tone-pending {
+      color: vars.$color-pending;
+    }
+
+    &.is-tone-error {
+      color: vars.$color-error;
+    }
+  }
+
+  // 원시 진단 결과: RAW 라벨 + 모노 코드 칩
+  .tooltip-raw {
+    margin-top: vars.$spacing-3;
+    padding-top: vars.$spacing-3;
+    border-top: 1px solid vars.$color-border;
+    display: flex;
+    align-items: flex-start;
+    gap: vars.$spacing-2;
+    font-family: vars.$font-mono;
+    font-size: 11px;
+
+    .tooltip-raw-label {
+      flex: none;
+      padding-top: 3px;
+      color: vars.$color-text-muted;
+      letter-spacing: 0.08em;
+    }
+
+    code {
+      font-family: vars.$font-mono;
+      color: vars.$color-text-primary;
+      background-color: vars.$color-chip-surface;
+      border: 1px solid vars.$color-border;
+      border-radius: vars.$radius-small;
+      padding: 2px vars.$spacing-2;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-width: 0;
+    }
+  }
+
+  // 상태별 본문의 보조 설명 문단 스타일
+  .tooltip-description {
+    margin-top: vars.$spacing-1;
+    color: vars.$color-text-secondary;
+
+    &.is-spaced {
+      margin-top: vars.$spacing-2;
+    }
+  }
+
+  // 오류 상태 제목 및 원시 오류 본문 스타일
+  .tooltip-error-title {
+    font-weight: 700;
+    color: vars.$color-error;
+    margin-bottom: vars.$spacing-2;
+  }
+
+  .tooltip-error-detail {
+    margin: vars.$spacing-1 0 vars.$spacing-2;
+    padding: vars.$spacing-2;
+    background: vars.$color-error-surface;
+    border: 1px solid vars.$color-error-border-soft;
+    border-radius: vars.$radius-small;
+    font-size: 11px;
+    color: vars.$color-error-detail-text;
+    font-family: vars.$font-mono;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  // 툴팁 내부 가이드 리스트 및 실험 플래그 링크 스타일
+  ul {
+    margin: vars.$spacing-1 0 0;
+    padding-left: vars.$spacing-4;
+    color: vars.$color-text-secondary;
+
+    ul {
+      padding-left: vars.$spacing-3;
+      list-style-type: circle;
+    }
+  }
+
+  .flag-link {
+    color: vars.$color-link;
+    text-decoration: underline;
+    font-family: vars.$font-mono;
+    font-size: 11px;
+    word-break: break-all;
+  }
+
+  .version-error {
+    color: vars.$color-error;
+    font-weight: bold;
+  }
+
+  .version-warning {
+    color: vars.$color-pending;
+    font-weight: bold;
+  }
+
+  .version-success {
+    color: vars.$color-ready;
+    font-weight: bold;
+  }
+
+  // 모델 다운로드 트리거 버튼: 평면 단색 액센트
+  .download-button {
+    display: inline-block;
+    margin-top: vars.$spacing-2;
+    padding: vars.$spacing-2 vars.$spacing-3;
+    background-color: vars.$color-accent;
+    border: none;
+    border-radius: vars.$radius-small;
+    color: vars.$color-text-inverse;
+    font-family: vars.$font-sans;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      filter 0.2s ease,
+      transform 0.1s ease;
+    outline: none;
+
+    &:hover {
+      filter: brightness(0.92);
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+
+    &:focus-visible {
+      outline: 2px solid vars.$color-accent;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      background: vars.$color-chip-surface;
+      color: vars.$color-text-muted;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
+    }
+  }
+
+  .download-error-message {
+    color: vars.$color-error;
+    font-size: 11px;
+    font-family: vars.$font-mono;
+    margin-top: vars.$spacing-1;
+    word-break: break-all;
+    display: block;
+  }
+
+  .progress-container {
+    margin-top: vars.$spacing-2;
+    width: 100%;
+  }
+
+  .progress-bar-background {
+    width: 100%;
+    height: 6px;
+    background-color: vars.$color-track-surface;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  // 다운로드 진행률(JS 가 width 로 갱신): 평면 단색 액센트 채움(그라디언트·시머 없음).
+  .progress-bar-fill {
+    width: 0%;
+    height: 100%;
+    background-color: vars.$color-accent;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  .progress-text {
+    margin-top: vars.$spacing-1;
+    font-size: 11px;
+    color: vars.$color-text-secondary;
+    text-align: right;
+  }
+}
+
+// 툴팁 활성화 직전의 상태 정의
+@starting-style {
+  .status-tooltip:popover-open {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+// 툴팁 활성화 시 백그라운드를 딤드/가림 없이 둡니다.
+.status-tooltip::backdrop {
+  display: none !important;
+  background: transparent !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-tooltip {
+    transition: none;
+  }
+}

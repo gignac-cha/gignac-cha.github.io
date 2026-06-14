@@ -1,0 +1,86 @@
+@use './variables' as vars;
+
+// ============================================================================
+// 상태 알약 — 모노 11px, 상태 도트 + 라벨, rgba 배경/원색 텍스트/동색 보더 공식
+// 기본(진단 중) 상태는 pending 과 같은 톤으로 보여줍니다.
+// ============================================================================
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0; // 좁은 카드에서 알약 대신 제목이 줄어들도록 형태를 방어합니다.
+  font-family: vars.$font-mono;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  padding: vars.$spacing-1 10px;
+  border-radius: vars.$radius-pill;
+  border: 1px solid vars.$color-pending-border;
+  background-color: vars.$color-pending-surface;
+  color: vars.$color-pending;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+
+  &:focus-visible {
+    outline: 2px solid vars.$color-accent;
+    outline-offset: 2px;
+  }
+
+  .pill-dot {
+    width: 6px;
+    height: 6px;
+    flex: none;
+    border-radius: 50%;
+    background-color: currentColor;
+    // 기본(진단 중) 상태의 도트는 펄스로 진행 중임을 알립니다.
+    animation: pulse-dot 1.6s ease-in-out infinite;
+  }
+
+  &.is-ready {
+    color: vars.$color-ready;
+    background-color: vars.$color-ready-surface;
+    border-color: vars.$color-ready-border;
+
+    .pill-dot {
+      animation: none;
+    }
+  }
+
+  &.is-pending {
+    color: vars.$color-pending;
+    background-color: vars.$color-pending-surface;
+    border-color: vars.$color-pending-border;
+  }
+
+  &.is-disabled {
+    color: vars.$color-error;
+    background-color: vars.$color-error-surface;
+    border-color: vars.$color-error-border;
+
+    .pill-dot {
+      animation: none;
+    }
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-pill .pill-dot {
+    animation: none;
+  }
+}
