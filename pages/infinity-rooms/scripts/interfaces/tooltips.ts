@@ -76,16 +76,6 @@ export function transitionTooltip(state: TooltipStateMachineState, event: Toolti
   }
 }
 
-// Popover API 미지원 환경을 대비한 구조적 타입 가드입니다.
-interface PopoverElement {
-  showPopover(): void;
-  hidePopover(): void;
-}
-
-function isPopoverElement(element: unknown): element is PopoverElement {
-  return typeof element === 'object' && element !== null && 'showPopover' in element && 'hidePopover' in element;
-}
-
 // 상태 톤입니다. 툴팁 제목(도트 + 텍스트)의 색을 결정합니다.
 export type StatusTone = 'ready' | 'pending' | 'error';
 
@@ -135,6 +125,28 @@ export function createStatusTooltip(options: { tooltipElementId: string; pillEle
     }
   };
 
+  // Popover API(top layer) 지원 여부를 한 번만 판정합니다.
+  // 미지원 브라우저(예: 구형/타 브라우저)에서는 showPopover 가 없어 툴팁이 영영 보이지 않으므로,
+  // 카드 안 일반 흐름 블록으로 펼치는 폴백(.is-open-fallback)으로 같은 가이드를 노출합니다.
+  const supportsPopover = typeof tooltipElement.showPopover === 'function' && typeof tooltipElement.hidePopover === 'function';
+
+  const showTooltip = () => {
+    if (supportsPopover) {
+      tooltipElement.showPopover();
+      positionTooltip();
+    } else {
+      tooltipElement.classList.add('is-open-fallback');
+    }
+  };
+
+  const hideTooltip = () => {
+    if (supportsPopover) {
+      tooltipElement.hidePopover();
+    } else {
+      tooltipElement.classList.remove('is-open-fallback');
+    }
+  };
+
   store.subscribe((previousState, nextState) => {
     if (previousState.visibility === nextState.visibility) {
       return;
@@ -143,27 +155,19 @@ export function createStatusTooltip(options: { tooltipElementId: string; pillEle
     try {
       if (nextState.visibility === 'closed') {
         tooltipElement.style.pointerEvents = '';
-        if (isPopoverElement(tooltipElement)) {
-          tooltipElement.hidePopover();
-        }
+        hideTooltip();
         document.removeEventListener('click', handleOutsideClick);
       } else if (nextState.visibility === 'hovered') {
         tooltipElement.style.pointerEvents = 'none';
-        if (isPopoverElement(tooltipElement)) {
-          tooltipElement.showPopover();
-        }
-        positionTooltip();
+        showTooltip();
       } else {
         tooltipElement.style.pointerEvents = 'auto';
-        if (isPopoverElement(tooltipElement)) {
-          tooltipElement.showPopover();
-        }
-        positionTooltip();
+        showTooltip();
         tooltipElement.focus();
         document.addEventListener('click', handleOutsideClick);
       }
     } catch (error) {
-      console.error('툴팁 popover 제어에 실패했습니다:', error);
+      console.error('툴팁 표시 제어에 실패했습니다:', error);
     }
   });
 
