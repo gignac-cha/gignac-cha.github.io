@@ -15,6 +15,7 @@ export type TooltipStateMachineEvent =
   | { type: 'MOUSE_ENTER' }
   | { type: 'MOUSE_LEAVE' }
   | { type: 'CLICK' }
+  | { type: 'OPEN' }
   | { type: 'OUTSIDE_CLICK' };
 
 export const initialTooltipStateMachineState: TooltipStateMachineState = {
@@ -56,6 +57,16 @@ export function transitionTooltip(state: TooltipStateMachineState, event: Toolti
       }
       return { ...state, visibility: 'pinned' };
     }
+    case 'OPEN': {
+      // 외부(경고 카드의 '해결 방법 보기')에서 호출하는 멱등 열기입니다. 토글하지 않고 항상 pinned 로 수렴합니다.
+      if (!state.isContentReady) {
+        return state;
+      }
+      if (state.visibility === 'pinned') {
+        return state;
+      }
+      return { ...state, visibility: 'pinned' };
+    }
     case 'OUTSIDE_CLICK': {
       if (state.visibility === 'pinned') {
         return { ...state, visibility: 'closed' };
@@ -82,6 +93,8 @@ export interface StatusTooltip {
   element: HTMLDivElement;
   // 콘텐츠를 교체하고 툴팁을 열 수 있는 상태로 표시합니다.
   setContent(titleText: string, contentNode: Node, rawMessage: string, tone: StatusTone): void;
+  // 콘텐츠가 준비되어 있으면 툴팁을 pinned 로 엽니다(이미 열려 있으면 무시). 외부 진입점에서 사용합니다.
+  open(): void;
 }
 
 export function createStatusTooltip(options: { tooltipElementId: string; pillElement: HTMLElement }): StatusTooltip {
@@ -166,6 +179,9 @@ export function createStatusTooltip(options: { tooltipElementId: string; pillEle
     setContent(titleText, contentNode, rawMessage, tone) {
       tooltipElement.replaceChildren(buildTooltipFragment(titleText, contentNode, rawMessage, tone));
       store.dispatch({ type: 'CONTENT_READY' });
+    },
+    open() {
+      store.dispatch({ type: 'OPEN' });
     },
   };
 }

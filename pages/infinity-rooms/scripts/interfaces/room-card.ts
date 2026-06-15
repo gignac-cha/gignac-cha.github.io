@@ -99,6 +99,13 @@ export interface RoomCard {
   destroy(): void;
 }
 
+export interface RoomCardOptions {
+  // 경고 카드의 '해결 방법 보기'가 호출할, 미지원 상태 카드의 가이드 열기 콜백들입니다.
+  // 미지원 분기(Prompt API / WebGPU)에 맞는 카드를 화면에 띄우고 해결 가이드를 엽니다.
+  onResolvePromptAPI?: () => void;
+  onResolveWebGPU?: () => void;
+}
+
 // 캔버스 좌하단에 띄우는 테마 칩(라벨 + 테마명)을 만듭니다.
 function createThemeChip(): { element: HTMLDivElement; nameElement: HTMLSpanElement } {
   const chip = document.createElement('div');
@@ -379,7 +386,9 @@ function createDetailPanel(): {
   };
 }
 
-export function createRoomCard(): RoomCard {
+export function createRoomCard(options: RoomCardOptions = {}): RoomCard {
+  const { onResolvePromptAPI, onResolveWebGPU } = options;
+
   const card = document.createElement('div');
   card.className = 'new-card';
 
@@ -669,7 +678,7 @@ export function createRoomCard(): RoomCard {
   };
   document.addEventListener('fullscreenchange', handleFullscreenChange);
 
-  const showWarning = (titleText: string, descriptionText: string) => {
+  const showWarning = (titleText: string, descriptionText: string, onResolution?: () => void) => {
     // 가용성 상실로 인한 경고는 장면을 정지(stop)만 해 자원을 보존하고, 재가용 시 재개할 수 있게 둡니다.
     // 시작 실패(hasStartFailed) 경고는 장면이 손상된 상태이므로 호출부에서 별도로 dispose 합니다.
     if (sceneState.handle && !sceneState.hasStartFailed) {
@@ -681,7 +690,7 @@ export function createRoomCard(): RoomCard {
 
     // 이전 경고 본문이 있으면 제거하고 새 본문으로 교체합니다.
     card.querySelector('.warning-card-content')?.remove();
-    card.appendChild(buildWarningCardContent({ titleText, descriptionText, hasResolutionAction: true }));
+    card.appendChild(buildWarningCardContent({ titleText, descriptionText, hasResolutionAction: true, onResolution }));
   };
 
   // 장면 시작(또는 재개)을 수행합니다. 이미 동작 중이면 무시하고, 정지(stop)된 상태면 재개합니다.
@@ -761,15 +770,15 @@ export function createRoomCard(): RoomCard {
     const { isPromptAPIAvailable, isWebGPUAvailable } = availability;
 
     if (isPromptAPIAvailable === false && isWebGPUAvailable === false) {
-      showWarning('3D 공간을 시작할 수 없습니다', 'Prompt API와 WebGPU 모두 사용 불가 상태입니다. 설정을 활성화해 주세요.');
+      showWarning('3D 공간을 시작할 수 없습니다', 'Prompt API와 WebGPU 모두 사용 불가 상태입니다. 설정을 활성화해 주세요.', onResolvePromptAPI);
       return;
     }
     if (isPromptAPIAvailable === false) {
-      showWarning('3D 공간을 시작할 수 없습니다', 'Prompt API가 활성화되지 않아 WebGPU 3D 공간을 구동할 수 없습니다. 크롬 Built-in AI 설정을 확인해 주세요.');
+      showWarning('3D 공간을 시작할 수 없습니다', 'Prompt API가 활성화되지 않아 WebGPU 3D 공간을 구동할 수 없습니다. 크롬 Built-in AI 설정을 확인해 주세요.', onResolvePromptAPI);
       return;
     }
     if (isWebGPUAvailable === false) {
-      showWarning('3D 공간을 시작할 수 없습니다', '이 기기/브라우저에서 WebGPU가 지원되지 않습니다. 하드웨어 가속 설정을 확인해 주세요.');
+      showWarning('3D 공간을 시작할 수 없습니다', '이 기기/브라우저에서 WebGPU가 지원되지 않습니다. 하드웨어 가속 설정을 확인해 주세요.', onResolveWebGPU);
       return;
     }
 
