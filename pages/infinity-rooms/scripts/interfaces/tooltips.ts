@@ -15,6 +15,7 @@ export type TooltipStateMachineEvent =
   | { type: 'MOUSE_ENTER' }
   | { type: 'MOUSE_LEAVE' }
   | { type: 'CLICK' }
+  | { type: 'OPEN' }
   | { type: 'OUTSIDE_CLICK' };
 
 export const initialTooltipStateMachineState: TooltipStateMachineState = {
@@ -56,6 +57,16 @@ export function transitionTooltip(state: TooltipStateMachineState, event: Toolti
       }
       return { ...state, visibility: 'pinned' };
     }
+    case 'OPEN': {
+      // 외부(경고 카드의 '해결 방법 보기')에서 호출하는 멱등 열기입니다. 토글하지 않고 항상 pinned 로 수렴합니다.
+      if (!state.isContentReady) {
+        return state;
+      }
+      if (state.visibility === 'pinned') {
+        return state;
+      }
+      return { ...state, visibility: 'pinned' };
+    }
     case 'OUTSIDE_CLICK': {
       if (state.visibility === 'pinned') {
         return { ...state, visibility: 'closed' };
@@ -65,16 +76,6 @@ export function transitionTooltip(state: TooltipStateMachineState, event: Toolti
   }
 }
 
-// Popover API 미지원 환경을 대비한 구조적 타입 가드입니다.
-interface PopoverElement {
-  showPopover(): void;
-  hidePopover(): void;
-}
-
-function isPopoverElement(element: unknown): element is PopoverElement {
-  return typeof element === 'object' && element !== null && 'showPopover' in element && 'hidePopover' in element;
-}
-
 // 상태 톤입니다. 툴팁 제목(도트 + 텍스트)의 색을 결정합니다.
 export type StatusTone = 'ready' | 'pending' | 'error';
 
@@ -82,6 +83,8 @@ export interface StatusTooltip {
   element: HTMLDivElement;
   // 콘텐츠를 교체하고 툴팁을 열 수 있는 상태로 표시합니다.
   setContent(titleText: string, contentNode: Node, rawMessage: string, tone: StatusTone): void;
+  // 콘텐츠가 준비되어 있으면 툴팁을 pinned 로 엽니다(이미 열려 있으면 무시). 외부 진입점에서 사용합니다.
+  open(): void;
 }
 
 export function createStatusTooltip(options: { tooltipElementId: string; pillElement: HTMLElement }): StatusTooltip {
@@ -122,6 +125,28 @@ export function createStatusTooltip(options: { tooltipElementId: string; pillEle
     }
   };
 
+  // Popover API(top layer) 지원 여부를 한 번만 판정합니다.
+  // 미지원 브라우저(예: 구형/타 브라우저)에서는 showPopover 가 없어 툴팁이 영영 보이지 않으므로,
+  // 카드 안 일반 흐름 블록으로 펼치는 폴백(.is-open-fallback)으로 같은 가이드를 노출합니다.
+  const supportsPopover = typeof tooltipElement.showPopover === 'function' && typeof tooltipElement.hidePopover === 'function';
+
+  const showTooltip = () => {
+    if (supportsPopover) {
+      tooltipElement.showPopover();
+      positionTooltip();
+    } else {
+      tooltipElement.classList.add('is-open-fallback');
+    }
+  };
+
+  const hideTooltip = () => {
+    if (supportsPopover) {
+      tooltipElement.hidePopover();
+    } else {
+      tooltipElement.classList.remove('is-open-fallback');
+    }
+  };
+
   store.subscribe((previousState, nextState) => {
     if (previousState.visibility === nextState.visibility) {
       return;
@@ -130,27 +155,19 @@ export function createStatusTooltip(options: { tooltipElementId: string; pillEle
     try {
       if (nextState.visibility === 'closed') {
         tooltipElement.style.pointerEvents = '';
-        if (isPopoverElement(tooltipElement)) {
-          tooltipElement.hidePopover();
-        }
+        hideTooltip();
         document.removeEventListener('click', handleOutsideClick);
       } else if (nextState.visibility === 'hovered') {
         tooltipElement.style.pointerEvents = 'none';
-        if (isPopoverElement(tooltipElement)) {
-          tooltipElement.showPopover();
-        }
-        positionTooltip();
+        showTooltip();
       } else {
         tooltipElement.style.pointerEvents = 'auto';
-        if (isPopoverElement(tooltipElement)) {
-          tooltipElement.showPopover();
-        }
-        positionTooltip();
+        showTooltip();
         tooltipElement.focus();
         document.addEventListener('click', handleOutsideClick);
       }
     } catch (error) {
-      console.error('툴팁 popover 제어에 실패했습니다:', error);
+      console.error('툴팁 표시 제어에 실패했습니다:', error);
     }
   });
 
@@ -166,6 +183,9 @@ export function createStatusTooltip(options: { tooltipElementId: string; pillEle
     setContent(titleText, contentNode, rawMessage, tone) {
       tooltipElement.replaceChildren(buildTooltipFragment(titleText, contentNode, rawMessage, tone));
       store.dispatch({ type: 'CONTENT_READY' });
+    },
+    open() {
+      store.dispatch({ type: 'OPEN' });
     },
   };
 }

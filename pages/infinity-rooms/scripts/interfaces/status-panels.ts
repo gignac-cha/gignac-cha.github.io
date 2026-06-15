@@ -36,6 +36,8 @@ export interface StatusPanelOptions<Status extends string> {
 export interface StatusPanel<Status extends string> {
   element: HTMLElement;
   onStatusChange(callback: (status: Status) => void): void;
+  // 카드를 화면 안으로 스크롤하고 해결 가이드 툴팁을 엽니다. 경고 카드의 '해결 방법 보기'가 호출합니다.
+  openTroubleshooting(): void;
 }
 
 // 진단 진행 상태 머신입니다. diagnose 의 rejection 도 failed 상태로 수렴합니다.
@@ -158,6 +160,11 @@ export function createStatusPanel<Status extends string>(options: StatusPanelOpt
       if (state.phase === 'diagnosed') {
         callback(state.status);
       }
+    },
+    openTroubleshooting() {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      panel.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+      statusTooltip.open();
     },
   };
 }

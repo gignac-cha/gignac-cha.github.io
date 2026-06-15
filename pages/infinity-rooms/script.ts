@@ -51,7 +51,11 @@ function initialize(): void {
   root.appendChild(createStatusCardsContainer([promptAPIStatusPanel.element, webGPUStatusPanel.element]));
 
   // 스테이지: 캔버스가 주인공인 방 카드와 미니맵 HUD 패널을 한 그리드로 묶습니다.
-  const roomCard = createRoomCard();
+  // 경고 카드의 '해결 방법 보기'는 미지원 상태 카드를 화면에 띄우고 해결 가이드 툴팁을 직접 엽니다.
+  const roomCard = createRoomCard({
+    onResolvePromptAPI: () => promptAPIStatusPanel.openTroubleshooting(),
+    onResolveWebGPU: () => webGPUStatusPanel.openTroubleshooting(),
+  });
   const stage = document.createElement('section');
   stage.className = 'stage';
   stage.setAttribute('aria-label', '3D 방 탐험');

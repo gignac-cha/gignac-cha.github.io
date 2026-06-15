@@ -279,3 +279,24 @@
     transition: none;
   }
 }
+
+// ----------------------------------------------------------------------------
+// Popover API 미지원 폴백 — top layer(showPopover) 대신 카드 안 일반 흐름 블록으로
+// 가이드를 펼칩니다. JS(tooltips.ts)가 .is-open-fallback 을 토글합니다.
+// 위치 계산/화살표 없이 항상 보이게 해, 구형·타 브라우저에서도 해결 가이드를 노출합니다.
+// ----------------------------------------------------------------------------
+.status-tooltip.is-open-fallback {
+  position: static;
+  display: block;
+  opacity: 1;
+  transform: none;
+  width: auto;
+  max-width: 100%;
+  margin-top: vars.$spacing-3;
+  pointer-events: auto;
+
+  // 일반 흐름 배치라 알약을 가리키는 화살표는 의미가 없어 숨깁니다.
+  &::before {
+    display: none;
+  }
+}
