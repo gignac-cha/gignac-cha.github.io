@@ -24,7 +24,6 @@
   "engines": {
     "node": ">=24.1.0"
   },
-  "packageManager": "pnpm@10.11.0",
   "devDependencies": {
     "@types/node": "^22.15.21",
     "esbuild": "^0.25.4",

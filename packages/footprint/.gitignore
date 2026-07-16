@@ -1,0 +1,4 @@
+outputs/
+*.bundle.js
+test-results/
+playwright-report/

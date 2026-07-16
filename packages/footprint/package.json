@@ -1,15 +1,28 @@
 {
-  "name": "@packages/footprint",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "build": "esbuild footprint.ts --bundle --outfile=footprint.js --platform=browser --target=esnext --format=esm",
-    "copy": "rsync footprint.js ../../page/modules/",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "name": "footprint",
+  "version": "0.1.0",
+  "description": "Tiny page-access footprint tracker — one step() call, sendBeacon transport, endpoint resolved from browser storage.",
+  "type": "module",
+  "types": "./outputs/footprint.d.ts",
+  "exports": {
+    ".": {
+      "types": "./outputs/footprint.d.ts",
+      "import": "./outputs/footprint.js"
+    }
   },
-  "keywords": [],
-  "author": "",
+  "scripts": {
+    "build": "tsc && esbuild footprint.ts --bundle --platform=browser --target=esnext --format=esm --outfile=outputs/footprint.bundle.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:browser": "pnpm build && playwright test"
+  },
+  "author": "Jin-Hyeok Cha",
   "license": "ISC",
-  "packageManager": "pnpm@10.11.0"
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.1.1",
+    "esbuild": "^0.28.1",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
+  }
 }

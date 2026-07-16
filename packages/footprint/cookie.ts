@@ -1,4 +1,4 @@
-type CookieEntry = { name: string; value: string };
+type CookieEntry = { name?: string; value?: string };
 type CookieOptions = {
   name: string;
   value: string;
@@ -12,31 +12,32 @@ type CookieStoreLike = {
   set(options: CookieOptions): Promise<void>;
 };
 
-declare global {
-  interface Window {
-    cookieStore?: CookieStoreLike;
+export const parseCookie = (cookie: string, name: string): string | undefined => {
+  const prefix = `${name}=`;
+  const found = cookie.split('; ').find((entry) => entry.startsWith(prefix));
+  return found ? found.slice(prefix.length) : undefined;
+};
+
+export const serializeCookie = (options: CookieOptions): string => {
+  const parts: string[] = [`${options.name}=${options.value}`];
+  parts.push(`Path=${options.path ?? '/'}`);
+  if (typeof options.expires === 'number') {
+    parts.push(`Expires=${new Date(options.expires).toUTCString()}`);
   }
-}
+  parts.push(`SameSite=${options.sameSite ?? 'lax'}`);
+  if (options.secure) {
+    parts.push('Secure');
+  }
+  return parts.join('; ');
+};
 
 const cookieStore: CookieStoreLike = window.cookieStore ?? {
   get: (name: string): Promise<CookieEntry | null> => {
-    const prefix: string = `${name}=`;
-    const found: string | undefined = document.cookie
-      .split('; ')
-      .find((entry: string) => entry.startsWith(prefix));
-    return Promise.resolve(found ? { name, value: found.slice(prefix.length) } : null);
+    const value = parseCookie(document.cookie, name);
+    return Promise.resolve(value === undefined ? null : { name, value });
   },
   set: (options: CookieOptions): Promise<void> => {
-    const parts: string[] = [`${options.name}=${options.value}`];
-    parts.push(`Path=${options.path ?? '/'}`);
-    if (typeof options.expires === 'number') {
-      parts.push(`Expires=${new Date(options.expires).toUTCString()}`);
-    }
-    parts.push(`SameSite=${options.sameSite ?? 'lax'}`);
-    if (options.secure ?? location.protocol === 'https:') {
-      parts.push('Secure');
-    }
-    document.cookie = parts.join('; ');
+    document.cookie = serializeCookie({ ...options, secure: options.secure ?? location.protocol === 'https:' });
     return Promise.resolve();
   },
 };
