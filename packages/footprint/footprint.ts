@@ -177,11 +177,12 @@ const send = (endpoint: string, payload: object): boolean => {
 // crypto.randomUUID 는 보안 컨텍스트(HTTPS/localhost) 전용이라 비보안 컨텍스트에서는 없습니다.
 // 없으면 getRandomValues(비보안 컨텍스트에서도 제공)로 UUID v4 를 직접 만들고, 그마저 없으면 Math.random 으로 대체합니다.
 const createUUID = (): string => {
-  if (typeof crypto.randomUUID === 'function') {
+  const hasCrypto = typeof crypto !== 'undefined';
+  if (hasCrypto && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();
   }
   const bytes = new Uint8Array(16);
-  if (typeof crypto.getRandomValues === 'function') {
+  if (hasCrypto && typeof crypto.getRandomValues === 'function') {
     crypto.getRandomValues(bytes);
   } else {
     for (let index = 0; index < bytes.length; index += 1) {

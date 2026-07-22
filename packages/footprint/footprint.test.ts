@@ -297,6 +297,49 @@ describe('payload', () => {
   });
 });
 
+describe('device resilience', () => {
+  // 버전 4·variant 비트까지 검증하는 엄격한 UUID v4 패턴입니다.
+  const UUID_V4_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
+  // crypto 객체의 특정 메서드만 잠시 없앴다가 복원합니다(비보안 컨텍스트 흉내).
+  const withoutCryptoMethod = async (method: 'randomUUID' | 'getRandomValues', run: () => Promise<void>) => {
+    const original = (crypto as unknown as Record<string, unknown>)[method];
+    Object.defineProperty(crypto, method, { configurable: true, value: undefined });
+    try {
+      await run();
+    } finally {
+      Object.defineProperty(crypto, method, { configurable: true, value: original });
+    }
+  };
+
+  it('leaves screen.orientation undefined instead of throwing when it is missing', async () => {
+    const original = (screen as { orientation?: unknown }).orientation;
+    delete (screen as { orientation?: unknown }).orientation;
+    try {
+      const { body } = await fire();
+      expect(body.screen.orientation).toBeUndefined();
+    } finally {
+      (screen as { orientation?: unknown }).orientation = original;
+    }
+  });
+
+  it('falls back to a valid UUID v4 via getRandomValues when crypto.randomUUID is absent', async () => {
+    await withoutCryptoMethod('randomUUID', async () => {
+      const { body } = await fire();
+      expect(body.uuid).toMatch(UUID_V4_PATTERN);
+    });
+  });
+
+  it('falls back to Math.random when neither randomUUID nor getRandomValues exists', async () => {
+    await withoutCryptoMethod('randomUUID', async () => {
+      await withoutCryptoMethod('getRandomValues', async () => {
+        const { body } = await fire();
+        expect(body.uuid).toMatch(UUID_V4_PATTERN);
+      });
+    });
+  });
+});
+
 describe('transport', () => {
   it('sends a text/plain blob so the request stays a CORS-simple request', async () => {
     const { beacon } = await fire();

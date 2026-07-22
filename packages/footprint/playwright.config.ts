@@ -10,7 +10,7 @@ export default defineConfig({
   },
   webServer: {
     command: 'node tests/server.ts',
-    url: 'http://127.0.0.1:4173/healthz',
+    url: 'http://127.0.0.1:4173/health',
     reuseExistingServer: !process.env.CI,
   },
   projects: [{ name: 'chromium', use: { browserName: 'chromium' } }],

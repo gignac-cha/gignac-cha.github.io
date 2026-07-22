@@ -21,7 +21,7 @@ const routes = new Map<string, Route>([
 
 const page = createServer(async (request, response) => {
   const url = new URL(request.url ?? '/', `http://127.0.0.1:${PAGE_PORT}`);
-  if (url.pathname === '/healthz') {
+  if (url.pathname === '/health') {
     response.writeHead(200, { 'Content-Type': 'text/plain' });
     response.end('ok');
     return;
@@ -57,7 +57,7 @@ const requests: CollectedRequest[] = [];
 
 const collector = createServer((request, response) => {
   const url = new URL(request.url ?? '/', `http://127.0.0.1:${COLLECTOR_PORT}`);
-  if (request.method === 'GET' && url.pathname === '/healthz') {
+  if (request.method === 'GET' && url.pathname === '/health') {
     response.writeHead(200, { 'Content-Type': 'text/plain' });
     response.end('ok');
     return;
