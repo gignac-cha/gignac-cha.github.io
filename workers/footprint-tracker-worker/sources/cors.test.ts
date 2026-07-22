@@ -29,21 +29,21 @@ describe('corsHeaders', () => {
     });
   });
 
-  it('returns no headers for a non-matching origin', () => {
-    expect(corsHeaders('https://evil.example', allowlist)).toEqual({});
+  it('returns only Vary: Origin for a non-matching origin', () => {
+    expect(corsHeaders('https://evil.example', allowlist)).toEqual({ Vary: 'Origin' });
   });
 
   it('matches only exactly — not by prefix, suffix or trailing slash', () => {
-    expect(corsHeaders('http://localhost:5173/', allowlist)).toEqual({});
-    expect(corsHeaders('http://localhost:51730', allowlist)).toEqual({});
-    expect(corsHeaders('https://sub.footprint-viewer.pages.dev', allowlist)).toEqual({});
+    expect(corsHeaders('http://localhost:5173/', allowlist)).toEqual({ Vary: 'Origin' });
+    expect(corsHeaders('http://localhost:51730', allowlist)).toEqual({ Vary: 'Origin' });
+    expect(corsHeaders('https://sub.footprint-viewer.pages.dev', allowlist)).toEqual({ Vary: 'Origin' });
   });
 
-  it('returns no headers when there is no Origin', () => {
-    expect(corsHeaders(null, allowlist)).toEqual({});
+  it('returns only Vary: Origin when there is no Origin', () => {
+    expect(corsHeaders(null, allowlist)).toEqual({ Vary: 'Origin' });
   });
 
-  it('returns no headers when the allowlist is empty', () => {
-    expect(corsHeaders('http://localhost:5173', [])).toEqual({});
+  it('returns only Vary: Origin when the allowlist is empty', () => {
+    expect(corsHeaders('http://localhost:5173', [])).toEqual({ Vary: 'Origin' });
   });
 });

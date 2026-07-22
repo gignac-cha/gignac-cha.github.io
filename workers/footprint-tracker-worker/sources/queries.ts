@@ -36,6 +36,9 @@ export class ConfigurationError extends Error {}
 
 const TABLE_NAME_PATTERN = /^[A-Za-z0-9_.]+$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+// 10진 정수 리터럴만 허용합니다. Number() 는 '1e2'(지수)·'0x1f'(16진) 도 정수로 만들지만,
+// API 표면에서는 예측 가능한 10진 표기만 받도록 형식 단계에서 거릅니다.
+const INTEGER_PATTERN = /^-?\d+$/;
 
 // 봇 판별용 User-Agent 힌트(전부 코드 안의 상수). ILIKE 로 대소문자 무시 부분일치를 봅니다.
 // 반드시 작은따옴표·LIKE 와일드카드(%, _)를 포함하지 않아야 합니다(그래야 리터럴로 안전하게 삽입됨).
@@ -84,6 +87,9 @@ export const validateParameters = (
         }
         values[parameter.name] = parameter.default;
         continue;
+      }
+      if (!INTEGER_PATTERN.test(raw)) {
+        throw new ParameterError(`parameter ${parameter.name} must be an integer`);
       }
       const parsed = Number(raw);
       if (!Number.isInteger(parsed)) {

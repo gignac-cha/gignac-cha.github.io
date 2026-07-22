@@ -14,7 +14,7 @@ Only a **closed set of predefined queries** is reachable. No user input ever rea
 
 | Request | Response |
 |---|---|
-| `GET /healthz` | `200 ok` (no CORS) |
+| `GET /health` | `200 ok` (no CORS) |
 | `GET /queries` | `200` `{ queries: [...] }` — the query catalog |
 | `GET /queries/{name}?...` | `200` `{ name, rows }` |
 | invalid / missing parameter value | `400` `{ error }` |

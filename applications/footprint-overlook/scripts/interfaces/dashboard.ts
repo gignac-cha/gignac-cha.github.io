@@ -3,6 +3,7 @@
 
 import { computeDateRange, formatLocalDate } from '../tools/date-ranges.ts';
 import { shortenHref } from '../tools/formatting.ts';
+import { createRequestTokenGuard } from '../tools/request-tokens.ts';
 import {
   findValueForDay,
   isEmptyPeriod,
@@ -72,11 +73,11 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
   const recentSection = createSection({ title: '최근 발자국', subtitle: 'recent-footprints', className: 'recent-panel' });
   root.appendChild(recentSection.element);
 
-  // 빠른 연속 선택 시 뒤늦게 도착한 이전 요청이 화면을 덮어쓰지 않도록 토큰으로 최신 요청만 반영합니다.
-  let activeRequestToken = 0;
+  // 빠른 연속 선택 시 뒤늦게 도착한 이전 요청이 화면을 덮어쓰지 않도록 토큰 가드로 최신 요청만 반영합니다.
+  const requestTokenGuard = createRequestTokenGuard();
 
   async function loadRange(days: number): Promise<void> {
-    const requestToken = (activeRequestToken += 1);
+    const requestToken = requestTokenGuard.issue();
 
     const today = new Date();
     const range = computeDateRange(days, today);
@@ -101,7 +102,7 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
       ]);
 
     // 더 최신 요청이 시작됐다면 이 응답은 버립니다.
-    if (requestToken !== activeRequestToken) {
+    if (!requestTokenGuard.isCurrent(requestToken)) {
       return;
     }
 

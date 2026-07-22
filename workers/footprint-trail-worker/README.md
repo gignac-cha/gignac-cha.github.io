@@ -20,7 +20,7 @@ The table format is open (Iceberg), so heavier ad-hoc engines (DuckDB, PyIceberg
 | `POST` any path, JSON object body | `204`, one record sent to the stream |
 | `POST` invalid / non-object JSON | `400`, nothing sent |
 | `POST` body over 64KiB (sendBeacon queue limit) | `413`, nothing sent |
-| `GET /healthz` | `200 ok` |
+| `GET /health` | `200 ok` |
 | anything else (including `OPTIONS` — no preflight ever happens) | `405` |
 
 Record fields (nested values stay JSON strings so the columnar schema is stable): `received_at`, `uuid`, `origin`, `href`, `user_agent`, `arguments` (verbatim `step()` arguments), `cf` (Cloudflare request metadata: country, colo, …), `payload` (full original JSON — lossless, replayable).

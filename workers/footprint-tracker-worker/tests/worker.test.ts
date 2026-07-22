@@ -52,9 +52,9 @@ const dispatch = async (request: Request) => {
 const get = (path: string, headers: Record<string, string> = {}) =>
   dispatch(new IncomingRequest(`${WORKER_URL}${path}`, { method: 'GET', headers }));
 
-describe('GET /healthz', () => {
+describe('GET /health', () => {
   it('answers 200 ok with no upstream call and no CORS', async () => {
-    const response = await get('/healthz', { Origin: ORIGIN });
+    const response = await get('/health', { Origin: ORIGIN });
     expect(response.status).toBe(200);
     expect(await response.text()).toBe('ok');
     expect(outboundCalls).toHaveLength(0);
@@ -63,7 +63,7 @@ describe('GET /healthz', () => {
 });
 
 describe('GET /queries', () => {
-  it('lists the five queries and reflects an allowlisted origin', async () => {
+  it('lists the six queries and reflects an allowlisted origin', async () => {
     const response = await get('/queries', { Origin: ORIGIN });
     expect(response.status).toBe(200);
     const body = (await response.json()) as { queries: Array<{ name: string }> };
@@ -141,7 +141,8 @@ describe('CORS posture on /queries', () => {
     const response = await get('/queries', { Origin: 'https://evil.example' });
     expect(response.status).toBe(200);
     expect(response.headers.get('Access-Control-Allow-Origin')).toBeNull();
-    expect(response.headers.get('Vary')).toBeNull();
+    // 캐시 안전을 위해 오리진이 불일치해도 Vary: Origin 은 항상 내려갑니다.
+    expect(response.headers.get('Vary')).toBe('Origin');
   });
 
   it('omits CORS headers when there is no Origin', async () => {
@@ -174,6 +175,16 @@ describe('CORS posture on /queries', () => {
     expect(response.headers.get('Access-Control-Allow-Origin')).toBeNull();
     expect(response.headers.get('Access-Control-Allow-Methods')).toBe('GET');
   });
+
+  it('answers OPTIONS on a non-/queries path with 204 and no CORS at all', async () => {
+    const response = await dispatch(
+      new IncomingRequest(`${WORKER_URL}/health`, { method: 'OPTIONS', headers: { Origin: ORIGIN } }),
+    );
+    expect(response.status).toBe(204);
+    expect(response.headers.get('Access-Control-Allow-Origin')).toBeNull();
+    expect(response.headers.get('Access-Control-Allow-Methods')).toBeNull();
+    expect(response.headers.get('Vary')).toBeNull();
+  });
 });
 
 describe('error responses', () => {
@@ -200,6 +211,23 @@ describe('error responses', () => {
     const response = await get('/queries/made-up', { Origin: ORIGIN });
     expect(response.status).toBe(404);
     expect(response.headers.get('Access-Control-Allow-Origin')).toBe(ORIGIN);
+  });
+
+  it('answers 404 for a malformed percent-encoded query name instead of crashing', async () => {
+    const response = await get('/queries/%zz', { Origin: ORIGIN });
+    expect(response.status).toBe(404);
+    expect(((await response.json()) as { error: string }).error).toMatch(/unknown query/);
+    expect(response.headers.get('Access-Control-Allow-Origin')).toBe(ORIGIN);
+    expect(outboundCalls).toHaveLength(0);
+  });
+
+  it('answers 405 with CORS on /queries for an allowed origin (browser can read the failure)', async () => {
+    const response = await dispatch(
+      new IncomingRequest(`${WORKER_URL}/queries`, { method: 'POST', headers: { Origin: ORIGIN } }),
+    );
+    expect(response.status).toBe(405);
+    expect(response.headers.get('Access-Control-Allow-Origin')).toBe(ORIGIN);
+    expect(response.headers.get('Vary')).toBe('Origin');
   });
 
   it('answers 404 for an unknown path', async () => {

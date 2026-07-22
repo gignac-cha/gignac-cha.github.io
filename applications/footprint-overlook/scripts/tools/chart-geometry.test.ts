@@ -119,6 +119,7 @@ describe('computeNiceMaximum', () => {
     expect(computeNiceMaximum(48)).toBe(50);
     expect(computeNiceMaximum(50)).toBe(50);
     expect(computeNiceMaximum(120)).toBe(200);
+    expect(computeNiceMaximum(2.3)).toBe(2.5);
   });
 });
 

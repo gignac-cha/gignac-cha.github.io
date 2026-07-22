@@ -10,17 +10,20 @@ export default {
   async fetch(request, environment, context): Promise<Response> {
     const url = new URL(request.url);
 
-    if (request.method === 'GET' && url.pathname === '/healthz') {
+    if (request.method === 'GET' && url.pathname === '/health') {
       return new Response('ok');
     }
     if (request.method !== 'POST') {
       return new Response(null, { status: 405 });
     }
 
-    const bodyText = await request.text();
-    if (bodyText.length > MAXIMUM_BODY_BYTES) {
+    // length(UTF-16 코드 유닛)가 아니라 실제 바이트 수로 한도를 검사합니다.
+    // Content-Length 는 없거나(청크 전송) 압축 해제 전 값일 수 있어 신뢰하지 않습니다.
+    const bodyBytes = await request.arrayBuffer();
+    if (bodyBytes.byteLength > MAXIMUM_BODY_BYTES) {
       return new Response(null, { status: 413 });
     }
+    const bodyText = new TextDecoder().decode(bodyBytes);
     const payload = parsePayload(bodyText);
     if (!payload) {
       return new Response(null, { status: 400 });

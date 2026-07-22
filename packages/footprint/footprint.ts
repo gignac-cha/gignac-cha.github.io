@@ -76,6 +76,9 @@ const collect = () => {
     'userAgentData' in navigator ? navigator.userAgentData : undefined;
   const documentMode: number | undefined =
     'documentMode' in document ? document.documentMode : undefined;
+  // 일부 구형 브라우저(iOS Safari < 16.4)에는 screen.orientation 이 없으므로 documentMode 처럼 가드합니다.
+  const orientation: ScreenOrientation | undefined =
+    'orientation' in screen ? screen.orientation : undefined;
   const memory: MemoryInfo | undefined = 'memory' in performance ? performance.memory : undefined;
   const intl: Intl.ResolvedDateTimeFormatOptions = Intl.DateTimeFormat().resolvedOptions();
   return {
@@ -120,7 +123,7 @@ const collect = () => {
       height: screen.height,
       colorDepth: screen.colorDepth,
       pixelDepth: screen.pixelDepth,
-      orientation: screen.orientation.type,
+      orientation: orientation?.type,
       availWidth: screen.availWidth,
       availHeight: screen.availHeight,
       isExtended: screen.isExtended,
@@ -171,13 +174,33 @@ const send = (endpoint: string, payload: object): boolean => {
   return false;
 };
 
+// crypto.randomUUID 는 보안 컨텍스트(HTTPS/localhost) 전용이라 비보안 컨텍스트에서는 없습니다.
+// 없으면 getRandomValues(비보안 컨텍스트에서도 제공)로 UUID v4 를 직접 만들고, 그마저 없으면 Math.random 으로 대체합니다.
+const createUUID = (): string => {
+  if (typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  const bytes = new Uint8Array(16);
+  if (typeof crypto.getRandomValues === 'function') {
+    crypto.getRandomValues(bytes);
+  } else {
+    for (let index = 0; index < bytes.length; index += 1) {
+      bytes[index] = Math.floor(Math.random() * 256);
+    }
+  }
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex: string = [...bytes].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+};
+
 const identify = async (): Promise<string> => {
   const existing: string | undefined =
     (await readCookie(KEY)) ??
     readLocal(KEY) ??
     readSession(KEY) ??
     (await readDatabase(KEY).catch(() => undefined));
-  const uuid: string = existing ?? crypto.randomUUID();
+  const uuid: string = existing ?? createUUID();
 
   await writeCookie(KEY, uuid);
   writeLocal(KEY, uuid);
@@ -290,6 +313,19 @@ const resolveEndpointOnce = async (): Promise<string | undefined> => {
   return endpoint;
 };
 
+// 성공한 식별만 캐시합니다. 실패는 캐시하지 않아 이후의 step() 이 식별을 다시 시도합니다.
+const identifyOnce = async (): Promise<string> => {
+  const pending = (uuidOnce ??= identify());
+  try {
+    return await pending;
+  } catch (error) {
+    if (uuidOnce === pending) {
+      uuidOnce = undefined;
+    }
+    throw error;
+  }
+};
+
 // 최초 자동 pageview 전용: endpoint 를 심는 seed 스크립트와의 로드 순서 경합을 흡수하기 위해
 // 키가 나타나기를 지수 백오프(100ms, 200ms)로 최대 3회 기다립니다. 끝내 없으면 보내지 않습니다.
 const resolveEndpointWithRetry = async (): Promise<string | undefined> => {
@@ -311,7 +347,7 @@ const stepWith = async (
 ): Promise<void> => {
   const [endpoint, uuid, device] = await Promise.all([
     resolveEndpointStrategy(),
-    (uuidOnce ??= identify()),
+    identifyOnce(),
     getDevice(),
   ]);
   if (!endpoint) {
@@ -324,5 +360,6 @@ export const step = (...arguments_: unknown[]): Promise<void> =>
   stepWith(resolveEndpointOnce, arguments_);
 
 if (typeof window !== 'undefined') {
-  void stepWith(resolveEndpointWithRetry, []);
+  // 자동 pageview 는 fire-and-forget 이므로 실패해도 조용히 삼킵니다(unhandled rejection 방지).
+  void stepWith(resolveEndpointWithRetry, []).catch(() => {});
 }

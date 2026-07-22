@@ -7,8 +7,9 @@ export const parseAllowlist = (raw: string | undefined): string[] =>
     .map((entry) => entry.trim())
     .filter((entry) => entry.length > 0);
 
-// 요청 오리진이 허용 목록과 "정확히" 일치할 때만 CORS 헤더를 돌려줍니다.
-// 일치하지 않으면 빈 객체 → 호출부는 CORS 헤더를 붙이지 않습니다(공개 읽기 API라 요청 자체는 계속 처리).
+// /queries 응답은 Origin 에 따라 내용(CORS 헤더)이 달라지므로, 일치 여부와 무관하게 항상 Vary: Origin 을 내려
+// 공유 캐시가 서로 다른 오리진의 응답을 섞어 내보내지 않게 합니다.
+// Access-Control-Allow-Origin 은 요청 오리진이 허용 목록과 "정확히" 일치할 때만 반사합니다.
 export const corsHeaders = (
   origin: string | null,
   allowlist: string[],
@@ -19,5 +20,5 @@ export const corsHeaders = (
       Vary: 'Origin',
     };
   }
-  return {};
+  return { Vary: 'Origin' };
 };

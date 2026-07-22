@@ -108,7 +108,8 @@ export function computeNiceMaximum(rawMaximum: number): number {
     niceNormalized = 10;
   }
 
-  return Math.round(niceNormalized * magnitude);
+  // 정수 반올림은 2.5 단계를 3 으로 망가뜨리므로(예: 2.3 -> 2.5 여야 함), 부동소수 잡음만 제거합니다.
+  return Number((niceNormalized * magnitude).toPrecision(12));
 }
 
 // 여러 수치 배열을 한꺼번에 훑어 최댓값을 구합니다(빈 입력이면 0).

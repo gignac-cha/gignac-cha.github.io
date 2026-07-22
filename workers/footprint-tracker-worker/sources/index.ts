@@ -40,10 +40,11 @@ export default {
     }
 
     if (request.method !== 'GET') {
-      return new Response(null, { status: 405 });
+      // /queries 경로라면 405 에도 CORS 헤더를 실어(허용 오리진일 때) 브라우저가 실패를 읽을 수 있게 합니다.
+      return new Response(null, { status: 405, headers: cors });
     }
 
-    if (pathname === '/healthz') {
+    if (pathname === '/health') {
       return new Response('ok');
     }
 
@@ -52,7 +53,14 @@ export default {
     }
 
     if (pathname.startsWith(QUERIES_PREFIX)) {
-      const name = decodeURIComponent(pathname.slice(QUERIES_PREFIX.length));
+      const rawName = pathname.slice(QUERIES_PREFIX.length);
+      let name: string;
+      try {
+        name = decodeURIComponent(rawName);
+      } catch {
+        // 퍼센트 인코딩이 깨진 이름(예: %zz)은 디코딩 불가 → 알 수 없는 쿼리로 취급합니다(500 방지).
+        return json({ error: `unknown query: ${rawName}` }, 404, cors);
+      }
       const definition = findQuery(name);
       if (!definition) {
         return json({ error: `unknown query: ${name}` }, 404, cors);

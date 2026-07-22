@@ -135,6 +135,14 @@ describe('parameter validation failures', () => {
     expectRejected('recent-footprints', 'limit=1.5');
   });
 
+  it('rejects non-decimal integer notations (scientific, hexadecimal, sign, space)', () => {
+    // Number('1e2')=100, Number('0x1f')=31 이라 통과할 수 있었지만, API 는 10진 표기만 받습니다.
+    expectRejected('recent-footprints', 'limit=1e2');
+    expectRejected('recent-footprints', 'limit=0x1f');
+    expectRejected('recent-footprints', 'limit=+5');
+    expectRejected('recent-footprints', 'limit=%205'); // ' 5'
+  });
+
   it('rejects a malformed date', () => {
     expectRejected('footprints-by-day', 'from=2026-7-1&to=2026-07-17');
     expectRejected('footprints-by-day', 'from=2026/07/01&to=2026-07-17');

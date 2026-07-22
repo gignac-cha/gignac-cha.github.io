@@ -152,12 +152,22 @@ describe('rejecting garbage', () => {
     expect(response.status).toBe(413);
     expect(batches).toHaveLength(0);
   });
+
+  it('answers 413 for a multibyte body over 64KiB in bytes but not in code units', async () => {
+    const { environment, batches } = makeEnvironment();
+    // '가' 는 UTF-16 코드 유닛 1개지만 UTF-8 3바이트 — 30000자면 약 90KiB 로 바이트 기준만 한도를 넘습니다.
+    const multibyte = JSON.stringify({ padding: '가'.repeat(30000) });
+    expect(multibyte.length).toBeLessThan(64 * 1024);
+    const response = await post(environment, multibyte);
+    expect(response.status).toBe(413);
+    expect(batches).toHaveLength(0);
+  });
 });
 
 describe('routing', () => {
-  it('answers ok on GET /healthz', async () => {
+  it('answers ok on GET /health', async () => {
     const { environment } = makeEnvironment();
-    const response = await dispatch(new IncomingRequest(`${WORKER_URL}/healthz`), environment);
+    const response = await dispatch(new IncomingRequest(`${WORKER_URL}/health`), environment);
     expect(response.status).toBe(200);
     expect(await response.text()).toBe('ok');
   });
