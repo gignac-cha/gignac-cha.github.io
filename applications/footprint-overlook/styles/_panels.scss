@@ -1,0 +1,176 @@
+@use './variables' as vars;
+
+// ============================================================================
+// 카드 계층 — 공통 패널, 요약 카드, 섹션 상태(로딩/에러/빈 상태)
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// 공통 패널 (차트·순위·테이블 섹션이 공유)
+// ----------------------------------------------------------------------------
+.panel {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: vars.$radius-medium;
+  padding: vars.$spacing-4;
+  box-shadow: var(--shadow-weak);
+
+  .panel-header {
+    margin-bottom: vars.$spacing-3;
+  }
+
+  .panel-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .panel-subtitle {
+    margin: vars.$spacing-1 0 0;
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+
+  .panel-body {
+    min-height: 64px;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 요약 카드 4장
+// ----------------------------------------------------------------------------
+.summary-cards {
+  display: grid;
+  // 카드 5장 — auto-fit 으로 넓은 화면에선 5열, 좁아지면 자연스럽게 줄바꿈합니다.
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: vars.$spacing-4;
+
+  @media (max-width: vars.$breakpoint-narrow) {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: vars.$radius-medium;
+    padding: vars.$spacing-4;
+    box-shadow: var(--shadow-weak);
+    display: flex;
+    flex-direction: column;
+    gap: vars.$spacing-1;
+
+    // 봇 비율 카드가 미지원(bots-by-day 없음)일 때 값 톤을 낮춰 다른 지표와 구분합니다.
+    &.summary-card-bot.is-unsupported .summary-value {
+      color: var(--color-text-muted);
+      font-size: 20px;
+    }
+  }
+
+  .summary-label {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+  }
+
+  .summary-value {
+    margin: vars.$spacing-1 0;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--color-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .summary-note {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 순위 두 패널을 나란히 두는 행
+// ----------------------------------------------------------------------------
+.rank-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: vars.$spacing-6;
+
+  @media (max-width: vars.$breakpoint-mobile) {
+    grid-template-columns: 1fr;
+    gap: vars.$spacing-4;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 섹션 상태 — 로딩 스피너 / 에러 / 빈 상태
+// ----------------------------------------------------------------------------
+.section-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: vars.$spacing-2;
+  min-height: 64px;
+  padding: vars.$spacing-4;
+  font-size: 13px;
+  text-align: center;
+}
+
+.section-loading {
+  color: var(--color-text-secondary);
+
+  .section-spinner {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    border-radius: 50%;
+    border: 2px solid var(--color-border-strong);
+    border-top-color: var(--color-accent);
+    animation: spin 0.9s linear infinite;
+  }
+}
+
+.section-empty {
+  color: var(--color-text-muted);
+}
+
+.section-error {
+  color: var(--color-error);
+  background-color: var(--color-error-surface);
+  border: 1px solid var(--color-error-border);
+  border-radius: vars.$radius-small;
+  word-break: break-word;
+
+  .section-error-icon {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: var(--color-error);
+    color: var(--color-text-inverse);
+    font-weight: 700;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.section-state-text {
+  min-width: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-loading .section-spinner {
+    animation: none;
+  }
+}

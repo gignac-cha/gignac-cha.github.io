@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "footprint-tracker",
+  "main": "sources/index.ts",
+  "compatibility_date": "2026-07-01",
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    // 아래 값은 전부 자리표시자입니다. 배포는 나중에 진행하므로 실제 값으로 교체해야 합니다.
+
+    // R2 SQL 질의 REST 엔드포인트의 "전체 URL" 입니다.
+    // 형식: https://api.sql.cloudflarestorage.com/api/v1/accounts/{ACCOUNT_ID}/r2-sql/query/{BUCKET_NAME}
+    // (BUCKET_NAME 은 워크샵/버킷 이름이며, 워크샵 식별자 `{ACCOUNT_ID}_{BUCKET_NAME}` 의 뒷부분입니다.)
+    "R2_SQL_URL": "https://api.sql.cloudflarestorage.com/api/v1/accounts/00000000000000000000000000000000/r2-sql/query/footprint",
+
+    // 조회 대상 테이블의 정규화된 이름(`네임스페이스.테이블`)입니다. 수집기 워커의 싱크 이름과 맞춰야 합니다.
+    "TABLE_NAME": "footprint.trail",
+
+    // CORS 허용 오리진 목록(쉼표 구분). 로컬 뷰어 두 개 + 향후 pages.dev 오리진(자리표시자)을 담았습니다.
+    "VIEWER_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173,https://footprint-viewer.pages.dev"
+  }
+
+  // R2_SQL_TOKEN 은 비밀값이라 설정 파일에 두지 않습니다.
+  //   - 배포:   wrangler secret put R2_SQL_TOKEN
+  //   - 로컬:   .dev.vars 파일에 R2_SQL_TOKEN=... (git 에 커밋하지 않음)
+  // Authorization: Bearer <R2_SQL_TOKEN> 헤더로 R2 SQL 에 전달됩니다.
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "footprint-trail",
+  "main": "sources/index.ts",
+  "compatibility_date": "2026-07-01",
+  "observability": {
+    "enabled": true
+  },
+  "pipelines": [
+    {
+      "binding": "STREAM",
+      // 아직 배포/생성 전이라 자리표시자입니다. `wrangler pipelines setup` 으로
+      // 스트림(구조화 스키마) → R2 Parquet 싱크 → 파이프라인을 만든 뒤 실제 stream id 로 교체하세요.
+      "stream": "00000000000000000000000000000000"
+    }
+  ]
+}

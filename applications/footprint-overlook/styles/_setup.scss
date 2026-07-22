@@ -1,0 +1,119 @@
+@use './variables' as vars;
+
+// ============================================================================
+// 설정 카드 — 엔드포인트가 없을 때 보여 주는 중앙 정렬 초기 설정 화면
+// ============================================================================
+
+// 설정 모드에서는 헤더 아래 카드를 세로 중앙에 가깝게 띄웁니다.
+#root.is-setup-mode {
+  min-height: 100vh;
+}
+
+.setup-wrap {
+  display: flex;
+  justify-content: center;
+  padding: vars.$spacing-8 0;
+}
+
+.setup-card {
+  width: 100%;
+  max-width: 520px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: vars.$radius-large;
+  padding: vars.$spacing-8;
+  box-shadow: var(--shadow-weak);
+  display: flex;
+  flex-direction: column;
+  gap: vars.$spacing-3;
+
+  @media (max-width: vars.$breakpoint-mobile) {
+    padding: vars.$spacing-6;
+  }
+
+  .setup-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+
+  .setup-description {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+
+  .setup-form {
+    display: flex;
+    gap: vars.$spacing-2;
+    margin-top: vars.$spacing-2;
+
+    @media (max-width: vars.$breakpoint-mobile) {
+      flex-direction: column;
+    }
+  }
+
+  .setup-input {
+    flex: 1;
+    min-width: 0;
+    font-family: vars.$font-mono;
+    font-size: 13px;
+    color: var(--color-text-primary);
+    background-color: var(--color-surface-sunken);
+    border: 1px solid var(--color-border-strong);
+    border-radius: vars.$radius-small;
+    padding: vars.$spacing-2 vars.$spacing-3;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 1px;
+      border-color: var(--color-accent);
+    }
+  }
+
+  .setup-save-button {
+    flex: none;
+    font-family: vars.$font-sans;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-inverse);
+    background-color: var(--color-accent);
+    border: none;
+    border-radius: vars.$radius-small;
+    padding: vars.$spacing-2 vars.$spacing-4;
+    cursor: pointer;
+    transition: filter 0.2s ease;
+
+    &:hover {
+      filter: brightness(0.94);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+  }
+
+  .setup-validation {
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-error);
+    min-height: 1em;
+  }
+
+  &:not(.is-invalid) .setup-validation {
+    display: none;
+  }
+
+  .setup-hint {
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+}

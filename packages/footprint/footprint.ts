@@ -273,9 +273,44 @@ const getDevice = () =>
     resolveBattery(),
   ]).then(([userAgentHints, gpu, storage, battery]) => ({ userAgentHints, gpu, storage, battery })));
 
-export const step = async (...arguments_: unknown[]): Promise<void> => {
+const ENDPOINT_RETRY_ATTEMPTS = 3;
+const ENDPOINT_RETRY_BASE_DELAY_MILLISECONDS = 100;
+
+const sleep = (milliseconds: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+// 성공한 해석만 페이지 수명 동안 캐시합니다. 실패(키 없음)는 캐시하지 않아,
+// 이후의 수동 step() 호출이 호출 시점의 저장소 상태를 다시 한 번(대기 없이) 읽습니다.
+const resolveEndpointOnce = async (): Promise<string | undefined> => {
+  const pending = (endpointOnce ??= resolveEndpoint());
+  const endpoint = await pending;
+  if (!endpoint && endpointOnce === pending) {
+    endpointOnce = undefined;
+  }
+  return endpoint;
+};
+
+// 최초 자동 pageview 전용: endpoint 를 심는 seed 스크립트와의 로드 순서 경합을 흡수하기 위해
+// 키가 나타나기를 지수 백오프(100ms, 200ms)로 최대 3회 기다립니다. 끝내 없으면 보내지 않습니다.
+const resolveEndpointWithRetry = async (): Promise<string | undefined> => {
+  for (let attempt = 0; attempt < ENDPOINT_RETRY_ATTEMPTS; attempt++) {
+    const endpoint = await resolveEndpointOnce();
+    if (endpoint) {
+      return endpoint;
+    }
+    if (attempt < ENDPOINT_RETRY_ATTEMPTS - 1) {
+      await sleep(ENDPOINT_RETRY_BASE_DELAY_MILLISECONDS * 2 ** attempt);
+    }
+  }
+  return undefined;
+};
+
+const stepWith = async (
+  resolveEndpointStrategy: () => Promise<string | undefined>,
+  arguments_: unknown[],
+): Promise<void> => {
   const [endpoint, uuid, device] = await Promise.all([
-    (endpointOnce ??= resolveEndpoint()),
+    resolveEndpointStrategy(),
     (uuidOnce ??= identify()),
     getDevice(),
   ]);
@@ -285,6 +320,9 @@ export const step = async (...arguments_: unknown[]): Promise<void> => {
   send(endpoint, buildPayload(arguments_, uuid, collect(), device));
 };
 
+export const step = (...arguments_: unknown[]): Promise<void> =>
+  stepWith(resolveEndpointOnce, arguments_);
+
 if (typeof window !== 'undefined') {
-  step();
+  void stepWith(resolveEndpointWithRetry, []);
 }

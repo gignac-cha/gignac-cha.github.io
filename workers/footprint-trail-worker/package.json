@@ -1,0 +1,23 @@
+{
+  "name": "footprint-trail-worker",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "vitest run",
+    "dev": "wrangler dev",
+    "build": "wrangler deploy --dry-run --outdir outputs",
+    "test:watch": "vitest",
+    "types": "wrangler types",
+    "typecheck": "tsc"
+  },
+  "keywords": [],
+  "author": "Jin-Hyeok Cha",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.18.5",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.111.0"
+  }
+}

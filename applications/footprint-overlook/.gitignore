@@ -1,0 +1,6 @@
+# Vite 빌드 산출물 (node_modules 는 저장소 전역 .gitignore 가 처리합니다)
+outputs/
+
+# 로그·에디터 캐시
+*.log
+.DS_Store

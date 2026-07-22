@@ -1,0 +1,85 @@
+@use './variables' as vars;
+
+// ============================================================================
+// 최근 발자국 테이블 — 시각 / UUID / href / arguments
+// ============================================================================
+
+// 좁은 화면에서 표가 페이지를 가로로 밀지 않도록 자체 가로 스크롤 컨테이너에 담습니다.
+.recent-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.recent-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    padding: 0 vars.$spacing-3 vars.$spacing-2;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: vars.$spacing-2 vars.$spacing-3;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    vertical-align: top;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .cell-time {
+    font-family: vars.$font-mono;
+    font-size: 12px;
+    white-space: nowrap;
+    color: var(--color-text-primary);
+  }
+
+  // 봇으로 추정되는 행 표식(클라이언트 측 힌트). 시각 셀 옆에 작은 배지로 답니다.
+  .bot-tag {
+    display: inline-block;
+    margin-left: vars.$spacing-2;
+    padding: 1px 6px;
+    font-family: vars.$font-sans;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-series-bots);
+    background-color: color-mix(in srgb, var(--color-series-bots) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-series-bots) 40%, transparent);
+    border-radius: vars.$radius-pill;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  .cell-uuid {
+    font-family: vars.$font-mono;
+    font-size: 12px;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  .cell-href {
+    max-width: 320px;
+    color: var(--color-text-primary);
+    word-break: break-all;
+  }
+
+  .cell-arguments {
+    max-width: 240px;
+    font-family: vars.$font-mono;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    word-break: break-word;
+  }
+}

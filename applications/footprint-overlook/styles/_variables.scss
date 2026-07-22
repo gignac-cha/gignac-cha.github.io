@@ -1,0 +1,128 @@
+// ============================================================================
+// 디자인 토큰 — 색은 라이트/다크 두 테마를 위한 CSS 커스텀 프로퍼티로,
+// 간격·타이포·라운딩 등 비색상 토큰은 Sass 변수로 둡니다.
+//
+// 미감: infinity-rooms 의 "Calm Light"(화이트 카드 + 따뜻한 중립 회색 + 1px 보더 + 옅은 그림자,
+// 그라디언트·블러·글로우 없음)를 잇되, prefers-color-scheme 로 다크 테마를 함께 지원합니다.
+// 색 리터럴(hex/rgba)은 이 파일에만 존재합니다.
+// ============================================================================
+
+:root {
+  color-scheme: light dark;
+
+  // 표면
+  --color-background: #f5f4f1;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #f0eee9;
+
+  // 보더
+  --color-border: #e6e3dd;
+  --color-border-strong: #d3cfc6;
+
+  // 텍스트
+  --color-text-primary: #1c1a17;
+  --color-text-secondary: #5f594f;
+  --color-text-muted: #8b857a;
+  --color-text-inverse: #ffffff;
+
+  // 액센트(단일 평면 블루)
+  --color-accent: #2563eb;
+  --color-accent-strong: #1d4ed8;
+  --color-accent-soft: rgba(37, 99, 235, 0.1);
+
+  // 차트 시리즈 3색(발자국=블루, 방문자=틸, 봇=뮤트 앰버 파선) — 색맹 대비를 위해 범례 라벨을 병행합니다.
+  --color-series-footprints: #2563eb;
+  --color-series-footprints-soft: rgba(37, 99, 235, 0.14);
+  --color-series-visitors: #0d9488;
+  --color-series-visitors-soft: rgba(13, 148, 136, 0.12);
+  --color-series-bots: #b45309;
+
+  // 순위 막대
+  --color-bar: #2563eb;
+  --color-bar-track: #efece7;
+
+  // 상태(에러 라이트 톤)
+  --color-error: #b91c1c;
+  --color-error-surface: #fee2e2;
+  --color-error-border: #fecaca;
+
+  // 차트 격자선
+  --color-grid: #ece9e3;
+
+  // 그림자(라이트: 절제된 옅은 그림자)
+  --shadow-weak: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+// 다크 테마 — OS 선호가 dark 일 때 토큰만 갈아 끼웁니다(구조/레이아웃은 공유).
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #14151a;
+    --color-surface: #1c1e26;
+    --color-surface-sunken: #191b22;
+
+    --color-border: #2b2e3a;
+    --color-border-strong: #3a3e4d;
+
+    --color-text-primary: #f3f2ef;
+    --color-text-secondary: #b4b8c4;
+    --color-text-muted: #7c8091;
+    --color-text-inverse: #0b0c10;
+
+    --color-accent: #6ea8ff;
+    --color-accent-strong: #93c0ff;
+    --color-accent-soft: rgba(110, 168, 255, 0.14);
+
+    --color-series-footprints: #6ea8ff;
+    --color-series-footprints-soft: rgba(110, 168, 255, 0.16);
+    --color-series-visitors: #34d3c0;
+    --color-series-visitors-soft: rgba(52, 211, 192, 0.14);
+    --color-series-bots: #fbbf24;
+
+    --color-bar: #6ea8ff;
+    --color-bar-track: #24273163;
+
+    --color-error: #f87171;
+    --color-error-surface: rgba(248, 113, 113, 0.12);
+    --color-error-border: rgba(248, 113, 113, 0.35);
+
+    --color-grid: #262932;
+
+    --shadow-weak: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-hover: 0 6px 18px rgba(0, 0, 0, 0.5);
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 비색상 토큰 (Sass 변수)
+// ----------------------------------------------------------------------------
+$font-sans:
+  'Pretendard Variable',
+  Pretendard,
+  -apple-system,
+  BlinkMacSystemFont,
+  system-ui,
+  'Apple SD Gothic Neo',
+  'Noto Sans KR',
+  sans-serif;
+$font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+
+// 간격 스케일 (4px 기반)
+$spacing-1: 4px;
+$spacing-2: 8px;
+$spacing-3: 12px;
+$spacing-4: 16px;
+$spacing-6: 24px;
+$spacing-8: 32px;
+
+// 라운딩
+$radius-small: 6px;
+$radius-medium: 12px;
+$radius-large: 16px;
+$radius-pill: 999px;
+
+// 레이아웃 & 브레이크포인트
+$column-width: 1040px;
+$breakpoint-tablet: 900px;
+$breakpoint-mobile: 640px;
+$breakpoint-narrow: 400px;

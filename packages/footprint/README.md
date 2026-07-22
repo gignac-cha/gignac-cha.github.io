@@ -16,7 +16,7 @@ Whichever store you seed, the resolved value is cached after the first read.
 
 ## Use
 
-Importing the module fires one footprint automatically on page load — zero extra code:
+Importing the module fires one footprint automatically on page load — zero extra code. To absorb load-order races with the seeding script, this initial pageview waits for the endpoint key with up to 3 attempts (exponential backoff: 100ms, 200ms) and stays silent if it never appears. Manual `step()` calls never wait — they check storage once at call time:
 
 ```js
 import { step } from 'footprint';

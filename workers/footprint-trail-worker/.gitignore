@@ -1,0 +1,3 @@
+outputs/
+.wrangler/
+worker-configuration.d.ts

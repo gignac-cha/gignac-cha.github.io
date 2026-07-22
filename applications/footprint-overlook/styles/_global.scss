@@ -1,0 +1,264 @@
+@use './variables' as vars;
+
+// ============================================================================
+// 전역 — 배경, 중앙 칼럼, 진입 모션, 헤더, 엔드포인트 바, 기간 컨트롤, 푸터
+// ============================================================================
+
+body {
+  margin: 0;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: vars.$font-sans;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  gap: vars.$spacing-6;
+  max-width: vars.$column-width;
+  margin: 0 auto;
+  padding: vars.$spacing-8 vars.$spacing-6;
+
+  @media (max-width: vars.$breakpoint-mobile) {
+    padding: vars.$spacing-6 vars.$spacing-4;
+    gap: vars.$spacing-4;
+  }
+
+  @media (max-width: vars.$breakpoint-narrow) {
+    padding: vars.$spacing-4 vars.$spacing-3;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 진입 모션 — 섹션별 fade + 6px rise
+// ----------------------------------------------------------------------------
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-header,
+.dashboard > * {
+  animation: rise-in 0.4s ease-out backwards;
+}
+
+.dashboard > *:nth-child(2) {
+  animation-delay: 0.04s;
+}
+
+.dashboard > *:nth-child(3) {
+  animation-delay: 0.08s;
+}
+
+.dashboard > *:nth-child(4) {
+  animation-delay: 0.12s;
+}
+
+.dashboard > *:nth-child(n + 5) {
+  animation-delay: 0.16s;
+}
+
+// ----------------------------------------------------------------------------
+// 페이지 헤더
+// ----------------------------------------------------------------------------
+.page-header {
+  .page-eyebrow {
+    margin: 0;
+    font-family: vars.$font-mono;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .page-title {
+    margin: vars.$spacing-2 0 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+  }
+
+  .title-latin {
+    margin-left: vars.$spacing-2;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+  }
+
+  .page-description {
+    margin: vars.$spacing-2 0 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    max-width: 640px;
+
+    strong {
+      font-weight: 600;
+      color: var(--color-accent);
+    }
+  }
+
+  @media (max-width: vars.$breakpoint-mobile) {
+    .page-title {
+      font-size: 24px;
+    }
+
+    .title-latin {
+      display: block;
+      margin-left: 0;
+      margin-top: vars.$spacing-1;
+      font-size: 16px;
+    }
+  }
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: vars.$spacing-6;
+
+  @media (max-width: vars.$breakpoint-mobile) {
+    gap: vars.$spacing-4;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 엔드포인트 바 — 현재 트래커 주소를 눈에 거슬리지 않게 노출 + 변경 버튼
+// ----------------------------------------------------------------------------
+.endpoint-bar {
+  display: flex;
+  align-items: center;
+  gap: vars.$spacing-2;
+  padding: vars.$spacing-2 vars.$spacing-3;
+  background-color: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: vars.$radius-pill;
+  font-size: 12px;
+
+  .endpoint-label {
+    flex: none;
+    font-family: vars.$font-mono;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .endpoint-value {
+    flex: 1;
+    min-width: 0;
+    font-family: vars.$font-mono;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .endpoint-change-button {
+    flex: none;
+    font-family: vars.$font-sans;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-accent);
+    background-color: transparent;
+    border: 1px solid var(--color-border-strong);
+    border-radius: vars.$radius-pill;
+    padding: 2px vars.$spacing-3;
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+
+    &:hover {
+      border-color: var(--color-accent);
+      background-color: var(--color-accent-soft);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 기간 프리셋 컨트롤 (7일 / 30일 / 90일)
+// ----------------------------------------------------------------------------
+.range-controls {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: vars.$spacing-1;
+  padding: vars.$spacing-1;
+  background-color: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: vars.$radius-pill;
+
+  .range-button {
+    font-family: vars.$font-sans;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    background-color: transparent;
+    border: none;
+    border-radius: vars.$radius-pill;
+    padding: vars.$spacing-1 vars.$spacing-4;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+
+    &:hover {
+      color: var(--color-text-primary);
+    }
+
+    &.is-active {
+      color: var(--color-text-inverse);
+      background-color: var(--color-accent);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 푸터
+// ----------------------------------------------------------------------------
+.page-footer {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding-top: vars.$spacing-2;
+}
+
+// ----------------------------------------------------------------------------
+// 모션 감소 환경
+// ----------------------------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  .page-header,
+  .dashboard > * {
+    animation: none;
+  }
+}

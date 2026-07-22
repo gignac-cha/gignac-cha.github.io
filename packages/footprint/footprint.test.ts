@@ -54,8 +54,31 @@ describe('endpoint resolution', () => {
   it('does not send at all when no endpoint is configured anywhere', async () => {
     const beacon = captureBeacon();
     await importStep();
-    await new Promise((resolve) => setTimeout(resolve, 20));
+    // 자동 발사는 100ms/200ms 백오프로 최대 3회 키를 기다리므로, 창이 완전히 닫힌 뒤 확인합니다.
+    await new Promise((resolve) => setTimeout(resolve, 450));
     expect(beacon).not.toHaveBeenCalled();
+  });
+
+  it('auto-fire waits for an endpoint seeded shortly after load (initial retry)', async () => {
+    const beacon = captureBeacon();
+    await importStep();
+    setTimeout(() => localStorage.setItem(ENDPOINT_KEY, ENDPOINT), 30);
+    await vi.waitFor(() => expect(beacon).toHaveBeenCalledTimes(1), { timeout: 1000 });
+    expect(beacon.mock.calls[0][0]).toBe(ENDPOINT);
+    expect((await nthBody(beacon, 0)).arguments).toEqual([]);
+  });
+
+  it('manual step() checks the endpoint once without waiting', async () => {
+    const beacon = captureBeacon();
+    const step = await importStep();
+    await new Promise((resolve) => setTimeout(resolve, 450));
+    await step('too-early');
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(beacon).not.toHaveBeenCalled();
+    localStorage.setItem(ENDPOINT_KEY, ENDPOINT);
+    await step('after-seed');
+    await vi.waitFor(() => expect(beacon).toHaveBeenCalledTimes(1));
+    expect((await nthBody(beacon, 0)).arguments).toEqual(['after-seed']);
   });
 
   it('prefers IndexedDB over every other store', async () => {

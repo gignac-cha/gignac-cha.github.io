@@ -1,0 +1,24 @@
+{
+  "name": "footprint-overlook",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "vitest run",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:watch": "vitest",
+    "typecheck": "tsc"
+  },
+  "keywords": [],
+  "author": "Jin-Hyeok Cha",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "sass": "^1.101.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.5",
+    "vitest": "^4.1.10"
+  }
+}
