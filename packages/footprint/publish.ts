@@ -40,24 +40,37 @@ const manifest = {
   version: source.version,
   description: source.description,
   type: 'module',
-  types: './footprint.d.ts',
+  types: './index.d.ts',
   exports: {
+    // Default entry: the side-effectful auto-fire tracker. `import '@scope/footprint'` (or
+    // `import { step } from '@scope/footprint'`) both send the automatic pageview and expose step.
     '.': {
+      types: './index.d.ts',
+      import: './index.js',
+    },
+    // Opt-out entry: the pure core with NO import-time side effect. Consumers who want step()
+    // without the automatic pageview use `import { step } from '@scope/footprint/step'`.
+    './step': {
       types: './footprint.d.ts',
       import: './footprint.js',
     },
   },
-  // Must stay `true`: importing this package IS the feature. footprint.ts fires its one
-  // automatic pageview from a top-level `if (typeof window !== 'undefined')` block, and a
-  // consumer may `import` the package for that side effect alone, using no exports at all.
-  // `sideEffects: false` is the reflexive "optimization" for libraries, but it declares every
-  // module pure and safe to prune when its exports are unused — exactly the situation here — so
+  // Must stay exactly `["./index.js"]` — neither `false` nor `true`. Importing this package IS
+  // the feature: index.js calls footprint.js's fireAutoPageview() at import time, and a consumer
+  // may `import '@scope/footprint'` for that side effect alone, using no exports at all.
+  // `sideEffects: false` — the reflexive "optimization" for libraries — declares every module
+  // pure and safe to prune when its exports are unused — exactly the situation here — so
   // webpack/Rollup-class bundlers would tree-shake the entire tracker out of production builds
-  // and tracking would die with no error anywhere. This flag is the manifest half of the
-  // contract documented above the auto-fire block in footprint.ts.
+  // and tracking would die with no error anywhere. A blanket `true` errs the other way: it brands
+  // every module side-effectful, forbidding bundlers from pruning any of them, including the
+  // deliberately pure './step' core. The array scopes the declaration to the truth of the code
+  // after the index.ts/footprint.ts split: index.js is the ONLY module with an import-time
+  // effect, so it alone is unprunable, and everything else — the './step' core included — stays
+  // tree-shakeable. This is the manifest half of the contract documented in index.ts and above
+  // fireAutoPageview in footprint.ts.
   // See webpack's tree-shaking guide on the `sideEffects` field:
   // https://webpack.js.org/guides/tree-shaking/
-  sideEffects: true,
+  sideEffects: ['./index.js'],
   author: source.author,
   license: source.license,
   publishConfig: { access: 'public' },

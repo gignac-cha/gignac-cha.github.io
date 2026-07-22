@@ -3,15 +3,19 @@
   "version": "0.1.0",
   "description": "Tiny page-access footprint tracker — one step() call, sendBeacon transport, endpoint resolved from browser storage.",
   "type": "module",
-  "types": "./outputs/footprint.d.ts",
+  "types": "./outputs/index.d.ts",
   "exports": {
     ".": {
+      "types": "./outputs/index.d.ts",
+      "import": "./outputs/index.js"
+    },
+    "./step": {
       "types": "./outputs/footprint.d.ts",
       "import": "./outputs/footprint.js"
     }
   },
   "scripts": {
-    "build": "tsc && esbuild footprint.ts --bundle --platform=browser --target=esnext --format=esm --outfile=outputs/footprint.bundle.js",
+    "build": "tsc && esbuild index.ts --bundle --platform=browser --target=esnext --format=esm --outfile=outputs/footprint.bundle.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:browser": "pnpm build && playwright test",

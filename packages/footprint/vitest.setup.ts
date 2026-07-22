@@ -109,10 +109,10 @@ const indexedDB = {
 
 define(globalThis, {
   // Alias `window` to globalThis so the two window-gated paths in the code under test run in
-  // Node: footprint.ts only auto-fires its import-time pageview behind
-  // `typeof window !== 'undefined'` (that auto-fire is the main behavior these tests assert),
-  // and cookie.ts reads `window.cookieStore` at module scope, which would throw a
-  // ReferenceError at import without a `window` binding. Remove this line and the suite
+  // Node: index.ts's import-time pageview goes through footprint.ts's fireAutoPageview, which
+  // is a no-op unless `typeof window !== 'undefined'` (and that auto-fire is the main behavior
+  // these tests assert), and cookie.ts reads `window.cookieStore` at module scope, which would
+  // throw a ReferenceError at import without a `window` binding. Remove this line and the suite
   // silently exercises a tracker that never fires.
   window: globalThis,
   indexedDB,

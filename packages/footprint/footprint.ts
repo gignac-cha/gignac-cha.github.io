@@ -434,16 +434,23 @@ const stepWith = async (
 export const step = (...arguments_: unknown[]): Promise<void> =>
   stepWith(resolveEndpointOnce, arguments_);
 
-// Import-time side effect, on purpose: merely importing this module sends exactly one automatic
-// pageview (a step() with empty arguments). This is the package's core contract — the README
-// promises "zero extra code" — so do not refactor it into an exported init() the caller must
-// invoke. Because the entire feature lives in a side effect, the published manifest pins
-// `sideEffects: true` (see publish.ts); the two are a matched pair — without that flag, bundlers
-// would tree-shake this very block out of consumer builds and tracking would silently vanish.
-// The `typeof window` guard makes the module safe to import under Node/vitest, where there is no
-// page to track; the test setup aliases `window` to globalThis precisely to opt back in
-// (vitest.setup.ts). The trailing catch(() => {}) guarantees a failed auto-fire can never become
-// an unhandled rejection in the host page.
-if (typeof window !== 'undefined') {
-  void stepWith(resolveEndpointWithRetry, []).catch(() => {});
-}
+// The automatic pageview, extracted into a named export so the import-time side effect lives in
+// exactly ONE place. index.ts (the default `.` entry) calls this on import — that is the package's
+// "zero extra code" contract — while this module (the './step' entry) only defines it and never
+// calls it, which is what lets a consumer opt out of the auto-fire entirely by importing from
+// './step'. Keeping the call out of this module is also what makes the manifest's
+// `sideEffects: ["./index.js"]` honest (see publish.ts): only index.js is unprunable, so the
+// auto-fire survives tree-shaking there while this core stays side-effect-free. The `typeof
+// window` guard keeps it a no-op under Node/SSR, where there is no page to track; the vitest
+// setup aliases `window` to globalThis to opt back in (vitest.setup.ts). It resolves the endpoint
+// via resolveEndpointWithRetry, NOT resolveEndpointOnce: only the auto-fire waits for a
+// late-seeded endpoint — see that function's comment for the load-order rationale. The trailing
+// catch(() => {}) guarantees a failed auto-fire can never surface as an unhandled rejection in
+// the host page. Pinned by footprint.test.ts: 'does not auto-fire a pageview merely by importing
+// the pure core' and 'exposes fireAutoPageview so the default entry (index.ts) can trigger the
+// pageview'.
+export const fireAutoPageview = (): void => {
+  if (typeof window !== 'undefined') {
+    void stepWith(resolveEndpointWithRetry, []).catch(() => {});
+  }
+};

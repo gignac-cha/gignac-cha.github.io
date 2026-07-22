@@ -29,6 +29,14 @@ step('cta-click', { plan: 'pro' });
 button.addEventListener('click', () => step('signup'));
 ```
 
+### Opt out of the automatic pageview
+
+The default entry auto-fires on import. To use `step()` **without** the automatic page-load footprint — to fire pageviews yourself (SPA routing), or under a test/SSR runtime — import the pure `footprint/step` entry instead. It has no import-time side effect:
+
+```js
+import { step } from 'footprint/step'; // no auto-fire — step() only
+```
+
 ## Static pages (no bundler)
 
 Serve the built single-file bundle (`outputs/footprint.bundle.js`) anywhere and load it:

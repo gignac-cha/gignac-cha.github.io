@@ -6,7 +6,13 @@ const ENDPOINT_KEY = 'footprint:endpoint';
 const ENDPOINT = 'https://worker.test/';
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
-const importStep = async () => (await import('./footprint.ts')).step;
+// Import the default entry (index.ts), exactly like a real consumer doing
+// `import '@scope/footprint'`: the import itself triggers the auto-fire AND yields step for
+// manual events. beforeEach's vi.resetModules() makes every call a fresh import, so each test
+// observes its own auto-fire from clean module state. The './step' opt-out path (footprint.ts,
+// no auto-fire) is covered separately in the 'manual-only entry (./step, no auto-fire)' suite
+// below.
+const importStep = async () => (await import('./index.ts')).step;
 
 const navigatorKeys: string[] = [];
 const defineNavigator = (properties: Record<string, unknown>) => {
@@ -391,5 +397,39 @@ describe('transport', () => {
     const step = await importStep();
     await expect(step('after-failure')).resolves.toBeUndefined();
     await new Promise((resolve) => setTimeout(resolve, 20));
+  });
+});
+
+describe('manual-only entry (./step, no auto-fire)', () => {
+  it('does not auto-fire a pageview merely by importing the pure core', async () => {
+    localStorage.setItem(ENDPOINT_KEY, ENDPOINT);
+    const beacon = captureBeacon();
+    await import('./footprint.ts');
+    // Outlive the entire auto-fire retry window (see the 450 ms rationale in the 'endpoint
+    // resolution' suite) so the wait covers every path a hidden auto-fire could take — the
+    // immediate send (an endpoint IS seeded) or a late retry. Even then the beacon must stay
+    // silent: importing the pure core must NEVER fire on its own — that silence is the entire
+    // point of the './step' opt-out path; the fireAutoPageview() call lives only in index.ts.
+    await new Promise((resolve) => setTimeout(resolve, 450));
+    expect(beacon).not.toHaveBeenCalled();
+  });
+
+  it('still sends when step() is called manually from the pure core', async () => {
+    localStorage.setItem(ENDPOINT_KEY, ENDPOINT);
+    const beacon = captureBeacon();
+    const { step } = await import('./footprint.ts');
+    await step('manual');
+    await vi.waitFor(() => expect(beacon).toHaveBeenCalledTimes(1));
+    expect(beacon.mock.calls[0][0]).toBe(ENDPOINT);
+    expect((await nthBody(beacon, 0)).arguments).toEqual(['manual']);
+  });
+
+  it('exposes fireAutoPageview so the default entry (index.ts) can trigger the pageview', async () => {
+    localStorage.setItem(ENDPOINT_KEY, ENDPOINT);
+    const beacon = captureBeacon();
+    const { fireAutoPageview } = await import('./footprint.ts');
+    fireAutoPageview();
+    await vi.waitFor(() => expect(beacon).toHaveBeenCalledTimes(1));
+    expect((await nthBody(beacon, 0)).arguments).toEqual([]);
   });
 });
