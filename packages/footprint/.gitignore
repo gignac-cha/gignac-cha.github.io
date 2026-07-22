@@ -1,4 +1,11 @@
+# 빌드·게시 산출물
 outputs/
+publish/
 *.bundle.js
+
+# 테스트 산출물
 test-results/
 playwright-report/
+
+# 로컬 비밀값(게시 스코프 등)
+.env

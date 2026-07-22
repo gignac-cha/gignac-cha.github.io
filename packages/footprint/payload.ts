@@ -43,6 +43,15 @@ export const buildPayload = <B extends { navigator: unknown }>(
     ...base,
     navigator: {
       ...navigator,
+      // Not redundant with the userAgentHints already present in `base.navigator`: that one is
+      // the synchronous, low-entropy snapshot taken by collect() in footprint.ts (brands /
+      // mobile / platform only — see the comment there). The high-entropy fields
+      // (architecture, bitness, model, ...) require the async getHighEntropyValues(), which can
+      // reject, so the full merge arrives separately via `device`. When it resolved, it
+      // supersedes the snapshot (it re-includes the same low-entropy fields); when it failed,
+      // `device.userAgentHints` is undefined and `??` keeps the sync snapshot as the graceful
+      // floor. footprint.test.ts pins both directions ('merges async device info ...' and
+      // 'degrades every device group gracefully when the APIs reject').
       userAgentHints: device.userAgentHints ?? navigator.userAgentHints,
     },
     gpu: device.gpu,

@@ -5,14 +5,23 @@
     "module": "NodeNext",
     "moduleResolution": "nodenext",
     "rewriteRelativeImportExtensions": true,
-    "outDir": "./outputs",
     "rootDir": ".",
+    "outDir": "./outputs",
     "declaration": true,
-    "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "strict": true,
     "skipLibCheck": true
   },
   "include": ["*.ts"],
-  "exclude": ["outputs", "tests", "*.test.ts", "vitest.config.ts", "vitest.setup.ts", "playwright.config.ts"]
+  "exclude": [
+    "outputs",
+    "publish",
+    "tests",
+    "*.test.ts",
+    "playwright.config.ts",
+    "vitest.config.ts",
+    "vitest.setup.ts",
+    "publish.ts"
+  ]
 }

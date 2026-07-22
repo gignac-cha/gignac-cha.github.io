@@ -34,6 +34,16 @@ const sessionStorage = new MemoryStorage();
 
 const indexedDBData = new Map<string, Map<string, unknown>>();
 
+// In-memory IndexedDB mock. The one non-obvious rule, used throughout via queueMicrotask: events
+// must fire ASYNCHRONOUSLY, like the real API. Per the Indexed Database spec, request results
+// are delivered by events dispatched from tasks queued after the request object has been
+// returned to the caller (W3C Indexed Database API, https://www.w3.org/TR/IndexedDB/; see also
+// https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB). The code
+// under test (indexedDB.ts) calls open()/get()/put() first and attaches listeners on the
+// returned request afterwards — so if this mock fired 'success' synchronously inside the call,
+// the event would dispatch before any listener exists and every promise in indexedDB.ts would
+// hang forever. queueMicrotask defers firing just past listener registration while keeping the
+// tests timer-free and fast.
 const makeRequest = () => {
   const listeners = new Map<string, () => void>();
   return {
@@ -98,6 +108,12 @@ const indexedDB = {
 };
 
 define(globalThis, {
+  // Alias `window` to globalThis so the two window-gated paths in the code under test run in
+  // Node: footprint.ts only auto-fires its import-time pageview behind
+  // `typeof window !== 'undefined'` (that auto-fire is the main behavior these tests assert),
+  // and cookie.ts reads `window.cookieStore` at module scope, which would throw a
+  // ReferenceError at import without a `window` binding. Remove this line and the suite
+  // silently exercises a tracker that never fires.
   window: globalThis,
   indexedDB,
   localStorage,

@@ -1,4 +1,4 @@
-export const readSession = (key: string): string | undefined => {
+export const readSessionStorage = (key: string): string | undefined => {
   try {
     return sessionStorage.getItem(key) ?? undefined;
   } catch {
@@ -6,7 +6,7 @@ export const readSession = (key: string): string | undefined => {
   }
 };
 
-export const writeSession = (key: string, value: string): void => {
+export const writeSessionStorage = (key: string, value: string): void => {
   try {
     sessionStorage.setItem(key, value);
   } catch {}

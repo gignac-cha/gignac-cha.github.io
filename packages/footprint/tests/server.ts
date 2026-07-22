@@ -42,9 +42,6 @@ const page = createServer(async (request, response) => {
   }
 });
 
-// The collector deliberately sends NO CORS headers: a payload only ever arrives
-// here when the browser treats it as a CORS-simple request (the whole point of
-// the text/plain transport). Any preflighted request would be blocked.
 type CollectedRequest = {
   method: string;
   path: string;

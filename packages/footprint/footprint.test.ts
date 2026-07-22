@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { readDatabase, writeDatabase } from './indexedDB.ts';
+import { readIndexedDB, writeIndexedDB } from './indexedDB.ts';
 
 const KEY = 'footprint';
 const ENDPOINT_KEY = 'footprint:endpoint';
@@ -42,6 +42,11 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
+  // Let trailing async work from the just-finished test settle while the mocks are still in
+  // place: the freshly imported module's auto-fire chain (retry sleeps, storage writes, the
+  // beacon/fetch promise chain) can still be in flight when a test body returns. Pausing before
+  // restoreAllMocks/unstubAllGlobals keeps those late callbacks from firing into the NEXT test
+  // against restored globals and unrelated stubs.
   await new Promise((resolve) => setTimeout(resolve, 50));
   for (const key of navigatorKeys.splice(0)) {
     delete (navigator as unknown as Record<string, unknown>)[key];
@@ -54,7 +59,11 @@ describe('endpoint resolution', () => {
   it('does not send at all when no endpoint is configured anywhere', async () => {
     const beacon = captureBeacon();
     await importStep();
-    // 자동 발사는 100ms/200ms 백오프로 최대 3회 키를 기다리므로, 창이 완전히 닫힌 뒤 확인합니다.
+    // 450 ms is derived from footprint.ts's auto-fire retry schedule: ENDPOINT_RETRY_ATTEMPTS
+    // (3) endpoint lookups with 100 ms + 200 ms of backoff between them, ~300 ms until the loop
+    // gives up. Only after outwaiting that entire window is "the beacon was never called" a
+    // meaningful assertion — a shorter sleep would pass even while a late retry was still about
+    // to send. Keep this above the total backoff if the ENDPOINT_RETRY_* constants change.
     await new Promise((resolve) => setTimeout(resolve, 450));
     expect(beacon).not.toHaveBeenCalled();
   });
@@ -71,6 +80,9 @@ describe('endpoint resolution', () => {
   it('manual step() checks the endpoint once without waiting', async () => {
     const beacon = captureBeacon();
     const step = await importStep();
+    // Same 450 ms rationale as above: fully outlive the auto-fire retry window (100 + 200 ms
+    // backoff) so it has already given up, and the beacon call counts below reflect ONLY the
+    // manual step() calls under test, never a late automatic retry.
     await new Promise((resolve) => setTimeout(resolve, 450));
     await step('too-early');
     await new Promise((resolve) => setTimeout(resolve, 50));
@@ -82,7 +94,7 @@ describe('endpoint resolution', () => {
   });
 
   it('prefers IndexedDB over every other store', async () => {
-    await writeDatabase(ENDPOINT_KEY, 'https://indexeddb.test/');
+    await writeIndexedDB(ENDPOINT_KEY, 'https://indexeddb.test/');
     localStorage.setItem(ENDPOINT_KEY, 'https://local.test/');
     sessionStorage.setItem(ENDPOINT_KEY, 'https://session.test/');
     document.cookie = `${ENDPOINT_KEY}=https://cookie.test/`;
@@ -144,7 +156,7 @@ describe('visitor uuid', () => {
     expect(localStorage.getItem(KEY)).toBe(body.uuid);
     expect(sessionStorage.getItem(KEY)).toBe(body.uuid);
     expect(document.cookie).toContain(`${KEY}=${body.uuid}`);
-    expect(await readDatabase(KEY)).toBe(body.uuid);
+    expect(await readIndexedDB(KEY)).toBe(body.uuid);
   });
 
   it('adopts an existing uuid from the cookie ahead of other stores', async () => {
@@ -298,10 +310,8 @@ describe('payload', () => {
 });
 
 describe('device resilience', () => {
-  // 버전 4·variant 비트까지 검증하는 엄격한 UUID v4 패턴입니다.
   const UUID_V4_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
-  // crypto 객체의 특정 메서드만 잠시 없앴다가 복원합니다(비보안 컨텍스트 흉내).
   const withoutCryptoMethod = async (method: 'randomUUID' | 'getRandomValues', run: () => Promise<void>) => {
     const original = (crypto as unknown as Record<string, unknown>)[method];
     Object.defineProperty(crypto, method, { configurable: true, value: undefined });

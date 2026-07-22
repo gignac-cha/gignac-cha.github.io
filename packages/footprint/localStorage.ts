@@ -1,4 +1,4 @@
-export const readLocal = (key: string): string | undefined => {
+export const readLocalStorage = (key: string): string | undefined => {
   try {
     return localStorage.getItem(key) ?? undefined;
   } catch {
@@ -6,7 +6,7 @@ export const readLocal = (key: string): string | undefined => {
   }
 };
 
-export const writeLocal = (key: string, value: string): void => {
+export const writeLocalStorage = (key: string, value: string): void => {
   try {
     localStorage.setItem(key, value);
   } catch {}

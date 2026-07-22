@@ -14,7 +14,8 @@
     "build": "tsc && esbuild footprint.ts --bundle --platform=browser --target=esnext --format=esm --outfile=outputs/footprint.bundle.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:browser": "pnpm build && playwright test"
+    "test:browser": "pnpm build && playwright test",
+    "publish:npm": "node --env-file-if-exists=.env publish.ts"
   },
   "author": "Jin-Hyeok Cha",
   "license": "ISC",
