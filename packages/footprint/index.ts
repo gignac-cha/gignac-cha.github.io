@@ -9,8 +9,8 @@
 // this re-exports from — stays prunable. Both halves are pinned by footprint.test.ts: the main
 // suites import './index.ts' and assert the pageview fires, and the 'manual-only entry (./step,
 // no auto-fire)' suite asserts importing footprint.ts alone stays silent.
-import { fireAutoPageview, step } from './footprint.ts';
+export { step } from './footprint.ts';
 
-export { step };
+import { fireAutoPageview } from './footprint.ts';
 
 fireAutoPageview();

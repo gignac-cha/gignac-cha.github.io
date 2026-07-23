@@ -2,7 +2,7 @@
 
 Tiny page-access footprint tracker. One `step()` call, `sendBeacon` transport (POST + `text/plain`, no CORS preflight), and a worker endpoint resolved from browser storage instead of being hardcoded.
 
-Self-contained package: `pnpm build` emits `outputs/` with unbundled ESM + type declarations and a single-file browser bundle (`outputs/footprint.bundle.js`).
+The package ships unbundled ESM + type declarations, single-file CommonJS entries (`index.cjs`, `footprint.cjs`) for bundlers that resolve the `require` condition, and a single-file browser bundle (`footprint.bundle.js`). Everything targets the browser — the CommonJS builds exist for bundlers, not for running under Node.
 
 ## Configure the endpoint (no hardcoding)
 
@@ -31,7 +31,7 @@ button.addEventListener('click', () => step('signup'));
 
 ### Opt out of the automatic pageview
 
-The default entry auto-fires on import. To use `step()` **without** the automatic page-load footprint — to fire pageviews yourself (SPA routing), or under a test/SSR runtime — import the pure `footprint/step` entry instead. It has no import-time side effect:
+The default entry auto-fires on import. To use `step()` **without** the automatic page-load footprint — for example to fire every pageview yourself in an SPA — import the pure `footprint/step` entry instead. It has no import-time side effect:
 
 ```js
 import { step } from 'footprint/step'; // no auto-fire — step() only
@@ -39,7 +39,7 @@ import { step } from 'footprint/step'; // no auto-fire — step() only
 
 ## Static pages (no bundler)
 
-Serve the built single-file bundle (`outputs/footprint.bundle.js`) anywhere and load it:
+Serve the built single-file bundle (`footprint.bundle.js`) anywhere and load it:
 
 ```html
 <script type="module">
@@ -53,12 +53,15 @@ Serve the built single-file bundle (`outputs/footprint.bundle.js`) anywhere and 
 Each `step()` sends:
 
 ```
-{ arguments, uuid, location, document, navigator, connection, screen, window, intl, colorScheme }
+{ arguments, uuid, location, document, navigator, connection, screen, window, intl, memory,
+  colorScheme, reducedMotion, reducedTransparency, forcedColors, invertedColors, pointer, hover,
+  gpu, storage, battery }
 ```
 
 - `arguments` — whatever you passed to `step()`, as an array (`[]` for the auto page-load footprint).
 - `uuid` — visitor id, upserted across cookie / localStorage / sessionStorage / IndexedDB.
-- the rest mirrors the corresponding Web API objects.
+- `gpu` / `storage` / `battery` and the high-entropy `navigator.userAgentHints` fields resolve asynchronously once per page; each degrades to `undefined` when its API is unavailable or rejects.
+- the rest mirrors the corresponding Web API objects and media queries.
 
 ## Development
 
@@ -67,7 +70,7 @@ Everything runs inside this package — it carries its own devDependencies and t
 ```sh
 pnpm test          # vitest unit tests (node environment, global overrides)
 pnpm test:browser  # build + Playwright end-to-end in real Chromium
-pnpm build         # tsc -> outputs/*.js + *.d.ts, esbuild -> outputs/footprint.bundle.js
+pnpm build         # tsc -> outputs/*.js + *.d.ts, esbuild -> footprint.bundle.js + index.cjs + footprint.cjs
 ```
 
 The browser tests spin up two local origins — a page server and a collector that deliberately sends **no CORS headers** — so a payload only ever arrives when the request really is CORS-simple (no preflight).

@@ -1,6 +1,6 @@
 {
   "name": "footprint",
-  "version": "0.1.0",
+  "version": "0.0.0-20260723.0",
   "description": "Tiny page-access footprint tracker — one step() call, sendBeacon transport, endpoint resolved from browser storage.",
   "type": "module",
   "types": "./outputs/index.d.ts",
@@ -15,13 +15,13 @@
     }
   },
   "scripts": {
-    "build": "tsc && esbuild index.ts --bundle --platform=browser --target=esnext --format=esm --outfile=outputs/footprint.bundle.js",
+    "build": "tsc && esbuild index.ts --bundle --platform=browser --target=esnext --format=esm --outfile=outputs/footprint.bundle.js && esbuild index.ts --bundle --platform=browser --target=es2020 --format=cjs --outfile=outputs/index.cjs && esbuild footprint.ts --bundle --platform=browser --target=es2020 --format=cjs --outfile=outputs/footprint.cjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:browser": "pnpm build && playwright test",
     "publish:npm": "node --env-file-if-exists=.env publish.ts"
   },
-  "author": "Jin-Hyeok Cha",
+  "author": "Tes Cha",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.61.1",

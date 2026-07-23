@@ -439,16 +439,15 @@ export const step = (...arguments_: unknown[]): Promise<void> =>
 // "zero extra code" contract — while this module (the './step' entry) only defines it and never
 // calls it, which is what lets a consumer opt out of the auto-fire entirely by importing from
 // './step'. Keeping the call out of this module is also what makes the manifest's
-// `sideEffects: ["./index.js"]` honest (see publish.ts): only index.js is unprunable, so the
-// auto-fire survives tree-shaking there while this core stays side-effect-free. The `typeof
-// window` guard keeps it a no-op under Node/SSR, where there is no page to track; the vitest
-// setup aliases `window` to globalThis to opt back in (vitest.setup.ts). It resolves the endpoint
-// via resolveEndpointWithRetry, NOT resolveEndpointOnce: only the auto-fire waits for a
-// late-seeded endpoint — see that function's comment for the load-order rationale. The trailing
-// catch(() => {}) guarantees a failed auto-fire can never surface as an unhandled rejection in
-// the host page. Pinned by footprint.test.ts: 'does not auto-fire a pageview merely by importing
-// the pure core' and 'exposes fireAutoPageview so the default entry (index.ts) can trigger the
-// pageview'.
+// `sideEffects: ["./index.js", "./index.cjs"]` honest (see publish.ts): only the index entries are
+// unprunable, so the auto-fire survives tree-shaking there while this core stays side-effect-free.
+// The `typeof window` guard keeps it a no-op where there is no page to track; the vitest setup
+// aliases `window` to globalThis to opt back in (vitest.setup.ts). It resolves the endpoint via
+// resolveEndpointWithRetry, NOT resolveEndpointOnce: only the auto-fire waits for a late-seeded
+// endpoint — see that function's comment for the load-order rationale. The trailing catch(() => {})
+// guarantees a failed auto-fire can never surface as an unhandled rejection in the host page.
+// Pinned by footprint.test.ts: 'does not auto-fire a pageview merely by importing the pure core'
+// and 'exposes fireAutoPageview so the default entry (index.ts) can trigger the pageview'.
 export const fireAutoPageview = (): void => {
   if (typeof window !== 'undefined') {
     void stepWith(resolveEndpointWithRetry, []).catch(() => {});
