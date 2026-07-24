@@ -1,0 +1,12 @@
+{
+  "fields": [
+    { "name": "received_at", "type": "string", "required": true },
+    { "name": "uuid", "type": "string", "required": false },
+    { "name": "origin", "type": "string", "required": false },
+    { "name": "href", "type": "string", "required": false },
+    { "name": "user_agent", "type": "string", "required": false },
+    { "name": "arguments", "type": "string", "required": true },
+    { "name": "cf", "type": "string", "required": false },
+    { "name": "payload", "type": "string", "required": true }
+  ]
+}

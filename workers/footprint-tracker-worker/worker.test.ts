@@ -1,14 +1,19 @@
 import { createExecutionContext, env, waitOnExecutionContext } from 'cloudflare:test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import worker from '../sources/index.ts';
+import worker from './worker.ts';
 
 const IncomingRequest = Request<unknown, IncomingRequestCfProperties>;
 
 const ORIGIN = 'http://localhost:5173';
 const WORKER_URL = 'https://footprint-tracker.test';
 
-// R2 SQL 업스트림은 전역 fetch 로 나갑니다. 테스트는 이 전역을 가로채(스텁)
-// 워커가 보낸 요청(Bearer 토큰 · 정확한 SQL)을 결정적으로 검증하고, 원하는 응답을 돌려줍니다.
+// The R2 SQL upstream leaves the worker via global fetch. The Workers Vitest pool runs the
+// worker in a real workerd isolate, but the upstream must be deterministic, so the global is
+// stubbed (vi.stubGlobal): every outbound call is captured — URL, method, headers, parsed
+// body — letting assertions check the Bearer token and the EXACT SQL sent, while respondWith
+// scripts whatever envelope each test wants back.
+// See https://developers.cloudflare.com/workers/testing/vitest-integration/ and
+// https://vitest.dev/api/vi.html#vi-stubglobal
 type OutboundCall = { url: string; method: string; headers: Record<string, string>; body: unknown };
 let outboundCalls: OutboundCall[];
 let respondWith: () => Response;
@@ -59,6 +64,41 @@ describe('GET /health', () => {
     expect(await response.text()).toBe('ok');
     expect(outboundCalls).toHaveLength(0);
     expect(response.headers.get('Access-Control-Allow-Origin')).toBeNull();
+  });
+});
+
+describe('GET / and GET /help', () => {
+  it('serves the same help document at both paths (no redirect), without CORS or upstream calls', async () => {
+    const root = await get('/', { Origin: ORIGIN });
+    const help = await get('/help', { Origin: ORIGIN });
+    expect(root.status).toBe(200);
+    expect(help.status).toBe(200);
+    const rootBody = await root.text();
+    expect(rootBody).toBe(await help.text());
+    expect((JSON.parse(rootBody) as { name: string }).name).toBe('footprint-tracker');
+    expect(root.headers.get('Access-Control-Allow-Origin')).toBeNull();
+    expect(outboundCalls).toHaveLength(0);
+  });
+});
+
+describe('HEAD and Allow', () => {
+  it('answers HEAD like GET with the body stripped and headers (incl. CORS) preserved', async () => {
+    const response = await dispatch(
+      new IncomingRequest(`${WORKER_URL}/queries`, { method: 'HEAD', headers: { Origin: ORIGIN } }),
+    );
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Content-Type')).toBe('application/json');
+    expect(response.headers.get('Access-Control-Allow-Origin')).toBe(ORIGIN);
+    expect(await response.text()).toBe('');
+  });
+
+  it('carries Allow on OPTIONS and on 405 responses', async () => {
+    const options = await dispatch(new IncomingRequest(`${WORKER_URL}/help`, { method: 'OPTIONS' }));
+    expect(options.status).toBe(204);
+    expect(options.headers.get('Allow')).toBe('GET, HEAD, OPTIONS');
+    const notAllowed = await dispatch(new IncomingRequest(`${WORKER_URL}/queries`, { method: 'POST' }));
+    expect(notAllowed.status).toBe(405);
+    expect(notAllowed.headers.get('Allow')).toBe('GET, HEAD, OPTIONS');
   });
 });
 
@@ -141,7 +181,9 @@ describe('CORS posture on /queries', () => {
     const response = await get('/queries', { Origin: 'https://evil.example' });
     expect(response.status).toBe(200);
     expect(response.headers.get('Access-Control-Allow-Origin')).toBeNull();
-    // 캐시 안전을 위해 오리진이 불일치해도 Vary: Origin 은 항상 내려갑니다.
+    // Vary: Origin must survive even the no-match variant — a shared cache that stored this
+    // response without it could later replay it to an allowlisted origin (see corsHeaders in
+    // cors.ts).
     expect(response.headers.get('Vary')).toBe('Origin');
   });
 
@@ -261,6 +303,19 @@ describe('error responses', () => {
       });
     const response = await get('/queries/top-pages?from=2026-07-01&to=2026-07-17');
     expect(response.status).toBe(502);
+  });
+
+  it('surfaces the real error detail even when the errors envelope has a null entry', async () => {
+    respondWith = () =>
+      new Response(
+        JSON.stringify({ success: false, errors: [null, { code: 40010, message: 'table not found' }] }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    const response = await get('/queries/recent-footprints');
+    expect(response.status).toBe(502);
+    // Without the null guard in describeErrors, the first (null) entry throws before the real
+    // 40010 detail is reached, and the 502 body carries a TypeError instead.
+    expect(((await response.json()) as { error: string }).error).toMatch(/40010|table not found/);
   });
 
   it('answers 502 when R2 SQL is unreachable', async () => {

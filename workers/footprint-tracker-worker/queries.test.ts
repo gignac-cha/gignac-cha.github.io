@@ -15,7 +15,7 @@ const TABLE = 'footprint.trail';
 const build = (name: string, search: string): string => {
   const definition = findQuery(name) as QueryDefinition;
   const values = validateParameters(definition, new URLSearchParams(search));
-  return definition.buildSql(TABLE, values);
+  return definition.buildSQL(TABLE, values);
 };
 
 const expectRejected = (name: string, search: string) => {
@@ -47,13 +47,20 @@ describe('listQueries', () => {
     ]);
   });
 
-  it('does not leak the internal buildSql function', () => {
+  it('does not leak the internal buildSQL function', () => {
     for (const query of listQueries()) {
-      expect('buildSql' in query).toBe(false);
+      expect('buildSQL' in query).toBe(false);
     }
   });
 });
 
+// The full-SQL toBe assertions in this suite and the two below ('by-day SQL', 'top-* SQL') are
+// character-for-character on purpose: the SQL string IS the wire contract — r2-sql.ts posts it
+// as one opaque { query } value with no bind or AST layer in between — and the QUERY_DEFINITIONS
+// comment in queries.ts delegates its "exact SQL is pinned" guarantee to exactly these
+// assertions (the wire side is pinned once more by 'sends the exact by-day SQL with inclusive
+// from / exclusive to' in worker.test.ts). Do not loosen these to toContain or a regex to make
+// an edit pass quietly: any drift in the emitted SQL is a contract change and must fail here first.
 describe('recent-footprints SQL', () => {
   it('defaults limit to 20 when omitted', () => {
     expect(build('recent-footprints', '')).toBe(
@@ -136,7 +143,8 @@ describe('parameter validation failures', () => {
   });
 
   it('rejects non-decimal integer notations (scientific, hexadecimal, sign, space)', () => {
-    // Number('1e2')=100, Number('0x1f')=31 이라 통과할 수 있었지만, API 는 10진 표기만 받습니다.
+    // Without the INTEGER_PATTERN gate these would slip through: Number('1e2') === 100 and
+    // Number('0x1f') === 31 both satisfy Number.isInteger. The API accepts decimal only.
     expectRejected('recent-footprints', 'limit=1e2');
     expectRejected('recent-footprints', 'limit=0x1f');
     expectRejected('recent-footprints', 'limit=+5');
@@ -150,7 +158,8 @@ describe('parameter validation failures', () => {
   });
 
   it('treats an out-of-calendar but well-formed date as a lexical value (no throw, no rows guarantee)', () => {
-    // 보안 경계는 "형식"이라 2026-13-45 같은 값도 통과합니다(주입 불가). 결과가 비는 건 R2 SQL 몫.
+    // The security boundary is lexical, not calendar-aware: a well-formed 2026-13-45 cannot
+    // escape its quotes, so it passes. Whether it matches any rows is R2 SQL's business.
     expect(build('footprints-by-day', 'from=2026-13-45&to=2026-99-99')).toContain(
       "received_at >= '2026-13-45' AND received_at < '2026-99-99'",
     );
@@ -182,8 +191,9 @@ describe('SQL injection attempts are rejected', () => {
         definition,
         new URLSearchParams("from=2026-01-01' OR '1'='1&to=2026-07-17"),
       );
-      // 검증을 통과했다면(그럴 리 없지만) SQL 에 주입 문자열이 없어야 합니다.
-      expect(definition.buildSql(TABLE, values)).not.toContain("OR '1'='1");
+      // Belt and braces: if validation ever regressed and let the value through, the built
+      // SQL still must not contain the injected fragment.
+      expect(definition.buildSQL(TABLE, values)).not.toContain("OR '1'='1");
       throw new Error('expected validation to reject the injected date');
     } catch (error) {
       expect(error).toBeInstanceOf(ParameterError);
@@ -203,10 +213,10 @@ describe('assertTableName', () => {
     }
   });
 
-  it('makes buildSql throw a ConfigurationError for a poisoned table name', () => {
+  it('makes buildSQL throw a ConfigurationError for a poisoned table name', () => {
     const definition = findQuery('recent-footprints') as QueryDefinition;
     const values = validateParameters(definition, new URLSearchParams(''));
-    expect(() => definition.buildSql("trail; DROP TABLE x", values)).toThrow(ConfigurationError);
+    expect(() => definition.buildSQL("trail; DROP TABLE x", values)).toThrow(ConfigurationError);
   });
 });
 

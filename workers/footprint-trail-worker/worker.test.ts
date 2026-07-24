@@ -1,7 +1,7 @@
 import { createExecutionContext, env, waitOnExecutionContext } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
-import type { FootprintRecord } from '../sources/footprints.ts';
-import worker from '../sources/index.ts';
+import type { FootprintRecord } from './footprints.ts';
+import worker from './worker.ts';
 
 const IncomingRequest = Request<unknown, IncomingRequestCfProperties>;
 
@@ -16,11 +16,17 @@ const pageview = {
   colorScheme: 'dark',
 };
 
-// 실제 스트림 대신 send 호출을 그대로 붙잡는 스텁을 env 에 얹어, 워커가 흘려보낸 배치를 결정적으로 검증합니다.
-const makeEnvironment = () => {
+// The real STREAM binding is replaced with a stub that captures every send() batch: the Workers
+// Vitest pool runs this worker in a real workerd isolate, but there is no local Pipelines
+// simulator to receive events — and even if there were, asserting through an async batching
+// service would be nondeterministic. Capturing the batches keeps the assertions exact (what was
+// sent, in what order, in which batch) while everything else stays the real runtime.
+// See https://developers.cloudflare.com/workers/testing/vitest-integration/
+const makeEnvironment = (overrides: Record<string, unknown> = {}) => {
   const batches: FootprintRecord[][] = [];
   const environment = {
     ...env,
+    ...overrides,
     STREAM: {
       send: async (records: FootprintRecord[]) => {
         batches.push(records);
@@ -37,6 +43,9 @@ const dispatch = async (request: Request, environment: Env) => {
     environment,
     executionContext,
   );
+  // waitOnExecutionContext() drains the worker's context.waitUntil() work — the STREAM.send()
+  // call — before returning; without it, assertions on the captured batches would race the
+  // delivery that intentionally happens after the response.
   await waitOnExecutionContext(executionContext);
   return response;
 };
@@ -130,6 +139,48 @@ describe('collecting footprints', () => {
   });
 });
 
+describe('origin allowlist (COLLECTOR_ORIGINS)', () => {
+  it('accepts a POST from an allowlisted origin', async () => {
+    const { environment, batches } = makeEnvironment({ COLLECTOR_ORIGINS: ORIGIN });
+    expect((await post(environment, JSON.stringify(pageview))).status).toBe(204);
+    expect(batches).toHaveLength(1);
+  });
+
+  it('rejects a POST from a non-allowlisted origin with 403 and streams nothing', async () => {
+    const { environment, batches } = makeEnvironment({ COLLECTOR_ORIGINS: ORIGIN });
+    const response = await post(environment, JSON.stringify(pageview), {
+      headers: { Origin: 'https://evil.example' },
+    });
+    expect(response.status).toBe(403);
+    expect(batches).toHaveLength(0);
+  });
+
+  it('lets a request WITHOUT an Origin header through (bots are recorded by design)', async () => {
+    const { environment, batches } = makeEnvironment({ COLLECTOR_ORIGINS: ORIGIN });
+    // Built manually instead of via post(): that helper always sets an Origin header, and this
+    // test's whole point is a request where the header is genuinely absent, not merely empty.
+    const response = await dispatch(
+      new IncomingRequest(`${WORKER_URL}/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain; charset=utf-8', 'User-Agent': 'curl/8.0' },
+        body: JSON.stringify(pageview),
+      }),
+      environment,
+    );
+    expect(response.status).toBe(204);
+    expect(batches).toHaveLength(1);
+  });
+
+  it('stays fully open when the allowlist is empty', async () => {
+    const { environment, batches } = makeEnvironment({ COLLECTOR_ORIGINS: '' });
+    const response = await post(environment, JSON.stringify(pageview), {
+      headers: { Origin: 'https://anyone.example' },
+    });
+    expect(response.status).toBe(204);
+    expect(batches).toHaveLength(1);
+  });
+});
+
 describe('rejecting garbage', () => {
   it('answers 400 for invalid JSON and streams nothing', async () => {
     const { environment, batches } = makeEnvironment();
@@ -155,7 +206,9 @@ describe('rejecting garbage', () => {
 
   it('answers 413 for a multibyte body over 64KiB in bytes but not in code units', async () => {
     const { environment, batches } = makeEnvironment();
-    // '가' 는 UTF-16 코드 유닛 1개지만 UTF-8 3바이트 — 30000자면 약 90KiB 로 바이트 기준만 한도를 넘습니다.
+    // '가' is ONE UTF-16 code unit but THREE UTF-8 bytes: 30,000 of them keep .length (~30k)
+    // comfortably under 64 Ki while the encoded body is ~90 KiB — so this passes any
+    // code-unit-based check and only a byte-accurate limit rejects it.
     const multibyte = JSON.stringify({ padding: '가'.repeat(30000) });
     expect(multibyte.length).toBeLessThan(64 * 1024);
     const response = await post(environment, multibyte);
@@ -172,18 +225,48 @@ describe('routing', () => {
     expect(await response.text()).toBe('ok');
   });
 
-  it('answers 405 for GET, PUT and DELETE', async () => {
+  it('answers 405 with an Allow header for PUT, DELETE and PATCH', async () => {
     const { environment } = makeEnvironment();
-    for (const method of ['GET', 'PUT', 'DELETE']) {
+    for (const method of ['PUT', 'DELETE', 'PATCH']) {
       const response = await dispatch(new IncomingRequest(`${WORKER_URL}/`, { method }), environment);
       expect(response.status).toBe(405);
+      expect(response.headers.get('Allow')).toBe('GET, HEAD, POST, OPTIONS');
     }
   });
 
-  it('answers 405 for OPTIONS — no preflight is ever expected', async () => {
+  it('answers OPTIONS with 204 + Allow and still no CORS headers (never a preflight)', async () => {
     const { environment } = makeEnvironment();
     const response = await dispatch(new IncomingRequest(`${WORKER_URL}/`, { method: 'OPTIONS' }), environment);
-    expect(response.status).toBe(405);
+    expect(response.status).toBe(204);
+    expect(response.headers.get('Allow')).toBe('GET, HEAD, POST, OPTIONS');
     expect(response.headers.get('Access-Control-Allow-Origin')).toBeNull();
+  });
+
+  it('serves the same help document at GET / and GET /help (no redirect)', async () => {
+    const { environment } = makeEnvironment();
+    const root = await dispatch(new IncomingRequest(`${WORKER_URL}/`), environment);
+    const help = await dispatch(new IncomingRequest(`${WORKER_URL}/help`), environment);
+    expect(root.status).toBe(200);
+    expect(help.status).toBe(200);
+    expect(root.headers.get('Content-Type')).toBe('application/json');
+    const rootBody = await root.text();
+    expect(rootBody).toBe(await help.text());
+    expect((JSON.parse(rootBody) as { name: string }).name).toBe('footprint-trail');
+  });
+
+  it('answers 404 for an unknown GET path', async () => {
+    const { environment } = makeEnvironment();
+    expect((await dispatch(new IncomingRequest(`${WORKER_URL}/unknown`), environment)).status).toBe(404);
+  });
+
+  it('answers HEAD like GET with the body stripped', async () => {
+    const { environment } = makeEnvironment();
+    const help = await dispatch(new IncomingRequest(`${WORKER_URL}/help`, { method: 'HEAD' }), environment);
+    expect(help.status).toBe(200);
+    expect(help.headers.get('Content-Type')).toBe('application/json');
+    expect(await help.text()).toBe('');
+    const health = await dispatch(new IncomingRequest(`${WORKER_URL}/health`, { method: 'HEAD' }), environment);
+    expect(health.status).toBe(200);
+    expect(await health.text()).toBe('');
   });
 });

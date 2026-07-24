@@ -1,4 +1,4 @@
-import { execFile } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
 import { access, copyFile, cp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -130,6 +130,21 @@ const willPublish = process.env.FOOTPRINT_PUBLISH === '1';
 // (and a no-op for non-prerelease versions, where `latest` is the default anyway).
 const publishArguments = ['publish', publishDirectory, '--tag', 'latest', ...(willPublish ? [] : ['--dry-run'])];
 console.log(`\n[publish] ${manifest.name}@${manifest.version} — ${willPublish ? '실제 게시' : 'dry-run'}\n`);
-const published = await runCommand('npm', publishArguments, { cwd: packageDirectory });
-process.stdout.write(published.stdout);
-process.stderr.write(published.stderr);
+// The publish step must run with THIS terminal's stdio, not execFile's pipes. npm's account
+// security flow (OTP / web authentication) is interactive: on a TTY it prints the authentication
+// URL, opens the browser, and waits for approval before uploading. Behind piped stdio npm detects
+// no TTY, aborts immediately with EOTP, and even masks the URL in its error output — so the
+// publish can never succeed through execFile, no matter where it is launched from. `stdio:
+// 'inherit'` hands the terminal through, letting npm drive its auth prompt directly (dry-run is
+// unaffected — it needs no auth and simply prints to the same terminal).
+await new Promise<void>((resolve, reject) => {
+  const child = spawn('npm', publishArguments, { cwd: packageDirectory, stdio: 'inherit' });
+  child.on('error', reject);
+  child.on('close', (code) => {
+    if (code === 0) {
+      resolve();
+    } else {
+      reject(new Error(`npm publish 가 실패했습니다 (exit ${code})`));
+    }
+  });
+});

@@ -33,6 +33,9 @@ describe('corsHeaders', () => {
     expect(corsHeaders('https://evil.example', allowlist)).toEqual({ Vary: 'Origin' });
   });
 
+  // Pins the exact-match rule against the classic CORS allowlist bypasses: prefix, suffix, or
+  // substring matching is how "allowlisted" reflection gets widened to attacker-registered
+  // origins that merely contain the allowed one (see corsHeaders in ./cors.ts).
   it('matches only exactly — not by prefix, suffix or trailing slash', () => {
     expect(corsHeaders('http://localhost:5173/', allowlist)).toEqual({ Vary: 'Origin' });
     expect(corsHeaders('http://localhost:51730', allowlist)).toEqual({ Vary: 'Origin' });

@@ -11,6 +11,6 @@
     "skipLibCheck": true,
     "types": ["@cloudflare/vitest-pool-workers/types"]
   },
-  "include": ["worker-configuration.d.ts", "sources/**/*.ts", "tests/**/*.ts"],
+  "include": ["*.ts"],
   "exclude": ["outputs"]
 }
