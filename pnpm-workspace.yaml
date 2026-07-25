@@ -1,6 +1,10 @@
 packages:
   - 'packages/*'
   - 'pages/*'
+  - 'workers/*'
+  - 'applications/*'
 allowBuilds:
   '@parcel/watcher': true
   esbuild: true
+  sharp: true
+  workerd: true
