@@ -6,10 +6,11 @@ import {
   fetchQueries,
   fetchQuery,
   mapErrorMessage,
+  type RecentFootprintRow,
   TrackerError,
 } from './tracker-client.ts';
 
-// fetch 응답을 흉내 내는 최소 헬퍼입니다.
+// Minimal stand-in for a fetch Response.
 function makeResponse(status: number, jsonBody: unknown, options: { throwOnJson?: boolean } = {}): Response {
   return {
     ok: status >= 200 && status < 300,
@@ -24,23 +25,23 @@ function makeResponse(status: number, jsonBody: unknown, options: { throwOnJson?
 }
 
 describe('buildQueriesUrl', () => {
-  it('base 뒤에 /queries 를 붙인다', () => {
+  it('appends /queries to the base', () => {
     expect(buildQueriesUrl('http://127.0.0.1:8788')).toBe('http://127.0.0.1:8788/queries');
   });
 
-  it('base 의 끝 슬래시를 정규화한다', () => {
+  it('normalizes a trailing slash on the base', () => {
     expect(buildQueriesUrl('http://127.0.0.1:8788/')).toBe('http://127.0.0.1:8788/queries');
   });
 });
 
 describe('buildQueryUrl', () => {
-  it('파라미터 없이 경로만 만든다', () => {
+  it('builds the bare path when no parameters are given', () => {
     expect(buildQueryUrl('http://127.0.0.1:8788', 'recent-footprints')).toBe(
       'http://127.0.0.1:8788/queries/recent-footprints',
     );
   });
 
-  it('from/to/limit 을 쿼리스트링으로 붙인다', () => {
+  it('appends from / to / limit as a query string', () => {
     expect(
       buildQueryUrl('http://127.0.0.1:8788', 'footprints-by-day', {
         from: '2026-07-10',
@@ -50,36 +51,42 @@ describe('buildQueryUrl', () => {
     ).toBe('http://127.0.0.1:8788/queries/footprints-by-day?from=2026-07-10&to=2026-07-17&limit=50');
   });
 
-  it('undefined 파라미터는 붙이지 않는다', () => {
+  it('omits undefined parameters', () => {
     expect(buildQueryUrl('http://127.0.0.1:8788', 'top-pages', { from: '2026-07-10' })).toBe(
       'http://127.0.0.1:8788/queries/top-pages?from=2026-07-10',
     );
   });
 
-  it('쿼리 이름을 인코딩한다', () => {
+  it('percent-encodes the query name', () => {
     expect(buildQueryUrl('http://x', 'a b/c')).toBe('http://x/queries/a%20b%2Fc');
   });
 });
 
 describe('mapErrorMessage', () => {
-  it('본문의 error 원문을 우선한다', () => {
+  it('prefers the upstream error text', () => {
     expect(mapErrorMessage(400, { error: 'from is required' })).toBe('from is required');
   });
 
-  it('error 가 없으면 상태 코드 기반 한국어 문구를 쓴다', () => {
+  it('falls back to a status-based sentence when the body carries no error', () => {
     expect(mapErrorMessage(400, null)).toContain('400');
     expect(mapErrorMessage(404, {})).toContain('404');
     expect(mapErrorMessage(502, null)).toContain('502');
     expect(mapErrorMessage(500, null)).toContain('500');
   });
 
-  it('error 가 빈 문자열이면 기본 문구로 폴백한다', () => {
+  it('describes a 405, which the worker answers with no body at all', () => {
+    // worker.ts returns `new Response(null, { status: 405, headers: { Allow } })`, so there is
+    // never an { error } to quote and only the fallback can say anything useful.
+    expect(mapErrorMessage(405, null)).toContain('405');
+  });
+
+  it('falls back when the error text is blank', () => {
     expect(mapErrorMessage(404, { error: '   ' })).toContain('404');
   });
 });
 
 describe('fetchQuery', () => {
-  it('200 이면 { name, rows } 를 돌려준다', async () => {
+  it('returns { name, rows } on 200', async () => {
     const fakeFetch = vi.fn(async () =>
       makeResponse(200, { name: 'footprints-by-day', rows: [{ day: '2026-07-10', footprints: 5 }] }),
     );
@@ -91,34 +98,62 @@ describe('fetchQuery', () => {
     );
   });
 
-  it('rows 가 배열이 아니면 빈 배열로 방어한다', async () => {
+  it('passes null column values through untouched', async () => {
+    // The collector writes null for uuid / origin / href / user_agent when they are absent, so
+    // the client must not coerce or drop them — the display layer decides how to render missing.
+    const fakeFetch = vi.fn(async () =>
+      makeResponse(200, {
+        name: 'recent-footprints',
+        rows: [
+          {
+            received_at: '2026-07-16T00:00:00Z',
+            uuid: null,
+            origin: null,
+            href: null,
+            user_agent: null,
+            arguments: '[]',
+          },
+        ],
+      }),
+    );
+    const result = await fetchQuery<RecentFootprintRow>(
+      'http://x',
+      'recent-footprints',
+      {},
+      fakeFetch as unknown as typeof fetch,
+    );
+    expect(result.rows[0].uuid).toBeNull();
+    expect(result.rows[0].href).toBeNull();
+  });
+
+  it('defends against a body whose rows is not an array', async () => {
     const fakeFetch = vi.fn(async () => makeResponse(200, { name: 'top-pages' }));
     const result = await fetchQuery('http://x', 'top-pages', {}, fakeFetch as unknown as typeof fetch);
     expect(result.rows).toEqual([]);
   });
 
-  it('4xx 이면 원문 메시지를 담은 TrackerError 를 던진다', async () => {
+  it('throws a TrackerError carrying the upstream text on 4xx', async () => {
     const fakeFetch = vi.fn(async () => makeResponse(400, { error: 'to is required' }));
     await expect(fetchQuery('http://x', 'footprints-by-day', {}, fakeFetch as unknown as typeof fetch)).rejects.toThrowError(
       new TrackerError('to is required', 400),
     );
   });
 
-  it('502 도 상태 코드를 보존한다', async () => {
+  it('preserves the status on 502', async () => {
     const fakeFetch = vi.fn(async () => makeResponse(502, { error: 'bad gateway' }));
     await expect(
       fetchQuery('http://x', 'top-origins', {}, fakeFetch as unknown as typeof fetch),
     ).rejects.toMatchObject({ status: 502, message: 'bad gateway' });
   });
 
-  it('비 JSON 에러 본문도 상태 코드 문구로 처리한다', async () => {
+  it('handles a non-JSON error body via the status sentence', async () => {
     const fakeFetch = vi.fn(async () => makeResponse(404, null, { throwOnJson: true }));
     await expect(
       fetchQuery('http://x', 'nope', {}, fakeFetch as unknown as typeof fetch),
     ).rejects.toMatchObject({ status: 404 });
   });
 
-  it('네트워크 실패는 status 0 의 TrackerError 로 감싼다', async () => {
+  it('wraps a network failure as a TrackerError with status 0', async () => {
     const fakeFetch = vi.fn(async () => {
       throw new Error('offline');
     });
@@ -127,7 +162,7 @@ describe('fetchQuery', () => {
     ).rejects.toMatchObject({ status: 0 });
   });
 
-  it('vi.stubGlobal 로 전역 fetch 를 스텁하면 기본 인자로도 동작한다', async () => {
+  it('works with the default argument when the global fetch is stubbed', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn(async () => makeResponse(200, { name: 'top-pages', rows: [{ href: '/', footprints: 3 }] })),
@@ -139,7 +174,7 @@ describe('fetchQuery', () => {
 });
 
 describe('fetchQueries', () => {
-  it('queries 배열을 돌려준다', async () => {
+  it('returns the queries array', async () => {
     const fakeFetch = vi.fn(async () =>
       makeResponse(200, { queries: [{ name: 'recent-footprints', description: '', parameters: [] }] }),
     );
@@ -148,11 +183,29 @@ describe('fetchQueries', () => {
     expect(queries[0].name).toBe('recent-footprints');
   });
 
-  it('실패하면 TrackerError 를 던진다', async () => {
+  it('probes /queries — the only endpoint that carries CORS headers', async () => {
+    // /health and /help would be cheaper but are unreadable cross-origin, so a probe against
+    // them could never confirm the allowlist.
+    const fakeFetch = vi.fn(async () => makeResponse(200, { queries: [] }));
+    await fetchQueries('https://footprint-tracker.example.workers.dev/', fakeFetch as unknown as typeof fetch);
+    expect(fakeFetch).toHaveBeenCalledWith('https://footprint-tracker.example.workers.dev/queries');
+  });
+
+  it('throws a TrackerError on failure', async () => {
     const fakeFetch = vi.fn(async () => makeResponse(502, { error: 'db down' }));
     await expect(fetchQueries('http://x', fakeFetch as unknown as typeof fetch)).rejects.toMatchObject({
       status: 502,
       message: 'db down',
+    });
+  });
+
+  it('reports a blocked or unreachable endpoint as status 0', async () => {
+    // What a CORS rejection looks like to script: an opaque network error, no status.
+    const fakeFetch = vi.fn(async () => {
+      throw new TypeError('Failed to fetch');
+    });
+    await expect(fetchQueries('https://wrong.example.com', fakeFetch as unknown as typeof fetch)).rejects.toMatchObject({
+      status: 0,
     });
   });
 });

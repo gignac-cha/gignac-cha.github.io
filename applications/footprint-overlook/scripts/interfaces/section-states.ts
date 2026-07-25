@@ -1,14 +1,18 @@
-// 각 대시보드 섹션이 공유하는 상태 표시(로딩 스피너·에러·빈 상태) DOM 헬퍼입니다.
-// 표시 전용이라 단위 테스트 대상에서 제외합니다(스타일 계약은 styles/_states.scss).
+// Shared section states — loading, error, empty — as DOM helpers. Every section can fail on its
+// own (the dashboard loads all fifteen queries with allSettled), so these three states exist per
+// section rather than once for the page.
 
-// 자식 요소를 모두 비웁니다(innerHTML 미사용 규칙 준수).
+// Removes all children. Never innerHTML: the strings rendered here include upstream error text,
+// and assigning that as markup would make any content the tracker echoes back an injection point.
+// See https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#security_considerations
 export function clearElement(element: Element): void {
   while (element.firstChild) {
     element.removeChild(element.firstChild);
   }
 }
 
-// 회전 스피너 + 안내 문구로 구성한 로딩 표시입니다.
+// Loading state: a spinner plus a message. The spinner is aria-hidden because it carries no
+// information the adjacent text does not already give.
 export function createLoadingIndicator(messageText = '불러오는 중…'): HTMLElement {
   const wrapper = document.createElement('div');
   wrapper.className = 'section-state section-loading';
@@ -26,7 +30,8 @@ export function createLoadingIndicator(messageText = '불러오는 중…'): HTM
   return wrapper;
 }
 
-// 상단 스트림 오류 원문을 그대로 보여 주는 에러 표시입니다.
+// Error state, showing the upstream text verbatim. role="alert" because it replaces content that
+// was loading, which a screen reader would otherwise never hear about.
 export function createErrorIndicator(messageText: string): HTMLElement {
   const wrapper = document.createElement('div');
   wrapper.className = 'section-state section-error';
@@ -46,8 +51,9 @@ export function createErrorIndicator(messageText: string): HTMLElement {
   return wrapper;
 }
 
-// "아직 발자국이 없습니다" 같은 빈 상태 표시입니다.
-export function createEmptyIndicator(messageText = '아직 발자국이 없습니다.'): HTMLElement {
+// Empty state — a successful response with nothing in it, which is not an error. Every call site
+// passes a message naming its own panel; the default is only the safety net.
+export function createEmptyIndicator(messageText = '아직 데이터가 없습니다.'): HTMLElement {
   const wrapper = document.createElement('div');
   wrapper.className = 'section-state section-empty';
 
@@ -59,7 +65,7 @@ export function createEmptyIndicator(messageText = '아직 발자국이 없습�
   return wrapper;
 }
 
-// 섹션 카드(제목 + 본문 마운트 지점)와 상태 전환 메서드를 함께 돌려주는 핸들입니다.
+// A section card (title plus a body mount point) together with its state transitions.
 export interface SectionHandle {
   element: HTMLElement;
   bodyElement: HTMLElement;
@@ -69,7 +75,7 @@ export interface SectionHandle {
   showContent(node: Node): void;
 }
 
-// 제목·부제를 가진 카드 섹션을 만들고, 본문 영역을 상태별로 갈아 끼울 수 있게 합니다.
+// Builds a titled card whose body can be swapped between the states above and real content.
 export function createSection(options: { title: string; subtitle?: string; className?: string }): SectionHandle {
   const element = document.createElement('section');
   element.className = options.className ? `panel ${options.className}` : 'panel';

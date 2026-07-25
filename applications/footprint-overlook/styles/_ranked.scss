@@ -1,7 +1,9 @@
 @use './variables' as vars;
 
 // ============================================================================
-// 순위 막대 목록 (top-pages / top-origins) — 라벨 + 수치 + 비례 막대
+// 순위 막대 목록 — 라벨 + 수치 + 비례 막대.
+// 상위 페이지 · 유입 경로 · 국가별 방문 · 플랫폼·기기 · 이벤트 · 봇 분류 패널과
+// 방문 환경 패널 안의 세 그룹이 모두 이 컴포넌트를 공유합니다.
 // ============================================================================
 
 .ranked-bars {
@@ -56,5 +58,37 @@
     border-radius: vars.$radius-pill;
     background-color: var(--color-bar);
     transition: width 0.3s ease;
+  }
+}
+
+// ============================================================================
+// 방문 환경 패널 — 한 카드 안에 작은 순위 목록 3개(색 구성표 · 상위 언어 · 화면 폭)를
+// 쌓습니다. 각 그룹은 2~6줄뿐이라 카드를 따로 주면 여백만 늘어납니다.
+// ============================================================================
+
+.ranked-groups {
+  display: flex;
+  flex-direction: column;
+  gap: vars.$spacing-4;
+
+  // 그룹 사이 얇은 구분선 — 마지막 그룹 아래에는 두지 않습니다.
+  .ranked-group + .ranked-group {
+    padding-top: vars.$spacing-4;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .ranked-group-title {
+    margin: 0 0 vars.$spacing-3;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-text-secondary);
+  }
+
+  // 쿼리는 성공했지만 행이 없는 그룹 — 패널 전체 빈 상태(.section-empty)보다 한 단계 작게.
+  .ranked-group-empty {
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-text-muted);
   }
 }

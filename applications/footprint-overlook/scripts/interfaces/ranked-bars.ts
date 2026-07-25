@@ -1,16 +1,18 @@
-// 순위 막대 목록(top-pages / top-origins)입니다. 라벨 + 수치 + 비례 막대(styled div)로 구성합니다.
-// 최대값 대비 비율 계산은 순수 summaries.maxRowValue 를 씁니다.
+// Ranked bar list for top-pages / top-origins: a label, a count, and a proportional bar drawn as
+// a styled div (no chart library). Bars are scaled against the largest value in the list, not
+// against the period total, so the shape of the ranking stays readable regardless of traffic
+// volume.
 
 import { formatCount } from '../tools/formatting.ts';
 
-// 막대 한 줄에 필요한 데이터입니다.
+// One row of the list.
 export interface RankedItem {
-  label: string; // 화면 표기 라벨(축약된 href/origin)
-  fullLabel: string; // title 툴팁용 원문
+  label: string; // display label (a shortened href/origin, or the missing marker)
+  fullLabel: string; // untruncated text for the title tooltip
   value: number;
 }
 
-// 막대 목록(ul)을 만듭니다. 최대값을 분모로 각 막대 폭을 비례 배분합니다.
+// Builds the list. Bar widths are proportional to the largest value.
 export function createRankedBarList(items: ReadonlyArray<RankedItem>): HTMLElement {
   const list = document.createElement('ul');
   list.className = 'ranked-bars';
@@ -43,7 +45,8 @@ export function createRankedBarList(items: ReadonlyArray<RankedItem>): HTMLEleme
     const bar = document.createElement('div');
     bar.className = 'ranked-bar';
     const widthRatio = maximumValue > 0 ? item.value / maximumValue : 0;
-    // 값이 있으면 최소 2% 폭을 줘 눈에 보이게 합니다.
+    // A non-zero value gets at least 2% width: a bar one pixel wide is indistinguishable from no
+    // bar at all, which would misread as "this page had no footprints".
     const widthPercentage = item.value > 0 ? Math.max(2, widthRatio * 100) : 0;
     bar.style.width = `${widthPercentage}%`;
     track.appendChild(bar);

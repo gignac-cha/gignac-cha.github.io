@@ -13,7 +13,7 @@ import {
   valueToY,
 } from './chart-geometry.ts';
 
-// 여백을 0 으로 둔 단순한 100x100 캔버스로 좌표 산수를 검증하기 쉽게 합니다.
+// A plain 100x100 canvas with no padding, so coordinates read as percentages.
 const SIMPLE: ChartDimensions = {
   width: 100,
   height: 100,
@@ -23,7 +23,7 @@ const SIMPLE: ChartDimensions = {
   paddingBottom: 0,
 };
 
-// 여백이 있는 캔버스(플롯 영역 80x80, 좌상단에서 10,10 시작).
+// A padded canvas: an 80x80 plot area starting at (10, 10).
 const PADDED: ChartDimensions = {
   width: 100,
   height: 100,
@@ -34,85 +34,85 @@ const PADDED: ChartDimensions = {
 };
 
 describe('computePlotSize', () => {
-  it('여백을 뺀 플롯 크기를 구한다', () => {
+  it('subtracts the padding from the canvas', () => {
     expect(computePlotSize(PADDED)).toEqual({ width: 80, height: 80 });
   });
 
-  it('여백이 크기를 넘으면 0 으로 클램프한다', () => {
-    // 세로 여백은 그대로(0)이므로 height 는 100, 가로 여백 합(160)이 폭(100)을 넘어 width 만 0 으로 클램프됩니다.
+  it('clamps to 0 when the padding exceeds the canvas', () => {
+    // Vertical padding is untouched (0), so height stays 100; the horizontal padding sums to 160
+    // against a width of 100, so only width clamps.
     expect(computePlotSize({ ...SIMPLE, paddingLeft: 80, paddingRight: 80 })).toEqual({ width: 0, height: 100 });
   });
 });
 
 describe('computeSeriesPoints', () => {
-  it('빈 값 배열이면 빈 점 배열이다', () => {
+  it('returns no points for an empty series', () => {
     expect(computeSeriesPoints([], 10, SIMPLE)).toEqual([]);
   });
 
-  it('점이 1개면 플롯 가로 중앙에 둔다', () => {
+  it('centres a single point horizontally', () => {
     const points = computeSeriesPoints([5], 10, SIMPLE);
     expect(points).toHaveLength(1);
-    expect(points[0].x).toBe(50); // 가로 중앙
-    expect(points[0].y).toBe(50); // 값 5 / 최대 10 → 중간 높이
+    expect(points[0].x).toBe(50); // horizontal centre
+    expect(points[0].y).toBe(50); // 5 of 10 -> half height
   });
 
-  it('최댓값 점은 맨 위(y=paddingTop), 0 값 점은 바닥(baseline)에 놓인다', () => {
+  it('puts the maximum at the top and a zero on the baseline', () => {
     const points = computeSeriesPoints([0, 10], 10, SIMPLE);
-    expect(points[0]).toEqual({ x: 0, y: 100 }); // 0 → 바닥
-    expect(points[1]).toEqual({ x: 100, y: 0 }); // 최댓값 → 꼭대기
+    expect(points[0]).toEqual({ x: 0, y: 100 }); // 0 -> baseline
+    expect(points[1]).toEqual({ x: 100, y: 0 }); // maximum -> top
   });
 
-  it('전부 0(maximumValue<=0)이면 모든 점이 바닥에 붙는다', () => {
-    const points = computeSeriesPoints([0, 0, 0], 0, SIMPLE);
-    expect(points.map((point) => point.y)).toEqual([100, 100, 100]);
+  it('flattens every point onto the baseline when the maximum is 0', () => {
+    expect(computeSeriesPoints([0, 0, 0], 0, SIMPLE).map((point) => point.y)).toEqual([100, 100, 100]);
   });
 
-  it('여백을 반영해 플롯 영역 안에 배치한다', () => {
+  it('places points inside the padded plot area', () => {
     const points = computeSeriesPoints([0, 10], 10, PADDED);
-    // x: 좌우 여백 10 사이 80 폭을 2점이 양끝에서 나눠 가짐 → 10, 90
-    expect(points[0]).toEqual({ x: 10, y: 90 }); // 0 → 바닥(paddingTop+plotHeight=90)
-    expect(points[1]).toEqual({ x: 90, y: 10 }); // 최댓값 → 꼭대기(paddingTop=10)
+    // Two points share the 80px plot width end to end -> x = 10 and 90.
+    expect(points[0]).toEqual({ x: 10, y: 90 }); // 0 -> baseline (paddingTop + plotHeight)
+    expect(points[1]).toEqual({ x: 90, y: 10 }); // maximum -> top (paddingTop)
   });
 
-  it('점 간 x 간격이 균등하다', () => {
+  it('spaces points evenly along x', () => {
     const points = computeSeriesPoints([1, 2, 3, 4, 5], 5, SIMPLE);
     expect(points.map((point) => point.x)).toEqual([0, 25, 50, 75, 100]);
   });
 });
 
 describe('toPolylinePoints', () => {
-  it('점들을 "x,y x,y" 문자열로 잇는다', () => {
+  it('joins points into an "x,y x,y" string', () => {
     expect(toPolylinePoints([{ x: 0, y: 100 }, { x: 50, y: 0 }])).toBe('0,100 50,0');
   });
 
-  it('빈 배열이면 빈 문자열이다', () => {
+  it('returns an empty string for no points', () => {
     expect(toPolylinePoints([])).toBe('');
   });
 });
 
 describe('toAreaPath', () => {
-  it('라인 아래를 baseline 까지 닫는 path 를 만든다', () => {
+  it('closes the line down to the baseline', () => {
     const path = toAreaPath([{ x: 0, y: 20 }, { x: 100, y: 80 }], 100);
     expect(path).toBe('M 0 20 L 100 80 L 100 100 L 0 100 Z');
   });
 
-  it('빈 배열이면 빈 문자열이다', () => {
+  it('returns an empty string for no points', () => {
     expect(toAreaPath([], 100)).toBe('');
   });
 
-  it('점이 1개여도 닫힌 path 를 만든다', () => {
+  it('still closes the path for a single point', () => {
     expect(toAreaPath([{ x: 50, y: 30 }], 100)).toBe('M 50 30 L 50 100 L 50 100 Z');
   });
 });
 
 describe('computeNiceMaximum', () => {
-  it('0 이하나 비정상 입력은 1 로 올린다', () => {
+  it('lifts a zero or non-finite maximum to 1', () => {
     expect(computeNiceMaximum(0)).toBe(1);
     expect(computeNiceMaximum(-5)).toBe(1);
     expect(computeNiceMaximum(Number.NaN)).toBe(1);
   });
 
-  it('보기 좋은 상한으로 올린다', () => {
+  it('rounds up to a readable bound', () => {
     expect(computeNiceMaximum(1)).toBe(1);
     expect(computeNiceMaximum(7)).toBe(10);
     expect(computeNiceMaximum(23)).toBe(25);
@@ -124,49 +124,49 @@ describe('computeNiceMaximum', () => {
 });
 
 describe('findMaximumValue', () => {
-  it('여러 시리즈에서 최댓값을 구한다', () => {
+  it('finds the maximum across several series', () => {
     expect(findMaximumValue([1, 5, 3], [2, 9, 4])).toBe(9);
   });
 
-  it('빈 입력이면 0 이다', () => {
+  it('returns 0 for empty input', () => {
     expect(findMaximumValue([], [])).toBe(0);
     expect(findMaximumValue()).toBe(0);
   });
 
-  it('음수/NaN 은 무시하고 양수 최댓값만 본다', () => {
+  it('ignores negative and NaN entries', () => {
     expect(findMaximumValue([-3, Number.NaN, 2])).toBe(2);
   });
 });
 
 describe('computeYAxisTicks', () => {
-  it('0 부터 최댓값까지 등분한 눈금을 만든다', () => {
+  it('divides 0..maximum into evenly spaced ticks', () => {
     expect(computeYAxisTicks(50, 5)).toEqual([0, 10, 20, 30, 40, 50]);
   });
 
-  it('tickCount 가 0 이하이면 [0] 이다', () => {
+  it('returns [0] when tickCount is 0 or less', () => {
     expect(computeYAxisTicks(50, 0)).toEqual([0]);
   });
 });
 
 describe('valueToY', () => {
-  it('값을 y 픽셀로 변환한다', () => {
+  it('maps a value to its y pixel', () => {
     expect(valueToY(0, 10, SIMPLE)).toBe(100);
     expect(valueToY(10, 10, SIMPLE)).toBe(0);
     expect(valueToY(5, 10, SIMPLE)).toBe(50);
   });
 
-  it('maximumValue<=0 이면 바닥 좌표다', () => {
+  it('maps to the baseline when the maximum is 0', () => {
     expect(valueToY(0, 0, SIMPLE)).toBe(100);
   });
 });
 
 describe('indexToX', () => {
-  it('인덱스를 x 픽셀로 변환한다', () => {
+  it('maps an index to its x pixel', () => {
     expect(indexToX(0, 5, SIMPLE)).toBe(0);
     expect(indexToX(4, 5, SIMPLE)).toBe(100);
   });
 
-  it('점이 1개면 가로 중앙이다', () => {
+  it('centres a single point', () => {
     expect(indexToX(0, 1, SIMPLE)).toBe(50);
   });
 });

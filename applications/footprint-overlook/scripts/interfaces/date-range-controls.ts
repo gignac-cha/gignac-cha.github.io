@@ -1,6 +1,7 @@
-// 날짜 범위 프리셋(7일 / 30일 / 90일) 버튼 그룹입니다. 선택 상태를 스타일로 표시하고 선택 시 콜백을 부릅니다.
+// Range preset buttons (7 / 30 / 90 days): they carry the selected state in both a class and
+// aria-pressed, and hand the chosen day count to the dashboard.
 
-// 프리셋 정의: 라벨과 일수.
+// One preset: its label and its day count.
 export interface RangePreset {
   label: string;
   days: number;
@@ -17,7 +18,7 @@ export interface RangeControlsHandle {
   setActiveDays(days: number): void;
 }
 
-// 프리셋 버튼 그룹을 만듭니다. onSelect 는 선택된 일수를 넘깁니다.
+// Builds the button group. onSelect receives the selected day count.
 export function createRangeControls(options: { onSelect: (days: number) => void }): RangeControlsHandle {
   const group = document.createElement('section');
   group.className = 'range-controls';

@@ -1,13 +1,16 @@
-// 손수 그리는 SVG 라인/영역 차트의 지오메트리(스케일·좌표·경로)를 계산하는 순수 함수 계층입니다.
-// DOM 의존이 없어 vitest 로 단독 검증할 수 있습니다. SVG 요소 생성은 interfaces/line-chart.ts 가 담당합니다.
+// Geometry for the hand-drawn SVG line/area chart — scales, coordinates and path strings — as
+// pure functions with no DOM access, so every edge case (empty series, a single point, an
+// all-zero period) is unit-tested in plain node (chart-geometry.test.ts). Building the SVG
+// elements themselves is interfaces/line-chart.ts's job; keeping the arithmetic out of there is
+// what makes it testable at all.
 
-// 픽셀 좌표 한 점입니다.
+// One point in pixel coordinates.
 export interface Point {
   x: number;
   y: number;
 }
 
-// 차트 캔버스 크기와 축 라벨을 위한 내부 여백입니다.
+// Canvas size plus the inner padding reserved for axis labels.
 export interface ChartDimensions {
   width: number;
   height: number;
@@ -17,12 +20,14 @@ export interface ChartDimensions {
   paddingBottom: number;
 }
 
-// 좌표 계산에서 소수점 잡음을 줄이기 위한 반올림(소수 2자리)입니다.
+// Rounds to two decimals. Division-derived coordinates otherwise land in the SVG markup as
+// 17.333333333333332, which bloats the document and makes the geometry tests assert on floating
+// point noise; two decimals is well below one device pixel at any rendered size.
 function round(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
-// 플롯 영역(여백을 뺀 실제 그리기 영역)의 가로/세로 크기입니다.
+// Size of the plot area (the canvas minus its padding).
 export function computePlotSize(dimensions: ChartDimensions): { width: number; height: number } {
   return {
     width: Math.max(0, dimensions.width - dimensions.paddingLeft - dimensions.paddingRight),
@@ -30,9 +35,11 @@ export function computePlotSize(dimensions: ChartDimensions): { width: number; h
   };
 }
 
-// 값 배열(인덱스 0..N-1 이 x축)을 픽셀 좌표로 변환합니다.
-// - 점이 0개면 빈 배열, 1개면 플롯 가로 중앙에 둡니다.
-// - maximumValue 가 0 이하이면 모든 점을 바닥(baseline)에 둡니다(전부 0인 구간).
+// Maps values (index 0..N-1 along x) to pixel coordinates.
+// - No points yields an empty list; a single point is centred horizontally, because the usual
+//   index/(count-1) spacing would divide by zero there.
+// - A maximumValue of 0 or less puts every point on the baseline: an all-zero period is a flat
+//   line at the bottom, not a division by zero.
 export function computeSeriesPoints(
   values: ReadonlyArray<number>,
   maximumValue: number,
@@ -60,12 +67,12 @@ export function computeSeriesPoints(
   });
 }
 
-// 픽셀 점들을 SVG polyline/polygon 의 points 속성 문자열로 변환합니다.
+// Serializes points into the `points` attribute of an SVG polyline/polygon.
 export function toPolylinePoints(points: ReadonlyArray<Point>): string {
   return points.map((point) => `${round(point.x)},${round(point.y)}`).join(' ');
 }
 
-// 라인 아래를 채우는 영역(area) path 를 만듭니다. baseline 까지 내려 닫습니다.
+// Builds the filled area path under a line, closed down to the baseline.
 export function toAreaPath(points: ReadonlyArray<Point>, baselineY: number): string {
   if (points.length === 0) {
     return '';
@@ -85,15 +92,17 @@ export function toAreaPath(points: ReadonlyArray<Point>, baselineY: number): str
   return segments.join(' ');
 }
 
-// 여러 시리즈를 함께 그릴 때 공통으로 쓸 y축 최댓값을 "보기 좋은 값"으로 올림합니다.
-// 예: 0 -> 1, 7 -> 10, 23 -> 25, 48 -> 50. (축이 데이터 꼭대기에 딱 붙지 않도록.)
+// Rounds the shared y-axis maximum up to a readable number: 0 -> 1, 7 -> 10, 23 -> 25, 48 -> 50.
+// Using the raw maximum instead would pin the tallest point to the very top of the plot and label
+// the axis with arbitrary values like 23; the 1 / 2 / 2.5 / 5 / 10 ladder keeps tick labels round
+// at every magnitude. A zero or non-finite input returns 1 so the axis never collapses.
 export function computeNiceMaximum(rawMaximum: number): number {
   if (!Number.isFinite(rawMaximum) || rawMaximum <= 0) {
     return 1;
   }
 
   const magnitude = 10 ** Math.floor(Math.log10(rawMaximum));
-  const normalized = rawMaximum / magnitude; // [1, 10)
+  const normalized = rawMaximum / magnitude; // in [1, 10)
 
   let niceNormalized: number;
   if (normalized <= 1) {
@@ -108,11 +117,14 @@ export function computeNiceMaximum(rawMaximum: number): number {
     niceNormalized = 10;
   }
 
-  // 정수 반올림은 2.5 단계를 3 으로 망가뜨리므로(예: 2.3 -> 2.5 여야 함), 부동소수 잡음만 제거합니다.
+  // toPrecision, not Math.round: rounding to an integer would destroy the 2.5 rung of the ladder
+  // (a raw maximum of 2.3 must become 2.5, not 3). This only strips the floating-point noise that
+  // the multiply reintroduces.
   return Number((niceNormalized * magnitude).toPrecision(12));
 }
 
-// 여러 수치 배열을 한꺼번에 훑어 최댓값을 구합니다(빈 입력이면 0).
+// Largest value across several series at once — the three chart lines share one y axis, so they
+// must be scaled together. Empty input yields 0.
 export function findMaximumValue(...valueLists: ReadonlyArray<ReadonlyArray<number>>): number {
   let maximum = 0;
   for (const values of valueLists) {
@@ -125,8 +137,8 @@ export function findMaximumValue(...valueLists: ReadonlyArray<ReadonlyArray<numb
   return maximum;
 }
 
-// y축 눈금 값들을 0 부터 maximumValue 까지 tickCount 등분으로 만듭니다.
-// tickCount 는 "구간 수"이므로 눈금 개수는 tickCount + 1 입니다.
+// y-axis tick values from 0 to maximumValue. tickCount counts INTERVALS, so the result has
+// tickCount + 1 entries (both ends included).
 export function computeYAxisTicks(maximumValue: number, tickCount: number): number[] {
   if (tickCount <= 0) {
     return [0];
@@ -139,7 +151,7 @@ export function computeYAxisTicks(maximumValue: number, tickCount: number): numb
   return ticks;
 }
 
-// 값 하나를 y 픽셀 좌표로 변환합니다(축 눈금 라벨 배치용).
+// Maps one value to its y pixel coordinate (used to place axis tick labels).
 export function valueToY(value: number, maximumValue: number, dimensions: ChartDimensions): number {
   const plot = computePlotSize(dimensions);
   const baselineY = dimensions.paddingTop + plot.height;
@@ -147,7 +159,8 @@ export function valueToY(value: number, maximumValue: number, dimensions: ChartD
   return round(baselineY - plot.height * ratio);
 }
 
-// x 인덱스 하나를 x 픽셀 좌표로 변환합니다(x축 라벨 배치·hover 매핑용).
+// Maps one x index to its pixel coordinate (x-axis labels and hover hit-testing). Must stay in
+// step with computeSeriesPoints above — the hover guide would otherwise sit beside its data point.
 export function indexToX(index: number, count: number, dimensions: ChartDimensions): number {
   const plot = computePlotSize(dimensions);
   if (count <= 1) {

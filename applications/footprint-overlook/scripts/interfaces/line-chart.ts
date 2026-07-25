@@ -1,7 +1,12 @@
-// 손수 그리는 SVG 라인/영역 차트입니다(차트/날짜 라이브러리 의존 0).
-// 세 시리즈(발자국 by-day, 고유 방문자 by-day, 봇 발자국 by-day)를 겹쳐 그리고,
-// x=일자·y=수치·축 라벨·간단한 hover 툴팁을 제공합니다. 봇 시리즈는 파선(dashed) + 뮤트 색으로 구분합니다.
-// 좌표·경로 산수는 모두 순수한 chart-geometry.ts 가 담당하고, 여기서는 SVG 요소만 조립합니다.
+// Hand-drawn SVG line/area chart — no chart or date library. It overlays three series (page views,
+// distinct visitors and bot views per day) on one shared y axis, with axis labels and a small
+// hover tooltip; the bot series is drawn as a muted dashed line so it reads as a subset of the
+// page-view line rather than a competing metric. Every coordinate and path string comes from the
+// pure chart-geometry module, leaving only element assembly here.
+//
+// The CSS class names and the internal identifiers keep saying "footprints": they name the QUERY
+// the series comes from (footprints-by-day) and the storage column behind it, which the de-theming
+// deliberately left alone. Only what a reader sees — legend, tooltip, aria-label — says 페이지 뷰.
 
 import {
   type ChartDimensions,
@@ -21,7 +26,10 @@ import { clearElement } from './section-states.ts';
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
-// viewBox 고정 크기 — CSS 로 폭 100% 스케일하므로 DOM 측정 없이 반응형이 됩니다.
+// Fixed viewBox dimensions. The SVG scales to 100% width in CSS, so the chart is responsive
+// without measuring the DOM — no resize observer, no re-render on layout change, and the geometry
+// stays deterministic and testable.
+// See https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/viewBox
 const DIMENSIONS: ChartDimensions = {
   width: 720,
   height: 300,
@@ -34,7 +42,7 @@ const DIMENSIONS: ChartDimensions = {
 const Y_TICK_COUNT = 4;
 const MAXIMUM_X_LABELS = 7;
 
-// 시리즈별 CSS 클래스(색은 styles/_chart.scss 가 정의).
+// Per-series CSS classes; the colours themselves live in styles/_chart.scss.
 const SERIES_CLASS = {
   footprints: 'series-footprints',
   visitors: 'series-visitors',
@@ -45,13 +53,13 @@ function createSvgElement<K extends keyof SVGElementTagNameMap>(tagName: K): SVG
   return document.createElementNS(SVG_NAMESPACE, tagName);
 }
 
-// 'YYYY-MM-DD' 를 축 라벨용 'MM-DD' 로 줄입니다.
+// Shortens a UTC 'YYYY-MM-DD' key to 'MM-DD' for the x axis.
 function toShortDayLabel(day: string): string {
   const match = day.match(/\d{4}-(\d{2})-(\d{2})/);
   return match ? `${match[1]}-${match[2]}` : day;
 }
 
-// y축 눈금선과 라벨을 그립니다.
+// Draws the y-axis grid lines and their labels.
 function appendYAxis(svg: SVGSVGElement, maximumValue: number): void {
   const ticks = computeYAxisTicks(maximumValue, Y_TICK_COUNT);
   for (const tickValue of ticks) {
@@ -75,7 +83,8 @@ function appendYAxis(svg: SVGSVGElement, maximumValue: number): void {
   }
 }
 
-// x축 날짜 라벨을 균등 간격으로 그립니다(너무 많으면 솎아 냅니다).
+// Draws x-axis date labels at even intervals, thinned to at most MAXIMUM_X_LABELS so a 90-day
+// range does not render 90 overlapping labels.
 function appendXAxis(svg: SVGSVGElement, days: ReadonlyArray<string>): void {
   const count = days.length;
   if (count === 0) {
@@ -96,7 +105,8 @@ function appendXAxis(svg: SVGSVGElement, days: ReadonlyArray<string>): void {
   }
 }
 
-// 한 시리즈(영역 + 라인)를 그립니다. withArea=false 이면 영역 채움 없이 라인만 그립니다(봇 파선 시리즈용).
+// Draws one series (area + line). withArea=false draws the line alone, which is what the dashed
+// bot series uses — a third translucent fill would muddy the two underneath it.
 function appendSeries(svg: SVGSVGElement, points: ReadonlyArray<Point>, seriesClass: string, withArea = true): void {
   if (points.length === 0) {
     return;
@@ -110,7 +120,8 @@ function appendSeries(svg: SVGSVGElement, points: ReadonlyArray<Point>, seriesCl
     svg.appendChild(area);
   }
 
-  // 점이 하나뿐이면 polyline 대신 점(circle)으로 그립니다.
+  // A polyline through a single point renders nothing at all, so a one-day range is drawn as a
+  // dot instead.
   if (points.length === 1) {
     const dot = createSvgElement('circle');
     dot.setAttribute('class', `chart-point ${seriesClass}`);
@@ -127,16 +138,16 @@ function appendSeries(svg: SVGSVGElement, points: ReadonlyArray<Point>, seriesCl
   svg.appendChild(line);
 }
 
-// 범례를 (재)구성합니다. 봇 시리즈가 있을 때만 봇 항목을 포함합니다.
+// Rebuilds the legend, including the bot entry only when a bot series is present.
 function renderLegend(legend: HTMLElement, hasBots: boolean): void {
   clearElement(legend);
 
   const items: { label: string; seriesClass: string }[] = [
-    { label: '발자국', seriesClass: SERIES_CLASS.footprints },
-    { label: '고유 방문자', seriesClass: SERIES_CLASS.visitors },
+    { label: '페이지 뷰', seriesClass: SERIES_CLASS.footprints },
+    { label: '방문자', seriesClass: SERIES_CLASS.visitors },
   ];
   if (hasBots) {
-    items.push({ label: '봇 발자국', seriesClass: SERIES_CLASS.bots });
+    items.push({ label: '봇', seriesClass: SERIES_CLASS.bots });
   }
 
   for (const item of items) {
@@ -157,7 +168,8 @@ function renderLegend(legend: HTMLElement, hasBots: boolean): void {
 
 export interface LineChartHandle {
   element: HTMLElement;
-  // bots 가 null 이면(bots-by-day 미지원/실패) 봇 시리즈와 범례 항목을 생략합니다.
+  // A null `bots` (query failed or unsupported) omits the series and its legend entry entirely —
+  // distinct from an all-zero series, which would claim "no bots visited".
   render(
     footprints: ReadonlyArray<DayValue>,
     visitors: ReadonlyArray<DayValue>,
@@ -165,7 +177,7 @@ export interface LineChartHandle {
   ): void;
 }
 
-// 라인 차트 컨테이너(범례 + SVG)를 만들고, render 로 시리즈를 다시 그립니다.
+// Builds the container (legend + SVG); render() redraws the series in place.
 export function createLineChart(): LineChartHandle {
   const container = document.createElement('div');
   container.className = 'chart';
@@ -178,7 +190,8 @@ export function createLineChart(): LineChartHandle {
   svgWrap.className = 'chart-svg-wrap';
   container.appendChild(svgWrap);
 
-  // hover 툴팁(간단): 가장 가까운 일자의 값을 보여 줍니다.
+  // Hover tooltip: the values of the nearest day. It lives outside the SVG (and survives each
+  // redraw) because HTML text wraps and styles far more easily than an SVG <text> block.
   const tooltip = document.createElement('div');
   tooltip.className = 'chart-tooltip';
   tooltip.setAttribute('role', 'status');
@@ -201,7 +214,8 @@ export function createLineChart(): LineChartHandle {
     const botValues = bots?.map((dayValue) => dayValue.value) ?? [];
     const days = footprints.map((dayValue) => dayValue.day);
 
-    // 봇 값도 포함해 y축 최댓값을 잡습니다(세 시리즈가 같은 축을 공유).
+    // The bot values take part in the maximum too: the three series share one axis, and scaling
+    // it without them would let the dashed line escape the top of the plot.
     const rawMaximum = findMaximumValue(footprintValues, visitorValues, botValues);
     const maximumValue = computeNiceMaximum(rawMaximum);
 
@@ -210,7 +224,7 @@ export function createLineChart(): LineChartHandle {
     svg.setAttribute('viewBox', `0 0 ${DIMENSIONS.width} ${DIMENSIONS.height}`);
     svg.setAttribute('preserveAspectRatio', 'none');
     svg.setAttribute('role', 'img');
-    svg.setAttribute('aria-label', hasBots ? '일별 발자국·고유 방문자·봇 발자국 추이' : '일별 발자국과 고유 방문자 추이');
+    svg.setAttribute('aria-label', hasBots ? '일별 페이지 뷰·방문자·봇 추이' : '일별 페이지 뷰와 방문자 추이');
 
     appendYAxis(svg, maximumValue);
     appendXAxis(svg, days);
@@ -219,14 +233,15 @@ export function createLineChart(): LineChartHandle {
     const visitorPoints = computeSeriesPoints(visitorValues, maximumValue, DIMENSIONS);
     const botPoints = hasBots ? computeSeriesPoints(botValues, maximumValue, DIMENSIONS) : [];
 
-    // 방문자(아래) → 발자국 → 봇(파선, 최상단)을 순서대로 겹칩니다. 봇은 영역 채움 없이 파선만 그립니다.
+    // Painting order is meaningful in SVG (later elements sit on top): visitors, then footprints,
+    // then the dashed bot line last so it stays readable over both filled areas.
     appendSeries(svg, visitorPoints, SERIES_CLASS.visitors);
     appendSeries(svg, footprintPoints, SERIES_CLASS.footprints);
     if (hasBots) {
       appendSeries(svg, botPoints, SERIES_CLASS.bots, false);
     }
 
-    // hover 상호작용용 세로 가이드 + 강조 점.
+    // Vertical guide line shown while hovering.
     const guide = createSvgElement('line');
     guide.setAttribute('class', 'chart-hover-guide');
     guide.setAttribute('y1', String(DIMENSIONS.paddingTop));
@@ -242,7 +257,9 @@ export function createLineChart(): LineChartHandle {
   return { element: container, render };
 }
 
-// hover 상호작용을 배선합니다. viewBox 비율로 마우스 x 를 인덱스에 매핑합니다.
+// Wires the hover interaction, mapping the pointer's x position to a data index through the
+// viewBox ratio. Pointer events rather than mouse events so pen and touch input work too.
+// See https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events
 function wireHover(context: {
   svg: SVGSVGElement;
   guide: SVGLineElement;
@@ -263,9 +280,11 @@ function wireHover(context: {
     if (rect.width === 0) {
       return;
     }
-    // 화면 좌표 → viewBox 좌표.
+    // Screen coordinates -> viewBox coordinates. The rendered width is whatever CSS decided, so
+    // the ratio is the only way back to the fixed coordinate system the geometry uses.
     const viewBoxX = ((event.clientX - rect.left) / rect.width) * DIMENSIONS.width;
-    // 플롯 영역 비율 → 가장 가까운 인덱스.
+    // Position within the plot area -> nearest data index, clamped to the ends so the pointer
+    // stays useful over the padding.
     const plotWidth = DIMENSIONS.width - DIMENSIONS.paddingLeft - DIMENSIONS.paddingRight;
     const ratio = plotWidth <= 0 ? 0 : (viewBoxX - DIMENSIONS.paddingLeft) / plotWidth;
     const index = Math.min(count - 1, Math.max(0, Math.round(ratio * (count - 1))));
@@ -286,18 +305,18 @@ function wireHover(context: {
 
     const footprintRow = document.createElement('div');
     footprintRow.className = 'chart-tooltip-row';
-    footprintRow.textContent = `발자국 ${formatCount(footprints[index]?.value ?? 0)}`;
+    footprintRow.textContent = `페이지 뷰 ${formatCount(footprints[index]?.value ?? 0)}`;
     tooltip.appendChild(footprintRow);
 
     const visitorRow = document.createElement('div');
     visitorRow.className = 'chart-tooltip-row';
-    visitorRow.textContent = `고유 방문자 ${formatCount(visitors[index]?.value ?? 0)}`;
+    visitorRow.textContent = `방문자 ${formatCount(visitors[index]?.value ?? 0)}`;
     tooltip.appendChild(visitorRow);
 
     if (bots !== null) {
       const botRow = document.createElement('div');
       botRow.className = 'chart-tooltip-row';
-      botRow.textContent = `봇 발자국 ${formatCount(bots[index]?.value ?? 0)}`;
+      botRow.textContent = `봇 ${formatCount(bots[index]?.value ?? 0)}`;
       tooltip.appendChild(botRow);
     }
   };

@@ -43,7 +43,7 @@ const HELP = {
 //   with zero per-site configuration. "Adding CORS" here would be pure noise: the OPTIONS
 //   preflight it implies never happens, and neither sendBeacon nor a keepalive fetch ever reads
 //   the response. Pinned by 'sends no CORS headers at all' and 'answers OPTIONS with 204 + Allow
-//   and still no CORS headers' in tests/worker.test.ts.
+//   and still no CORS headers' in worker.test.ts.
 //   See https://fetch.spec.whatwg.org/#cors-safelisted-request-header
 // - Collection responses are therefore status-only (204 on success): there is no reader on the
 //   other side. Only the introspection paths (/, /help, /health) return content.
@@ -56,7 +56,7 @@ export default {
 
     // HEAD is GET with the content stripped (RFC 9110 §9.3.2 — "identical to GET except that the
     // server MUST NOT send content"), so it is routed as GET and only the body is withheld.
-    // Pinned by 'answers HEAD like GET with the body stripped' in tests/worker.test.ts.
+    // Pinned by 'answers HEAD like GET with the body stripped' in worker.test.ts.
     // See https://www.rfc-editor.org/rfc/rfc9110.html#name-head
     const isHead = request.method === 'HEAD';
     const method = isHead ? 'GET' : request.method;
@@ -84,7 +84,7 @@ export default {
     // Collection accepts only POST — but on ANY path: the endpoint URL that host pages seed into
     // browser storage may carry an arbitrary path (e.g. /collect/<id>), and rejecting on path
     // would silently drop those deliveries. Pinned by 'accepts a POST on any path (the endpoint
-    // may include one)' in tests/worker.test.ts.
+    // may include one)' in worker.test.ts.
     if (method !== 'POST') {
       return new Response(null, { status: 405, headers: { Allow: ALLOWED_METHODS } });
     }
@@ -97,7 +97,7 @@ export default {
     // project records all page access including bots, and non-browser clients simply do not send
     // the header. This is a tripwire for honest misuse, not an authentication boundary — the
     // header is trivially forged outside a browser. An empty/unset var keeps the collector open.
-    // Pinned by the 'origin allowlist (COLLECTOR_ORIGINS)' suite in tests/worker.test.ts.
+    // Pinned by the 'origin allowlist (COLLECTOR_ORIGINS)' suite in worker.test.ts.
     // See https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Origin
     const allowedOrigins = parseAllowedOrigins(environment.COLLECTOR_ORIGINS);
     const requestOrigin = request.headers.get('Origin');
@@ -111,7 +111,7 @@ export default {
     // code units, not bytes — '가'.repeat(30000) is 30,000 code units but ~90 KiB of UTF-8.
     // Reading the raw ArrayBuffer first yields the one number the 64 KiB contract is actually
     // about; the text is decoded only after the size check has passed. Pinned by the two 413
-    // tests in tests/worker.test.ts (including the multibyte one).
+    // tests in worker.test.ts (including the multibyte one).
     // See https://www.rfc-editor.org/rfc/rfc9110.html#name-content-length and
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/length
     const bodyBytes = await request.arrayBuffer();

@@ -97,13 +97,6 @@ body {
     color: var(--color-text-primary);
   }
 
-  .title-latin {
-    margin-left: vars.$spacing-2;
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--color-text-secondary);
-  }
-
   .page-description {
     margin: vars.$spacing-2 0 0;
     font-size: 14px;
@@ -120,13 +113,6 @@ body {
   @media (max-width: vars.$breakpoint-mobile) {
     .page-title {
       font-size: 24px;
-    }
-
-    .title-latin {
-      display: block;
-      margin-left: 0;
-      margin-top: vars.$spacing-1;
-      font-size: 16px;
     }
   }
 }

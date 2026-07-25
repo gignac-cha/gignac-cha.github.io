@@ -43,19 +43,27 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-const dispatch = async (request: Request) => {
+const dispatch = async (request: Request, environment: Env = env) => {
   const executionContext = createExecutionContext();
   const response = await worker.fetch(
     request as Request<unknown, IncomingRequestCfProperties>,
-    env,
+    environment,
     executionContext,
   );
   await waitOnExecutionContext(executionContext);
   return response;
 };
 
-const get = (path: string, headers: Record<string, string> = {}) =>
-  dispatch(new IncomingRequest(`${WORKER_URL}${path}`, { method: 'GET', headers }));
+// OWNER_UUIDS ships as "" in wrangler.jsonc (feature off), and `wrangler types` therefore narrows
+// it to the literal type "" — so exercising the owner filter means handing the worker a MODIFIED
+// COPY of the environment rather than mutating the shared one, which would leak across tests.
+// worker.ts only ever reads plain string properties off `environment`, so a spread copy is a
+// faithful stand-in; the cast exists solely to widen that literal type.
+const withOwnerUUIDs = (ownerUUIDs: string): Env =>
+  ({ ...env, OWNER_UUIDS: ownerUUIDs }) as unknown as Env;
+
+const get = (path: string, headers: Record<string, string> = {}, environment: Env = env) =>
+  dispatch(new IncomingRequest(`${WORKER_URL}${path}`, { method: 'GET', headers }), environment);
 
 describe('GET /health', () => {
   it('answers 200 ok with no upstream call and no CORS', async () => {
@@ -103,7 +111,7 @@ describe('HEAD and Allow', () => {
 });
 
 describe('GET /queries', () => {
-  it('lists the six queries and reflects an allowlisted origin', async () => {
+  it('lists the sixteen queries and reflects an allowlisted origin', async () => {
     const response = await get('/queries', { Origin: ORIGIN });
     expect(response.status).toBe(200);
     const body = (await response.json()) as { queries: Array<{ name: string }> };
@@ -114,9 +122,37 @@ describe('GET /queries', () => {
       'top-pages',
       'top-origins',
       'bots-by-day',
+      'period-summary',
+      'top-referrers',
+      'views-by-country',
+      'views-by-hour',
+      'top-platforms',
+      'views-by-color-scheme',
+      'top-languages',
+      'views-by-screen-width',
+      'top-events',
+      'verified-bot-categories',
     ]);
     expect(response.headers.get('Access-Control-Allow-Origin')).toBe(ORIGIN);
     expect(response.headers.get('Vary')).toBe('Origin');
+  });
+
+  it('advertises the boolean include_owner descriptor on every query', async () => {
+    // The catalog is what the viewer and the mock tracker both read to know the API surface, so
+    // the boolean descriptor variant has to survive the trip over the wire, not just exist in
+    // TypeScript. Pinned alongside 'offers include_owner on every query' in queries.test.ts.
+    const response = await get('/queries');
+    const body = (await response.json()) as {
+      queries: Array<{ parameters: Array<Record<string, unknown>> }>;
+    };
+    for (const query of body.queries) {
+      expect(query.parameters).toContainEqual({
+        name: 'include_owner',
+        type: 'boolean',
+        required: false,
+        default: false,
+      });
+    }
   });
 });
 
@@ -137,7 +173,7 @@ describe('GET /queries/{name}', () => {
     expect(call.headers['content-type']).toBe('application/json');
     expect(call.body).toEqual({
       query:
-        'SELECT received_at, uuid, origin, href, user_agent, arguments FROM footprint.trail ORDER BY received_at DESC LIMIT 5',
+        "SELECT received_at, uuid, origin, href, user_agent, arguments, json_get_str(cf, 'verifiedBotCategory') AS verified_bot_category FROM footprint.trail ORDER BY received_at DESC LIMIT 5",
     });
   });
 
@@ -156,10 +192,80 @@ describe('GET /queries/{name}', () => {
     respondWith = () => rowsEnvelope(rows);
     const response = await get('/queries/bots-by-day?from=2026-07-01&to=2026-07-17', { Origin: ORIGIN });
     expect(response.status).toBe(200);
+    // The output columns stay `footprints` / `bot_footprints` even though the viewer relabels
+    // them: the row shape is the API contract, the labels are UI copy.
     expect(await response.json()).toEqual({ name: 'bots-by-day', rows });
     expect((outboundCalls[0].body as { query: string }).query).toContain(
-      "SUM(CASE WHEN user_agent ILIKE '%bot%'",
+      "SUM(CASE WHEN (json_get_str(cf, 'verifiedBotCategory') IS NOT NULL AND json_get_str(cf, 'verifiedBotCategory') != '') OR user_agent ILIKE '%bot%'",
     );
+  });
+
+  it('sends the exact SQL of every new v2 query over the wire', async () => {
+    // Each of these strings was also executed once, verbatim, against the live footprint.trail
+    // table (read-only, HTTP 200) before being pinned — see the note above the dimensional suite
+    // in queries.test.ts. This test pins the wire side: what the worker actually POSTs.
+    const range = 'from=2026-07-01&to=2026-07-17';
+    const expected: Array<[string, string]> = [
+      [
+        'period-summary',
+        "SELECT COUNT(*) AS views, COUNT(DISTINCT uuid) AS visitors FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17'",
+      ],
+      [
+        'top-referrers',
+        "SELECT json_get_str(payload, 'document', 'referrer') AS referrer, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY referrer ORDER BY views DESC LIMIT 10",
+      ],
+      [
+        'views-by-country',
+        "SELECT json_get_str(cf, 'country') AS country, COUNT(*) AS views, COUNT(DISTINCT uuid) AS visitors FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY country ORDER BY views DESC LIMIT 10",
+      ],
+      [
+        'views-by-hour',
+        "SELECT substr(received_at, 12, 2) AS hour, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY hour ORDER BY hour",
+      ],
+      [
+        'top-platforms',
+        "SELECT json_get_str(payload, 'navigator', 'userAgentHints', 'platform') AS platform, json_get_bool(payload, 'navigator', 'userAgentHints', 'mobile') AS mobile, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY platform, mobile ORDER BY views DESC LIMIT 10",
+      ],
+      [
+        'views-by-color-scheme',
+        "SELECT json_get_str(payload, 'colorScheme') AS color_scheme, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY color_scheme ORDER BY views DESC",
+      ],
+      [
+        'top-languages',
+        "SELECT json_get_str(payload, 'navigator', 'language') AS language, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY language ORDER BY views DESC LIMIT 10",
+      ],
+      [
+        'views-by-screen-width',
+        "SELECT CASE WHEN json_get_int(payload, 'screen', 'width') < 600 THEN 'under-600' WHEN json_get_int(payload, 'screen', 'width') < 1024 THEN '600-to-1023' WHEN json_get_int(payload, 'screen', 'width') < 1440 THEN '1024-to-1439' WHEN json_get_int(payload, 'screen', 'width') < 1920 THEN '1440-to-1919' WHEN json_get_int(payload, 'screen', 'width') >= 1920 THEN '1920-and-above' END AS width_bucket, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY width_bucket ORDER BY views DESC",
+      ],
+      [
+        'top-events',
+        "SELECT arguments, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND arguments != '[]' GROUP BY arguments ORDER BY views DESC LIMIT 10",
+      ],
+      [
+        'verified-bot-categories',
+        "SELECT json_get_str(cf, 'verifiedBotCategory') AS category, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND json_get_str(cf, 'verifiedBotCategory') IS NOT NULL AND json_get_str(cf, 'verifiedBotCategory') != '' GROUP BY category ORDER BY views DESC",
+      ],
+    ];
+
+    for (const [name, sql] of expected) {
+      outboundCalls = [];
+      const response = await get(`/queries/${name}?${range}`, { Origin: ORIGIN });
+      expect(response.status).toBe(200);
+      expect((outboundCalls[0].body as { query: string }).query).toBe(sql);
+    }
+  });
+
+  it('passes through the row shapes of the new queries verbatim, nulls included', async () => {
+    // The null buckets are load-bearing: 'did not report' is a real answer the viewer renders as
+    // 미보고 / 미상, so the worker must never coerce or drop them on the way out.
+    const rows = [
+      { platform: null, mobile: null, views: 12 },
+      { platform: 'macOS', mobile: false, views: 4 },
+    ];
+    respondWith = () => rowsEnvelope(rows);
+    const response = await get('/queries/top-platforms?from=2026-07-01&to=2026-07-17');
+    expect(await response.json()).toEqual({ name: 'top-platforms', rows });
   });
 
   it('normalizes upstream rows found at result.rows, rows or data', async () => {
@@ -172,6 +278,91 @@ describe('GET /queries/{name}', () => {
         });
       const response = await get('/queries/footprints-by-day?from=2026-07-01&to=2026-07-17');
       expect(await response.json()).toEqual({ name: 'footprints-by-day', rows });
+    }
+  });
+});
+
+describe('OWNER_UUIDS owner exclusion', () => {
+  const OWNERS = 'owner-1,owner-2';
+
+  it('excludes the owner uuids from a ranged query by default', async () => {
+    await get(
+      '/queries/footprints-by-day?from=2026-07-01&to=2026-07-17',
+      { Origin: ORIGIN },
+      withOwnerUUIDs(OWNERS),
+    );
+    expect((outboundCalls[0].body as { query: string }).query).toBe(
+      "SELECT substr(received_at, 1, 10) AS day, COUNT(*) AS footprints FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND uuid NOT IN ('owner-1', 'owner-2') GROUP BY day ORDER BY day",
+    );
+  });
+
+  it('opens a WHERE clause on recent-footprints, which has none of its own', async () => {
+    await get('/queries/recent-footprints', { Origin: ORIGIN }, withOwnerUUIDs(OWNERS));
+    expect((outboundCalls[0].body as { query: string }).query).toBe(
+      "SELECT received_at, uuid, origin, href, user_agent, arguments, json_get_str(cf, 'verifiedBotCategory') AS verified_bot_category FROM footprint.trail WHERE uuid NOT IN ('owner-1', 'owner-2') ORDER BY received_at DESC LIMIT 20",
+    );
+  });
+
+  it('adds nothing when OWNER_UUIDS is the committed empty default', async () => {
+    // env carries the wrangler.jsonc value, which is "" — the feature ships OFF.
+    await get('/queries/footprints-by-day?from=2026-07-01&to=2026-07-17');
+    expect((outboundCalls[0].body as { query: string }).query).not.toContain('uuid NOT IN');
+  });
+
+  it('is bypassed by include_owner=true', async () => {
+    await get(
+      '/queries/footprints-by-day?from=2026-07-01&to=2026-07-17&include_owner=true',
+      { Origin: ORIGIN },
+      withOwnerUUIDs(OWNERS),
+    );
+    expect((outboundCalls[0].body as { query: string }).query).not.toContain('uuid NOT IN');
+  });
+
+  it('answers 400 for an include_owner value that is neither true nor false', async () => {
+    const response = await get(
+      '/queries/footprints-by-day?from=2026-07-01&to=2026-07-17&include_owner=1',
+      { Origin: ORIGIN },
+      withOwnerUUIDs(OWNERS),
+    );
+    expect(response.status).toBe(400);
+    expect(((await response.json()) as { error: string }).error).toBe(
+      'parameter include_owner must be true or false',
+    );
+    expect(response.headers.get('Access-Control-Allow-Origin')).toBe(ORIGIN);
+    expect(outboundCalls).toHaveLength(0);
+  });
+
+  it('answers 502 (not 400, not 200) for a poisoned OWNER_UUIDS var and never calls upstream', async () => {
+    // A malformed OWNER_UUIDS is the OPERATOR's mistake, so it maps to 502 like any other
+    // configuration failure — mapping it to 400 would blame the caller for a var they cannot see,
+    // and silently ignoring it would serve the owner's own footprints as if the filter worked.
+    const response = await get(
+      '/queries/footprints-by-day?from=2026-07-01&to=2026-07-17',
+      { Origin: ORIGIN },
+      withOwnerUUIDs("owner-1,evil') OR 1=1--"),
+    );
+    expect(response.status).toBe(502);
+    expect(((await response.json()) as { error: string }).error).toMatch(/invalid owner uuid/);
+    expect(response.headers.get('Access-Control-Allow-Origin')).toBe(ORIGIN);
+    expect(outboundCalls).toHaveLength(0);
+  });
+
+  it('applies the exclusion to every query in the catalog', async () => {
+    const listing = await get('/queries');
+    const { queries } = (await listing.json()) as {
+      queries: Array<{ name: string; parameters: Array<{ name: string }> }>;
+    };
+    for (const query of queries) {
+      outboundCalls = [];
+      const ranged = query.parameters.some((parameter) => parameter.name === 'from');
+      await get(
+        `/queries/${query.name}${ranged ? '?from=2026-07-01&to=2026-07-17' : ''}`,
+        {},
+        withOwnerUUIDs(OWNERS),
+      );
+      expect((outboundCalls[0].body as { query: string }).query).toContain(
+        "uuid NOT IN ('owner-1', 'owner-2')",
+      );
     }
   });
 });

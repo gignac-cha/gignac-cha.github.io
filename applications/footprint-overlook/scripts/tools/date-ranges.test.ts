@@ -4,88 +4,123 @@ import {
   computeDateRange,
   countDays,
   enumerateDays,
-  formatLocalDate,
-  parseLocalDate,
+  formatUTCDate,
+  parseUTCDate,
 } from './date-ranges.ts';
 
-describe('formatLocalDate', () => {
-  it('로컬 시간대 기준으로 YYYY-MM-DD 로 변환한다', () => {
-    expect(formatLocalDate(new Date(2026, 6, 16))).toBe('2026-07-16');
+describe('formatUTCDate', () => {
+  it('formats a Date as a UTC YYYY-MM-DD string', () => {
+    expect(formatUTCDate(new Date(Date.UTC(2026, 6, 16)))).toBe('2026-07-16');
   });
 
-  it('월/일을 0 으로 채운다', () => {
-    expect(formatLocalDate(new Date(2026, 0, 5))).toBe('2026-01-05');
+  it('zero-pads month and day', () => {
+    expect(formatUTCDate(new Date(Date.UTC(2026, 0, 5)))).toBe('2026-01-05');
+  });
+
+  it('reads the UTC calendar, not the local one', () => {
+    // 2026-07-16T23:30:00Z is already 2026-07-17 in KST (UTC+9) and still 2026-07-16 in UTC.
+    // The UTC answer is the only correct one here: the tracker buckets days by the first ten
+    // characters of the UTC received_at, so a local-calendar reading would file this instant
+    // under a day the server never uses.
+    expect(formatUTCDate(new Date('2026-07-16T23:30:00Z'))).toBe('2026-07-16');
+    expect(formatUTCDate(new Date('2026-07-17T00:30:00Z'))).toBe('2026-07-17');
   });
 });
 
-describe('parseLocalDate', () => {
-  it('YYYY-MM-DD 를 로컬 자정 Date 로 파싱한다(하루 밀림 없음)', () => {
-    const date = parseLocalDate('2026-07-16');
-    expect(date.getFullYear()).toBe(2026);
-    expect(date.getMonth()).toBe(6);
-    expect(date.getDate()).toBe(16);
+describe('parseUTCDate', () => {
+  it('parses YYYY-MM-DD as UTC midnight of that day', () => {
+    const date = parseUTCDate('2026-07-16');
+    expect(date.getUTCFullYear()).toBe(2026);
+    expect(date.getUTCMonth()).toBe(6);
+    expect(date.getUTCDate()).toBe(16);
+    expect(date.toISOString()).toBe('2026-07-16T00:00:00.000Z');
   });
 
-  it('parse -> format 왕복이 일치한다', () => {
-    expect(formatLocalDate(parseLocalDate('2026-02-28'))).toBe('2026-02-28');
+  it('parse -> format round trip', () => {
+    expect(formatUTCDate(parseUTCDate('2026-02-28'))).toBe('2026-02-28');
   });
 });
 
 describe('computeDateRange', () => {
-  const today = new Date(2026, 6, 16); // 2026-07-16
+  const today = new Date('2026-07-16T12:00:00Z');
 
-  it('7일 프리셋: from 은 오늘-6일, to 는 내일(배타적)', () => {
+  it('7-day preset: from is today - 6 days, to is tomorrow (exclusive)', () => {
     expect(computeDateRange(7, today)).toEqual({ from: '2026-07-10', to: '2026-07-17' });
   });
 
-  it('30일 프리셋', () => {
+  it('30-day preset', () => {
     expect(computeDateRange(30, today)).toEqual({ from: '2026-06-17', to: '2026-07-17' });
   });
 
-  it('90일 프리셋', () => {
+  it('90-day preset', () => {
     expect(computeDateRange(90, today)).toEqual({ from: '2026-04-18', to: '2026-07-17' });
   });
 
-  it('to 는 항상 오늘의 다음 날이며 오늘을 포함(배타적 종료)한다', () => {
+  it('always ends the day after today, so today is included and `to` is not', () => {
     const range = computeDateRange(7, today);
-    // 실제 나열된 날에 오늘이 포함되고 to 당일은 빠져야 합니다.
     const days = enumerateDays(range.from, range.to);
     expect(days).toContain('2026-07-16');
     expect(days).not.toContain('2026-07-17');
     expect(days).toHaveLength(7);
   });
 
-  it('전달의 입력 Date 시각(시/분)에 영향받지 않는다', () => {
-    const noisyToday = new Date(2026, 6, 16, 23, 59, 59);
-    expect(computeDateRange(7, noisyToday)).toEqual({ from: '2026-07-10', to: '2026-07-17' });
+  it('ignores the time of day carried by the input Date', () => {
+    expect(computeDateRange(7, new Date('2026-07-16T00:00:00Z'))).toEqual({
+      from: '2026-07-10',
+      to: '2026-07-17',
+    });
+    expect(computeDateRange(7, new Date('2026-07-16T23:59:59Z'))).toEqual({
+      from: '2026-07-10',
+      to: '2026-07-17',
+    });
+  });
+
+  it('anchors on the UTC day even when the local day differs', () => {
+    // Still 2026-07-16 in UTC, already 2026-07-17 in KST. Anchoring locally would ask the
+    // tracker for a range ending one day late and leave the newest bar permanently empty.
+    expect(computeDateRange(7, new Date('2026-07-16T22:00:00Z'))).toEqual({
+      from: '2026-07-10',
+      to: '2026-07-17',
+    });
   });
 });
 
 describe('enumerateDays', () => {
-  it('to 는 배타적이라 마지막 날은 to 하루 전이다', () => {
+  it('excludes `to`, so the last day is the day before it', () => {
     expect(enumerateDays('2026-07-10', '2026-07-13')).toEqual(['2026-07-10', '2026-07-11', '2026-07-12']);
   });
 
-  it('from == to 이면 빈 배열이다', () => {
+  it('returns an empty list when from equals to', () => {
     expect(enumerateDays('2026-07-10', '2026-07-10')).toEqual([]);
   });
 
-  it('월 경계를 넘어간다', () => {
+  it('crosses a month boundary', () => {
     expect(enumerateDays('2026-01-30', '2026-02-02')).toEqual(['2026-01-30', '2026-01-31', '2026-02-01']);
   });
 
-  it('연 경계를 넘어간다', () => {
+  it('crosses a year boundary', () => {
     expect(enumerateDays('2025-12-30', '2026-01-02')).toEqual(['2025-12-30', '2025-12-31', '2026-01-01']);
   });
 
-  it('윤년 2월을 올바르게 다룬다', () => {
-    // 2028 은 윤년이므로 2월 29일이 존재합니다.
+  it('handles a leap-year February', () => {
+    // 2028 is a leap year, so February 29 exists.
     expect(enumerateDays('2028-02-28', '2028-03-01')).toEqual(['2028-02-28', '2028-02-29']);
+  });
+
+  it('emits exactly one entry per day across a long range (no DST duplicates or gaps)', () => {
+    // A 90-day window spanning the northern-hemisphere DST transitions. With a local-midnight
+    // cursor one of these steps would be 23 or 25 hours long and could repeat or skip a day;
+    // stepping at UTC midnight cannot.
+    const days = enumerateDays('2026-02-15', '2026-05-16');
+    expect(days).toHaveLength(90);
+    expect(new Set(days).size).toBe(90);
+    expect(days[0]).toBe('2026-02-15');
+    expect(days[days.length - 1]).toBe('2026-05-15');
   });
 });
 
 describe('countDays', () => {
-  it('구간 일 수를 센다', () => {
+  it('counts the days in the range', () => {
     expect(countDays('2026-07-10', '2026-07-17')).toBe(7);
     expect(countDays('2026-07-10', '2026-07-10')).toBe(0);
   });

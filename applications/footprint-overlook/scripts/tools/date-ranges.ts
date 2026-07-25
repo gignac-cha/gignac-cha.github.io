@@ -1,60 +1,91 @@
-// 날짜 범위 계산을 담당하는 순수 함수 계층입니다. DOM 의존이 없어 vitest 로 단독 검증할 수 있습니다.
+// Date-range arithmetic for the range presets, as PURE functions with no DOM access, so the whole
+// time axis unit-tests in plain node (date-ranges.test.ts).
 //
-// 트래커 API 규약: by-day 계열 쿼리의 `to` 는 배타적(exclusive)입니다. 즉 [from, to) 반열린 구간이며
-// `to` 당일은 포함되지 않습니다. 프리셋 버튼은 "오늘을 포함한 최근 N일"을 뜻하므로
-// from = 오늘-(N-1)일, to = 내일(배타적) 로 계산합니다.
+// THE time invariant of this viewer: every date it computes, sends and labels is UTC.
+// That is not a preference, it is dictated by the pipeline. The trail collector stamps
+// received_at server-side with new Date().toISOString() — UTC (see footprints.ts in
+// footprint-trail-worker) — and the tracker buckets days with substr(received_at, 1, 10),
+// i.e. the first ten characters of that UTC timestamp (see QUERY_DEFINITIONS in
+// footprint-tracker-worker/queries.ts). Computing `from`/`to` or "today" from the browser's LOCAL
+// calendar would therefore shift every bucket by the viewer's offset — in KST (UTC+9) the "today"
+// card would read 0 until 09:00 local and the first nine hours of each local day would land in the
+// previous bar. Local-time helpers are deliberately absent from this module so no caller can
+// reintroduce that skew; the UI labels the axis as UTC instead of silently converting.
+// See https://www.rfc-editor.org/rfc/rfc3339#section-5.1 (UTC timestamps sort chronologically as
+// strings, which is what makes the tracker's lexical range filter correct) and
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getUTCDate
+//
+// Tracker API contract: `to` is EXCLUSIVE on every by-day query, so a range is the half-open
+// interval [from, to). A preset button means "the last N days including today", hence
+// from = today - (N - 1) days and to = tomorrow.
 
-// 배타적 종료일(to)을 가진 날짜 범위입니다. 두 값 모두 로컬 기준 YYYY-MM-DD 문자열입니다.
+// A date range with an exclusive end. Both values are UTC YYYY-MM-DD strings.
 export interface DateRange {
   from: string;
   to: string;
 }
 
-// 로컬 시간대 기준으로 Date 를 YYYY-MM-DD 문자열로 변환합니다. (UTC 가 아니라 로컬 날짜여야 합니다.)
-export function formatLocalDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+// Formats a Date as a UTC YYYY-MM-DD string. Uses the getUTC* accessors rather than toISOString()
+// slicing only because the intent is explicit at the call site; both are UTC. Pinned by the
+// 'formatUTCDate' suite in date-ranges.test.ts.
+export function formatUTCDate(date: Date): string {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
 
-// YYYY-MM-DD 문자열을 로컬 자정 Date 로 파싱합니다.
-// (new Date('2026-07-16') 은 UTC 자정으로 해석되므로 시간대에 따라 하루가 밀립니다. 이를 피하려고 직접 구성합니다.)
-export function parseLocalDate(text: string): Date {
+// Parses a YYYY-MM-DD string into the Date at UTC midnight of that day, via Date.UTC() rather than
+// the Date(string) constructor: the constructor's handling of date-only forms is what makes
+// new Date('2026-07-16') UTC midnight but new Date('2026/07/16') LOCAL midnight, and relying on
+// that distinction is how a one-day drift creeps back in. Building the timestamp explicitly keeps
+// the round trip parse -> format stable in every time zone. Pinned by 'parse -> format round trip'
+// in date-ranges.test.ts.
+// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/UTC
+export function parseUTCDate(text: string): Date {
   const [year, month, day] = text.split('-').map(Number);
-  return new Date(year, month - 1, day);
+  return new Date(Date.UTC(year, month - 1, day));
 }
 
-// "오늘을 포함한 최근 presetDays 일"에 해당하는 [from, to) 범위를 계산합니다.
-// from = 오늘-(presetDays-1)일, to = 내일(오늘 다음 날, 배타적).
+// Computes the half-open [from, to) range for "the last presetDays days including today (UTC)":
+// from = today - (presetDays - 1) days, to = tomorrow (exclusive). The incoming Date is normalized
+// to its UTC midnight first, so the wall-clock time of day it carries cannot shift the result.
+// Pinned by the 'computeDateRange' suite in date-ranges.test.ts.
 export function computeDateRange(presetDays: number, today: Date): DateRange {
-  const fromDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  fromDate.setDate(fromDate.getDate() - (presetDays - 1));
+  const startOfToday = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
 
-  const toDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  toDate.setDate(toDate.getDate() + 1);
+  const fromDate = new Date(startOfToday);
+  fromDate.setUTCDate(fromDate.getUTCDate() - (presetDays - 1));
 
-  return { from: formatLocalDate(fromDate), to: formatLocalDate(toDate) };
+  const toDate = new Date(startOfToday);
+  toDate.setUTCDate(toDate.getUTCDate() + 1);
+
+  return { from: formatUTCDate(fromDate), to: formatUTCDate(toDate) };
 }
 
-// [from, to) 반열린 구간의 날짜를 하루 간격으로 나열합니다(to 당일은 제외). 월/연 경계를 안전하게 넘어갑니다.
+// Enumerates every day in the half-open interval [from, to), one step per day, excluding `to`
+// itself. Stepping with setUTCDate() delegates month, year and leap-day rollover to the Date
+// implementation instead of hand-rolled calendar arithmetic — and because the cursor sits at UTC
+// midnight, no daylight-saving transition can turn a step into 23 or 25 hours and duplicate or
+// skip a day. Pinned by the month, year and leap-year cases in date-ranges.test.ts.
 export function enumerateDays(from: string, to: string): string[] {
   const days: string[] = [];
-  const cursor = parseLocalDate(from);
-  const end = parseLocalDate(to);
+  const cursor = parseUTCDate(from);
+  const end = parseUTCDate(to);
 
-  // 방어적으로 최대 반복 횟수를 둬 잘못된 입력(무한 루프)을 막습니다.
+  // Defensive iteration ceiling: a malformed or inverted input must not spin forever inside a
+  // render path. 100000 days (~274 years) is far beyond any range this viewer can request.
   let guard = 0;
   while (cursor.getTime() < end.getTime() && guard < 100000) {
-    days.push(formatLocalDate(cursor));
-    cursor.setDate(cursor.getDate() + 1);
+    days.push(formatUTCDate(cursor));
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
     guard += 1;
   }
 
   return days;
 }
 
-// [from, to) 구간의 날짜 수(=일 수)를 셉니다.
+// Number of days in [from, to).
 export function countDays(from: string, to: string): number {
   return enumerateDays(from, to).length;
 }

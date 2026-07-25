@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createRequestTokenGuard } from './request-tokens.ts';
 
 describe('createRequestTokenGuard', () => {
-  it('마지막으로 발급된 토큰만 최신이다', () => {
+  it('treats only the most recently issued token as current', () => {
     const guard = createRequestTokenGuard();
     const first = guard.issue();
     const second = guard.issue();
@@ -10,7 +10,8 @@ describe('createRequestTokenGuard', () => {
     expect(guard.isCurrent(second)).toBe(true);
   });
 
-  it('늦게 도착한 이전 요청은 최신 판정에서 탈락해 화면을 덮어쓰지 못한다', async () => {
+  it('drops a late response from an earlier load so it cannot overwrite the screen', async () => {
+    // The race the guard exists for, made deterministic: the first load resolves LAST.
     const guard = createRequestTokenGuard();
     const applied: string[] = [];
 
@@ -28,12 +29,12 @@ describe('createRequestTokenGuard', () => {
       releaseSlow = resolve;
     });
 
-    const firstLoad = load('7일', slow);
-    const secondLoad = load('30일', Promise.resolve());
+    const firstLoad = load('7-day', slow);
+    const secondLoad = load('30-day', Promise.resolve());
     await secondLoad;
     releaseSlow();
     await firstLoad;
 
-    expect(applied).toEqual(['30일']);
+    expect(applied).toEqual(['30-day']);
   });
 });

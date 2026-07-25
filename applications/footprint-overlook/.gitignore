@@ -4,3 +4,6 @@ outputs/
 # 로그·에디터 캐시
 *.log
 .DS_Store
+
+# wrangler pages dev 가 만드는 miniflare 로컬 캐시 (배포 전 확인용 실행의 부산물)
+.wrangler/

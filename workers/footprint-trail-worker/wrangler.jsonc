@@ -12,8 +12,7 @@
     // pass on purpose, because this project records ALL page access including bots. An empty
     // value disables the allowlist entirely and leaves the collector open. Full semantics and
     // the reasoning (a tripwire, not an authentication boundary) live on the allowlist block in
-    // sources/index.ts; pinned by the 'origin allowlist (COLLECTOR_ORIGINS)' suite in
-    // tests/worker.test.ts.
+    // worker.ts; pinned by the 'origin allowlist (COLLECTOR_ORIGINS)' suite in worker.test.ts.
     "COLLECTOR_ORIGINS": "https://gignac-cha.github.io"
   },
   "pipelines": [
@@ -22,7 +21,7 @@
       // The `footprint_trail` stream on the outlook Cloudflare account (c85e85e2…). Created with
       // HTTP ingest DISABLED — this binding is its only producer — and the 8-column structured
       // schema kept in stream-schema.json, which must stay in lockstep with FootprintRecord in
-      // sources/footprints.ts (see the comment there). Downstream, a pipeline delivers the
+      // footprints.ts (see the comment there). Downstream, a pipeline delivers the
       // stream into the R2 Data Catalog sink as Parquet: bucket `footprint`, Iceberg table
       // `footprint.trail`. Recreating the stream mints a NEW id, so this value must be updated
       // whenever the pipeline setup is rebuilt. See https://developers.cloudflare.com/pipelines/

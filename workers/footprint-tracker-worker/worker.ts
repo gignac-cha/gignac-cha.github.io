@@ -1,5 +1,11 @@
 import { corsHeaders, parseAllowlist } from './cors.ts';
-import { findQuery, listQueries, ParameterError, validateParameters } from './queries.ts';
+import {
+  findQuery,
+  listQueries,
+  ParameterError,
+  parseOwnerUUIDs,
+  validateParameters,
+} from './queries.ts';
 import { queryR2SQL } from './r2-sql.ts';
 
 // footprint-tracker: the read side of the footprint family — a read-only, parameterized JSON
@@ -146,7 +152,15 @@ const route = async (request: Request, environment: Env): Promise<Response> => {
 
     try {
       const values = validateParameters(definition, url.searchParams);
-      const sql = definition.buildSQL(environment.TABLE_NAME, values);
+      // Parsed per request, not memoized at module scope. Two reasons: `environment` simply does
+      // not exist at module scope in a Worker (bindings arrive as a fetch() argument), and doing
+      // it inside the try keeps a malformed OWNER_UUIDS on the REQUEST path — it surfaces as a
+      // 502 carrying `invalid owner uuid: ...` instead of as an isolate that fails to start with
+      // no message at all. The cost is a split plus one regex test per entry, nothing next to the
+      // upstream round trip on the very next line.
+      // See https://developers.cloudflare.com/workers/configuration/environment-variables/
+      const ownerUUIDs = parseOwnerUUIDs(environment.OWNER_UUIDS);
+      const sql = definition.buildSQL(environment.TABLE_NAME, values, ownerUUIDs);
       const rows = await queryR2SQL(environment, sql);
       return json({ name, rows }, 200, cors);
     } catch (error) {
@@ -154,10 +168,11 @@ const route = async (request: Request, environment: Env): Promise<Response> => {
       // and every error maps in one place. The split by fault: a bad parameter value is the
       // caller's mistake (ParameterError → 400), while everything past validation is on our
       // side — R2SQLError (upstream unreachable, non-2xx, or a success:false envelope — see
-      // r2-sql.ts) and ConfigurationError (poisoned TABLE_NAME — see queries.ts) both map to
-      // 502 Bad Gateway (RFC 9110 §15.6.3), passing the upstream message through for the viewer
-      // and the logs. Pinned by 'answers 400 with CORS for a missing required parameter' and the
-      // three 502 tests in worker.test.ts.
+      // r2-sql.ts) and ConfigurationError (poisoned TABLE_NAME or OWNER_UUIDS — see queries.ts)
+      // both map to 502 Bad Gateway (RFC 9110 §15.6.3), passing the upstream message through for
+      // the viewer and the logs. Pinned by 'answers 400 with CORS for a missing required
+      // parameter', 'answers 502 (not 400, not 200) for a poisoned OWNER_UUIDS var and never
+      // calls upstream', and the three 502 tests in worker.test.ts.
       // See https://www.rfc-editor.org/rfc/rfc9110.html#name-502-bad-gateway
       if (error instanceof ParameterError) {
         return json({ error: error.message }, 400, cors);

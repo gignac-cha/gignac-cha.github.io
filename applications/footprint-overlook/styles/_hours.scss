@@ -1,0 +1,75 @@
+@use './variables' as vars;
+
+// ============================================================================
+// 시간대 분포 — 24개 세로 막대(UTC 시각별 페이지 뷰). SVG 대신 플렉스 + 높이 %로 그려
+// 컨테이너 폭에 그대로 반응합니다(뷰박스 좌표 변환이 필요 없습니다).
+// ============================================================================
+
+.hour-bars {
+  display: flex;
+  flex-direction: column;
+  gap: vars.$spacing-2;
+}
+
+.hour-bars-chart {
+  display: flex;
+  // stretch(기본값) 이어야 합니다. flex-end 로 두면 컬럼 높이가 내용에 맞춰 줄어들고,
+  // 그러면 .hour-bar 의 height: N% 가 기댈 기준 높이가 사라져 막대가 전부 0 이 됩니다.
+  align-items: stretch;
+  gap: 2px;
+  height: 160px;
+
+  @media (max-width: vars.$breakpoint-mobile) {
+    height: 128px;
+  }
+
+  .hour-column {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    // 라벨은 항상 아래에 붙고 막대는 남은 높이를 차지합니다.
+    justify-content: flex-end;
+    gap: vars.$spacing-1;
+  }
+
+  // 막대가 자라는 바탕 — 값이 0인 시간대도 자리(와 배경)를 지켜 24칸 격자가 유지됩니다.
+  .hour-track {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: flex-end;
+    background-color: var(--color-bar-track);
+    border-radius: vars.$radius-small vars.$radius-small 0 0;
+    overflow: hidden;
+  }
+
+  .hour-bar {
+    width: 100%;
+    background-color: var(--color-bar);
+    border-radius: vars.$radius-small vars.$radius-small 0 0;
+    transition: height 0.3s ease;
+  }
+
+  // 3시간마다 한 번만 글자가 들어갑니다. 빈 라벨도 DOM 에 남겨 24칸의 기준선을 맞춥니다.
+  .hour-label {
+    flex: none;
+    height: 12px;
+    font-family: vars.$font-mono;
+    font-size: 10px;
+    line-height: 12px;
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+}
+
+.hour-caption {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hour-bars-chart .hour-bar {
+    transition: none;
+  }
+}

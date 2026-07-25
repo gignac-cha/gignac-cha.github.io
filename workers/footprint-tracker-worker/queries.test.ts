@@ -1,21 +1,27 @@
 import { describe, expect, it } from 'vitest';
 import {
+  assertOwnerUUID,
   assertTableName,
   ConfigurationError,
   findQuery,
   listQueries,
   ParameterError,
+  parseOwnerUUIDs,
   QUERY_DEFINITIONS,
   validateParameters,
   type QueryDefinition,
 } from './queries.ts';
 
 const TABLE = 'footprint.trail';
+const RANGE = 'from=2026-07-01&to=2026-07-17';
 
-const build = (name: string, search: string): string => {
+// Every query now takes the validated OWNER_UUIDS list as a third buildSQL argument. It defaults
+// to [] here so the pinned-SQL suites read exactly as they did before the feature existed — the
+// owner filter has its own suite below, which passes a list explicitly.
+const build = (name: string, search: string, ownerUUIDs: string[] = []): string => {
   const definition = findQuery(name) as QueryDefinition;
   const values = validateParameters(definition, new URLSearchParams(search));
-  return definition.buildSQL(TABLE, values);
+  return definition.buildSQL(TABLE, values, ownerUUIDs);
 };
 
 const expectRejected = (name: string, search: string) => {
@@ -24,7 +30,7 @@ const expectRejected = (name: string, search: string) => {
 };
 
 describe('listQueries', () => {
-  it('exposes exactly the six v1 queries', () => {
+  it('exposes exactly the sixteen catalog queries in order', () => {
     expect(listQueries().map((query) => query.name)).toEqual([
       'recent-footprints',
       'footprints-by-day',
@@ -32,6 +38,16 @@ describe('listQueries', () => {
       'top-pages',
       'top-origins',
       'bots-by-day',
+      'period-summary',
+      'top-referrers',
+      'views-by-country',
+      'views-by-hour',
+      'top-platforms',
+      'views-by-color-scheme',
+      'top-languages',
+      'views-by-screen-width',
+      'top-events',
+      'verified-bot-categories',
     ]);
   });
 
@@ -39,12 +55,28 @@ describe('listQueries', () => {
     const recent = listQueries().find((query) => query.name === 'recent-footprints');
     expect(recent?.parameters).toEqual([
       { name: 'limit', type: 'integer', required: false, default: 20, minimum: 1, maximum: 100 },
+      { name: 'include_owner', type: 'boolean', required: false, default: false },
     ]);
     const byDay = listQueries().find((query) => query.name === 'footprints-by-day');
     expect(byDay?.parameters).toEqual([
       { name: 'from', type: 'date', required: true },
       { name: 'to', type: 'date', required: true },
+      { name: 'include_owner', type: 'boolean', required: false, default: false },
     ]);
+  });
+
+  it('offers include_owner on every query', () => {
+    // The owner filter is cross-cutting, so a query that silently lacked the opt-out would be a
+    // hole in the contract rather than a missing convenience. QUERY_DEFINITIONS appends the
+    // descriptor programmatically precisely so this can never drift.
+    for (const query of listQueries()) {
+      expect(query.parameters).toContainEqual({
+        name: 'include_owner',
+        type: 'boolean',
+        required: false,
+        default: false,
+      });
+    }
   });
 
   it('does not leak the internal buildSQL function', () => {
@@ -54,17 +86,17 @@ describe('listQueries', () => {
   });
 });
 
-// The full-SQL toBe assertions in this suite and the two below ('by-day SQL', 'top-* SQL') are
-// character-for-character on purpose: the SQL string IS the wire contract — r2-sql.ts posts it
-// as one opaque { query } value with no bind or AST layer in between — and the QUERY_DEFINITIONS
-// comment in queries.ts delegates its "exact SQL is pinned" guarantee to exactly these
-// assertions (the wire side is pinned once more by 'sends the exact by-day SQL with inclusive
-// from / exclusive to' in worker.test.ts). Do not loosen these to toContain or a regex to make
-// an edit pass quietly: any drift in the emitted SQL is a contract change and must fail here first.
+// The full-SQL toBe assertions in this suite and the ones below are character-for-character on
+// purpose: the SQL string IS the wire contract — r2-sql.ts posts it as one opaque { query } value
+// with no bind or AST layer in between — and the QUERY_DEFINITIONS comment in queries.ts delegates
+// its "exact SQL is pinned" guarantee to exactly these assertions (the wire side is pinned once
+// more by 'sends the exact by-day SQL with inclusive from / exclusive to' in worker.test.ts). Do
+// not loosen these to toContain or a regex to make an edit pass quietly: any drift in the emitted
+// SQL is a contract change and must fail here first.
 describe('recent-footprints SQL', () => {
-  it('defaults limit to 20 when omitted', () => {
+  it('defaults limit to 20 when omitted and selects the verified-bot category', () => {
     expect(build('recent-footprints', '')).toBe(
-      'SELECT received_at, uuid, origin, href, user_agent, arguments FROM footprint.trail ORDER BY received_at DESC LIMIT 20',
+      "SELECT received_at, uuid, origin, href, user_agent, arguments, json_get_str(cf, 'verifiedBotCategory') AS verified_bot_category FROM footprint.trail ORDER BY received_at DESC LIMIT 20",
     );
   });
 
@@ -85,25 +117,25 @@ describe('recent-footprints SQL', () => {
 
 describe('by-day SQL', () => {
   it('builds footprints-by-day with inclusive from / exclusive to', () => {
-    expect(build('footprints-by-day', 'from=2026-07-01&to=2026-07-17')).toBe(
+    expect(build('footprints-by-day', RANGE)).toBe(
       "SELECT substr(received_at, 1, 10) AS day, COUNT(*) AS footprints FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY day ORDER BY day",
     );
   });
 
   it('builds unique-visitors-by-day with COUNT(DISTINCT uuid)', () => {
-    expect(build('unique-visitors-by-day', 'from=2026-07-01&to=2026-07-17')).toBe(
+    expect(build('unique-visitors-by-day', RANGE)).toBe(
       "SELECT substr(received_at, 1, 10) AS day, COUNT(DISTINCT uuid) AS visitors FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY day ORDER BY day",
     );
   });
 
-  it('builds bots-by-day with a total count and a conditional bot sum over the UA heuristic', () => {
-    expect(build('bots-by-day', 'from=2026-07-01&to=2026-07-17')).toBe(
-      "SELECT substr(received_at, 1, 10) AS day, COUNT(*) AS footprints, SUM(CASE WHEN user_agent ILIKE '%bot%' OR user_agent ILIKE '%crawler%' OR user_agent ILIKE '%spider%' OR user_agent ILIKE '%headless%' OR user_agent ILIKE '%scraper%' OR user_agent ILIKE '%python-requests%' OR user_agent ILIKE '%curl%' OR user_agent ILIKE '%wget%' THEN 1 ELSE 0 END) AS bot_footprints FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY day ORDER BY day",
+  it('builds bots-by-day ORing the verified-bot category with the UA heuristic', () => {
+    expect(build('bots-by-day', RANGE)).toBe(
+      "SELECT substr(received_at, 1, 10) AS day, COUNT(*) AS footprints, SUM(CASE WHEN (json_get_str(cf, 'verifiedBotCategory') IS NOT NULL AND json_get_str(cf, 'verifiedBotCategory') != '') OR user_agent ILIKE '%bot%' OR user_agent ILIKE '%crawler%' OR user_agent ILIKE '%spider%' OR user_agent ILIKE '%headless%' OR user_agent ILIKE '%scraper%' OR user_agent ILIKE '%python-requests%' OR user_agent ILIKE '%curl%' OR user_agent ILIKE '%wget%' THEN 1 ELSE 0 END) AS bot_footprints FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY day ORDER BY day",
     );
   });
 
   it('keeps the bot User-Agent hints free of single quotes and LIKE wildcards', () => {
-    const sql = build('bots-by-day', 'from=2026-07-01&to=2026-07-17');
+    const sql = build('bots-by-day', RANGE);
     const hints = sql.match(/ILIKE '%([^%]+)%'/g) ?? [];
     expect(hints).toHaveLength(8);
     for (const clause of hints) {
@@ -111,23 +143,232 @@ describe('by-day SQL', () => {
       expect(hint).not.toMatch(/['%_]/);
     }
   });
+
+  it('shares one verified-bot predicate between bots-by-day and verified-bot-categories', () => {
+    // The two panels would silently disagree about what "verified bot" means if either grew its
+    // own copy of the predicate, so the shared constant is asserted here rather than assumed.
+    const predicate =
+      "json_get_str(cf, 'verifiedBotCategory') IS NOT NULL AND json_get_str(cf, 'verifiedBotCategory') != ''";
+    expect(build('bots-by-day', RANGE)).toContain(predicate);
+    expect(build('verified-bot-categories', RANGE)).toContain(predicate);
+  });
 });
 
 describe('top-* SQL', () => {
   it('builds top-pages grouped by href with default limit 10', () => {
-    expect(build('top-pages', 'from=2026-07-01&to=2026-07-17')).toBe(
+    expect(build('top-pages', RANGE)).toBe(
       "SELECT href, COUNT(*) AS footprints FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY href ORDER BY footprints DESC LIMIT 10",
     );
   });
 
   it('builds top-origins grouped by origin', () => {
-    expect(build('top-origins', 'from=2026-07-01&to=2026-07-17')).toBe(
+    expect(build('top-origins', RANGE)).toBe(
       "SELECT origin, COUNT(*) AS footprints FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY origin ORDER BY footprints DESC LIMIT 10",
     );
   });
 
   it('clamps the top-* limit to a maximum of 50', () => {
-    expect(build('top-pages', 'from=2026-07-01&to=2026-07-17&limit=9999')).toContain('LIMIT 50');
+    expect(build('top-pages', `${RANGE}&limit=9999`)).toContain('LIMIT 50');
+  });
+});
+
+// Each of the strings pinned below was executed once, verbatim, against the live footprint.trail
+// table (read-only, HTTP 200) before being pinned — the R2 SQL dialect is a subset with no
+// published grammar, so "it compiles in TypeScript" proves nothing about whether the engine
+// accepts json_get_bool in a GROUP BY or a CASE with no ELSE.
+describe('period-summary SQL', () => {
+  it('builds a single-row total views / distinct visitors summary', () => {
+    expect(build('period-summary', RANGE)).toBe(
+      "SELECT COUNT(*) AS views, COUNT(DISTINCT uuid) AS visitors FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17'",
+    );
+  });
+
+  it('takes no limit parameter', () => {
+    const definition = findQuery('period-summary') as QueryDefinition;
+    expect(definition.parameters.map((parameter) => parameter.name)).toEqual([
+      'from',
+      'to',
+      'include_owner',
+    ]);
+  });
+});
+
+describe('dimensional SQL (payload / cf JSON columns)', () => {
+  it('builds top-referrers grouped by payload.document.referrer', () => {
+    expect(build('top-referrers', RANGE)).toBe(
+      "SELECT json_get_str(payload, 'document', 'referrer') AS referrer, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY referrer ORDER BY views DESC LIMIT 10",
+    );
+  });
+
+  it('builds views-by-country with both views and distinct visitors', () => {
+    expect(build('views-by-country', RANGE)).toBe(
+      "SELECT json_get_str(cf, 'country') AS country, COUNT(*) AS views, COUNT(DISTINCT uuid) AS visitors FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY country ORDER BY views DESC LIMIT 10",
+    );
+  });
+
+  it('builds views-by-hour bucketing on the UTC hour characters of received_at', () => {
+    expect(build('views-by-hour', RANGE)).toBe(
+      "SELECT substr(received_at, 12, 2) AS hour, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY hour ORDER BY hour",
+    );
+  });
+
+  it('builds top-platforms grouped by the client-hint platform and mobile flag', () => {
+    expect(build('top-platforms', RANGE)).toBe(
+      "SELECT json_get_str(payload, 'navigator', 'userAgentHints', 'platform') AS platform, json_get_bool(payload, 'navigator', 'userAgentHints', 'mobile') AS mobile, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY platform, mobile ORDER BY views DESC LIMIT 10",
+    );
+  });
+
+  it('builds views-by-color-scheme grouped by payload.colorScheme', () => {
+    expect(build('views-by-color-scheme', RANGE)).toBe(
+      "SELECT json_get_str(payload, 'colorScheme') AS color_scheme, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY color_scheme ORDER BY views DESC",
+    );
+  });
+
+  it('builds top-languages grouped by payload.navigator.language', () => {
+    expect(build('top-languages', RANGE)).toBe(
+      "SELECT json_get_str(payload, 'navigator', 'language') AS language, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY language ORDER BY views DESC LIMIT 10",
+    );
+  });
+
+  it('builds views-by-screen-width with the five CSS-breakpoint buckets and no ELSE', () => {
+    // No ELSE is the point: an absent payload.screen.width must land in its own NULL bucket
+    // instead of being folded into 'under-600'.
+    expect(build('views-by-screen-width', RANGE)).toBe(
+      "SELECT CASE WHEN json_get_int(payload, 'screen', 'width') < 600 THEN 'under-600' WHEN json_get_int(payload, 'screen', 'width') < 1024 THEN '600-to-1023' WHEN json_get_int(payload, 'screen', 'width') < 1440 THEN '1024-to-1439' WHEN json_get_int(payload, 'screen', 'width') < 1920 THEN '1440-to-1919' WHEN json_get_int(payload, 'screen', 'width') >= 1920 THEN '1920-and-above' END AS width_bucket, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY width_bucket ORDER BY views DESC",
+    );
+  });
+
+  it('builds top-events excluding the empty argument list', () => {
+    expect(build('top-events', RANGE)).toBe(
+      "SELECT arguments, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND arguments != '[]' GROUP BY arguments ORDER BY views DESC LIMIT 10",
+    );
+  });
+
+  it('builds verified-bot-categories excluding null and empty categories', () => {
+    expect(build('verified-bot-categories', RANGE)).toBe(
+      "SELECT json_get_str(cf, 'verifiedBotCategory') AS category, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND json_get_str(cf, 'verifiedBotCategory') IS NOT NULL AND json_get_str(cf, 'verifiedBotCategory') != '' GROUP BY category ORDER BY views DESC",
+    );
+  });
+
+  it('reads the JSON paths the footprint library actually writes', () => {
+    // Guards against a rename in packages/footprint (collect() / mergeUserAgentHints()) silently
+    // turning these columns into all-NULL: the paths are asserted as literal argument lists, so a
+    // drifting key breaks a test here instead of quietly blanking a dashboard panel.
+    const paths = [
+      ["top-referrers", "json_get_str(payload, 'document', 'referrer')"],
+      ["top-platforms", "json_get_str(payload, 'navigator', 'userAgentHints', 'platform')"],
+      ["top-platforms", "json_get_bool(payload, 'navigator', 'userAgentHints', 'mobile')"],
+      ["top-languages", "json_get_str(payload, 'navigator', 'language')"],
+      ["views-by-color-scheme", "json_get_str(payload, 'colorScheme')"],
+      ["views-by-screen-width", "json_get_int(payload, 'screen', 'width')"],
+      ["views-by-country", "json_get_str(cf, 'country')"],
+      ["verified-bot-categories", "json_get_str(cf, 'verifiedBotCategory')"],
+    ] as const;
+    for (const [name, path] of paths) {
+      expect(build(name, RANGE)).toContain(path);
+    }
+  });
+
+  it('clamps the dimensional limits to a maximum of 50 and defaults them to 10', () => {
+    for (const name of ['top-referrers', 'views-by-country', 'top-platforms', 'top-languages', 'top-events']) {
+      expect(build(name, RANGE)).toContain('LIMIT 10');
+      expect(build(name, `${RANGE}&limit=9999`)).toContain('LIMIT 50');
+      expect(build(name, `${RANGE}&limit=0`)).toContain('LIMIT 1');
+    }
+  });
+});
+
+// The whole point of the feature: the operator's own uuids never reach the dashboard unless the
+// caller asks for them explicitly. All four directions are pinned — filter on, filter off (empty
+// config), explicit opt-in, and the two WHERE/AND shapes the catalog has.
+describe('owner exclusion (OWNER_UUIDS)', () => {
+  const OWNERS = ['owner-1', 'owner-2'];
+
+  it('appends an AND uuid NOT IN clause to a ranged query', () => {
+    expect(build('footprints-by-day', RANGE, OWNERS)).toBe(
+      "SELECT substr(received_at, 1, 10) AS day, COUNT(*) AS footprints FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND uuid NOT IN ('owner-1', 'owner-2') GROUP BY day ORDER BY day",
+    );
+  });
+
+  it('inserts a WHERE uuid NOT IN clause into recent-footprints, which has no WHERE of its own', () => {
+    expect(build('recent-footprints', '', OWNERS)).toBe(
+      "SELECT received_at, uuid, origin, href, user_agent, arguments, json_get_str(cf, 'verifiedBotCategory') AS verified_bot_category FROM footprint.trail WHERE uuid NOT IN ('owner-1', 'owner-2') ORDER BY received_at DESC LIMIT 20",
+    );
+  });
+
+  it('adds nothing at all when OWNER_UUIDS is empty', () => {
+    for (const definition of QUERY_DEFINITIONS) {
+      const values = validateParameters(definition, new URLSearchParams(RANGE));
+      expect(definition.buildSQL(TABLE, values, [])).not.toContain('uuid NOT IN');
+    }
+  });
+
+  it('is bypassed by include_owner=true on every query', () => {
+    for (const definition of QUERY_DEFINITIONS) {
+      const values = validateParameters(
+        definition,
+        new URLSearchParams(`${RANGE}&include_owner=true`),
+      );
+      expect(definition.buildSQL(TABLE, values, OWNERS)).not.toContain('uuid NOT IN');
+    }
+  });
+
+  it('applies the filter on every query when include_owner is false or absent', () => {
+    for (const search of [RANGE, `${RANGE}&include_owner=false`, `${RANGE}&include_owner=`]) {
+      for (const definition of QUERY_DEFINITIONS) {
+        const values = validateParameters(definition, new URLSearchParams(search));
+        expect(definition.buildSQL(TABLE, values, OWNERS)).toContain(
+          "uuid NOT IN ('owner-1', 'owner-2')",
+        );
+      }
+    }
+  });
+
+  it('keeps the exclusion inside the WHERE clause, before GROUP BY / ORDER BY / LIMIT', () => {
+    // A fragment appended in the wrong place would either be a syntax error upstream (a 502 the
+    // viewer cannot act on) or, worse, silently parse as something else. Ordering is asserted by
+    // index rather than by re-pinning every string.
+    for (const name of ['top-pages', 'top-referrers', 'views-by-screen-width', 'top-events']) {
+      const sql = build(name, RANGE, OWNERS);
+      const exclusion = sql.indexOf('uuid NOT IN');
+      expect(exclusion).toBeGreaterThan(sql.indexOf('WHERE'));
+      expect(exclusion).toBeLessThan(sql.indexOf('GROUP BY'));
+    }
+  });
+});
+
+describe('parseOwnerUUIDs', () => {
+  it('returns an empty list for an empty, whitespace-only or absent value', () => {
+    expect(parseOwnerUUIDs('')).toEqual([]);
+    expect(parseOwnerUUIDs('   ')).toEqual([]);
+    expect(parseOwnerUUIDs(',, ,')).toEqual([]);
+    expect(parseOwnerUUIDs(undefined)).toEqual([]);
+  });
+
+  it('splits on commas and trims each entry', () => {
+    expect(parseOwnerUUIDs('a-1, b_2 ,c3')).toEqual(['a-1', 'b_2', 'c3']);
+    expect(parseOwnerUUIDs('550e8400-e29b-41d4-a716-446655440000')).toEqual([
+      '550e8400-e29b-41d4-a716-446655440000',
+    ]);
+  });
+
+  it('rejects an OWNER_UUIDS entry that tries to break out of its quotes', () => {
+    // Operator config, not caller input — so ConfigurationError (→ 502), never ParameterError.
+    for (const bad of [
+      "a') OR 1=1--",
+      "owner'",
+      'owner;DROP TABLE x',
+      'owner uuid',
+      'owner%',
+      'a'.repeat(129),
+    ]) {
+      expect(() => parseOwnerUUIDs(bad)).toThrow(ConfigurationError);
+    }
+  });
+
+  it('rejects the whole list when only one entry is malformed', () => {
+    // Skipping the bad entry would leak exactly the footprints the operator asked to hide.
+    expect(() => parseOwnerUUIDs("good-1,bad';--,good-2")).toThrow(ConfigurationError);
   });
 });
 
@@ -137,9 +378,27 @@ describe('parameter validation failures', () => {
     expectRejected('footprints-by-day', '');
   });
 
+  it('rejects a missing required date on every ranged query', () => {
+    for (const definition of QUERY_DEFINITIONS) {
+      if (!definition.parameters.some((parameter) => parameter.name === 'from')) {
+        continue;
+      }
+      expectRejected(definition.name, '');
+      expectRejected(definition.name, 'from=2026-07-01');
+      expectRejected(definition.name, 'to=2026-07-17');
+    }
+  });
+
   it('rejects a non-integer limit', () => {
     expectRejected('recent-footprints', 'limit=abc');
     expectRejected('recent-footprints', 'limit=1.5');
+  });
+
+  it('rejects a non-integer limit on the new dimensional queries too', () => {
+    for (const name of ['top-referrers', 'views-by-country', 'top-platforms', 'top-languages', 'top-events']) {
+      expectRejected(name, `${RANGE}&limit=abc`);
+      expectRejected(name, `${RANGE}&limit=1.5`);
+    }
   });
 
   it('rejects non-decimal integer notations (scientific, hexadecimal, sign, space)', () => {
@@ -155,6 +414,34 @@ describe('parameter validation failures', () => {
     expectRejected('footprints-by-day', 'from=2026-7-1&to=2026-07-17');
     expectRejected('footprints-by-day', 'from=2026/07/01&to=2026-07-17');
     expectRejected('footprints-by-day', 'from=yesterday&to=2026-07-17');
+  });
+
+  it('rejects an include_owner value that is not true or false', () => {
+    for (const bad of ['1', '0', 'yes', 'TRUE', 'False', 'ture', 'null']) {
+      expectRejected('footprints-by-day', `${RANGE}&include_owner=${bad}`);
+    }
+  });
+
+  it('names include_owner in the boolean rejection message', () => {
+    const definition = findQuery('footprints-by-day') as QueryDefinition;
+    expect(() =>
+      validateParameters(definition, new URLSearchParams(`${RANGE}&include_owner=1`)),
+    ).toThrow('parameter include_owner must be true or false');
+  });
+
+  it('defaults include_owner to false and accepts both spellings', () => {
+    const definition = findQuery('footprints-by-day') as QueryDefinition;
+    expect(
+      validateParameters(definition, new URLSearchParams(RANGE)).include_owner,
+    ).toBe(false);
+    expect(
+      validateParameters(definition, new URLSearchParams(`${RANGE}&include_owner=false`))
+        .include_owner,
+    ).toBe(false);
+    expect(
+      validateParameters(definition, new URLSearchParams(`${RANGE}&include_owner=true`))
+        .include_owner,
+    ).toBe(true);
   });
 
   it('treats an out-of-calendar but well-formed date as a lexical value (no throw, no rows guarantee)', () => {
@@ -178,10 +465,31 @@ describe('SQL injection attempts are rejected', () => {
     expectRejected('bots-by-day', 'from=2026-07-01'); // missing required `to`
   });
 
+  it('rejects injected dates and limits on every new query', () => {
+    // The catalog grew from six queries to sixteen; the injection matrix grows with it rather
+    // than staying pinned to the two originals.
+    for (const definition of QUERY_DEFINITIONS) {
+      const names = definition.parameters.map((parameter) => parameter.name);
+      if (names.includes('from')) {
+        expectRejected(definition.name, "from=2026-01-01' OR '1'='1&to=2026-07-17");
+        expectRejected(definition.name, "from=2026-07-01&to=2026-07-17';DROP TABLE trail;--");
+      }
+      if (names.includes('limit')) {
+        const range = names.includes('from') ? `${RANGE}&` : '';
+        expectRejected(definition.name, `${range}limit=1);DROP TABLE x;--`);
+        expectRejected(definition.name, `${range}limit=1 UNION SELECT 1`);
+      }
+      expectRejected(
+        definition.name,
+        `${names.includes('from') ? `${RANGE}&` : ''}include_owner=true' OR '1'='1`,
+      );
+    }
+  });
+
   it('rejects a statement-injection limit', () => {
     expectRejected('recent-footprints', 'limit=20;DROP TABLE x');
     expectRejected('recent-footprints', 'limit=20 OR 1=1');
-    expectRejected('top-pages', 'from=2026-07-01&to=2026-07-17&limit=1);DROP TABLE x;--');
+    expectRejected('top-pages', `${RANGE}&limit=1);DROP TABLE x;--`);
   });
 
   it('never lets an injected date reach the SQL string', () => {
@@ -193,10 +501,27 @@ describe('SQL injection attempts are rejected', () => {
       );
       // Belt and braces: if validation ever regressed and let the value through, the built
       // SQL still must not contain the injected fragment.
-      expect(definition.buildSQL(TABLE, values)).not.toContain("OR '1'='1");
+      expect(definition.buildSQL(TABLE, values, [])).not.toContain("OR '1'='1");
       throw new Error('expected validation to reject the injected date');
     } catch (error) {
       expect(error).toBeInstanceOf(ParameterError);
+    }
+  });
+
+  it('emits no single quote in the built SQL that is not part of a code-constant literal', () => {
+    // A structural check on top of the per-parameter ones: every query is built with the most
+    // hostile values that PASS validation, and the resulting quote count must equal the count for
+    // benign values — proof that no user value ever contributes an extra quote.
+    for (const definition of QUERY_DEFINITIONS) {
+      const benign = validateParameters(definition, new URLSearchParams(`${RANGE}&limit=10`));
+      const hostile = validateParameters(
+        definition,
+        new URLSearchParams('from=9999-99-99&to=0000-00-00&limit=99999&include_owner=false'),
+      );
+      const quotesIn = (sql: string) => (sql.match(/'/g) ?? []).length;
+      expect(quotesIn(definition.buildSQL(TABLE, hostile, []))).toBe(
+        quotesIn(definition.buildSQL(TABLE, benign, [])),
+      );
     }
   });
 });
@@ -216,7 +541,31 @@ describe('assertTableName', () => {
   it('makes buildSQL throw a ConfigurationError for a poisoned table name', () => {
     const definition = findQuery('recent-footprints') as QueryDefinition;
     const values = validateParameters(definition, new URLSearchParams(''));
-    expect(() => definition.buildSQL("trail; DROP TABLE x", values)).toThrow(ConfigurationError);
+    expect(() => definition.buildSQL("trail; DROP TABLE x", values, [])).toThrow(ConfigurationError);
+  });
+});
+
+describe('assertOwnerUUID', () => {
+  it('accepts library-minted uuids and short fallback ids', () => {
+    expect(assertOwnerUUID('550e8400-e29b-41d4-a716-446655440000')).toBe(
+      '550e8400-e29b-41d4-a716-446655440000',
+    );
+    expect(assertOwnerUUID('v3-1-ec005d')).toBe('v3-1-ec005d');
+    expect(assertOwnerUUID('A_b-9')).toBe('A_b-9');
+  });
+
+  it('rejects anything that could escape a single-quoted literal', () => {
+    for (const bad of ['', "a'", 'a b', 'a;b', 'a)b', 'a%b', 'a.b', 'a'.repeat(129)]) {
+      expect(() => assertOwnerUUID(bad)).toThrow(ConfigurationError);
+    }
+  });
+
+  it('makes buildSQL throw a ConfigurationError for a poisoned owner uuid', () => {
+    // Defense in depth: buildSQL re-validates the list it is handed, so a caller that skipped
+    // parseOwnerUUIDs still cannot inject.
+    const definition = findQuery('recent-footprints') as QueryDefinition;
+    const values = validateParameters(definition, new URLSearchParams(''));
+    expect(() => definition.buildSQL(TABLE, values, ["x') OR 1=1--"])).toThrow(ConfigurationError);
   });
 });
 

@@ -1,7 +1,7 @@
 @use './variables' as vars;
 
 // ============================================================================
-// 최근 발자국 테이블 — 시각 / UUID / href / arguments
+// 최근 조회 테이블 — 시각 / UUID / href / arguments
 // ============================================================================
 
 // 좁은 화면에서 표가 페이지를 가로로 밀지 않도록 자체 가로 스크롤 컨테이너에 담습니다.
@@ -45,7 +45,8 @@
     color: var(--color-text-primary);
   }
 
-  // 봇으로 추정되는 행 표식(클라이언트 측 힌트). 시각 셀 옆에 작은 배지로 답니다.
+  // 봇 행 표식. 시각 셀 옆에 작은 배지로 답니다. 기본형은 user_agent 휴리스틱(추정)이고,
+  // Cloudflare 가 검증한 봇은 .is-verified 로 한 단계 진하게 그려 확신도 차이를 드러냅니다.
   .bot-tag {
     display: inline-block;
     margin-left: vars.$spacing-2;
@@ -60,6 +61,11 @@
     border-radius: vars.$radius-pill;
     white-space: nowrap;
     vertical-align: middle;
+
+    &.is-verified {
+      background-color: color-mix(in srgb, var(--color-series-bots) 24%, transparent);
+      border-color: var(--color-series-bots);
+    }
   }
 
   .cell-uuid {

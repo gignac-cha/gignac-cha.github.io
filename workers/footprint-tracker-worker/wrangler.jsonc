@@ -27,7 +27,27 @@
     // footprint-overlook viewer on Cloudflare Pages. Only an EXACT match is reflected, and an
     // empty value means no cross-origin reader at all (deny by default) — full semantics on
     // corsHeaders in cors.ts; pinned by the 'CORS posture on /queries' suite in worker.test.ts.
-    "VIEWER_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173,https://footprint-overlook.pages.dev"
+    "VIEWER_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173,https://footprint-overlook.pages.dev",
+
+    // Owner-visit exclusion (comma-separated visitor uuids): footprints whose `uuid` column
+    // matches one of these are excluded from EVERY query by default, so the site owner's own
+    // browsing does not inflate their own analytics. An EMPTY value means the feature is off —
+    // that is the committed default, because the owner uuid is personal to whoever deploys this
+    // and belongs in their own config, not in the repository.
+    //
+    // How to find your uuid: open the site, then read the value footprint stored under the
+    // `footprint` key in localStorage (it is the same value the `uuid` column carries). One
+    // browser profile is one uuid, so list every browser/device you browse your own site from.
+    //
+    // Semantics: excluded means the rows still exist in the table and are still collected — only
+    // the read API hides them. A caller can opt back in per request with `?include_owner=true`;
+    // the viewer never sends it, so the dashboard is always owner-free. Each entry is validated
+    // against /^[A-Za-z0-9_-]{1,128}$/ before it is embedded in SQL, and a violating entry fails
+    // the request with a 502 (operator config error, not a caller error) rather than being
+    // silently dropped — see parseOwnerUUIDs in queries.ts. Pinned by the 'owner exclusion
+    // (OWNER_UUIDS)' suite in queries.test.ts and the 'OWNER_UUIDS owner exclusion' suite in
+    // worker.test.ts.
+    "OWNER_UUIDS": ""
   }
 
   // R2_SQL_TOKEN is a secret and therefore never lives in this file:

@@ -18,52 +18,52 @@ const SERIES = [
 ];
 
 describe('sumDailyValues', () => {
-  it('일별 값을 모두 더한다', () => {
+  it('adds up the daily values', () => {
     expect(sumDailyValues(SERIES)).toBe(15);
   });
 
-  it('빈 배열이면 0 이다', () => {
+  it('returns 0 for an empty series', () => {
     expect(sumDailyValues([])).toBe(0);
   });
 });
 
 describe('findValueForDay', () => {
-  it('해당 날짜 값을 찾는다', () => {
+  it('finds the value for a given day', () => {
     expect(findValueForDay(SERIES, '2026-07-12')).toBe(10);
   });
 
-  it('없는 날짜면 0 이다', () => {
+  it('returns 0 for a day outside the series', () => {
     expect(findValueForDay(SERIES, '2026-07-20')).toBe(0);
   });
 });
 
 describe('maxDailyValue', () => {
-  it('일별 최댓값을 구한다', () => {
+  it('finds the busiest day', () => {
     expect(maxDailyValue(SERIES)).toBe(10);
   });
 
-  it('빈 배열이면 0 이다', () => {
+  it('returns 0 for an empty series', () => {
     expect(maxDailyValue([])).toBe(0);
   });
 });
 
 describe('averageDailyValue', () => {
-  it('일 평균을 구한다', () => {
+  it('computes the daily average', () => {
     expect(averageDailyValue(SERIES)).toBe(5);
   });
 
-  it('빈 배열이면 0 이다', () => {
+  it('returns 0 for an empty series', () => {
     expect(averageDailyValue([])).toBe(0);
   });
 });
 
 describe('isEmptyPeriod', () => {
-  it('합이 0 이면 빈 기간이다', () => {
+  it('reports a period whose total is 0 as empty', () => {
     expect(isEmptyPeriod([{ day: '2026-07-10', value: 0 }])).toBe(true);
     expect(isEmptyPeriod([])).toBe(true);
   });
 
-  it('발자국이 있으면 빈 기간이 아니다', () => {
+  it('reports a period with footprints as not empty', () => {
     expect(isEmptyPeriod(SERIES)).toBe(false);
   });
 });
@@ -74,37 +74,37 @@ describe('sumRowValues / maxRowValue', () => {
     { href: '/b', footprints: 3 },
   ];
 
-  it('랭크 목록 값의 합을 구한다', () => {
+  it('adds up a ranked list', () => {
     expect(sumRowValues(rows)).toBe(15);
   });
 
-  it('랭크 목록 최대 값을 구한다', () => {
+  it('finds the largest value in a ranked list', () => {
     expect(maxRowValue(rows)).toBe(12);
   });
 
-  it('빈 목록이면 0 이다', () => {
+  it('returns 0 for an empty list', () => {
     expect(sumRowValues([])).toBe(0);
     expect(maxRowValue([])).toBe(0);
   });
 });
 
 describe('computeBotRatio', () => {
-  it('봇 발자국 / 총 발자국 비율을 구한다', () => {
+  it('computes bot footprints over total footprints', () => {
     expect(computeBotRatio(123, 632)).toBeCloseTo(0.1946, 3);
     expect(computeBotRatio(50, 100)).toBe(0.5);
   });
 
-  it('총 발자국이 0 이면 0 이다(0으로 나눔 방어)', () => {
+  it('returns 0 when the total is 0 (no division by zero)', () => {
     expect(computeBotRatio(0, 0)).toBe(0);
     expect(computeBotRatio(5, 0)).toBe(0);
   });
 
-  it('0..1 범위로 클램프한다', () => {
+  it('clamps the ratio to 0..1', () => {
     expect(computeBotRatio(150, 100)).toBe(1);
     expect(computeBotRatio(-5, 100)).toBe(0);
   });
 
-  it('비정상 입력을 방어한다', () => {
+  it('defends against non-finite input', () => {
     expect(computeBotRatio(Number.NaN, 100)).toBe(0);
     expect(computeBotRatio(10, Number.NaN)).toBe(0);
   });
