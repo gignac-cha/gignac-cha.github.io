@@ -125,7 +125,7 @@ const BOT_USER_AGENT_CONDITION = BOT_USER_AGENT_HINTS.map(
 // catches unverified scrapers Cloudflare has no verdict for.
 // See https://developers.cloudflare.com/bots/concepts/bot/#verified-bots and
 // https://developers.cloudflare.com/workers/runtime-apis/request/#incomingrequestcfproperties
-const VERIFIED_BOT_CATEGORY = "json_get_str(cf, 'verifiedBotCategory')";
+const VERIFIED_BOT_CATEGORY = "CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END";
 // TWO predicates, and BOTH are load-bearing — this was measured against the live table, not
 // guessed:
 //   - `!= ''` carries the ordinary case. Cloudflare always SETS cf.verifiedBotCategory; for a
@@ -305,6 +305,16 @@ const INCLUDE_OWNER_PARAMETER: ParameterDescriptor = {
 // together. json_get_* on an absent path returns NULL, which is a legitimate bucket here
 // ("unreported"), not an error: older rows and non-browser clients simply group under null.
 //
+// EVERY json_get_* call below is wrapped in `CASE WHEN octet_length(column) <= 2000 THEN ... END`,
+// and the guard is load-bearing, not defensive: R2 SQL rejects json_get_*() on any input value
+// over 2000 bytes by FAILING THE WHOLE QUERY (code 40004 "argument 1 exceeds the maximum byte
+// length of 2000"), measured live the moment the first real browser payload reached 2013 bytes —
+// five dashboard panels 502'd at once. CASE short-circuits per row (verified against the live
+// table with that same oversized row present), so an oversized payload/cf degrades to the NULL
+// "unreported" bucket instead of taking the query down. Real payloads routinely straddle 2KB, so
+// removing a guard reintroduces a failure that only appears once real traffic arrives.
+// Pinned by 'guards every json_get_* read against the 2000-byte limit' in queries.test.ts.
+//
 // The exact SQL of every query is pinned character-for-character in queries.test.ts and, as sent
 // over the wire, by 'sends the exact by-day SQL with inclusive from / exclusive to' in
 // worker.test.ts. Every string below was additionally executed once against the live
@@ -409,7 +419,7 @@ const CATALOG: QueryDefinition[] = [
     // traffic is direct" is exactly what the viewer's 유입 경로 panel is asking. Bucketing the
     // two together is the VIEWER's presentation decision, not this query's.
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT json_get_str(payload, 'document', 'referrer') AS referrer, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY referrer ORDER BY views DESC LIMIT ${values.limit}`,
+      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'document', 'referrer') END AS referrer, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY referrer ORDER BY views DESC LIMIT ${values.limit}`,
   },
   {
     name: 'views-by-country',
@@ -423,7 +433,7 @@ const CATALOG: QueryDefinition[] = [
     // be spoofed by the browser. It is NULL when the request carried no cf metadata at all
     // (local development, replayed rows) — a real bucket the viewer labels 미상.
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT json_get_str(cf, 'country') AS country, COUNT(*) AS views, COUNT(DISTINCT uuid) AS visitors FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY country ORDER BY views DESC LIMIT ${values.limit}`,
+      `SELECT CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'country') END AS country, COUNT(*) AS views, COUNT(DISTINCT uuid) AS visitors FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY country ORDER BY views DESC LIMIT ${values.limit}`,
   },
   {
     name: 'views-by-hour',
@@ -454,7 +464,7 @@ const CATALOG: QueryDefinition[] = [
     // (Safari, Firefox), so the null bucket here means "did not report", not "unknown device".
     // See https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT json_get_str(payload, 'navigator', 'userAgentHints', 'platform') AS platform, json_get_bool(payload, 'navigator', 'userAgentHints', 'mobile') AS mobile, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY platform, mobile ORDER BY views DESC LIMIT ${values.limit}`,
+      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'navigator', 'userAgentHints', 'platform') END AS platform, CASE WHEN octet_length(payload) <= 2000 THEN json_get_bool(payload, 'navigator', 'userAgentHints', 'mobile') END AS mobile, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY platform, mobile ORDER BY views DESC LIMIT ${values.limit}`,
   },
   {
     name: 'views-by-color-scheme',
@@ -464,7 +474,7 @@ const CATALOG: QueryDefinition[] = [
       { name: 'to', type: 'date', required: true },
     ],
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT json_get_str(payload, 'colorScheme') AS color_scheme, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY color_scheme ORDER BY views DESC`,
+      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'colorScheme') END AS color_scheme, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY color_scheme ORDER BY views DESC`,
   },
   {
     name: 'top-languages',
@@ -478,7 +488,7 @@ const CATALOG: QueryDefinition[] = [
     // the payload carries both, but the array cannot be grouped on and the preferred tag is what
     // a language breakdown means.
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT json_get_str(payload, 'navigator', 'language') AS language, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY language ORDER BY views DESC LIMIT ${values.limit}`,
+      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'navigator', 'language') END AS language, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY language ORDER BY views DESC LIMIT ${values.limit}`,
   },
   {
     name: 'views-by-screen-width',
@@ -496,7 +506,7 @@ const CATALOG: QueryDefinition[] = [
     // null width_bucket row). The boundaries are the common CSS breakpoints, and the labels are
     // stable identifiers — the Korean display strings live in the viewer.
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT CASE WHEN json_get_int(payload, 'screen', 'width') < 600 THEN 'under-600' WHEN json_get_int(payload, 'screen', 'width') < 1024 THEN '600-to-1023' WHEN json_get_int(payload, 'screen', 'width') < 1440 THEN '1024-to-1439' WHEN json_get_int(payload, 'screen', 'width') < 1920 THEN '1440-to-1919' WHEN json_get_int(payload, 'screen', 'width') >= 1920 THEN '1920-and-above' END AS width_bucket, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY width_bucket ORDER BY views DESC`,
+      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN CASE WHEN json_get_int(payload, 'screen', 'width') < 600 THEN 'under-600' WHEN json_get_int(payload, 'screen', 'width') < 1024 THEN '600-to-1023' WHEN json_get_int(payload, 'screen', 'width') < 1440 THEN '1024-to-1439' WHEN json_get_int(payload, 'screen', 'width') < 1920 THEN '1440-to-1919' WHEN json_get_int(payload, 'screen', 'width') >= 1920 THEN '1920-and-above' END END AS width_bucket, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY width_bucket ORDER BY views DESC`,
   },
   {
     name: 'top-events',

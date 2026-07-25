@@ -173,7 +173,7 @@ describe('GET /queries/{name}', () => {
     expect(call.headers['content-type']).toBe('application/json');
     expect(call.body).toEqual({
       query:
-        "SELECT received_at, uuid, origin, href, user_agent, arguments, json_get_str(cf, 'verifiedBotCategory') AS verified_bot_category FROM footprint.trail ORDER BY received_at DESC LIMIT 5",
+        "SELECT received_at, uuid, origin, href, user_agent, arguments, CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END AS verified_bot_category FROM footprint.trail ORDER BY received_at DESC LIMIT 5",
     });
   });
 
@@ -196,7 +196,7 @@ describe('GET /queries/{name}', () => {
     // them: the row shape is the API contract, the labels are UI copy.
     expect(await response.json()).toEqual({ name: 'bots-by-day', rows });
     expect((outboundCalls[0].body as { query: string }).query).toContain(
-      "SUM(CASE WHEN (json_get_str(cf, 'verifiedBotCategory') IS NOT NULL AND json_get_str(cf, 'verifiedBotCategory') != '') OR user_agent ILIKE '%bot%'",
+      "SUM(CASE WHEN (CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END IS NOT NULL AND CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END != '') OR user_agent ILIKE '%bot%'",
     );
   });
 
@@ -212,11 +212,11 @@ describe('GET /queries/{name}', () => {
       ],
       [
         'top-referrers',
-        "SELECT json_get_str(payload, 'document', 'referrer') AS referrer, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY referrer ORDER BY views DESC LIMIT 10",
+        "SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'document', 'referrer') END AS referrer, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY referrer ORDER BY views DESC LIMIT 10",
       ],
       [
         'views-by-country',
-        "SELECT json_get_str(cf, 'country') AS country, COUNT(*) AS views, COUNT(DISTINCT uuid) AS visitors FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY country ORDER BY views DESC LIMIT 10",
+        "SELECT CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'country') END AS country, COUNT(*) AS views, COUNT(DISTINCT uuid) AS visitors FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY country ORDER BY views DESC LIMIT 10",
       ],
       [
         'views-by-hour',
@@ -224,19 +224,19 @@ describe('GET /queries/{name}', () => {
       ],
       [
         'top-platforms',
-        "SELECT json_get_str(payload, 'navigator', 'userAgentHints', 'platform') AS platform, json_get_bool(payload, 'navigator', 'userAgentHints', 'mobile') AS mobile, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY platform, mobile ORDER BY views DESC LIMIT 10",
+        "SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'navigator', 'userAgentHints', 'platform') END AS platform, CASE WHEN octet_length(payload) <= 2000 THEN json_get_bool(payload, 'navigator', 'userAgentHints', 'mobile') END AS mobile, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY platform, mobile ORDER BY views DESC LIMIT 10",
       ],
       [
         'views-by-color-scheme',
-        "SELECT json_get_str(payload, 'colorScheme') AS color_scheme, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY color_scheme ORDER BY views DESC",
+        "SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'colorScheme') END AS color_scheme, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY color_scheme ORDER BY views DESC",
       ],
       [
         'top-languages',
-        "SELECT json_get_str(payload, 'navigator', 'language') AS language, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY language ORDER BY views DESC LIMIT 10",
+        "SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'navigator', 'language') END AS language, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY language ORDER BY views DESC LIMIT 10",
       ],
       [
         'views-by-screen-width',
-        "SELECT CASE WHEN json_get_int(payload, 'screen', 'width') < 600 THEN 'under-600' WHEN json_get_int(payload, 'screen', 'width') < 1024 THEN '600-to-1023' WHEN json_get_int(payload, 'screen', 'width') < 1440 THEN '1024-to-1439' WHEN json_get_int(payload, 'screen', 'width') < 1920 THEN '1440-to-1919' WHEN json_get_int(payload, 'screen', 'width') >= 1920 THEN '1920-and-above' END AS width_bucket, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY width_bucket ORDER BY views DESC",
+        "SELECT CASE WHEN octet_length(payload) <= 2000 THEN CASE WHEN json_get_int(payload, 'screen', 'width') < 600 THEN 'under-600' WHEN json_get_int(payload, 'screen', 'width') < 1024 THEN '600-to-1023' WHEN json_get_int(payload, 'screen', 'width') < 1440 THEN '1024-to-1439' WHEN json_get_int(payload, 'screen', 'width') < 1920 THEN '1440-to-1919' WHEN json_get_int(payload, 'screen', 'width') >= 1920 THEN '1920-and-above' END END AS width_bucket, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY width_bucket ORDER BY views DESC",
       ],
       [
         'top-events',
@@ -244,7 +244,7 @@ describe('GET /queries/{name}', () => {
       ],
       [
         'verified-bot-categories',
-        "SELECT json_get_str(cf, 'verifiedBotCategory') AS category, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND json_get_str(cf, 'verifiedBotCategory') IS NOT NULL AND json_get_str(cf, 'verifiedBotCategory') != '' GROUP BY category ORDER BY views DESC",
+        "SELECT CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END AS category, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END IS NOT NULL AND CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END != '' GROUP BY category ORDER BY views DESC",
       ],
     ];
 
@@ -299,7 +299,7 @@ describe('OWNER_UUIDS owner exclusion', () => {
   it('opens a WHERE clause on recent-footprints, which has none of its own', async () => {
     await get('/queries/recent-footprints', { Origin: ORIGIN }, withOwnerUUIDs(OWNERS));
     expect((outboundCalls[0].body as { query: string }).query).toBe(
-      "SELECT received_at, uuid, origin, href, user_agent, arguments, json_get_str(cf, 'verifiedBotCategory') AS verified_bot_category FROM footprint.trail WHERE uuid NOT IN ('owner-1', 'owner-2') ORDER BY received_at DESC LIMIT 20",
+      "SELECT received_at, uuid, origin, href, user_agent, arguments, CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END AS verified_bot_category FROM footprint.trail WHERE uuid NOT IN ('owner-1', 'owner-2') ORDER BY received_at DESC LIMIT 20",
     );
   });
 

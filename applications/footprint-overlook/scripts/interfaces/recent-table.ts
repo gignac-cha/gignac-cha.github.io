@@ -7,7 +7,17 @@
 
 import { detectBotEvidence } from '../tools/bot-detection.ts';
 import { formatTimestamp, shortenHref, shortenUuid, summarizeArguments, toDisplayText } from '../tools/formatting.ts';
+import { matchesHighlight } from '../tools/highlight-uuid.ts';
 import type { RecentFootprintRow } from '../tools/tracker-client.ts';
+
+// Visitor highlighting hooks. highlightedUUID paints every matching row; onToggleHighlight makes
+// each uuid cell a click target so a visitor can be highlighted straight from the table — the
+// visitor uuid lives on the tracked site's origin and cannot be auto-detected here (see the
+// module header of tools/highlight-uuid.ts), so clicking a row beats retyping 36 characters.
+export interface RecentTableOptions {
+  highlightedUUID: string | null;
+  onToggleHighlight: (uuidValue: string) => void;
+}
 
 // The time column is labelled UTC because that is what it is: received_at is stamped server-side
 // in UTC and rendered without conversion, on the same axis as every chart (see the module header
@@ -45,7 +55,10 @@ function createBotTag(row: RecentFootprintRow): HTMLElement | null {
   return botTag;
 }
 
-export function createRecentTable(rows: ReadonlyArray<RecentFootprintRow>): HTMLElement {
+export function createRecentTable(
+  rows: ReadonlyArray<RecentFootprintRow>,
+  options?: RecentTableOptions,
+): HTMLElement {
   const wrapper = document.createElement('div');
   wrapper.className = 'recent-table-wrap';
 
@@ -74,6 +87,11 @@ export function createRecentTable(rows: ReadonlyArray<RecentFootprintRow>): HTML
       tableRow.classList.add('is-bot');
     }
 
+    const isHighlighted = matchesHighlight(row.uuid, options?.highlightedUUID ?? null);
+    if (isHighlighted) {
+      tableRow.classList.add('is-highlighted');
+    }
+
     const timeCell = document.createElement('td');
     timeCell.className = 'cell-time';
     timeCell.appendChild(document.createTextNode(formatTimestamp(row.received_at)));
@@ -84,8 +102,24 @@ export function createRecentTable(rows: ReadonlyArray<RecentFootprintRow>): HTML
 
     const uuidCell = document.createElement('td');
     uuidCell.className = 'cell-uuid';
-    uuidCell.textContent = shortenUuid(row.uuid);
-    uuidCell.title = toDisplayText(row.uuid);
+    // A real button, not a click handler on the cell: keyboard users get focus + Enter for free,
+    // and a null uuid (no identity reported) renders as plain text with nothing to toggle.
+    if (options !== undefined && typeof row.uuid === 'string' && row.uuid.length > 0) {
+      const uuidValue = row.uuid;
+      const toggleButton = document.createElement('button');
+      toggleButton.type = 'button';
+      toggleButton.className = 'uuid-toggle';
+      toggleButton.textContent = shortenUuid(uuidValue);
+      toggleButton.title = isHighlighted
+        ? `${uuidValue}\n클릭하면 강조를 해제합니다.`
+        : `${uuidValue}\n클릭하면 이 방문자를 강조합니다.`;
+      toggleButton.setAttribute('aria-pressed', isHighlighted ? 'true' : 'false');
+      toggleButton.addEventListener('click', () => options.onToggleHighlight(uuidValue));
+      uuidCell.appendChild(toggleButton);
+    } else {
+      uuidCell.textContent = shortenUuid(row.uuid);
+      uuidCell.title = toDisplayText(row.uuid);
+    }
     tableRow.appendChild(uuidCell);
 
     const hrefCell = document.createElement('td');

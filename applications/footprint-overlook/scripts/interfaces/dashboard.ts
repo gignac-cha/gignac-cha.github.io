@@ -52,6 +52,11 @@ import { createHourBars } from './hour-bars.ts';
 import { createLineChart } from './line-chart.ts';
 import { createEndpointBar } from './page-shells.ts';
 import { createRankedBarList, type RankedItem } from './ranked-bars.ts';
+import {
+  normalizeHighlightUUID,
+  readHighlightedUUID,
+  writeHighlightedUUID,
+} from '../tools/highlight-uuid.ts';
 import { createRecentTable } from './recent-table.ts';
 import { createSection, type SectionHandle } from './section-states.ts';
 import { createSummaryCards } from './summary-cards.ts';
@@ -495,17 +500,81 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
     environmentSection.showContent(createGroupedRanks(groups));
   }
 
+  // Visitor highlighting state. The uuid survives reloads via storage; the rows are kept so a
+  // highlight change repaints WITHOUT refetching — the toggle only changes presentation, and a
+  // network round trip per click would reorder rows mid-interaction.
+  let highlightedUUID = readHighlightedUUID();
+  let recentRows: RecentFootprintRow[] = [];
+
+  function applyHighlight(uuidValue: string | null): void {
+    // Clicking the already-highlighted visitor toggles the highlight off.
+    highlightedUUID = uuidValue !== null && uuidValue === highlightedUUID ? null : uuidValue;
+    writeHighlightedUUID(highlightedUUID);
+    renderRecentContent();
+  }
+
+  // The control bar above the table: paste a uuid (change event, so typing does not re-render
+  // away the focused input) or clear the current one. Rebuilt on every render because the panel
+  // body is replaced wholesale by the section state machine anyway.
+  function createHighlightBar(): HTMLElement {
+    const bar = document.createElement('div');
+    bar.className = 'recent-highlight-bar';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'highlight-input';
+    input.placeholder = 'uuid 를 붙여넣으면 해당 방문자를 강조합니다';
+    input.setAttribute('aria-label', '강조할 방문자 uuid');
+    input.autocomplete = 'off';
+    input.spellcheck = false;
+    input.value = highlightedUUID ?? '';
+    input.addEventListener('change', () => {
+      const normalized = normalizeHighlightUUID(input.value);
+      applyHighlight(normalized.length > 0 ? normalized : null);
+    });
+    bar.appendChild(input);
+
+    if (highlightedUUID !== null) {
+      const matchCount = recentRows.filter((row) => row.uuid === highlightedUUID).length;
+      const status = document.createElement('span');
+      status.className = 'highlight-status';
+      status.textContent = `${matchCount}행 강조 중`;
+      bar.appendChild(status);
+
+      const clearButton = document.createElement('button');
+      clearButton.type = 'button';
+      clearButton.className = 'highlight-clear-button';
+      clearButton.textContent = '해제';
+      clearButton.addEventListener('click', () => applyHighlight(null));
+      bar.appendChild(clearButton);
+    }
+
+    return bar;
+  }
+
+  function renderRecentContent(): void {
+    const container = document.createElement('div');
+    container.appendChild(createHighlightBar());
+    container.appendChild(
+      createRecentTable(recentRows, {
+        highlightedUUID,
+        onToggleHighlight: (uuidValue) => applyHighlight(uuidValue),
+      }),
+    );
+    recentSection.showContent(container);
+  }
+
   function renderRecent(recentResult: PromiseSettledResult<{ rows: RecentFootprintRow[] }>): void {
     if (recentResult.status === 'rejected') {
       recentSection.showError(toErrorMessage(recentResult.reason));
       return;
     }
-    const rows = recentResult.value.rows;
-    if (rows.length === 0) {
+    recentRows = recentResult.value.rows;
+    if (recentRows.length === 0) {
       recentSection.showEmpty('아직 조회 기록이 없습니다.');
       return;
     }
-    recentSection.showContent(createRecentTable(rows));
+    renderRecentContent();
   }
 
   // Initial load (30 days by default).
