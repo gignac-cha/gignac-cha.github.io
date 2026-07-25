@@ -11,4 +11,7 @@ try {
   localStorage.setItem('footprint:endpoint', FOOTPRINT_ENDPOINT);
 } catch {}
 
-void import('@tes.cha/footprint');
+// 배포 산출물은 번들이 아니라 네이티브 ESM 이므로 이 bare specifier 는 index.html 의 importmap
+// (@tes.cha/footprint → jsdelivr CDN 번들)으로 해석됩니다. importmap 항목이 빠지면 이 import 는
+// 조용히 실패해야 하므로(트래킹이 페이지를 깨면 안 됨) 거부를 명시적으로 삼킵니다.
+void import('@tes.cha/footprint').catch(() => {});
