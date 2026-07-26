@@ -238,6 +238,14 @@
   margin-left: vars.$spacing-2;
 }
 
+// A dimension the tracker's catalog does not serve yet — a version gap, not an error, so it is
+// muted body text rather than the red error indicator.
+.dimension-unsupported-note {
+  margin: vars.$spacing-3 0 0;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
 .panel-header-title-row {
   display: flex;
   // The title and the refresh badge may not fit on one line in a narrow panel; wrapping beats

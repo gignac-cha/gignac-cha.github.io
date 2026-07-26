@@ -70,6 +70,7 @@ import {
   type ViewsByScreenWidthRow,
   type VisitDepthRow,
   type WeeklyRetentionRow,
+  fetchQueries,
   fetchQuery,
   QUERY_NAMES,
   TrackerError,
@@ -318,11 +319,13 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
     languages: PanelResult<TopLanguageRow> | null;
     screenWidths: PanelResult<ViewsByScreenWidthRow> | null;
   }
+  // 'unsupported' marks a dimension the tracker's own catalog does not list — a version gap, not
+  // a failure. It never becomes a plan (no request, no 404), and renders as a muted note.
   interface ExperienceQualityState {
     colorSchemes: PanelResult<ViewsByColorSchemeRow> | null;
-    connectionTypes: PanelResult<ConnectionTypeRow> | null;
-    deviceCapabilities: PanelResult<DeviceCapabilityRow> | null;
-    accessibilitySignals: PanelResult<AccessibilitySignalRow> | null;
+    connectionTypes: PanelResult<ConnectionTypeRow> | 'unsupported' | null;
+    deviceCapabilities: PanelResult<DeviceCapabilityRow> | 'unsupported' | null;
+    accessibilitySignals: PanelResult<AccessibilitySignalRow> | 'unsupported' | null;
   }
   let environmentState: EnvironmentState = { languages: null, screenWidths: null };
   let experienceQualityState: ExperienceQualityState = {
@@ -331,6 +334,33 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
     deviceCapabilities: null,
     accessibilitySignals: null,
   };
+
+  // What the tracker itself says it serves (GET /queries). The dashboard ships ahead of the
+  // worker — panels for queries the deployed worker does not have yet must not fire the request
+  // at all: the inevitable 404 renders as a red error card and logs a console error for what is a
+  // known version gap. null means the catalog could not be read, in which case NOTHING is gated
+  // and behavior is exactly the pre-capability one (a wrong guess here must fail open).
+  let supportedQueryNames: Set<string> | null = null;
+  let recentUuidParameterSupported = false;
+  const capabilityPromise = (async () => {
+    try {
+      const catalog = await fetchQueries(options.endpoint);
+      if (catalog.length > 0) {
+        supportedQueryNames = new Set(catalog.map((descriptor) => descriptor.name));
+        const recentDescriptor = catalog.find((descriptor) => descriptor.name === QUERY_NAMES.recentFootprints);
+        recentUuidParameterSupported =
+          recentDescriptor?.parameters.some((parameter) => parameter.name === 'uuid') ?? false;
+      }
+    } catch {
+      // Catalog unreachable: leave capability unknown and gate nothing.
+    }
+  })();
+
+  function isQueryUnsupported(queryName: string): boolean {
+    return supportedQueryNames !== null && !supportedQueryNames.has(queryName);
+  }
+
+  const UNSUPPORTED_PANEL_TEXT = '이 트래커 버전에는 아직 없는 지표입니다 — 트래커를 업데이트하면 자동으로 표시됩니다.';
 
   // The 갱신 중 badge is reference-counted per section: 방문 환경 and 경험 품질 are painted by
   // several queries, and the first one to answer must not clear a badge the others still owe.
@@ -403,6 +433,23 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
       sections: SectionHandle[];
       render: (result: PanelResult<Row>) => void;
     }): PanelPlan {
+      // The tracker's catalog says this query does not exist there: no request is made (so no 404
+      // error card, no console noise) and the panel states the version gap as a quiet empty state.
+      // Only single-owner sections may flow through here — the experience-quality dimensions share
+      // one section and are gated in buildWave2Plans instead, before a plan is even created.
+      if (isQueryUnsupported(definition.queryName)) {
+        return {
+          sections: definition.sections,
+          paintFromCache: () => {
+            for (const section of definition.sections) {
+              section.showEmpty(UNSUPPORTED_PANEL_TEXT);
+            }
+            return true;
+          },
+          fetchAndPaint: async () => {},
+        };
+      }
+
       let markedSections: SectionHandle[] = [];
 
       return {
@@ -610,12 +657,18 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
       timelineSection.showError(toErrorMessage(result.reason));
       return;
     }
-    if (result.value.rows.length === 0) {
+    // Filter client-side EVEN THOUGH the request may have carried ?uuid=: a tracker deployed
+    // before that parameter existed silently ignores it and answers with the whole site's recent
+    // rows — observed live, where the panel then presented other visitors' rows under this
+    // visitor's title. Against a new tracker this filter is a no-op; against an old one it is the
+    // difference between a correct timeline and a confidently wrong one.
+    const visitorRows = result.value.rows.filter((row) => row.uuid === uuidValue);
+    if (visitorRows.length === 0) {
       timelineSection.showEmpty(`선택된 방문자 [${uuidValue}] 의 최근 기록이 없습니다.`);
       return;
     }
     timelineSection.showContent(
-      createVisitorTimelinePanel(uuidValue, result.value.rows, () => applyHighlight(null)),
+      createVisitorTimelinePanel(uuidValue, visitorRows, () => applyHighlight(null)),
     );
   }
 
@@ -628,7 +681,14 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
   ): PanelPlan {
     return createPlanFactory(context)<RecentFootprintRow>({
       queryName: QUERY_NAMES.recentFootprints,
-      parameters: { uuid: uuidValue, limit: TIMELINE_LIMIT },
+      // The uuid parameter is sent only when the tracker's catalog declares it. An old tracker
+      // ignores unknown parameters rather than rejecting them, so sending it anyway would not
+      // break — but the response would be unfiltered, and caching THAT under a per-uuid key would
+      // poison the cache for the day the tracker upgrades. renderVisitorTimeline filters
+      // client-side either way.
+      parameters: recentUuidParameterSupported
+        ? { uuid: uuidValue, limit: TIMELINE_LIMIT }
+        : { limit: TIMELINE_LIMIT },
       cacheKey: `timeline:${uuidValue}:${TIMELINE_LIMIT}`,
       sections: [timelineSection],
       render: (result) => {
@@ -789,37 +849,51 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
       failureMessages.push(`색 구성표: ${toErrorMessage(colorSchemesResult.reason)}`);
     }
 
+    // A dimension can be in FOUR states now: pending (null), fulfilled, rejected (a real
+    // failure — alert line), or 'unsupported' (the tracker's catalog does not list the query —
+    // a quiet version-gap note, deliberately NOT styled as an error: nothing is broken).
     const connectionTypesResult = experienceQualityState.connectionTypes;
     const deviceCapabilitiesResult = experienceQualityState.deviceCapabilities;
     const accessibilitySignalsResult = experienceQualityState.accessibilitySignals;
-    if (connectionTypesResult?.status === 'rejected') {
-      failureMessages.push(`연결 유형: ${toErrorMessage(connectionTypesResult.reason)}`);
+    const dimensionEntries = [
+      { title: '연결 유형', state: connectionTypesResult },
+      { title: '기기 메모리', state: deviceCapabilitiesResult },
+      { title: '접근성 선호', state: accessibilitySignalsResult },
+    ] as const;
+    const unsupportedTitles: string[] = [];
+    for (const entry of dimensionEntries) {
+      if (entry.state === 'unsupported') {
+        unsupportedTitles.push(entry.title);
+      } else if (entry.state?.status === 'rejected') {
+        failureMessages.push(`${entry.title}: ${toErrorMessage(entry.state.reason)}`);
+      }
     }
-    if (deviceCapabilitiesResult?.status === 'rejected') {
-      failureMessages.push(`기기 메모리: ${toErrorMessage(deviceCapabilitiesResult.reason)}`);
-    }
-    if (accessibilitySignalsResult?.status === 'rejected') {
-      failureMessages.push(`접근성 선호: ${toErrorMessage(accessibilitySignalsResult.reason)}`);
-    }
+
+    const toRows = <Row,>(state: PanelResult<Row> | 'unsupported' | null): Row[] =>
+      state !== 'unsupported' && state?.status === 'fulfilled' ? state.value.rows : [];
 
     // createExperienceQualityPanel draws its three dimensions as one block, so a dimension that
     // failed can only be handed an empty array — its group then reads "데이터가 없습니다", which is
     // why the failure notice is inserted ABOVE the block (and carries role="alert"): the reader has
     // to see WHY the group is empty before reading the group.
-    const hasAnyDimension =
-      connectionTypesResult?.status === 'fulfilled' ||
-      deviceCapabilitiesResult?.status === 'fulfilled' ||
-      accessibilitySignalsResult?.status === 'fulfilled';
+    const hasAnyDimension = dimensionEntries.some(
+      (entry) => entry.state !== 'unsupported' && entry.state?.status === 'fulfilled',
+    );
     if (hasAnyDimension) {
       container.appendChild(
         createExperienceQualityPanel({
-          connectionTypes: connectionTypesResult?.status === 'fulfilled' ? connectionTypesResult.value.rows : [],
-          deviceCapabilities:
-            deviceCapabilitiesResult?.status === 'fulfilled' ? deviceCapabilitiesResult.value.rows : [],
-          accessibilitySignals:
-            accessibilitySignalsResult?.status === 'fulfilled' ? accessibilitySignalsResult.value.rows : [],
+          connectionTypes: toRows(connectionTypesResult),
+          deviceCapabilities: toRows(deviceCapabilitiesResult),
+          accessibilitySignals: toRows(accessibilitySignalsResult),
         }),
       );
+    }
+
+    if (unsupportedTitles.length > 0) {
+      const note = document.createElement('p');
+      note.className = 'dimension-unsupported-note';
+      note.textContent = `${unsupportedTitles.join(' · ')} — ${UNSUPPORTED_PANEL_TEXT}`;
+      container.appendChild(note);
     }
 
     if (container.childElementCount === 0) {
@@ -928,6 +1002,17 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
     }
     chartSection.showContent(lineChart.element);
     lineChart.render(footprintSeries, visitorSeries, botSeries);
+  }
+
+  // The experience-quality dimensions share one section with color-scheme, so the generic
+  // unsupported stub in createPlanFactory (which quiets a WHOLE section) would blank the
+  // dimensions that do work. An unsupported dimension instead marks its slot in the aggregated
+  // state — renderExperienceQuality prints it as a muted note — and produces no plan at all.
+  function markExperienceDimensionUnsupported(
+    dimension: 'connectionTypes' | 'deviceCapabilities' | 'accessibilitySignals',
+  ): PanelPlan[] {
+    experienceQualityState = { ...experienceQualityState, [dimension]: 'unsupported' };
+    return [];
   }
 
   function buildWave2Plans(context: {
@@ -1140,38 +1225,50 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
         },
       }),
 
-      createPanelPlan<ConnectionTypeRow>({
-        queryName: QUERY_NAMES.connectionTypes,
-        parameters: dayParameters,
-        cacheKey: rangeKey,
-        sections: [experienceQualitySection],
-        render: (result) => {
-          experienceQualityState = { ...experienceQualityState, connectionTypes: result };
-          renderExperienceQuality();
-        },
-      }),
+      ...(isQueryUnsupported(QUERY_NAMES.connectionTypes)
+        ? markExperienceDimensionUnsupported('connectionTypes')
+        : [
+            createPanelPlan<ConnectionTypeRow>({
+              queryName: QUERY_NAMES.connectionTypes,
+              parameters: dayParameters,
+              cacheKey: rangeKey,
+              sections: [experienceQualitySection],
+              render: (result) => {
+                experienceQualityState = { ...experienceQualityState, connectionTypes: result };
+                renderExperienceQuality();
+              },
+            }),
+          ]),
 
-      createPanelPlan<DeviceCapabilityRow>({
-        queryName: QUERY_NAMES.deviceCapabilities,
-        parameters: dayParameters,
-        cacheKey: rangeKey,
-        sections: [experienceQualitySection],
-        render: (result) => {
-          experienceQualityState = { ...experienceQualityState, deviceCapabilities: result };
-          renderExperienceQuality();
-        },
-      }),
+      ...(isQueryUnsupported(QUERY_NAMES.deviceCapabilities)
+        ? markExperienceDimensionUnsupported('deviceCapabilities')
+        : [
+            createPanelPlan<DeviceCapabilityRow>({
+              queryName: QUERY_NAMES.deviceCapabilities,
+              parameters: dayParameters,
+              cacheKey: rangeKey,
+              sections: [experienceQualitySection],
+              render: (result) => {
+                experienceQualityState = { ...experienceQualityState, deviceCapabilities: result };
+                renderExperienceQuality();
+              },
+            }),
+          ]),
 
-      createPanelPlan<AccessibilitySignalRow>({
-        queryName: QUERY_NAMES.accessibilitySignals,
-        parameters: dayParameters,
-        cacheKey: rangeKey,
-        sections: [experienceQualitySection],
-        render: (result) => {
-          experienceQualityState = { ...experienceQualityState, accessibilitySignals: result };
-          renderExperienceQuality();
-        },
-      }),
+      ...(isQueryUnsupported(QUERY_NAMES.accessibilitySignals)
+        ? markExperienceDimensionUnsupported('accessibilitySignals')
+        : [
+            createPanelPlan<AccessibilitySignalRow>({
+              queryName: QUERY_NAMES.accessibilitySignals,
+              parameters: dayParameters,
+              cacheKey: rangeKey,
+              sections: [experienceQualitySection],
+              render: (result) => {
+                experienceQualityState = { ...experienceQualityState, accessibilitySignals: result };
+                renderExperienceQuality();
+              },
+            }),
+          ]),
 
       createPanelPlan<BotsByHourRow>({
         queryName: QUERY_NAMES.botsByHour,
@@ -1338,6 +1435,14 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
       pagesSection.showSkeleton();
     }
 
+    // Capability must be known before wave-2 plans exist: gating decisions (skip the request or
+    // not) are made at plan-construction time. The catalog request was fired when the dashboard
+    // mounted, so this await costs nothing except on the very first load.
+    await capabilityPromise;
+    if (!requestTokenGuard.isCurrent(requestToken)) {
+      return;
+    }
+
     // Wave 2's cached rows are painted now, before wave 1's network round trip, so a reload fills
     // the whole page in the first frame instead of filling the top and leaving the rest grey.
     const wave2Plans = buildWave2Plans({
@@ -1419,7 +1524,21 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
       return;
     }
 
-    startRealtimeRefresh(requestToken);
+    // Every plan of this load generation has settled, so any badge still reference-counted above
+    // zero is a leak (observed live: a '갱신 중' badge stuck for minutes on a mixed-fate panel).
+    // Count-zero entries are '갱신 실패' badges and stay until the next load re-marks them.
+    for (const [section, pending] of [...pendingRefreshBySection]) {
+      if (pending.count > 0) {
+        pendingRefreshBySection.delete(section);
+        section.setRefreshing(null);
+      }
+    }
+
+    // No 60-second poll for a tracker that does not serve views-by-minute — each tick would be
+    // another guaranteed 404 in the console.
+    if (!isQueryUnsupported(QUERY_NAMES.viewsByMinute)) {
+      startRealtimeRefresh(requestToken);
+    }
   }
 
   function teardown(): void {
