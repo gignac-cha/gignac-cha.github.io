@@ -42,6 +42,14 @@ export type ParameterDescriptor =
       type: 'boolean';
       required: boolean;
       default: boolean;
+    }
+  | {
+      // Free-text is deliberately NOT what this admits: the only string parameter today is a
+      // visitor uuid, validated against the same allowlist as OWNER_UUIDS entries (the footprint
+      // library mints both shapes), so a value that reaches SQL can never close its quotes.
+      name: string;
+      type: 'string';
+      required: boolean;
     };
 
 export type ParameterValues = Record<string, number | string | boolean>;
@@ -55,6 +63,16 @@ export interface QueryDefinition {
   // stay pure so queries.test.ts can build every SQL string with no environment at all — tests
   // that do not exercise the feature simply pass [].
   buildSQL: (table: string, values: ParameterValues, ownerUUIDs: string[]) => string;
+  // Optional post-processing of upstream rows before they are served — the escape hatch for the
+  // two contracts SQL alone cannot honor: views-by-minute promises ZERO-FILLED minutes (GROUP BY
+  // cannot produce rows for minutes with no data) and weekly-retention promises ISO week labels
+  // ('2026-W30') plus small integer offsets, which are string formatting, not analytics.
+  // `nowMilliseconds` is a parameter instead of Date.now() so tests pin exact outputs.
+  mapRows?: (
+    rows: Array<Record<string, unknown>>,
+    values: ParameterValues,
+    nowMilliseconds?: number,
+  ) => Array<Record<string, unknown>>;
 }
 
 // A caller mistake (missing or ill-typed parameter). The route maps this — and only this — to
@@ -203,6 +221,22 @@ const ownerExclusion = (
 const clamp = (value: number, minimum: number, maximum: number): number =>
   Math.min(maximum, Math.max(minimum, value));
 
+const WEEK_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
+
+// ISO-8601 week label ('2026-W31') for a UTC instant. The ISO rule: a week belongs to the year
+// that contains its Thursday, weeks start on Monday. Implemented with the standard
+// shift-to-Thursday trick so the year boundary cases (Dec 29 – Jan 3) land in the right year.
+// Exported for direct testing — weekly-retention's cohort labels are exactly this function.
+// See https://en.wikipedia.org/wiki/ISO_week_date#Algorithms
+export const isoWeekLabel = (instant: Date): string => {
+  const thursday = new Date(Date.UTC(instant.getUTCFullYear(), instant.getUTCMonth(), instant.getUTCDate()));
+  const weekday = thursday.getUTCDay() === 0 ? 7 : thursday.getUTCDay();
+  thursday.setUTCDate(thursday.getUTCDate() + 4 - weekday);
+  const yearStart = new Date(Date.UTC(thursday.getUTCFullYear(), 0, 1));
+  const weekNumber = Math.ceil(((thursday.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  return `${thursday.getUTCFullYear()}-W${String(weekNumber).padStart(2, '0')}`;
+};
+
 // The single gate every user-supplied value passes before buildSQL may see it. Values are
 // checked per descriptor and failures throw ParameterError (→ 400 at the route). Two deliberate
 // softness choices: an empty string counts as missing (URLSearchParams yields '' for `?limit=`,
@@ -256,6 +290,23 @@ export const validateParameters = (
         throw new ParameterError(`parameter ${parameter.name} must be true or false`);
       }
       values[parameter.name] = raw === 'true';
+      continue;
+    }
+
+    if (parameter.type === 'string') {
+      if (isMissing) {
+        if (parameter.required) {
+          throw new ParameterError(`missing required parameter: ${parameter.name}`);
+        }
+        continue;
+      }
+      // The visitor-uuid allowlist is the ONLY admitted string shape (see the descriptor type's
+      // comment): same alphabet as OWNER_UUIDS, so the buildSQL below can re-assert it with
+      // assertOwnerUUID as defense in depth before quoting it into the WHERE clause.
+      if (!OWNER_UUID_PATTERN.test(raw)) {
+        throw new ParameterError(`parameter ${parameter.name} must be a visitor uuid`);
+      }
+      values[parameter.name] = raw;
       continue;
     }
 
@@ -323,17 +374,27 @@ const INCLUDE_OWNER_PARAMETER: ParameterDescriptor = {
 const CATALOG: QueryDefinition[] = [
   {
     name: 'recent-footprints',
-    description: 'Most recent footprints, newest first.',
+    description: 'Most recent footprints, newest first. Optional uuid narrows to one visitor.',
     parameters: [
       { name: 'limit', type: 'integer', required: false, default: 20, minimum: 1, maximum: 100 },
+      // The visitor-timeline parameter: the overlook sends it only when its catalog probe saw it
+      // here, and additionally filters client-side, so an older/newer pairing in either direction
+      // stays correct (the pre-uuid worker ignored the unknown parameter and answered site-wide).
+      { name: 'uuid', type: 'string', required: false },
     ],
     // verified_bot_category rides along so the recent-views table can tag a row as a bot on
     // Cloudflare's own verdict instead of only on the User-Agent heuristic. It is NOT filtered
     // here, unlike verified-bot-categories below: the value reaches the viewer raw, and the empty
     // string that non-bot requests carry (see VERIFIED_BOT_CONDITION above) means "not a verified
     // bot" — a consumer must treat '' exactly like null.
-    buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT received_at, uuid, origin, href, user_agent, arguments, ${VERIFIED_BOT_CATEGORY} AS verified_bot_category FROM ${assertTableName(table)}${ownerExclusion(values, ownerUUIDs, 'WHERE')} ORDER BY received_at DESC LIMIT ${values.limit}`,
+    buildSQL: (table, values, ownerUUIDs) => {
+      // assertOwnerUUID re-validation is defense in depth on top of validateParameters' string
+      // branch — the value is quoted into SQL, so it gets the same double gate as OWNER_UUIDS.
+      const uuidCondition =
+        typeof values.uuid === 'string' ? ` WHERE uuid = '${assertOwnerUUID(values.uuid)}'` : '';
+      const ownerCondition = ownerExclusion(values, ownerUUIDs, uuidCondition === '' ? 'WHERE' : 'AND');
+      return `SELECT received_at, uuid, origin, href, user_agent, arguments, ${VERIFIED_BOT_CATEGORY} AS verified_bot_category FROM ${assertTableName(table)}${uuidCondition}${ownerCondition} ORDER BY received_at DESC LIMIT ${values.limit}`;
+    },
   },
   {
     name: 'footprints-by-day',
@@ -540,6 +601,184 @@ const CATALOG: QueryDefinition[] = [
     // disagree about what "verified bot" means.
     buildSQL: (table, values, ownerUUIDs) =>
       `SELECT ${VERIFIED_BOT_CATEGORY} AS category, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND ${VERIFIED_BOT_CONDITION}${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY category ORDER BY views DESC`,
+  },
+
+  // --------------------------------------------------------------------------------------------
+  // The eleven queries below were designed against the mock contract first
+  // (applications/footprint-overlook/tools/mock-tracker.ts) — row shapes and bucket labels must
+  // match it character for character, because the dashboard was built and tested against the
+  // mock. Every construct they lean on (window functions, CTEs, JOINs between CTEs, HAVING,
+  // regexp_match capture indexing, date_trunc over CAST, now() - INTERVAL) was individually
+  // probed against the live table before any of this was written — R2 SQL documents none of
+  // them, and this catalog's house rule is measurement over guessing.
+  // --------------------------------------------------------------------------------------------
+  {
+    name: 'utm-breakdown',
+    description: 'Views per UTM source/medium/campaign parsed from payload.location.search.',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    // regexp_match returns the capture-group array and indexing is 1-BASED — [1] is the first
+    // capture (probed live: [2] on a single-group pattern is NULL, not an error). Visits with no
+    // utm_* collapse into the all-null row, which the contract requires ("utm 없는 방문은
+    // 전부-null 한 행으로 합산") — the dashboard's 미보고 path renders it.
+    buildSQL: (table, values, ownerUUIDs) =>
+      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN regexp_match(json_get_str(payload, 'location', 'search'), 'utm_source=([^&]+)')[1] END AS source, CASE WHEN octet_length(payload) <= 2000 THEN regexp_match(json_get_str(payload, 'location', 'search'), 'utm_medium=([^&]+)')[1] END AS medium, CASE WHEN octet_length(payload) <= 2000 THEN regexp_match(json_get_str(payload, 'location', 'search'), 'utm_campaign=([^&]+)')[1] END AS campaign, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY source, medium, campaign ORDER BY views DESC`,
+  },
+  {
+    name: 'new-vs-returning-by-day',
+    description: 'Per-day split of visitors seen for the first time ever vs. returning visitors.',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    // first_seen is deliberately UNBOUNDED by the date range: "new" means new to the SITE, not
+    // new to the window, so a visitor whose first visit predates `from` counts as returning on
+    // every day of the range. Only rows with a uuid participate — a null uuid cannot be tracked
+    // across days, and counting it as forever-new would inflate new_visitors.
+    buildSQL: (table, values, ownerUUIDs) =>
+      `WITH first_seen AS (SELECT uuid, MIN(substr(received_at, 1, 10)) AS first_day FROM ${assertTableName(table)} WHERE uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY uuid), daily AS (SELECT DISTINCT substr(received_at, 1, 10) AS day, uuid FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')}) SELECT daily.day AS day, COUNT(CASE WHEN first_seen.first_day = daily.day THEN 1 END) AS new_visitors, COUNT(CASE WHEN first_seen.first_day <> daily.day THEN 1 END) AS returning_visitors FROM daily JOIN first_seen ON daily.uuid = first_seen.uuid GROUP BY day ORDER BY day`,
+  },
+  {
+    name: 'visit-depth',
+    description: 'Distribution of visitors by how many pages they viewed within the date range.',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    // Bucket labels are the mock contract verbatim ('1' | '2' | '3-5' | '6-10' | '11-plus').
+    // The CASE tests descend so each row hits exactly one bucket; ELSE '1' carries the remaining
+    // single-view visitors.
+    buildSQL: (table, values, ownerUUIDs) =>
+      `SELECT CASE WHEN footprints >= 11 THEN '11-plus' WHEN footprints >= 6 THEN '6-10' WHEN footprints >= 3 THEN '3-5' WHEN footprints = 2 THEN '2' ELSE '1' END AS depth_bucket, COUNT(*) AS visitors FROM (SELECT uuid, COUNT(*) AS footprints FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY uuid) GROUP BY depth_bucket ORDER BY visitors DESC`,
+  },
+  {
+    name: 'weekly-retention',
+    description: 'Weekly cohort retention: distinct visitors per cohort week and activity week.',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    // SQL returns raw week-start timestamps; mapRows turns them into the contract's ISO week
+    // label + small integer offset, and drops offsets outside 0..7 (the matrix the dashboard
+    // draws is eight columns wide — SQL doing this arithmetic on TIMESTAMPs would be both
+    // unverified dialect territory and harder to pin in tests than plain Date math).
+    buildSQL: (table, values, ownerUUIDs) =>
+      `WITH cohort AS (SELECT uuid, MIN(date_trunc('week', CAST(received_at AS TIMESTAMP))) AS cohort_week_start FROM ${assertTableName(table)} WHERE uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY uuid), activity AS (SELECT DISTINCT uuid, date_trunc('week', CAST(received_at AS TIMESTAMP)) AS active_week_start FROM ${assertTableName(table)} WHERE uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')}) SELECT cohort.cohort_week_start AS cohort_week_start, activity.active_week_start AS active_week_start, COUNT(DISTINCT activity.uuid) AS visitors FROM activity JOIN cohort ON activity.uuid = cohort.uuid WHERE cohort.cohort_week_start >= date_trunc('week', CAST('${values.from}' AS TIMESTAMP)) AND cohort.cohort_week_start < CAST('${values.to}' AS TIMESTAMP) GROUP BY 1, 2 ORDER BY 1, 2`,
+    mapRows: (rows) =>
+      rows.flatMap((row) => {
+        const cohortStart = new Date(String(row.cohort_week_start));
+        const activeStart = new Date(String(row.active_week_start));
+        if (Number.isNaN(cohortStart.getTime()) || Number.isNaN(activeStart.getTime())) {
+          return [];
+        }
+        const weekOffset = Math.round((activeStart.getTime() - cohortStart.getTime()) / WEEK_MILLISECONDS);
+        if (weekOffset < 0 || weekOffset > 7) {
+          return [];
+        }
+        return [{ cohort_week: isoWeekLabel(cohortStart), week_offset: weekOffset, visitors: row.visitors }];
+      }),
+  },
+  {
+    name: 'top-landings',
+    description: 'Pages that opened a visitor-day (first footprint of each visitor each day).',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+      { name: 'limit', type: 'integer', required: false, default: 10, minimum: 1, maximum: 50 },
+    ],
+    // "Landing" is per visitor per DAY (ROW_NUMBER partitioned by uuid AND day), not per visitor
+    // ever — a returning visitor's next-day entry page is a landing again. href can be NULL
+    // (older rows), which stays as its own bucket per the dashboard's 미보고 rule.
+    buildSQL: (table, values, ownerUUIDs) =>
+      `SELECT href, COUNT(*) AS landings FROM (SELECT href, ROW_NUMBER() OVER (PARTITION BY uuid, substr(received_at, 1, 10) ORDER BY received_at) AS visit_index FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')}) WHERE visit_index = 1 GROUP BY href ORDER BY landings DESC LIMIT ${values.limit}`,
+  },
+  {
+    name: 'page-transitions',
+    description: 'Most common page-to-page moves (LAG over each visitor, ordered by time).',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+      { name: 'limit', type: 'integer', required: false, default: 20, minimum: 1, maximum: 50 },
+    ],
+    // A row with no predecessor (each visitor's first footprint in the range) is not a
+    // transition, so from_href IS NULL is filtered — that null means "nothing before this",
+    // unlike the null HREF buckets elsewhere which mean "unreported".
+    buildSQL: (table, values, ownerUUIDs) =>
+      `SELECT from_href, to_href, COUNT(*) AS transitions FROM (SELECT href AS to_href, LAG(href) OVER (PARTITION BY uuid ORDER BY received_at) AS from_href FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')}) WHERE from_href IS NOT NULL GROUP BY from_href, to_href ORDER BY transitions DESC LIMIT ${values.limit}`,
+  },
+  {
+    name: 'connection-types',
+    description: 'Views per network effective type (payload.connection.effectiveType).',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    buildSQL: (table, values, ownerUUIDs) =>
+      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'connection', 'effectiveType') END AS effective_type, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY effective_type ORDER BY views DESC`,
+  },
+  {
+    name: 'device-capabilities',
+    description: 'Views per device-memory bucket (payload.navigator.deviceMemory, gigabytes).',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    // navigator.deviceMemory reports the coarse steps 0.25/0.5/1/2/4/8; json_get_int floors the
+    // sub-1 values to 0, which still lands them in 'under-4' — exactly where a ≤0.5GB device
+    // belongs. The nested CASE keeps the single octet_length guard around every json_get_* read
+    // (the same shape views-by-screen-width uses).
+    buildSQL: (table, values, ownerUUIDs) =>
+      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN CASE WHEN json_get_int(payload, 'navigator', 'deviceMemory') >= 8 THEN '8-and-above' WHEN json_get_int(payload, 'navigator', 'deviceMemory') >= 4 THEN '4-to-7' WHEN json_get_int(payload, 'navigator', 'deviceMemory') >= 0 THEN 'under-4' END END AS memory_bucket, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY memory_bucket ORDER BY views DESC`,
+  },
+  {
+    name: 'accessibility-signals',
+    description: 'Views per prefers-reduced-motion signal (payload.reducedMotion).',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    buildSQL: (table, values, ownerUUIDs) =>
+      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_bool(payload, 'reducedMotion') END AS reduced_motion, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY reduced_motion ORDER BY views DESC`,
+  },
+  {
+    name: 'bots-by-hour',
+    description: 'Total vs. bot views per hour of day (same bot verdict as bots-by-day).',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    // Sparse like views-by-hour (GROUP BY cannot mint empty hours); the dashboard zero-fills.
+    // The bot predicate is the same VERIFIED/heuristic OR that bots-by-day uses, so the two bot
+    // panels can never disagree about what counts as a bot.
+    buildSQL: (table, values, ownerUUIDs) =>
+      `SELECT substr(received_at, 12, 2) AS hour, COUNT(*) AS views, SUM(CASE WHEN (${VERIFIED_BOT_CONDITION}) OR ${BOT_USER_AGENT_CONDITION} THEN 1 ELSE 0 END) AS bot_views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY hour ORDER BY hour`,
+  },
+  {
+    name: 'views-by-minute',
+    description: 'Views per minute over the trailing window, zero-filled (near-real-time panel).',
+    parameters: [
+      { name: 'minutes', type: 'integer', required: false, default: 30, minimum: 1, maximum: 120 },
+    ],
+    // The trailing window is anchored server-side with now() so the caller cannot game it and
+    // the worker needs no clock parameter in the URL. minutes is a validated, clamped integer —
+    // the only reason interpolating it into the INTERVAL literal is safe.
+    buildSQL: (table, values, ownerUUIDs) =>
+      `SELECT substr(received_at, 1, 16) AS minute, COUNT(*) AS views FROM ${assertTableName(table)} WHERE CAST(received_at AS TIMESTAMP) >= now() - INTERVAL '${values.minutes}' MINUTE${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY minute ORDER BY minute`,
+    // The contract promises every minute of the window, zeros included — GROUP BY cannot mint
+    // rows for silent minutes, so the fill happens here. Minutes are UTC ('YYYY-MM-DDTHH:MM',
+    // exactly substr(received_at, 1, 16)'s shape) and the window ends at the CURRENT minute.
+    mapRows: (rows, values, nowMilliseconds = Date.now()) => {
+      const viewsByMinute = new Map(rows.map((row) => [String(row.minute), Number(row.views)]));
+      const minutes = typeof values.minutes === 'number' ? values.minutes : 30;
+      const filled: Array<Record<string, unknown>> = [];
+      for (let index = minutes - 1; index >= 0; index -= 1) {
+        const minuteLabel = new Date(nowMilliseconds - index * 60000).toISOString().slice(0, 16);
+        filled.push({ minute: minuteLabel, views: viewsByMinute.get(minuteLabel) ?? 0 });
+      }
+      return filled;
+    },
   },
 ];
 

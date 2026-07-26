@@ -111,7 +111,7 @@ describe('HEAD and Allow', () => {
 });
 
 describe('GET /queries', () => {
-  it('lists the sixteen queries and reflects an allowlisted origin', async () => {
+  it('lists the twenty-seven queries and reflects an allowlisted origin', async () => {
     const response = await get('/queries', { Origin: ORIGIN });
     expect(response.status).toBe(200);
     const body = (await response.json()) as { queries: Array<{ name: string }> };
@@ -132,6 +132,17 @@ describe('GET /queries', () => {
       'views-by-screen-width',
       'top-events',
       'verified-bot-categories',
+      'utm-breakdown',
+      'new-vs-returning-by-day',
+      'visit-depth',
+      'weekly-retention',
+      'top-landings',
+      'page-transitions',
+      'connection-types',
+      'device-capabilities',
+      'accessibility-signals',
+      'bots-by-hour',
+      'views-by-minute',
     ]);
     expect(response.headers.get('Access-Control-Allow-Origin')).toBe(ORIGIN);
     expect(response.headers.get('Vary')).toBe('Origin');

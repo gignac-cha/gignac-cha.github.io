@@ -162,7 +162,11 @@ const route = async (request: Request, environment: Env): Promise<Response> => {
       const ownerUUIDs = parseOwnerUUIDs(environment.OWNER_UUIDS);
       const sql = definition.buildSQL(environment.TABLE_NAME, values, ownerUUIDs);
       const rows = await queryR2SQL(environment, sql);
-      return json({ name, rows }, 200, cors);
+      // mapRows is the per-query post-processing hook (zero-filling, label formatting — see its
+      // comment in queries.ts). Applied here, inside the same try, so a mapping bug surfaces as
+      // a 502 with a message rather than an unhandled rejection.
+      const mappedRows = definition.mapRows ? definition.mapRows(rows, values) : rows;
+      return json({ name, rows: mappedRows }, 200, cors);
     } catch (error) {
       // One try wraps validation, SQL building and the upstream call so `values` stays a const
       // and every error maps in one place. The split by fault: a bad parameter value is the
