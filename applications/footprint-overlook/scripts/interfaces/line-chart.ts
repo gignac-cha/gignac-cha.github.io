@@ -1,13 +1,3 @@
-// Hand-drawn SVG line/area chart — no chart or date library. It overlays three series (page views,
-// distinct visitors and bot views per day) on one shared y axis, with axis labels and a small
-// hover tooltip; the bot series is drawn as a muted dashed line so it reads as a subset of the
-// page-view line rather than a competing metric. Every coordinate and path string comes from the
-// pure chart-geometry module, leaving only element assembly here.
-//
-// The CSS class names and the internal identifiers keep saying "footprints": they name the QUERY
-// the series comes from (footprints-by-day) and the storage column behind it, which the de-theming
-// deliberately left alone. Only what a reader sees — legend, tooltip, aria-label — says 페이지 뷰.
-
 import {
   type ChartDimensions,
   type Point,
@@ -20,18 +10,14 @@ import {
   toPolylinePoints,
   valueToY,
 } from '../tools/chart-geometry.ts';
-import { formatCount } from '../tools/formatting.ts';
+import { formatCount, MISSING_TEXT } from '../tools/formatting.ts';
+import { getSteppedChartWidth } from '../tools/responsive-chart-steps.ts';
 import type { DayValue } from '../tools/zero-filling.ts';
 import { clearElement } from './section-states.ts';
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
-// Fixed viewBox dimensions. The SVG scales to 100% width in CSS, so the chart is responsive
-// without measuring the DOM — no resize observer, no re-render on layout change, and the geometry
-// stays deterministic and testable.
-// See https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/viewBox
-const DIMENSIONS: ChartDimensions = {
-  width: 720,
+const BASE_DIMENSIONS: Omit<ChartDimensions, 'width'> = {
   height: 300,
   paddingLeft: 44,
   paddingRight: 16,
@@ -42,7 +28,6 @@ const DIMENSIONS: ChartDimensions = {
 const Y_TICK_COUNT = 4;
 const MAXIMUM_X_LABELS = 7;
 
-// Per-series CSS classes; the colours themselves live in styles/_chart.scss.
 const SERIES_CLASS = {
   footprints: 'series-footprints',
   visitors: 'series-visitors',
@@ -53,29 +38,27 @@ function createSvgElement<K extends keyof SVGElementTagNameMap>(tagName: K): SVG
   return document.createElementNS(SVG_NAMESPACE, tagName);
 }
 
-// Shortens a UTC 'YYYY-MM-DD' key to 'MM-DD' for the x axis.
 function toShortDayLabel(day: string): string {
   const match = day.match(/\d{4}-(\d{2})-(\d{2})/);
   return match ? `${match[1]}-${match[2]}` : day;
 }
 
-// Draws the y-axis grid lines and their labels.
-function appendYAxis(svg: SVGSVGElement, maximumValue: number): void {
+function appendYAxis(svg: SVGSVGElement, maximumValue: number, dimensions: ChartDimensions): void {
   const ticks = computeYAxisTicks(maximumValue, Y_TICK_COUNT);
   for (const tickValue of ticks) {
-    const y = valueToY(tickValue, maximumValue, DIMENSIONS);
+    const y = valueToY(tickValue, maximumValue, dimensions);
 
     const gridLine = createSvgElement('line');
     gridLine.setAttribute('class', 'chart-grid-line');
-    gridLine.setAttribute('x1', String(DIMENSIONS.paddingLeft));
-    gridLine.setAttribute('x2', String(DIMENSIONS.width - DIMENSIONS.paddingRight));
+    gridLine.setAttribute('x1', String(dimensions.paddingLeft));
+    gridLine.setAttribute('x2', String(dimensions.width - dimensions.paddingRight));
     gridLine.setAttribute('y1', String(y));
     gridLine.setAttribute('y2', String(y));
     svg.appendChild(gridLine);
 
     const label = createSvgElement('text');
     label.setAttribute('class', 'chart-axis-label chart-axis-label-y');
-    label.setAttribute('x', String(DIMENSIONS.paddingLeft - 8));
+    label.setAttribute('x', String(dimensions.paddingLeft - 8));
     label.setAttribute('y', String(y + 3));
     label.setAttribute('text-anchor', 'end');
     label.textContent = formatCount(tickValue);
@@ -83,18 +66,16 @@ function appendYAxis(svg: SVGSVGElement, maximumValue: number): void {
   }
 }
 
-// Draws x-axis date labels at even intervals, thinned to at most MAXIMUM_X_LABELS so a 90-day
-// range does not render 90 overlapping labels.
-function appendXAxis(svg: SVGSVGElement, days: ReadonlyArray<string>): void {
+function appendXAxis(svg: SVGSVGElement, days: ReadonlyArray<string>, dimensions: ChartDimensions): void {
   const count = days.length;
   if (count === 0) {
     return;
   }
   const step = Math.max(1, Math.ceil(count / MAXIMUM_X_LABELS));
-  const baselineY = DIMENSIONS.height - DIMENSIONS.paddingBottom;
+  const baselineY = dimensions.height - dimensions.paddingBottom;
 
   for (let index = 0; index < count; index += step) {
-    const x = indexToX(index, count, DIMENSIONS);
+    const x = indexToX(index, count, dimensions);
     const label = createSvgElement('text');
     label.setAttribute('class', 'chart-axis-label chart-axis-label-x');
     label.setAttribute('x', String(x));
@@ -105,13 +86,18 @@ function appendXAxis(svg: SVGSVGElement, days: ReadonlyArray<string>): void {
   }
 }
 
-// Draws one series (area + line). withArea=false draws the line alone, which is what the dashed
-// bot series uses — a third translucent fill would muddy the two underneath it.
-function appendSeries(svg: SVGSVGElement, points: ReadonlyArray<Point>, seriesClass: string, withArea = true): void {
-  if (points.length === 0) {
+function appendSeries(
+  svg: SVGSVGElement,
+  points: ReadonlyArray<Point>,
+  seriesClass: string,
+  dimensions: ChartDimensions,
+  withArea = true,
+  visible = true,
+): void {
+  if (points.length === 0 || !visible) {
     return;
   }
-  const baselineY = DIMENSIONS.height - DIMENSIONS.paddingBottom;
+  const baselineY = dimensions.height - dimensions.paddingBottom;
 
   if (withArea) {
     const area = createSvgElement('path');
@@ -120,8 +106,6 @@ function appendSeries(svg: SVGSVGElement, points: ReadonlyArray<Point>, seriesCl
     svg.appendChild(area);
   }
 
-  // A polyline through a single point renders nothing at all, so a one-day range is drawn as a
-  // dot instead.
   if (points.length === 1) {
     const dot = createSvgElement('circle');
     dot.setAttribute('class', `chart-point ${seriesClass}`);
@@ -138,46 +122,71 @@ function appendSeries(svg: SVGSVGElement, points: ReadonlyArray<Point>, seriesCl
   svg.appendChild(line);
 }
 
-// Rebuilds the legend, including the bot entry only when a bot series is present.
-function renderLegend(legend: HTMLElement, hasBots: boolean): void {
-  clearElement(legend);
+function buildAccessibleTable(
+  days: ReadonlyArray<string>,
+  footprints: ReadonlyArray<DayValue>,
+  visitors: ReadonlyArray<DayValue>,
+  bots: ReadonlyArray<DayValue> | null,
+): HTMLTableElement {
+  const table = document.createElement('table');
+  table.className = 'visually-hidden';
 
-  const items: { label: string; seriesClass: string }[] = [
-    { label: '페이지 뷰', seriesClass: SERIES_CLASS.footprints },
-    { label: '방문자', seriesClass: SERIES_CLASS.visitors },
-  ];
-  if (hasBots) {
-    items.push({ label: '봇', seriesClass: SERIES_CLASS.bots });
-  }
+  const caption = document.createElement('caption');
+  caption.textContent = '일별 트래픽 데이터 상세 테이블';
+  table.appendChild(caption);
 
-  for (const item of items) {
-    const entry = document.createElement('span');
-    entry.className = 'legend-entry';
+  const thead = document.createElement('thead');
+  const trHead = document.createElement('tr');
+  ['날짜', '페이지 뷰', '방문자', '봇'].forEach((text) => {
+    const th = document.createElement('th');
+    th.textContent = text;
+    trHead.appendChild(th);
+  });
+  thead.appendChild(trHead);
+  table.appendChild(thead);
 
-    const swatch = document.createElement('span');
-    swatch.className = `legend-swatch ${item.seriesClass}`;
-    entry.appendChild(swatch);
+  const tbody = document.createElement('tbody');
+  days.forEach((day, index) => {
+    const row = document.createElement('tr');
 
-    const text = document.createElement('span');
-    text.textContent = item.label;
-    entry.appendChild(text);
+    const dayCell = document.createElement('td');
+    dayCell.textContent = day;
+    row.appendChild(dayCell);
 
-    legend.appendChild(entry);
-  }
+    const footprintCell = document.createElement('td');
+    footprintCell.textContent = String(footprints[index]?.value ?? 0);
+    row.appendChild(footprintCell);
+
+    const visitorCell = document.createElement('td');
+    visitorCell.textContent = String(visitors[index]?.value ?? 0);
+    row.appendChild(visitorCell);
+
+    // The dash, not 'N/A': this is the same "not measured" the rest of the page renders as 미상,
+    // and a screen reader should hear the page's own vocabulary rather than a second one.
+    const botCell = document.createElement('td');
+    botCell.textContent = bots === null ? MISSING_TEXT : String(bots[index]?.value ?? 0);
+    row.appendChild(botCell);
+
+    tbody.appendChild(row);
+  });
+  table.appendChild(tbody);
+
+  return table;
 }
 
 export interface LineChartHandle {
   element: HTMLElement;
-  // A null `bots` (query failed or unsupported) omits the series and its legend entry entirely —
-  // distinct from an all-zero series, which would claim "no bots visited".
   render(
     footprints: ReadonlyArray<DayValue>,
     visitors: ReadonlyArray<DayValue>,
     bots: ReadonlyArray<DayValue> | null,
   ): void;
+  // Disconnects the ResizeObserver below. The chart is rebuilt whenever the dashboard is torn down
+  // and re-mounted (view switch), and an observer that outlives its element keeps both the callback
+  // and the detached container alive.
+  teardown(): void;
 }
 
-// Builds the container (legend + SVG); render() redraws the series in place.
 export function createLineChart(): LineChartHandle {
   const container = document.createElement('div');
   container.className = 'chart';
@@ -190,77 +199,155 @@ export function createLineChart(): LineChartHandle {
   svgWrap.className = 'chart-svg-wrap';
   container.appendChild(svgWrap);
 
-  // Hover tooltip: the values of the nearest day. It lives outside the SVG (and survives each
-  // redraw) because HTML text wraps and styles far more easily than an SVG <text> block.
   const tooltip = document.createElement('div');
   tooltip.className = 'chart-tooltip';
   tooltip.setAttribute('role', 'status');
   svgWrap.appendChild(tooltip);
 
-  const render = (
-    footprints: ReadonlyArray<DayValue>,
-    visitors: ReadonlyArray<DayValue>,
-    bots: ReadonlyArray<DayValue> | null,
-  ): void => {
-    const hasBots = bots !== null;
+  let currentFootprints: ReadonlyArray<DayValue> = [];
+  let currentVisitors: ReadonlyArray<DayValue> = [];
+  let currentBots: ReadonlyArray<DayValue> | null = null;
+
+  const seriesVisibility = {
+    footprints: true,
+    visitors: true,
+    bots: true,
+  };
+
+  let currentViewBoxWidth: 720 | 1080 | 1440 = 720;
+
+  function renderLegend(legendElement: HTMLElement, hasBots: boolean): void {
+    clearElement(legendElement);
+
+    const items: Array<{ key: 'footprints' | 'visitors' | 'bots'; label: string; seriesClass: string }> = [
+      { key: 'footprints', label: '페이지 뷰', seriesClass: SERIES_CLASS.footprints },
+      { key: 'visitors', label: '방문자', seriesClass: SERIES_CLASS.visitors },
+    ];
+    if (hasBots) {
+      items.push({ key: 'bots', label: '봇', seriesClass: SERIES_CLASS.bots });
+    }
+
+    for (const item of items) {
+      const entry = document.createElement('button');
+      entry.type = 'button';
+      entry.className = `legend-entry ${seriesVisibility[item.key] ? '' : 'is-disabled'}`;
+      entry.style.background = 'none';
+      entry.style.border = 'none';
+      entry.style.cursor = 'pointer';
+      entry.style.opacity = seriesVisibility[item.key] ? '1' : '0.35';
+
+      const swatch = document.createElement('span');
+      swatch.className = `legend-swatch ${item.seriesClass}`;
+      entry.appendChild(swatch);
+
+      const text = document.createElement('span');
+      text.textContent = item.label;
+      entry.appendChild(text);
+
+      entry.addEventListener('click', () => {
+        seriesVisibility[item.key] = !seriesVisibility[item.key];
+        drawChart();
+      });
+
+      legendElement.appendChild(entry);
+    }
+  }
+
+  function drawChart(): void {
+    const hasBots = currentBots !== null;
     renderLegend(legend, hasBots);
 
     clearElement(svgWrap);
     svgWrap.appendChild(tooltip);
     tooltip.classList.remove('is-visible');
 
-    const footprintValues = footprints.map((dayValue) => dayValue.value);
-    const visitorValues = visitors.map((dayValue) => dayValue.value);
-    const botValues = bots?.map((dayValue) => dayValue.value) ?? [];
-    const days = footprints.map((dayValue) => dayValue.day);
+    const dimensions: ChartDimensions = {
+      ...BASE_DIMENSIONS,
+      width: currentViewBoxWidth,
+    };
 
-    // The bot values take part in the maximum too: the three series share one axis, and scaling
-    // it without them would let the dashed line escape the top of the plot.
+    const footprintValues = currentFootprints.map((dayValue) => dayValue.value);
+    const visitorValues = currentVisitors.map((dayValue) => dayValue.value);
+    const botValues = currentBots?.map((dayValue) => dayValue.value) ?? [];
+    // The footprint series is the zero-filled window (tools/zero-filling.ts), so it carries every
+    // day of the range in order and is the x axis for all three series.
+    const days = currentFootprints.map((dayValue) => dayValue.day);
+
     const rawMaximum = findMaximumValue(footprintValues, visitorValues, botValues);
     const maximumValue = computeNiceMaximum(rawMaximum);
 
     const svg = createSvgElement('svg');
-    svg.setAttribute('class', 'chart-svg');
-    svg.setAttribute('viewBox', `0 0 ${DIMENSIONS.width} ${DIMENSIONS.height}`);
+    // chart-focusable marks the element that actually takes focus (tabindex below) so the
+    // stylesheet has one selector for the keyboard focus ring; chart-svg stays the layout hook.
+    svg.setAttribute('class', 'chart-svg chart-focusable');
+    svg.setAttribute('viewBox', `0 0 ${dimensions.width} ${dimensions.height}`);
     svg.setAttribute('preserveAspectRatio', 'none');
     svg.setAttribute('role', 'img');
-    svg.setAttribute('aria-label', hasBots ? '일별 페이지 뷰·방문자·봇 추이' : '일별 페이지 뷰와 방문자 추이');
+    svg.setAttribute('tabindex', '0');
+    svg.setAttribute('aria-label', hasBots ? '일별 페이지 뷰·방문자·봇 추이 (화살표 키로 일자 이동)' : '일별 페이지 뷰와 방문자 추이 (화살표 키로 일자 이동)');
 
-    appendYAxis(svg, maximumValue);
-    appendXAxis(svg, days);
+    appendYAxis(svg, maximumValue, dimensions);
+    appendXAxis(svg, days, dimensions);
 
-    const footprintPoints = computeSeriesPoints(footprintValues, maximumValue, DIMENSIONS);
-    const visitorPoints = computeSeriesPoints(visitorValues, maximumValue, DIMENSIONS);
-    const botPoints = hasBots ? computeSeriesPoints(botValues, maximumValue, DIMENSIONS) : [];
+    const footprintPoints = computeSeriesPoints(footprintValues, maximumValue, dimensions);
+    const visitorPoints = computeSeriesPoints(visitorValues, maximumValue, dimensions);
+    const botPoints = hasBots ? computeSeriesPoints(botValues, maximumValue, dimensions) : [];
 
-    // Painting order is meaningful in SVG (later elements sit on top): visitors, then footprints,
-    // then the dashed bot line last so it stays readable over both filled areas.
-    appendSeries(svg, visitorPoints, SERIES_CLASS.visitors);
-    appendSeries(svg, footprintPoints, SERIES_CLASS.footprints);
+    appendSeries(svg, visitorPoints, SERIES_CLASS.visitors, dimensions, true, seriesVisibility.visitors);
+    appendSeries(svg, footprintPoints, SERIES_CLASS.footprints, dimensions, true, seriesVisibility.footprints);
     if (hasBots) {
-      appendSeries(svg, botPoints, SERIES_CLASS.bots, false);
+      appendSeries(svg, botPoints, SERIES_CLASS.bots, dimensions, false, seriesVisibility.bots);
     }
 
-    // Vertical guide line shown while hovering.
     const guide = createSvgElement('line');
     guide.setAttribute('class', 'chart-hover-guide');
-    guide.setAttribute('y1', String(DIMENSIONS.paddingTop));
-    guide.setAttribute('y2', String(DIMENSIONS.height - DIMENSIONS.paddingBottom));
+    guide.setAttribute('y1', String(dimensions.paddingTop));
+    guide.setAttribute('y2', String(dimensions.height - dimensions.paddingBottom));
     guide.style.display = 'none';
     svg.appendChild(guide);
 
     svgWrap.appendChild(svg);
+    svgWrap.appendChild(buildAccessibleTable(days, currentFootprints, currentVisitors, currentBots));
 
-    wireHover({ svg, guide, tooltip, days, footprints, visitors, bots });
+    wireInteractions({ svg, guide, tooltip, days, footprints: currentFootprints, visitors: currentVisitors, bots: currentBots, dimensions });
+  }
+
+  const render = (
+    footprints: ReadonlyArray<DayValue>,
+    visitors: ReadonlyArray<DayValue>,
+    bots: ReadonlyArray<DayValue> | null,
+  ): void => {
+    currentFootprints = footprints;
+    currentVisitors = visitors;
+    currentBots = bots;
+    drawChart();
   };
 
-  return { element: container, render };
+  let resizeObserver: ResizeObserver | null = null;
+  if (typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const steppedWidth = getSteppedChartWidth(entry.contentRect.width);
+        if (steppedWidth !== currentViewBoxWidth) {
+          currentViewBoxWidth = steppedWidth;
+          if (currentFootprints.length > 0) {
+            drawChart();
+          }
+        }
+      }
+    });
+    resizeObserver.observe(container);
+  }
+
+  const teardown = (): void => {
+    resizeObserver?.disconnect();
+    resizeObserver = null;
+  };
+
+  return { element: container, render, teardown };
 }
 
-// Wires the hover interaction, mapping the pointer's x position to a data index through the
-// viewBox ratio. Pointer events rather than mouse events so pen and touch input work too.
-// See https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events
-function wireHover(context: {
+function wireInteractions(context: {
   svg: SVGSVGElement;
   guide: SVGLineElement;
   tooltip: HTMLElement;
@@ -268,34 +355,25 @@ function wireHover(context: {
   footprints: ReadonlyArray<DayValue>;
   visitors: ReadonlyArray<DayValue>;
   bots: ReadonlyArray<DayValue> | null;
+  dimensions: ChartDimensions;
 }): void {
-  const { svg, guide, tooltip, days, footprints, visitors, bots } = context;
+  const { svg, guide, tooltip, days, footprints, visitors, bots, dimensions } = context;
   const count = days.length;
   if (count === 0) {
     return;
   }
 
-  const handleMove = (event: PointerEvent): void => {
-    const rect = svg.getBoundingClientRect();
-    if (rect.width === 0) {
-      return;
-    }
-    // Screen coordinates -> viewBox coordinates. The rendered width is whatever CSS decided, so
-    // the ratio is the only way back to the fixed coordinate system the geometry uses.
-    const viewBoxX = ((event.clientX - rect.left) / rect.width) * DIMENSIONS.width;
-    // Position within the plot area -> nearest data index, clamped to the ends so the pointer
-    // stays useful over the padding.
-    const plotWidth = DIMENSIONS.width - DIMENSIONS.paddingLeft - DIMENSIONS.paddingRight;
-    const ratio = plotWidth <= 0 ? 0 : (viewBoxX - DIMENSIONS.paddingLeft) / plotWidth;
-    const index = Math.min(count - 1, Math.max(0, Math.round(ratio * (count - 1))));
+  let focusedIndex = -1;
 
-    const guideX = indexToX(index, count, DIMENSIONS);
+  function updateTooltipForIndex(index: number): void {
+    focusedIndex = index;
+    const guideX = indexToX(index, count, dimensions);
     guide.setAttribute('x1', String(guideX));
     guide.setAttribute('x2', String(guideX));
     guide.style.display = 'block';
 
     tooltip.classList.add('is-visible');
-    tooltip.style.left = `${(guideX / DIMENSIONS.width) * 100}%`;
+    tooltip.style.left = `${(guideX / dimensions.width) * 100}%`;
     clearElement(tooltip);
 
     const dayLabel = document.createElement('div');
@@ -319,13 +397,87 @@ function wireHover(context: {
       botRow.textContent = `봇 ${formatCount(bots[index]?.value ?? 0)}`;
       tooltip.appendChild(botRow);
     }
+  }
+
+  // Which day the pointer is over, or null when the element has no laid-out width yet.
+  const toIndexFromEvent = (event: PointerEvent): number | null => {
+    const rect = svg.getBoundingClientRect();
+    if (rect.width === 0) {
+      return null;
+    }
+    const viewBoxX = ((event.clientX - rect.left) / rect.width) * dimensions.width;
+    const plotWidth = dimensions.width - dimensions.paddingLeft - dimensions.paddingRight;
+    const ratio = plotWidth <= 0 ? 0 : (viewBoxX - dimensions.paddingLeft) / plotWidth;
+    return Math.min(count - 1, Math.max(0, Math.round(ratio * (count - 1))));
   };
 
-  const handleLeave = (): void => {
+  const hideTooltip = (): void => {
+    focusedIndex = -1;
     guide.style.display = 'none';
     tooltip.classList.remove('is-visible');
   };
 
+  // Set when a tap CLOSED the tooltip, and cleared when that finger lifts. Without it the stray
+  // pointermove some browsers emit for a stationary tap would re-open what the tap just closed.
+  let closedByCurrentGesture = false;
+
+  const handleMove = (event: PointerEvent): void => {
+    if (event.pointerType !== 'mouse' && closedByCurrentGesture) {
+      return;
+    }
+    const index = toIndexFromEvent(event);
+    if (index !== null) {
+      updateTooltipForIndex(index);
+    }
+  };
+
+  // A touch never hovers: the browser fires pointerdown/move/up and then pointerleave the instant
+  // the finger lifts, so on a phone the tooltip used to flash and vanish and the chart was
+  // effectively unreadable. Leave therefore closes the tooltip only for a real hovering device;
+  // a touch or pen tap toggles it instead, and tapping the same day again closes it.
+  const handleLeave = (event: PointerEvent): void => {
+    if (event.pointerType === 'mouse') {
+      hideTooltip();
+    }
+  };
+
+  const handleDown = (event: PointerEvent): void => {
+    if (event.pointerType === 'mouse') {
+      return;
+    }
+    const index = toIndexFromEvent(event);
+    if (index === null) {
+      return;
+    }
+    if (index === focusedIndex && tooltip.classList.contains('is-visible')) {
+      hideTooltip();
+      closedByCurrentGesture = true;
+      return;
+    }
+    closedByCurrentGesture = false;
+    updateTooltipForIndex(index);
+  };
+
+  const handleGestureEnd = (): void => {
+    closedByCurrentGesture = false;
+  };
+
+  const handleKeydown = (event: KeyboardEvent): void => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      const nextIndex = focusedIndex <= 0 ? count - 1 : focusedIndex - 1;
+      updateTooltipForIndex(nextIndex);
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      const nextIndex = focusedIndex >= count - 1 ? 0 : focusedIndex + 1;
+      updateTooltipForIndex(nextIndex);
+    }
+  };
+
+  svg.addEventListener('pointerdown', handleDown);
   svg.addEventListener('pointermove', handleMove);
+  svg.addEventListener('pointerup', handleGestureEnd);
+  svg.addEventListener('pointercancel', handleGestureEnd);
   svg.addEventListener('pointerleave', handleLeave);
+  svg.addEventListener('keydown', handleKeydown);
 }

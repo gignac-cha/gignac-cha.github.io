@@ -1,7 +1,10 @@
-// Range preset buttons (7 / 30 / 90 days): they carry the selected state in both a class and
-// aria-pressed, and hand the chosen day count to the dashboard.
+import {
+  type AppTheme,
+  getEffectiveTheme,
+  readStoredTheme,
+  writeStoredTheme,
+} from '../tools/theme-options.ts';
 
-// One preset: its label and its day count.
 export interface RangePreset {
   label: string;
   days: number;
@@ -15,15 +18,23 @@ export const RANGE_PRESETS: RangePreset[] = [
 
 export interface RangeControlsHandle {
   element: HTMLElement;
-  setActiveDays(days: number): void;
+  setActiveDays(days: number | null): void;
+  setCustomDates(from: string, to: string): void;
 }
 
-// Builds the button group. onSelect receives the selected day count.
-export function createRangeControls(options: { onSelect: (days: number) => void }): RangeControlsHandle {
-  const group = document.createElement('section');
-  group.className = 'range-controls';
-  group.setAttribute('role', 'group');
-  group.setAttribute('aria-label', '기간 선택');
+export function createRangeControls(options: {
+  onSelectPreset: (days: number) => void;
+  onSelectCustom: (from: string, to: string) => void;
+}): RangeControlsHandle {
+  const container = document.createElement('section');
+  container.className = 'range-controls';
+  container.setAttribute('aria-label', '기간 및 테마 설정');
+
+  // 1. Preset Buttons Group
+  const buttonsGroup = document.createElement('div');
+  buttonsGroup.className = 'range-buttons-group';
+  buttonsGroup.setAttribute('role', 'group');
+  buttonsGroup.setAttribute('aria-label', '기간 선택');
 
   const buttonByDays = new Map<number, HTMLButtonElement>();
 
@@ -33,18 +44,102 @@ export function createRangeControls(options: { onSelect: (days: number) => void 
     button.className = 'range-button';
     button.textContent = preset.label;
     button.setAttribute('aria-pressed', 'false');
-    button.addEventListener('click', () => options.onSelect(preset.days));
-    group.appendChild(button);
+    button.addEventListener('click', () => options.onSelectPreset(preset.days));
+    buttonsGroup.appendChild(button);
     buttonByDays.set(preset.days, button);
   }
+  container.appendChild(buttonsGroup);
 
-  const setActiveDays = (days: number): void => {
+  // 2. Custom Date Range Group
+  const customGroup = document.createElement('div');
+  customGroup.className = 'custom-range-group';
+
+  const fromInput = document.createElement('input');
+  fromInput.type = 'date';
+  fromInput.setAttribute('aria-label', '시작 날짜 (from)');
+
+  const toInput = document.createElement('input');
+  toInput.type = 'date';
+  toInput.setAttribute('aria-label', '종료 날짜 (to)');
+
+  const applyButton = document.createElement('button');
+  applyButton.type = 'button';
+  applyButton.className = 'range-apply-button';
+  applyButton.textContent = '적용';
+  applyButton.addEventListener('click', () => {
+    if (fromInput.value && toInput.value) {
+      options.onSelectCustom(fromInput.value, toInput.value);
+    }
+  });
+
+  const utcLabel = document.createElement('span');
+  utcLabel.className = 'utc-label';
+  utcLabel.textContent = '(UTC 기준 [from, to))';
+
+  customGroup.appendChild(fromInput);
+  customGroup.appendChild(document.createTextNode(' ~ '));
+  customGroup.appendChild(toInput);
+  customGroup.appendChild(applyButton);
+  customGroup.appendChild(utcLabel);
+  container.appendChild(customGroup);
+
+  // 3. Theme Toggle Group (auto / light / dark)
+  const themeGroup = document.createElement('div');
+  themeGroup.className = 'theme-toggle-group';
+
+  const currentTheme = readStoredTheme();
+  applyThemeToDocument(currentTheme);
+
+  const themeButtons: Array<{ theme: AppTheme; label: string; element: HTMLButtonElement }> = [
+    { theme: 'auto', label: '자동', element: document.createElement('button') },
+    { theme: 'light', label: '라이트', element: document.createElement('button') },
+    { theme: 'dark', label: '다크', element: document.createElement('button') },
+  ];
+
+  function updateThemeButtons(activeTheme: AppTheme): void {
+    for (const item of themeButtons) {
+      const isActive = item.theme === activeTheme;
+      item.element.classList.toggle('is-active', isActive);
+      item.element.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    }
+  }
+
+  for (const item of themeButtons) {
+    item.element.type = 'button';
+    item.element.className = 'theme-button';
+    item.element.textContent = item.label;
+    item.element.addEventListener('click', () => {
+      writeStoredTheme(item.theme);
+      applyThemeToDocument(item.theme);
+      updateThemeButtons(item.theme);
+    });
+    themeGroup.appendChild(item.element);
+  }
+  updateThemeButtons(currentTheme);
+  container.appendChild(themeGroup);
+
+  function applyThemeToDocument(theme: AppTheme): void {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const effective = getEffectiveTheme(theme, prefersDark);
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', effective);
+    }
+  }
+
+  const setActiveDays = (days: number | null): void => {
     for (const [presetDays, button] of buttonByDays) {
-      const isActive = presetDays === days;
+      const isActive = days !== null && presetDays === days;
       button.classList.toggle('is-active', isActive);
       button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     }
   };
 
-  return { element: group, setActiveDays };
+  const setCustomDates = (from: string, to: string): void => {
+    fromInput.value = from;
+    toInput.value = to;
+  };
+
+  return { element: container, setActiveDays, setCustomDates };
 }

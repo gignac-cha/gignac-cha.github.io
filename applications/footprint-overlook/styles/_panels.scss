@@ -41,12 +41,16 @@
 // ----------------------------------------------------------------------------
 .summary-cards {
   display: grid;
+  // .dashboard 그리드의 한 칸이 아니라 전체 폭을 차지합니다(.dashboard-full-width 와 동일한 역할).
+  grid-column: 1 / -1;
   // 카드 5장 — auto-fit 으로 넓은 화면에선 5열, 좁아지면 자연스럽게 줄바꿈합니다.
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: vars.$spacing-4;
 
-  @media (max-width: vars.$breakpoint-narrow) {
-    grid-template-columns: 1fr;
+  // 모바일에서는 auto-fit 이 카드를 1열까지 줄이는 대신 2열로 고정합니다(좁은 화면에서도
+  // KPI 5장이 스크롤 없이 한눈에 들어오도록).
+  @media (max-width: vars.$breakpoint-mobile) {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .summary-card {
@@ -110,6 +114,56 @@
 }
 
 // ----------------------------------------------------------------------------
+// 패널 내부 토글 — UTC/KST 처럼 패널 바디 안에서 두 상태를 오가는 세그먼트 버튼.
+// .theme-toggle-group/.theme-button(헤더의 라이트·다크 테마 스위치)과 같은 필 모양
+// 토글이라 시각 정의를 한 곳(여기)에서만 갖고 두 클래스 이름이 같이 씁니다. 예전에는
+// 시간대 토글이 .theme-toggle-group 을 그대로 빌려 썼는데, 그 정의가 _global.scss 의
+// .range-controls 안에 중첩돼 있어서 패널 바디 안에서는 셀렉터가 전혀 매치되지 않아
+// 무스타일 텍스트로 보였습니다. 최상위로 올려 어느 컨테이너 안에서든 적용되게 합니다.
+// ----------------------------------------------------------------------------
+.theme-toggle-group,
+.panel-toggle-group {
+  display: inline-flex;
+  align-items: center;
+  gap: vars.$spacing-1;
+  padding: vars.$spacing-1;
+  background-color: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: vars.$radius-pill;
+}
+
+.theme-button,
+.panel-toggle-button {
+  font-family: vars.$font-sans;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  border-radius: vars.$radius-pill;
+  padding: 2px vars.$spacing-3;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+
+  &:hover {
+    color: var(--color-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  &.is-active {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    box-shadow: var(--shadow-weak);
+  }
+}
+
+// ----------------------------------------------------------------------------
 // 섹션 상태 — 로딩 스피너 / 에러 / 빈 상태
 // ----------------------------------------------------------------------------
 .section-state {
@@ -167,6 +221,144 @@
   min-width: 0;
 }
 
+// ----------------------------------------------------------------------------
+// SWR Refresh Badge & Skeletons & Footnotes
+// ----------------------------------------------------------------------------
+.refresh-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: vars.$spacing-1;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background-color: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: vars.$radius-pill;
+  padding: 1px vars.$spacing-2;
+  margin-left: vars.$spacing-2;
+}
+
+.panel-header-title-row {
+  display: flex;
+  // The title and the refresh badge may not fit on one line in a narrow panel; wrapping beats
+  // becoming the widest min-content on the page (see .dashboard > * { min-width: 0 }).
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: vars.$spacing-2;
+}
+
+.summary-delta {
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: vars.$spacing-2;
+
+  &.delta-up {
+    color: var(--color-positive);
+  }
+
+  &.delta-down {
+    color: var(--color-negative);
+  }
+
+  &.delta-neutral {
+    color: var(--color-text-muted);
+  }
+}
+
+// 스파크라인을 담는 자리 — 여백만 책임지고, 크기는 안의 svg(.kpi-sparkline)가 결정합니다.
+.summary-sparkline {
+  margin-top: vars.$spacing-2;
+}
+
+// 카드 미니 추이 svg. 뷰박스가 고정 비율(100x24)이라 width 를 px 로 박아두면 좁은 카드에서
+// svg 가 카드 폭을 밀어내 375px 폭에서 가로 스크롤을 만드는 원인 중 하나였습니다. width 를
+// 100% 로 두고 height 만 고정해 카드 폭에 맞춰 줄어들게 합니다.
+.kpi-sparkline {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: 28px;
+
+  path {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.panel-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: vars.$spacing-3;
+  padding: vars.$spacing-2 0;
+}
+
+.skeleton-block {
+  background-color: var(--color-surface-sunken);
+  border-radius: vars.$radius-small;
+  height: 16px;
+  width: 100%;
+  animation: pulse-skeleton 1.5s ease-in-out infinite;
+
+  &.skeleton-header {
+    height: 20px;
+    width: 60%;
+  }
+
+  &.skeleton-short {
+    width: 40%;
+  }
+}
+
+@keyframes pulse-skeleton {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.unreported-footnote {
+  margin-top: vars.$spacing-3;
+  padding-top: vars.$spacing-2;
+  border-top: 1px dashed var(--color-border);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.unreported-toggle-button {
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -174,7 +366,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .section-loading .section-spinner {
+  .section-loading .section-spinner,
+  .skeleton-block {
     animation: none;
   }
 }

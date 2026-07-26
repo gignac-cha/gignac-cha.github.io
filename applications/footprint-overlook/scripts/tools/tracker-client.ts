@@ -32,6 +32,8 @@ export interface QueryParameters {
   from?: string;
   to?: string;
   limit?: number;
+  uuid?: string;
+  minutes?: number;
 }
 
 // Query metadata as served by GET /queries. `boolean` is the type the worker reports for
@@ -39,7 +41,7 @@ export interface QueryParameters {
 // here keeps a descriptor round-trip from widening to `string`.
 export interface QueryParameterDescriptor {
   name: string;
-  type: 'integer' | 'date' | 'boolean';
+  type: 'integer' | 'date' | 'boolean' | 'string';
   required: boolean;
   default?: number | string | boolean;
   minimum?: number;
@@ -173,6 +175,58 @@ export interface VerifiedBotCategoryRow {
   views: number;
 }
 
+// New Query Row Interfaces for Part B
+export interface UtmBreakdownRow {
+  source: string | null;
+  medium: string | null;
+  campaign: string | null;
+  views: number;
+}
+export interface NewVsReturningByDayRow {
+  day: string;
+  new_visitors: number;
+  returning_visitors: number;
+}
+export interface VisitDepthRow {
+  depth_bucket: '1' | '2' | '3-5' | '6-10' | '11-plus';
+  visitors: number;
+}
+export interface WeeklyRetentionRow {
+  cohort_week: string; // 'YYYY-Www'
+  week_offset: number; // 0..7
+  visitors: number;
+}
+export interface TopLandingRow {
+  href: string | null;
+  landings: number;
+}
+export interface PageTransitionRow {
+  from_href: string | null;
+  to_href: string | null;
+  transitions: number;
+}
+export interface ConnectionTypeRow {
+  effective_type: 'slow-2g' | '2g' | '3g' | '4g' | null;
+  views: number;
+}
+export interface DeviceCapabilityRow {
+  memory_bucket: 'under-4' | '4-to-7' | '8-and-above' | null;
+  views: number;
+}
+export interface AccessibilitySignalRow {
+  reduced_motion: boolean | null;
+  views: number;
+}
+export interface BotsByHourRow {
+  hour: string; // '00'..'23' UTC
+  views: number;
+  bot_views: number;
+}
+export interface ViewsByMinuteRow {
+  minute: string; // 'YYYY-MM-DDTHH:MM' UTC
+  views: number;
+}
+
 // Query-name constants, to keep typos out of the request path.
 export const QUERY_NAMES = {
   recentFootprints: 'recent-footprints',
@@ -191,6 +245,17 @@ export const QUERY_NAMES = {
   viewsByScreenWidth: 'views-by-screen-width',
   topEvents: 'top-events',
   verifiedBotCategories: 'verified-bot-categories',
+  utmBreakdown: 'utm-breakdown',
+  newVsReturningByDay: 'new-vs-returning-by-day',
+  visitDepth: 'visit-depth',
+  weeklyRetention: 'weekly-retention',
+  topLandings: 'top-landings',
+  pageTransitions: 'page-transitions',
+  connectionTypes: 'connection-types',
+  deviceCapabilities: 'device-capabilities',
+  accessibilitySignals: 'accessibility-signals',
+  botsByHour: 'bots-by-hour',
+  viewsByMinute: 'views-by-minute',
 } as const;
 
 // Carries the upstream status alongside the message so a caller can distinguish a rejected request
@@ -229,6 +294,12 @@ export function buildQueryUrl(baseUrl: string, queryName: string, parameters: Qu
   }
   if (parameters.limit !== undefined) {
     search.set('limit', String(parameters.limit));
+  }
+  if (parameters.uuid !== undefined) {
+    search.set('uuid', parameters.uuid);
+  }
+  if (parameters.minutes !== undefined) {
+    search.set('minutes', String(parameters.minutes));
   }
 
   const query = search.toString();

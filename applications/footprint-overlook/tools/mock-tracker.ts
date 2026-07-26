@@ -39,7 +39,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 
 import { isBotUserAgent } from '../scripts/tools/bot-detection.ts';
-import { enumerateDays, parseUTCDate } from '../scripts/tools/date-ranges.ts';
+import { enumerateDays, formatUTCDate, parseUTCDate } from '../scripts/tools/date-ranges.ts';
 
 const PORT = 8788;
 
@@ -340,6 +340,33 @@ function sumFootprintsInRange(from: string, to: string, withOwner: boolean): num
   return enumerateDays(from, to).reduce((total, day) => total + dayFootprints(day, withOwner), 0);
 }
 
+// Views and distinct visitors for a whole [from, to) period, using the SAME formula period-summary
+// answers with: views is a plain sum of daily footprints, but visitors is deliberately SMALLER than
+// the sum of the daily distinct counts (~55-75% of it), because a visitor who returns on three days
+// counts once in a period total and three times across the days. Any other query that needs a
+// period-wide visitor figure (visit-depth's bucket total, for one) MUST reuse this exact function
+// rather than re-deriving its own estimate, or the two panels would report different visitor counts
+// for the same range and disagree about a number that has exactly one correct answer. Views is 0 in
+// an empty range and visitors follows it to 0 too — no floor, because a period with no traffic has
+// no visitors, ghost or otherwise.
+function computePeriodVisitors(
+  from: string,
+  to: string,
+  withOwner: boolean,
+): { views: number; visitors: number } {
+  const days = enumerateDays(from, to);
+  const views = days.reduce((total, day) => total + dayFootprints(day, withOwner), 0);
+  const dailyVisitorSum = days.reduce(
+    (total, day) => total + dayVisitors(day, dayFootprints(day, withOwner)),
+    0,
+  );
+  const visitors =
+    views === 0
+      ? 0
+      : Math.max(1, Math.min(views, Math.round(dailyVisitorSum * (0.55 + 0.2 * seededValue(`period:${from}:${to}`)))));
+  return { views, visitors };
+}
+
 // Splits an integer total across weights so the parts sum to EXACTLY the total (largest remainder
 // method: floor every ideal share, then hand the leftover units to the largest fractional parts).
 // Rounding each bucket independently — the obvious implementation — drifts by up to one unit per
@@ -433,15 +460,29 @@ function makeUuid(random: () => number): string {
   return `${hex(8)}-${hex(4)}-4${hex(3)}-${hex(4)}-${hex(12)}`;
 }
 
+// A small, fixed pool of visitor uuids for recent-footprints, generated once from ITS OWN seed
+// stream (independent of the per-row `random` used while building each row) and then assigned
+// cyclically by row index — see the comment at its use site for why a per-row random uuid cannot
+// serve the visitor-timeline filter.
+const RECENT_UUID_POOL_SIZE = 6;
+const RECENT_UUID_POOL: string[] = Array.from({ length: RECENT_UUID_POOL_SIZE }, (_, poolIndex) =>
+  makeUuid(createSeededRandom(hashString(`recent-uuid-pool:${poolIndex}`))),
+);
+
 // ----------------------------------------------------------------------------
 // Parameter model — the worker's ParameterDescriptor, ParameterValues and error classes.
 // ----------------------------------------------------------------------------
 type ParameterDescriptor =
   | { name: string; type: 'integer'; required: boolean; default: number; minimum: number; maximum: number }
   | { name: string; type: 'date'; required: boolean }
-  | { name: string; type: 'boolean'; required: boolean; default: boolean };
+  | { name: string; type: 'boolean'; required: boolean; default: boolean }
+  | { name: string; type: 'string'; required: boolean };
 
-type ParameterValues = Record<string, number | string | boolean>;
+// `undefined` belongs in the value type, not just at read sites: validateParameters() below never
+// sets a key for an optional parameter the caller omitted (see the 'string' branch), so reading an
+// unset key genuinely yields undefined at runtime, and the type must say so or a `!== undefined`
+// check downstream becomes a TypeScript error about comparing "impossible" types.
+type ParameterValues = Record<string, number | string | boolean | undefined>;
 
 // A caller mistake -> 400. Mirrors ParameterError in queries.ts.
 class ParameterError extends Error {}
@@ -490,6 +531,17 @@ function validateParameters(
   for (const parameter of parameters) {
     const raw = searchParameters.get(parameter.name);
     const isMissing = raw === null || raw === '';
+
+    if (parameter.type === 'string') {
+      if (isMissing) {
+        if (parameter.required) {
+          throw new ParameterError(`missing required parameter: ${parameter.name}`);
+        }
+        continue;
+      }
+      values[parameter.name] = raw;
+      continue;
+    }
 
     if (parameter.type === 'integer') {
       if (isMissing) {
@@ -553,6 +605,36 @@ const withOwnerOf = (values: ParameterValues, ownerUUIDs: string[]): boolean =>
   values.include_owner === true && ownerUUIDs.length > 0;
 
 // ----------------------------------------------------------------------------
+// ISO week helpers — used only by weekly-retention's cohorts below. Kept local to this file rather
+// than added to date-ranges.ts because no other query or panel in this viewer groups by week; the
+// tracker contract's cohort_week is 'YYYY-Www' and this is the one place that derives it.
+// ----------------------------------------------------------------------------
+// Monday (UTC midnight) of the ISO 8601 week containing `date`. ISO weeks start on Monday, so
+// getUTCDay() (Sunday = 0) is rotated to Monday = 0 before subtracting.
+function mondayOfISOWeek(date: Date): Date {
+  const dayNumber = (date.getUTCDay() + 6) % 7; // Monday = 0 .. Sunday = 6
+  const monday = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+  monday.setUTCDate(monday.getUTCDate() - dayNumber);
+  return monday;
+}
+
+// ISO 8601 week-numbering label ('YYYY-Www') for the week whose Monday is `monday`, via the
+// standard nearest-Thursday method: ISO 8601 defines a year's week 1 as the week containing that
+// year's first Thursday (equivalently, the week containing 4 January), so a week's label takes its
+// year from whichever calendar year owns its Thursday — the reason the label can differ from the
+// Monday's own calendar year at the turn of a year.
+// See https://en.wikipedia.org/wiki/ISO_week_date#Calculating_the_week_number_from_a_month_and_day
+function isoWeekLabel(monday: Date): string {
+  const thursday = new Date(monday.getTime());
+  thursday.setUTCDate(thursday.getUTCDate() + 3);
+  const isoYear = thursday.getUTCFullYear();
+  const firstThursday = mondayOfISOWeek(new Date(Date.UTC(isoYear, 0, 4)));
+  firstThursday.setUTCDate(firstThursday.getUTCDate() + 3);
+  const weekNumber = 1 + Math.round((thursday.getTime() - firstThursday.getTime()) / (7 * 24 * 60 * 60 * 1000));
+  return `${isoYear}-W${String(weekNumber).padStart(2, '0')}`;
+}
+
+// ----------------------------------------------------------------------------
 // Query catalog — names, descriptions, parameter bounds and row shapes copied from CATALOG in
 // workers/footprint-tracker-worker/queries.ts, in the same order the worker serves them.
 // ----------------------------------------------------------------------------
@@ -569,15 +651,17 @@ const CATALOG: QueryDefinition[] = [
     description: 'Most recent footprints, newest first.',
     parameters: [
       { name: 'limit', type: 'integer', required: false, default: 20, minimum: 1, maximum: 100 },
+      { name: 'uuid', type: 'string', required: false },
     ],
     rows: (values, ownerUUIDs) => {
       const limit = limitOf(values);
+      const targetUuid = values.uuid !== undefined ? String(values.uuid) : undefined;
       const withOwner = withOwnerOf(values, ownerUUIDs);
       const rows: Record<string, unknown>[] = [];
       // Candidates are drawn newest-first and owner rows are skipped when excluded, so the answer
       // still holds `limit` rows — the worker's WHERE reaches further back for the same reason.
       // The upper bound on `index` keeps a pathological OWNER_UUIDS from spinning forever.
-      for (let index = 0; rows.length < limit && index < limit * 3 + 30; index += 1) {
+      for (let index = 0; rows.length < limit && index < limit * 10 + 100; index += 1) {
         const random = createSeededRandom(hashString(`recent:${index}`));
         const receivedAt = new Date(Date.now() - index * 37 * 60 * 1000).toISOString(); // ~37 min apart
         const path = HREF_PATHS[Math.floor(random() * HREF_PATHS.length)];
@@ -593,17 +677,29 @@ const CATALOG: QueryDefinition[] = [
         if (isOwnerRow && !withOwner) {
           continue;
         }
-        // A verified category is far more likely on a row the User-Agent heuristic already flags,
-        // but NOT exclusive to it: the 5% of clean-looking rows that still carry one are the case
-        // the viewer's verified-first bot tag exists for, and the only way to see it in dev.
-        //
-        // The NON-verified value is the empty string, not null — measured on the live table:
-        // Cloudflare always sets cf.verifiedBotCategory and leaves it BLANK for ordinary traffic,
-        // so '' is the value that dominates real rows and the one the viewer's blank-vs-null
-        // handling must be exercised against. Null is reserved for the ~8% of rows standing in
-        // for a NULL cf column (non-Cloudflare replays, rows predating the column) — the same
-        // rows json_get_str() answers null for upstream. See the predicate comment in
-        // workers/footprint-tracker-worker/queries.ts, which pins the measurement.
+        // A caller filtering by uuid (the visitor timeline highlight) needs SEVERAL rows back for
+        // the same visitor, which a fresh random uuid per row could never produce — real repeat
+        // visits are exactly what that filter exists to show. RECENT_UUID_POOL is assigned
+        // CYCLICALLY by row `index` rather than drawn from this row's `random`, so every other draw
+        // this stream makes (path/origin/user-agent/arguments_/hasUuid/hasHref/isOwnerRow and
+        // verifiedBotCategory below) keeps its existing call site; the only change is that the
+        // stream no longer spends makeUuid()'s draws when hasUuid is true.
+        const rowUuid = isOwnerRow
+          ? ownerUUIDs[0]
+          : hasUuid
+            ? RECENT_UUID_POOL[index % RECENT_UUID_POOL.length]
+            : null;
+        if (targetUuid !== undefined && rowUuid !== targetUuid) {
+          continue;
+        }
+        // Mirrors the distribution MEASURED on the live table, not a guess: Cloudflare always sets
+        // cf.verifiedBotCategory and leaves it the EMPTY STRING for ordinary, unverified traffic —
+        // that is the common "no verdict" case, and it is drawn far more often below. Null appears
+        // only when the whole cf column itself is absent (a non-Cloudflare replay) or on rows
+        // collected before this field existed, so it stays the rare branch, never the default. Both
+        // mean "no verdict" to detectBotEvidence() (see the RecentFootprintRow comment in
+        // scripts/tools/tracker-client.ts), which is why getting this ratio backwards would still
+        // "work" yet train the viewer against a shape the real table never produces.
         const verifiedBotCategory =
           random() < (isBotUserAgent(userAgent) ? 0.5 : 0.05)
             ? pickWeighted(VERIFIED_BOT_CATEGORY_DISTRIBUTION, random()).name
@@ -612,7 +708,7 @@ const CATALOG: QueryDefinition[] = [
               : '';
         rows.push({
           received_at: receivedAt,
-          uuid: isOwnerRow ? ownerUUIDs[0] : hasUuid ? makeUuid(random) : null,
+          uuid: rowUuid,
           origin,
           href: hasHref ? `${SITE_ORIGIN}${path}` : null,
           user_agent: userAgent,
@@ -722,20 +818,10 @@ const CATALOG: QueryDefinition[] = [
       const from = dateOf(values, 'from');
       const to = dateOf(values, 'to');
       const withOwner = withOwnerOf(values, ownerUUIDs);
-      const days = enumerateDays(from, to);
-      const views = days.reduce((total, day) => total + dayFootprints(day, withOwner), 0);
-      const dailyVisitorSum = days.reduce(
-        (total, day) => total + dayVisitors(day, dayFootprints(day, withOwner)),
-        0,
-      );
-      // Deliberately SMALLER than the sum of the daily distinct counts (~55-75% of it): a visitor
-      // who returns on three days counts once here and three times there. That gap is the entire
-      // reason this query exists, so a mock that just echoed the daily sum would hide the bug the
-      // new card was added to fix. Always one row, even when the period is empty.
-      const visitors =
-        views === 0
-          ? 0
-          : Math.max(1, Math.min(views, Math.round(dailyVisitorSum * (0.55 + 0.2 * seededValue(`period:${from}:${to}`)))));
+      // Always one row, even when the period is empty — see computePeriodVisitors() for why
+      // `visitors` is not simply the sum of the daily distinct counts, and why that gap is the
+      // entire reason this query exists rather than the daily sum being reused here.
+      const { views, visitors } = computePeriodVisitors(from, to, withOwner);
       return [{ views, visitors }];
     },
   },
@@ -926,6 +1012,319 @@ const CATALOG: QueryDefinition[] = [
         `verified-bot-categories:${from}:${to}`,
         VERIFIED_BOT_CATEGORY_DISTRIBUTION.length,
       ).map((row) => ({ category: row.name, views: row.count }));
+    },
+  },
+  {
+    name: 'utm-breakdown',
+    description: 'Views broken down by UTM parameters (source, medium, campaign).',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    rows: (values, ownerUUIDs) => {
+      const from = dateOf(values, 'from');
+      const to = dateOf(values, 'to');
+      const total = sumFootprintsInRange(from, to, withOwnerOf(values, ownerUUIDs));
+      const utmCatalog: DistributionEntry[] = [
+        { name: 'google:cpc:summer-sale', weight: 4 },
+        { name: 'newsletter:email:weekly-28', weight: 3 },
+        { name: 'github:social:readme', weight: 2 },
+        { name: 'twitter:social:launch', weight: 1 },
+        { name: null, weight: 10 },
+      ];
+      return distributeTotal(utmCatalog, total, `utm-breakdown:${from}:${to}`, utmCatalog.length).map((row) => {
+        if (row.name === null) {
+          return { source: null, medium: null, campaign: null, views: row.count };
+        }
+        const [source, medium, campaign] = row.name.split(':');
+        return { source: source ?? null, medium: medium ?? null, campaign: campaign ?? null, views: row.count };
+      });
+    },
+  },
+  {
+    name: 'new-vs-returning-by-day',
+    description: 'New vs. returning visitors per day within a date range.',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    rows: (values, ownerUUIDs) => {
+      const withOwner = withOwnerOf(values, ownerUUIDs);
+      return enumerateDays(dateOf(values, 'from'), dateOf(values, 'to'))
+        .map((day) => {
+          const totalVisitors = dayVisitors(day, dayFootprints(day, withOwner));
+          const newRatio = 0.4 + 0.3 * seededValue(`new-visitors:${day}`);
+          const newVisitors = Math.round(totalVisitors * newRatio);
+          const returningVisitors = totalVisitors - newVisitors;
+          return { day, new_visitors: newVisitors, returning_visitors: returningVisitors };
+        })
+        .filter((row) => row.new_visitors > 0 || row.returning_visitors > 0);
+    },
+  },
+  {
+    name: 'visit-depth',
+    description: 'Visitors grouped by number of page views in a session/period.',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    rows: (values, ownerUUIDs) => {
+      const from = dateOf(values, 'from');
+      const to = dateOf(values, 'to');
+      // The bucket counts below must sum to exactly the same visitor figure period-summary answers
+      // with for this range — computePeriodVisitors() is the one place that number is computed,
+      // and it is 0 (no floor) for an empty range rather than a ghost single visitor.
+      const { visitors: periodVisitors } = computePeriodVisitors(from, to, withOwnerOf(values, ownerUUIDs));
+      const depthCatalog: DistributionEntry[] = [
+        { name: '1', weight: 10 },
+        { name: '2', weight: 5 },
+        { name: '3-5', weight: 3 },
+        { name: '6-10', weight: 1 },
+        { name: '11-plus', weight: 1 },
+      ];
+      return distributeTotal(depthCatalog, periodVisitors, `visit-depth:${from}:${to}`, depthCatalog.length).map(
+        (row) => ({ depth_bucket: row.name as '1' | '2' | '3-5' | '6-10' | '11-plus', visitors: row.count }),
+      );
+    },
+  },
+  {
+    name: 'weekly-retention',
+    description: 'Weekly cohort retention matrix.',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    // `from` plays no part below: cohorts are derived from `to` alone (the last 4 ISO weeks ending
+    // there), exactly as a rolling retention view would report regardless of how far back the
+    // caller's range starts.
+    rows: (values, ownerUUIDs) => {
+      const to = dateOf(values, 'to');
+      const withOwner = withOwnerOf(values, ownerUUIDs);
+      // `to` is exclusive, so the last day actually IN the range is one day before it; the ISO
+      // week containing that day is "now" for retention purposes. Nothing past it may be reported
+      // as an observation, or a cohort could claim retention data from a week that has not
+      // happened yet.
+      const lastObservedDay = parseUTCDate(to);
+      lastObservedDay.setUTCDate(lastObservedDay.getUTCDate() - 1);
+      const currentWeekMonday = mondayOfISOWeek(lastObservedDay);
+
+      const cohortWeeksCount = 4;
+      const rows: Record<string, unknown>[] = [];
+      for (let weeksBack = cohortWeeksCount - 1; weeksBack >= 0; weeksBack -= 1) {
+        const cohortMonday = new Date(currentWeekMonday.getTime());
+        cohortMonday.setUTCDate(cohortMonday.getUTCDate() - weeksBack * 7);
+        const cohortLabel = isoWeekLabel(cohortMonday);
+
+        // A cohort's week-0 baseline is the visitors first seen across its OWN 7 UTC days, scaled
+        // down from the site's daily model exactly like new-vs-returning-by-day does — a retention
+        // cohort is a slice of one week's visitors, never a flat three-digit constant unrelated to
+        // how much traffic the site actually gets (daily footprints cap at 50).
+        const cohortSunday = new Date(cohortMonday.getTime());
+        cohortSunday.setUTCDate(cohortSunday.getUTCDate() + 7);
+        const cohortDays = enumerateDays(formatUTCDate(cohortMonday), formatUTCDate(cohortSunday));
+        const weeklyVisitors = cohortDays.reduce(
+          (total, day) => total + dayVisitors(day, dayFootprints(day, withOwner)),
+          0,
+        );
+        const baseVisitors = Math.round(weeklyVisitors * (0.4 + 0.3 * seededValue(`retention-base:${cohortLabel}`)));
+        if (baseVisitors === 0) {
+          continue;
+        }
+
+        // weeksBack IS the count of completed weeks between this cohort and the current week, so
+        // it doubles as the highest offset that has actually happened by `to` — offsets beyond it
+        // would be future weeks and are never generated.
+        for (let offset = 0; offset <= weeksBack; offset += 1) {
+          const decayFactor = offset === 0 ? 1.0 : Math.max(0.05, 0.45 * Math.pow(0.7, offset - 1));
+          const visitors = Math.round(
+            baseVisitors * decayFactor * (0.8 + 0.4 * seededValue(`retention:${cohortLabel}:${offset}`)),
+          );
+          rows.push({ cohort_week: cohortLabel, week_offset: offset, visitors });
+        }
+      }
+      return rows;
+    },
+  },
+  {
+    name: 'top-landings',
+    description: 'Top landing pages by visitor count.',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+      { name: 'limit', type: 'integer', required: false, default: 10, minimum: 1, maximum: 50 },
+    ],
+    rows: (values, ownerUUIDs) => {
+      const from = dateOf(values, 'from');
+      const to = dateOf(values, 'to');
+      const total = sumFootprintsInRange(from, to, withOwnerOf(values, ownerUUIDs));
+      // No floor: an empty range has zero landings, not one ghost landing invented to avoid an
+      // empty panel.
+      const landingsTotal = Math.round(total * 0.6);
+      // A null bucket belongs here for the same reason recent-footprints sometimes stores a null
+      // href (see hasHref there): the landing page is read from the same nullable href column, and
+      // a request that arrived without one groups into a null key exactly as top-pages's would.
+      const landingCatalog: DistributionEntry[] = [
+        ...HREF_PATHS.map((path) => ({ name: path })),
+        { name: null, weight: 1 },
+      ];
+      return distributeTotal(
+        landingCatalog,
+        landingsTotal,
+        `top-landings:${from}:${to}`,
+        limitOf(values),
+      ).map((row) => ({ href: row.name === null ? null : `${SITE_ORIGIN}${row.name}`, landings: row.count }));
+    },
+  },
+  {
+    name: 'page-transitions',
+    description: 'Top page transitions (from page -> to page).',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+      { name: 'limit', type: 'integer', required: false, default: 20, minimum: 1, maximum: 50 },
+    ],
+    rows: (values, ownerUUIDs) => {
+      const from = dateOf(values, 'from');
+      const to = dateOf(values, 'to');
+      const total = sumFootprintsInRange(from, to, withOwnerOf(values, ownerUUIDs));
+      const transitionPairs: DistributionEntry[] = [
+        { name: '/ -> /blog', weight: 8 },
+        { name: '/blog -> /blog/typescript-tips', weight: 6 },
+        { name: '/ -> /projects', weight: 5 },
+        { name: '/projects -> /projects/footprint', weight: 4 },
+        { name: '/blog/typescript-tips -> /about', weight: 3 },
+        { name: '/blog -> /blog/on-device-ai', weight: 3 },
+        { name: '/ -> /about', weight: 2 },
+        { name: 'null -> /', weight: 7 },
+      ];
+      return distributeTotal(transitionPairs, Math.round(total * 0.5), `page-transitions:${from}:${to}`, limitOf(values)).map((row) => {
+        const parts = row.name ? row.name.split(' -> ') : ['null', 'null'];
+        const fromHref = parts[0] === 'null' ? null : `${SITE_ORIGIN}${parts[0]}`;
+        const toHref = parts[1] === 'null' ? null : `${SITE_ORIGIN}${parts[1]}`;
+        return { from_href: fromHref, to_href: toHref, transitions: row.count };
+      });
+    },
+  },
+  {
+    name: 'connection-types',
+    description: 'Views per effective connection type (navigator.connection.effectiveType).',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    rows: (values, ownerUUIDs) => {
+      const from = dateOf(values, 'from');
+      const to = dateOf(values, 'to');
+      const total = sumFootprintsInRange(from, to, withOwnerOf(values, ownerUUIDs));
+      const connectionCatalog: DistributionEntry[] = [
+        { name: '4g', weight: 12 },
+        { name: '3g', weight: 4 },
+        { name: '2g', weight: 1 },
+        { name: 'slow-2g', weight: 1 },
+        { name: null, weight: 3 },
+      ];
+      return distributeTotal(connectionCatalog, total, `connection-types:${from}:${to}`, connectionCatalog.length).map((row) => ({
+        effective_type: row.name as 'slow-2g' | '2g' | '3g' | '4g' | null,
+        views: row.count,
+      }));
+    },
+  },
+  {
+    name: 'device-capabilities',
+    description: 'Views per device memory bucket (navigator.deviceMemory).',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    rows: (values, ownerUUIDs) => {
+      const from = dateOf(values, 'from');
+      const to = dateOf(values, 'to');
+      const total = sumFootprintsInRange(from, to, withOwnerOf(values, ownerUUIDs));
+      const memoryCatalog: DistributionEntry[] = [
+        { name: '8-and-above', weight: 10 },
+        { name: '4-to-7', weight: 6 },
+        { name: 'under-4', weight: 2 },
+        { name: null, weight: 3 },
+      ];
+      return distributeTotal(memoryCatalog, total, `device-capabilities:${from}:${to}`, memoryCatalog.length).map((row) => ({
+        memory_bucket: row.name as 'under-4' | '4-to-7' | '8-and-above' | null,
+        views: row.count,
+      }));
+    },
+  },
+  {
+    name: 'accessibility-signals',
+    description: 'Views per accessibility preference (prefers-reduced-motion).',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    rows: (values, ownerUUIDs) => {
+      const from = dateOf(values, 'from');
+      const to = dateOf(values, 'to');
+      const total = sumFootprintsInRange(from, to, withOwnerOf(values, ownerUUIDs));
+      const motionCatalog: DistributionEntry[] = [
+        { name: 'false', weight: 15 },
+        { name: 'true', weight: 3 },
+        { name: null, weight: 2 },
+      ];
+      return distributeTotal(motionCatalog, total, `accessibility-signals:${from}:${to}`, motionCatalog.length).map((row) => ({
+        reduced_motion: row.name === null ? null : row.name === 'true',
+        views: row.count,
+      }));
+    },
+  },
+  {
+    name: 'bots-by-hour',
+    description: 'Total vs bot views per UTC hour of day.',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+    ],
+    rows: (values, ownerUUIDs) => {
+      const from = dateOf(values, 'from');
+      const to = dateOf(values, 'to');
+      const total = sumFootprintsInRange(from, to, withOwnerOf(values, ownerUUIDs));
+      const jitteredWeights = HOUR_WEIGHTS.map(
+        (weight, hour) => weight * (0.75 + 0.5 * seededValue(`hour:${from}:${to}:${hour}`)),
+      );
+      const counts = allocateExactly(jitteredWeights, total);
+      // Same two-part model dayBotFootprints() applies at the day grain — a heuristic slice
+      // (10-28%) plus a disjoint Cloudflare-verified slice (3-12%) — so an hour's bot share and the
+      // day it belongs to are never modelled by two different formulas. Sparse like views-by-hour:
+      // an hour with no traffic is simply absent from the wire, not a zero-filled row the viewer
+      // would have to distinguish from "no data yet".
+      return counts
+        .map((views, hour) => {
+          const heuristicRatio = 0.1 + 0.18 * seededValue(`bots-hour:${from}:${to}:${hour}`);
+          const verifiedRatio = 0.03 + 0.09 * seededValue(`verified-bots-hour:${from}:${to}:${hour}`);
+          const botViews = views === 0 ? 0 : Math.min(views, Math.round(views * (heuristicRatio + verifiedRatio)));
+          return { hour: String(hour).padStart(2, '0'), views, bot_views: botViews };
+        })
+        .filter((row) => row.views > 0);
+    },
+  },
+  {
+    name: 'views-by-minute',
+    description: 'Views per minute for the last N minutes.',
+    parameters: [
+      { name: 'minutes', type: 'integer', required: false, default: 30, minimum: 1, maximum: 120 },
+    ],
+    rows: (values) => {
+      // validateParameters() already applies the descriptor's default (30) whenever `minutes` is
+      // missing, so a second `?? 30` here would only mask a validation bug rather than handle a
+      // real case — this value is never undefined by the time it reaches rows().
+      const minutesCount = Number(values.minutes);
+      const now = new Date();
+      const rows: Record<string, unknown>[] = [];
+      for (let index = minutesCount - 1; index >= 0; index -= 1) {
+        const minuteDate = new Date(now.getTime() - index * 60 * 1000);
+        const minuteIso = minuteDate.toISOString().slice(0, 16);
+        const randomValue = seededValue(`minute:${minuteIso}`);
+        const views = randomValue > 0.4 ? Math.floor(randomValue * 6) : 0;
+        rows.push({ minute: minuteIso, views });
+      }
+      return rows;
     },
   },
 ];

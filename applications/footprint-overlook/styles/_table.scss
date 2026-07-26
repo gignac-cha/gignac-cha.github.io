@@ -126,12 +126,91 @@
   }
 }
 
+// ----------------------------------------------------------------------------
+// 모바일 컴팩트 모드 — 시각·href 두 열만 남기고 uuid/arguments 는 행 확장 버튼
+// (.recent-table-compact-toggle, aria-expanded) 뒤로 숨깁니다. 데스크탑(>640px)에서는
+// 4열이 그대로 보이므로 토글 버튼과 확장 행 모두 기본적으로 감춰둡니다.
+// ----------------------------------------------------------------------------
+.recent-table-compact-toggle {
+  display: none;
+}
+
+// 확장 행(uuid + arguments 상세)의 기본 모습. 표시 여부는 아래 모바일 블록에서
+// :has() 로 토글 버튼의 aria-expanded 상태를 읽어 결정합니다.
+tr.recent-row-details {
+  display: none;
+
+  td {
+    padding-top: 0;
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    white-space: normal;
+    word-break: break-word;
+  }
+}
+
+@media (max-width: vars.$breakpoint-mobile) {
+  .recent-table {
+    // uuid(2번째)·arguments(4번째) 열을 숨깁니다. 확장 행(.recent-row-details)은 보통 열
+    // 구성이 달라(예: colspan 셀 하나) nth-child 가 엉뚱한 셀을 지울 수 있으므로 제외합니다.
+    thead th:nth-child(2),
+    thead th:nth-child(4),
+    tbody tr:not(.recent-row-details) td:nth-child(2),
+    tbody tr:not(.recent-row-details) td:nth-child(4) {
+      display: none;
+    }
+  }
+
+  .recent-table-compact-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    padding: 0 vars.$spacing-2;
+    font-family: vars.$font-sans;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-accent);
+    background: none;
+    border: 1px solid var(--color-border-strong);
+    border-radius: vars.$radius-small;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--color-accent-soft);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    &[aria-expanded='true'] {
+      color: var(--color-text-inverse);
+      background-color: var(--color-accent);
+      border-color: var(--color-accent);
+    }
+  }
+
+  // 토글 버튼이 aria-expanded="true" 인 행의 바로 다음 형제 행이 확장 상세 행입니다.
+  // 버튼 클릭 핸들러는 aria-expanded 만 뒤집으면 되고, 보이기/감추기는 여기 CSS 가 맡습니다.
+  tr:has(> td .recent-table-compact-toggle[aria-expanded='true']) + tr.recent-row-details {
+    display: table-row;
+  }
+}
+
 // 표 위의 강조 컨트롤 바 — uuid 붙여넣기 입력 + 상태 + 해제.
 .recent-highlight-bar {
   display: flex;
   align-items: center;
   gap: vars.$spacing-2;
   margin-bottom: vars.$spacing-3;
+
+  @media (max-width: vars.$breakpoint-mobile) {
+    // 아래에서 입력을 전폭으로 풀면 같은 줄에 있던 상태 텍스트·버튼이 더 이상 안 맞으므로
+    // 다음 줄로 자연스럽게 넘어가게 합니다.
+    flex-wrap: wrap;
+  }
 
   .highlight-input {
     flex: 1;
@@ -154,12 +233,28 @@
       outline-offset: 1px;
       border-color: var(--color-accent);
     }
+
+    // 420px 상한은 넓은 화면에서 입력창이 지나치게 길어지지 않게 하는 용도였지만, 375px
+    // 화면에서는 반대로 입력창이 나머지 컨트롤과 다투며 좁아집니다. 모바일에서는 상한을
+    // 풀어 전폭으로 씁니다.
+    @media (max-width: vars.$breakpoint-mobile) {
+      max-width: none;
+      width: 100%;
+    }
   }
 
   .highlight-status {
     font-size: 12px;
     color: var(--color-accent);
     white-space: nowrap;
+
+    // The status quotes a full UUID; on a phone that one unbreakable line is wider than the
+    // viewport itself (measured 413px at 375px) — the last page-level horizontal-scroll source.
+    @media (max-width: vars.$breakpoint-mobile) {
+      white-space: normal;
+      overflow-wrap: anywhere;
+      min-width: 0;
+    }
   }
 
   .highlight-clear-button {

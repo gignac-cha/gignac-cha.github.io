@@ -46,6 +46,12 @@
   --color-error-surface: #fee2e2;
   --color-error-border: #fecaca;
 
+  // 증감 델타(▲▼) 색 — summary-cards 의 setDelta 가 참조합니다. 예전엔 _panels.scss 에
+  // #16a34a/#dc2626 로 하드코딩돼 있어 다크 테마에서 그대로 쓰이면 배경(#14151a) 대비가
+  // 낮았습니다. 라이트/다크 각각 값을 갖는 토큰으로 옮겨 팔레트 한 곳에서만 관리합니다.
+  --color-positive: #16a34a;
+  --color-negative: #dc2626;
+
   // 차트 격자선
   --color-grid: #ece9e3;
 
@@ -54,43 +60,98 @@
   --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-// 다크 테마 — OS 선호가 dark 일 때 토큰만 갈아 끼웁니다(구조/레이아웃은 공유).
+// 다크 테마 토큰 — 두 군데(①시스템이 dark 를 선호하고 사용자가 명시적으로 라이트를 고르지
+// 않은 경우, ②사용자가 명시적으로 다크를 고른 경우)에서 완전히 동일한 값을 내보내야 캐스케이드가
+// 자연스럽게 이어집니다. 예전엔 이 두 블록이 각자 값을 나열해 하나를 고치면 다른 하나가
+// 조용히 어긋날 수 있었습니다. 값은 이 믹스인 하나에만 있고, 블록 두 개는 그걸 불러 쓰기만 합니다.
+@mixin dark-theme-tokens {
+  --color-background: #14151a;
+  --color-surface: #1c1e26;
+  --color-surface-sunken: #191b22;
+
+  --color-border: #2b2e3a;
+  --color-border-strong: #3a3e4d;
+
+  --color-text-primary: #f3f2ef;
+  --color-text-secondary: #b4b8c4;
+  --color-text-muted: #7c8091;
+  --color-text-inverse: #0b0c10;
+
+  --color-accent: #6ea8ff;
+  --color-accent-strong: #93c0ff;
+  --color-accent-soft: rgba(110, 168, 255, 0.14);
+
+  --color-series-footprints: #6ea8ff;
+  --color-series-footprints-soft: rgba(110, 168, 255, 0.16);
+  --color-series-visitors: #34d3c0;
+  --color-series-visitors-soft: rgba(52, 211, 192, 0.14);
+  --color-series-bots: #fbbf24;
+
+  --color-bar: #6ea8ff;
+  --color-bar-track: #24273163;
+
+  --color-error: #f87171;
+  --color-error-surface: rgba(248, 113, 113, 0.12);
+  --color-error-border: rgba(248, 113, 113, 0.35);
+
+  --color-positive: #4ade80;
+  --color-negative: #f87171;
+
+  --color-grid: #262932;
+
+  --shadow-weak: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 6px 18px rgba(0, 0, 0, 0.5);
+}
+
+// OS 선호가 dark 이면서 사용자가 [data-theme="light"] 를 명시적으로 고르지 않은 경우.
 @media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: #14151a;
-    --color-surface: #1c1e26;
-    --color-surface-sunken: #191b22;
-
-    --color-border: #2b2e3a;
-    --color-border-strong: #3a3e4d;
-
-    --color-text-primary: #f3f2ef;
-    --color-text-secondary: #b4b8c4;
-    --color-text-muted: #7c8091;
-    --color-text-inverse: #0b0c10;
-
-    --color-accent: #6ea8ff;
-    --color-accent-strong: #93c0ff;
-    --color-accent-soft: rgba(110, 168, 255, 0.14);
-
-    --color-series-footprints: #6ea8ff;
-    --color-series-footprints-soft: rgba(110, 168, 255, 0.16);
-    --color-series-visitors: #34d3c0;
-    --color-series-visitors-soft: rgba(52, 211, 192, 0.14);
-    --color-series-bots: #fbbf24;
-
-    --color-bar: #6ea8ff;
-    --color-bar-track: #24273163;
-
-    --color-error: #f87171;
-    --color-error-surface: rgba(248, 113, 113, 0.12);
-    --color-error-border: rgba(248, 113, 113, 0.35);
-
-    --color-grid: #262932;
-
-    --shadow-weak: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-hover: 0 6px 18px rgba(0, 0, 0, 0.5);
+  :root:not([data-theme="light"]) {
+    @include dark-theme-tokens;
   }
+}
+
+// 사용자가 테마 토글에서 다크를 명시적으로 고른 경우 — OS 선호와 무관하게 적용됩니다.
+:root[data-theme="dark"] {
+  @include dark-theme-tokens;
+}
+
+:root[data-theme="light"] {
+  --color-background: #f5f4f1;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #f0eee9;
+
+  --color-border: #e6e3dd;
+  --color-border-strong: #d3cfc6;
+
+  --color-text-primary: #1c1a17;
+  --color-text-secondary: #5f594f;
+  --color-text-muted: #8b857a;
+  --color-text-inverse: #ffffff;
+
+  --color-accent: #2563eb;
+  --color-accent-strong: #1d4ed8;
+  --color-accent-soft: rgba(37, 99, 235, 0.1);
+
+  --color-series-footprints: #2563eb;
+  --color-series-footprints-soft: rgba(37, 99, 235, 0.14);
+  --color-series-visitors: #0d9488;
+  --color-series-visitors-soft: rgba(13, 148, 136, 0.12);
+  --color-series-bots: #b45309;
+
+  --color-bar: #2563eb;
+  --color-bar-track: #efece7;
+
+  --color-error: #b91c1c;
+  --color-error-surface: #fee2e2;
+  --color-error-border: #fecaca;
+
+  --color-positive: #16a34a;
+  --color-negative: #dc2626;
+
+  --color-grid: #ece9e3;
+
+  --shadow-weak: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 // ----------------------------------------------------------------------------
@@ -122,7 +183,7 @@ $radius-large: 16px;
 $radius-pill: 999px;
 
 // 레이아웃 & 브레이크포인트
-$column-width: 1040px;
+$column-width: 1920px;
 $breakpoint-tablet: 900px;
 $breakpoint-mobile: 640px;
 $breakpoint-narrow: 400px;

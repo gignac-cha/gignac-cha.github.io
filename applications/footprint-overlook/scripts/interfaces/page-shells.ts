@@ -41,9 +41,12 @@ export function createPageHeader(): HTMLElement {
 export interface EndpointBarHandle {
   element: HTMLElement;
   setEndpoint(endpoint: string): void;
+  // The clock time the data on screen was fetched — the dashboard passes the cache timestamp while
+  // it repaints from storage, then the real one. An empty string clears the line.
+  setLastUpdated(text: string): void;
 }
 
-export function createEndpointBar(options: { onChange: () => void }): EndpointBarHandle {
+export function createEndpointBar(options: { onChange: () => void; onRefresh?: () => void }): EndpointBarHandle {
   const bar = document.createElement('section');
   bar.className = 'endpoint-bar';
   bar.setAttribute('aria-label', '트래커 엔드포인트');
@@ -58,6 +61,20 @@ export function createEndpointBar(options: { onChange: () => void }): EndpointBa
   value.textContent = '—';
   bar.appendChild(value);
 
+  const lastUpdated = document.createElement('span');
+  lastUpdated.className = 'endpoint-last-updated';
+  lastUpdated.textContent = '';
+  bar.appendChild(lastUpdated);
+
+  if (options.onRefresh) {
+    const refreshButton = document.createElement('button');
+    refreshButton.type = 'button';
+    refreshButton.className = 'endpoint-refresh-button';
+    refreshButton.textContent = '새로고침';
+    refreshButton.addEventListener('click', () => options.onRefresh?.());
+    bar.appendChild(refreshButton);
+  }
+
   const changeButton = document.createElement('button');
   changeButton.type = 'button';
   changeButton.className = 'endpoint-change-button';
@@ -70,6 +87,9 @@ export function createEndpointBar(options: { onChange: () => void }): EndpointBa
     setEndpoint: (endpoint) => {
       value.textContent = endpoint;
       value.title = endpoint;
+    },
+    setLastUpdated: (text) => {
+      lastUpdated.textContent = text.length > 0 ? `마지막 갱신 ${text}` : '';
     },
   };
 }

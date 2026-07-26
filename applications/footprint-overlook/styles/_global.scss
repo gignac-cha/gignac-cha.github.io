@@ -56,6 +56,11 @@ body {
 .page-header,
 .dashboard > * {
   animation: rise-in 0.4s ease-out backwards;
+  // Grid items default to min-width:auto, so one panel's min-content (a long unwrapped subtitle,
+  // a non-wrapping control row) silently widens EVERY track and the page itself starts scrolling
+  // sideways — measured 561px on a 375px viewport. Zero re-enables shrinking; anything that is
+  // genuinely wider than its panel is expected to scroll inside its own overflow-x container.
+  min-width: 0;
 }
 
 .dashboard > *:nth-child(2) {
@@ -118,17 +123,25 @@ body {
 }
 
 .dashboard {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
   gap: vars.$spacing-6;
+  width: 100%;
 
   @media (max-width: vars.$breakpoint-mobile) {
+    // minmax(0, 1fr) rather than bare 1fr: a bare fr still floors at the items' min-content,
+    // which is exactly the blowout the mobile layout must prevent.
+    grid-template-columns: minmax(0, 1fr);
     gap: vars.$spacing-4;
   }
 }
 
+.dashboard-full-width {
+  grid-column: 1 / -1;
+}
+
 // ----------------------------------------------------------------------------
-// 엔드포인트 바 — 현재 트래커 주소를 눈에 거슬리지 않게 노출 + 변경 버튼
+// 엔드포인트 바 — 현재 트래커 주소를 눈에 거슬리지 않게 노출 + 새로고침 + 변경 버튼
 // ----------------------------------------------------------------------------
 .endpoint-bar {
   display: flex;
@@ -139,6 +152,7 @@ body {
   border: 1px solid var(--color-border);
   border-radius: vars.$radius-pill;
   font-size: 12px;
+  grid-column: 1 / -1;
 
   .endpoint-label {
     flex: none;
@@ -159,6 +173,13 @@ body {
     text-overflow: ellipsis;
   }
 
+  .endpoint-last-updated {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    margin-right: vars.$spacing-1;
+  }
+
+  .endpoint-refresh-button,
   .endpoint-change-button {
     flex: none;
     font-family: vars.$font-sans;
@@ -187,16 +208,25 @@ body {
 }
 
 // ----------------------------------------------------------------------------
-// 기간 프리셋 컨트롤 (7일 / 30일 / 90일)
+// 기간 프리셋 컨트롤 + 커스텀 날짜 범위 + 테마 토글
 // ----------------------------------------------------------------------------
 .range-controls {
-  display: inline-flex;
-  align-self: flex-start;
-  gap: vars.$spacing-1;
-  padding: vars.$spacing-1;
-  background-color: var(--color-surface-sunken);
-  border: 1px solid var(--color-border);
-  border-radius: vars.$radius-pill;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: vars.$spacing-3;
+  grid-column: 1 / -1;
+
+  .range-buttons-group {
+    display: inline-flex;
+    align-items: center;
+    gap: vars.$spacing-1;
+    padding: vars.$spacing-1;
+    background-color: var(--color-surface-sunken);
+    border: 1px solid var(--color-border);
+    border-radius: vars.$radius-pill;
+  }
 
   .range-button {
     font-family: vars.$font-sans;
@@ -225,6 +255,77 @@ body {
       outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
+  }
+
+  .custom-range-group {
+    display: inline-flex;
+    // Two date inputs plus the apply button are ~440px of min-content — without wrapping they are
+    // the widest single item on the page and set the mobile page width all by themselves.
+    flex-wrap: wrap;
+    align-items: center;
+    gap: vars.$spacing-2;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+
+    input[type='date'] {
+      font-family: vars.$font-mono;
+      font-size: 12px;
+      padding: 4px vars.$spacing-2;
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: vars.$radius-small;
+      color: var(--color-text-primary);
+
+      &:focus-visible {
+        outline: 2px solid var(--color-accent);
+      }
+    }
+
+    .range-apply-button {
+      font-family: vars.$font-sans;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-accent);
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border-strong);
+      border-radius: vars.$radius-small;
+      padding: 4px vars.$spacing-3;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--color-accent-soft);
+      }
+    }
+
+    .utc-label {
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+  }
+
+  // .theme-toggle-group/.theme-button 자체의 시각 정의는 _panels.scss 에 있습니다(패널
+  // 바디 안의 .panel-toggle-group/.panel-toggle-button 과 같은 필 토글이라 최상위 셀렉터
+  // 하나를 공유합니다 — 자세한 이유는 그 파일의 주석 참고).
+}
+
+// ----------------------------------------------------------------------------
+// 모바일(≤640px) 일괄 규칙 — 좁은 화면에서 가로 스크롤과 손가락으로 누르기 어려운
+// 컨트롤을 만드는 원인들을 한 번에 정리합니다.
+// ----------------------------------------------------------------------------
+@media (max-width: vars.$breakpoint-mobile) {
+  // 엔드포인트 바는 라벨 · 주소 · 최근 갱신 · 새로고침 · 변경까지 다섯 조각을 한 줄에
+  // 우겨넣고 있어 좁은 화면에서 줄바꿈이 없으면 페이지 자체가 가로로 밀립니다.
+  // .range-controls 는 이미 flex-wrap 을 갖고 있어 여기서 다시 줄 필요가 없습니다.
+  .endpoint-bar {
+    flex-wrap: wrap;
+  }
+
+  // 터치 타깃 최소 크기(44px, WCAG 2.5.5 권장치)를 모든 버튼·입력에 일괄 적용합니다.
+  // 컴포넌트별로 흩어져 있던 pill 버튼·입력창을 하나하나 손보는 대신, 데스크탑 전용 밀도(예:
+  // .range-button 의 padding)는 그대로 두고 모바일 전용 최소 높이만 덧씌웁니다.
+  button,
+  input {
+    min-height: 44px;
   }
 }
 

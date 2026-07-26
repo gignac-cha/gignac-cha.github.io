@@ -24,9 +24,23 @@ function clearElement(element: Element): void {
   }
 }
 
+// The teardown of the dashboard currently on screen, if one is. Emptying #root detaches its
+// elements but cannot stop what they started: the dashboard runs a 60-second timer for the
+// near-realtime panel and a ResizeObserver for the trend chart, and both would keep firing against
+// a tree nobody can see — a zombie poller that survives every "변경" round trip.
+let disposeActiveDashboard: (() => void) | null = null;
+
+function replaceView(root: HTMLElement): void {
+  if (disposeActiveDashboard !== null) {
+    disposeActiveDashboard();
+    disposeActiveDashboard = null;
+  }
+  clearElement(root);
+}
+
 // No endpoint stored: header plus the centred setup card.
 function renderSetup(root: HTMLElement, initialValue?: string): void {
-  clearElement(root);
+  replaceView(root);
   root.classList.add('is-setup-mode');
   root.appendChild(createPageHeader());
 
@@ -52,16 +66,16 @@ function renderSetup(root: HTMLElement, initialValue?: string): void {
 
 // Endpoint available: header, dashboard, footer.
 function renderDashboard(root: HTMLElement, endpoint: string): void {
-  clearElement(root);
+  replaceView(root);
   root.classList.remove('is-setup-mode');
   root.appendChild(createPageHeader());
-  root.appendChild(
-    createDashboard({
-      endpoint,
-      // "변경" returns to the setup card with the current value prefilled.
-      onChangeEndpoint: () => renderSetup(root, endpoint),
-    }),
-  );
+  const dashboard = createDashboard({
+    endpoint,
+    // "변경" returns to the setup card with the current value prefilled.
+    onChangeEndpoint: () => renderSetup(root, endpoint),
+  });
+  disposeActiveDashboard = dashboard.teardown;
+  root.appendChild(dashboard.element);
   root.appendChild(createPageFooter());
 }
 
@@ -79,7 +93,7 @@ function initialize(): void {
 // page with the reason visible only in the console.
 function renderInitializationError(error: unknown): void {
   const root = findOrCreateRootElement();
-  clearElement(root);
+  replaceView(root);
   const reasonText = error instanceof Error ? error.message : String(error);
   const card = document.createElement('section');
   card.className = 'panel';

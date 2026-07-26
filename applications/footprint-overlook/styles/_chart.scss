@@ -54,10 +54,16 @@
 
 // ----------------------------------------------------------------------------
 // SVG 래퍼 — viewBox 를 100% 폭으로 스케일(반응형). 세로는 고정 높이로 종횡비를 고정합니다.
+// overflow-x: auto 를 여기(패널 안쪽)에 둬서, 어떤 이유로든 내용이 폭을 넘치더라도(예:
+// 가장자리 근처 데이터 포인트의 .chart-tooltip 이 white-space: nowrap 로 튀어나오는 경우)
+// 넘친 부분이 이 컨테이너 안에서만 스크롤되고 페이지 전체가 가로로 밀리지 않습니다.
+// (overflow-x 를 visible 이 아닌 값으로 두면 CSS 규칙상 overflow-y 도 auto 로 계산되지만,
+// 이 래퍼는 세로로 넘치는 내용이 없어 실질적인 영향은 없습니다.)
 // ----------------------------------------------------------------------------
 .chart-svg-wrap {
   position: relative;
   width: 100%;
+  overflow-x: auto;
 }
 
 .chart-svg {
@@ -67,6 +73,14 @@
 
   @media (max-width: vars.$breakpoint-mobile) {
     height: 240px;
+  }
+
+  // 키보드로 포커스했을 때(마우스 클릭 시엔 표시 안 함)의 링. svg 는 tabindex="0" 으로
+  // 포커스 가능해 화살표 키로 데이터 포인트를 이동할 수 있는데, 포커스 상태를 보여줄
+  // 스타일이 아예 없어서 키보드 사용자에게 지금 어디에 있는지가 안 보였습니다.
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
   }
 }
 
