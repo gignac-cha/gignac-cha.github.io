@@ -27,7 +27,6 @@
     "vitest": "^4.1.10"
   },
   "dependencies": {
-    "@tes.cha/footprint": "workspace:footprint@*",
     "d3": "^7.9.0",
     "three": "^0.184.0"
   }

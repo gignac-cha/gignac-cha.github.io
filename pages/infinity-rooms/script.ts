@@ -1,8 +1,6 @@
 // 무한의 방 페이지 진입점입니다. 페이지 헤더/상태 카드/스테이지(방 카드 + 미니맵)/조작법/푸터를 조립하고,
 // 초기화 실패 시 빈 화면 대신 한국어 경고 카드를 표시합니다.
 
-// 페이지 접근 추적(footprint)을 가장 먼저 초기화합니다. side-effect import 만으로 로드 시 자동 발자국을 남깁니다.
-import './scripts/tools/footprint-tracking.ts';
 import { createControlsHintRow, createPageFooter, createPageHeader } from './scripts/interfaces/page-shells.ts';
 import { createRoomCard } from './scripts/interfaces/room-card.ts';
 import { createPromptAPIStatusPanel, createStatusCardsContainer, createWebGPUStatusPanel } from './scripts/interfaces/status-panels.ts';

@@ -88,9 +88,6 @@ importers:
 
   pages/infinity-rooms:
     dependencies:
-      '@tes.cha/footprint':
-        specifier: workspace:footprint@*
-        version: link:../../packages/footprint
       d3:
         specifier: ^7.9.0
         version: 7.9.0
