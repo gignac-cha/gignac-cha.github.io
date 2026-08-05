@@ -4,6 +4,8 @@ Tiny page-access footprint tracker. One `step()` call, `sendBeacon` transport (P
 
 The package ships unbundled ESM + type declarations, single-file CommonJS entries (`index.cjs`, `footprint.cjs`) for bundlers that resolve the `require` condition, and a single-file browser bundle (`footprint.bundle.js`). Everything targets the browser — the CommonJS builds exist for bundlers, not for running under Node.
 
+**AI agents**: follow `llms-install.md`, next to this file, for the integration workflow — it tells you which values to ask the user for before writing any code.
+
 ## Configure the endpoint (no hardcoding)
 
 Seed the worker endpoint once under the key `footprint:endpoint`. It is resolved with this priority: **IndexedDB → localStorage → sessionStorage → cookie** (first hit wins). localStorage is the simplest:

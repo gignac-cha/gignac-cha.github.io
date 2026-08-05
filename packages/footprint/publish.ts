@@ -128,6 +128,17 @@ if (await exists(join(packageDirectory, 'LICENSE'))) {
   await copyFile(join(packageDirectory, 'LICENSE'), join(publishDirectory, 'LICENSE'));
 }
 
+// The agent integration guide ships VERBATIM — unlike the README it needs no scope rewrite.
+// Every package reference in it is a <package-name> placeholder the reading agent resolves from
+// context (the user's instructions, or the node_modules path it found the file at), and the
+// endpoint is an <endpoint-url> placeholder the agent must ask the user for. That
+// placeholder-only design keeps the real scope and worker address out of the committed file
+// while letting the committed and published copies be the SAME document. Shipping it in the
+// tarball is what makes it reachable at all: agents only read files they are pointed at or that
+// sit in node_modules — ambient discovery of AI-doc conventions does not exist (an Ahrefs study
+// measured 97% of llms.txt files receiving zero traffic, https://ahrefs.com/blog/llmstxt-study/).
+await copyFile(join(packageDirectory, 'llms-install.md'), join(publishDirectory, 'llms-install.md'));
+
 const willPublish = process.env.FOOTPRINT_PUBLISH === '1';
 // npm refuses to publish a prerelease version without an explicit dist-tag, so that a prerelease
 // cannot accidentally become `latest`. Our date-based `0.0.0-YYYYMMDD.N` versions ARE the primary

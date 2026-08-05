@@ -1,6 +1,6 @@
 {
   "name": "footprint",
-  "version": "0.0.0-20260806.0",
+  "version": "0.0.0-20260806.1",
   "description": "Tiny page-access footprint tracker — one step() call, sendBeacon transport, endpoint resolved from browser storage.",
   "type": "module",
   "types": "./outputs/index.d.ts",
