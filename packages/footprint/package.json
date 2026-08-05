@@ -1,6 +1,6 @@
 {
   "name": "footprint",
-  "version": "0.0.0-20260723.0",
+  "version": "0.0.0-20260806.0",
   "description": "Tiny page-access footprint tracker — one step() call, sendBeacon transport, endpoint resolved from browser storage.",
   "type": "module",
   "types": "./outputs/index.d.ts",
@@ -19,7 +19,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:browser": "pnpm build && playwright test",
-    "publish:npm": "node --env-file-if-exists=.env publish.ts"
+    "publish:dry-run": "FOOTPRINT_PUBLISH=0 node --env-file-if-exists=.env publish.ts",
+    "publish:release": "FOOTPRINT_PUBLISH=1 node --env-file-if-exists=.env publish.ts"
   },
   "author": "Tes Cha",
   "license": "ISC",

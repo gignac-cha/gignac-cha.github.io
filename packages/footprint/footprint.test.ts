@@ -433,3 +433,45 @@ describe('manual-only entry (./step, no auto-fire)', () => {
     expect((await nthBody(beacon, 0)).arguments).toEqual([]);
   });
 });
+
+describe('default export (namespaced step)', () => {
+  // The collision-avoidance surface the README recommends: `import footprint from ...` then
+  // `footprint.step(...)`. Three identities are pinned at once — the default is the SAME function
+  // as the named export on each entry (an additional surface, never a fork), and the two entries
+  // serve ONE object (index.ts re-exports the core's default instead of building its own), so no
+  // future edit can quietly split them into diverging copies.
+  it('serves the same step through the default export on both entries', async () => {
+    localStorage.setItem(ENDPOINT_KEY, ENDPOINT);
+    captureBeacon();
+    const core = await import('./footprint.ts');
+    expect(core.default.step).toBe(core.step);
+    const entry = await import('./index.ts');
+    expect(entry.default.step).toBe(entry.step);
+    expect(entry.default).toBe(core.default);
+  });
+
+  it('sends through footprint.step exactly like the named step', async () => {
+    localStorage.setItem(ENDPOINT_KEY, ENDPOINT);
+    const beacon = captureBeacon();
+    const { default: footprint } = await import('./footprint.ts');
+    await footprint.step('namespaced', { via: 'default' });
+    await vi.waitFor(() => expect(beacon).toHaveBeenCalledTimes(1));
+    expect(beacon.mock.calls[0][0]).toBe(ENDPOINT);
+    expect((await nthBody(beacon, 0)).arguments).toEqual(['namespaced', { via: 'default' }]);
+  });
+
+  it('still auto-fires the pageview when the main entry is imported through the default export', async () => {
+    // The auto-fire hangs on MODULE EVALUATION, not on which binding the consumer names — so
+    // switching the README's recommended form from `import { step }` to `import footprint from`
+    // must not cost the automatic pageview. Pinned here because nothing else exercises the
+    // default-import path against the side-effectful entry.
+    localStorage.setItem(ENDPOINT_KEY, ENDPOINT);
+    const beacon = captureBeacon();
+    const { default: footprint } = await import('./index.ts');
+    await vi.waitFor(() => expect(beacon).toHaveBeenCalledTimes(1));
+    expect((await nthBody(beacon, 0)).arguments).toEqual([]);
+    await footprint.step('after-auto');
+    await vi.waitFor(() => expect(beacon).toHaveBeenCalledTimes(2));
+    expect((await nthBody(beacon, 1)).arguments).toEqual(['after-auto']);
+  });
+});

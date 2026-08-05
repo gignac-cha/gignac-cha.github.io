@@ -10,6 +10,9 @@
 // suites import './index.ts' and assert the pageview fires, and the 'manual-only entry (./step,
 // no auto-fire)' suite asserts importing footprint.ts alone stays silent.
 export { step } from './footprint.ts';
+// The namespaced surface (`footprint.step`) — re-exported rather than rebuilt so both entries
+// serve the identical object; see the default-export comment in footprint.ts for why it exists.
+export { default } from './footprint.ts';
 
 import { fireAutoPageview } from './footprint.ts';
 

@@ -12,40 +12,56 @@ Seed the worker endpoint once under the key `footprint:endpoint`. It is resolved
 localStorage.setItem('footprint:endpoint', 'https://your-worker.example.workers.dev/');
 ```
 
-Whichever store you seed, the resolved value is cached after the first read.
+Run this from any code that executes during startup — the top level of any module in your startup path, or a one-line inline script in the host page:
+
+```html
+<script>localStorage.setItem('footprint:endpoint', 'https://your-worker.example.workers.dev/');</script>
+```
+
+Seeding does not need to run before the import — only during startup: the initial pageview waits for the key with up to 3 attempts (exponential backoff: 100ms, 200ms). Code that runs later — after render, inside lifecycle hooks, behind user interaction — is too late: the auto-fire gives up silently. Whichever store you seed, the resolved value is cached after the first read.
 
 ## Use
 
-Importing the module fires one footprint automatically on page load — zero extra code. To absorb load-order races with the seeding script, this initial pageview waits for the endpoint key with up to 3 attempts (exponential backoff: 100ms, 200ms) and stays silent if it never appears. Manual `step()` calls never wait — they check storage once at call time:
+Importing the module fires one footprint automatically on page load — the bare import is the complete integration:
+
+```js
+import 'footprint';
+```
+
+Add this one line to code that already runs at startup. There is nothing to wire: do not create a wrapper module, an initialization function, or a framework lifecycle hook around it.
+
+To also record custom events, use the default import and call `footprint.step(...)` — `step` is a common identifier, and keeping it namespaced avoids collisions with your own code. Arguments are sent verbatim as an array — no interpretation:
+
+```js
+import footprint from 'footprint';
+
+footprint.step('cta-click', { plan: 'pro' });
+button.addEventListener('click', () => footprint.step('signup'));
+```
+
+The named form also works, when a bare `step` cannot be confused with anything else in your module:
 
 ```js
 import { step } from 'footprint';
 ```
 
-Call the same `step()` for anything else. Arguments are sent verbatim as an array — no interpretation:
-
-```js
-step('cta-click', { plan: 'pro' });
-button.addEventListener('click', () => step('signup'));
-```
+Manual `step()` calls never wait for the endpoint key — they check storage once at call time.
 
 ### Opt out of the automatic pageview
 
-The default entry auto-fires on import. To use `step()` **without** the automatic page-load footprint — for example to fire every pageview yourself in an SPA — import the pure `footprint/step` entry instead. It has no import-time side effect:
+The auto-fire hangs on module evaluation, not on which binding you name: `import 'footprint'`, `import footprint from 'footprint'`, and `import { step } from 'footprint'` all trigger it equally, and bundlers cannot tree-shake it away (the entry is pinned as side-effectful). The **only** way to use `step()` without the automatic page-load footprint — for example to fire every pageview yourself in an SPA — is the pure `footprint/step` entry, which has no import-time side effect:
 
 ```js
-import { step } from 'footprint/step'; // no auto-fire — step() only
+import footprint from 'footprint/step'; // no auto-fire — footprint.step() only
 ```
 
 ## Static pages (no bundler)
 
-Serve the built single-file bundle (`footprint.bundle.js`) anywhere and load it:
+Serve the built single-file bundle (`footprint.bundle.js`) anywhere, seed the endpoint with a one-line inline script, and load the bundle — importing it is the whole integration here too:
 
 ```html
-<script type="module">
-  localStorage.setItem('footprint:endpoint', 'https://your-worker.example.workers.dev/');
-  import('/path/to/footprint.bundle.js');
-</script>
+<script>localStorage.setItem('footprint:endpoint', 'https://your-worker.example.workers.dev/');</script>
+<script type="module" src="/path/to/footprint.bundle.js"></script>
 ```
 
 ## Payload

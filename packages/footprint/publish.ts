@@ -112,6 +112,11 @@ await writeFile(join(publishDirectory, 'package.json'), `${JSON.stringify(manife
 const readme = await readFile(join(packageDirectory, 'README.md'), 'utf8');
 const scopedReadme = readme
   .replace(/from 'footprint(\/step)?'/g, (_match, subpath: string | undefined) => `from '@${scope}/footprint${subpath ?? ''}'`)
+  // Bare side-effect imports (`import 'footprint'`) carry no `from`, so the specifier rewrite
+  // above cannot see them — needed since the README's Use section leads with the bare import as
+  // the complete integration. Requiring the leading `import ` keeps storage keys
+  // ('footprint:endpoint') and `footprint.step` binding mentions verbatim, same as above.
+  .replace(/import 'footprint'/g, `import '@${scope}/footprint'`)
   .replace(/`footprint\/step`/g, `\`@${scope}/footprint/step\``)
   // Strip the repo-development section: it documents building this source tree (pnpm scripts, the
   // outputs/ folder), none of which exists in the installed package — the tarball ships the built

@@ -434,6 +434,21 @@ const stepWith = async (
 export const step = (...arguments_: unknown[]): Promise<void> =>
   stepWith(resolveEndpointOnce, arguments_);
 
+// The same step, additionally offered as the default export so a consumer can keep the call
+// namespaced — `import footprint from ...; footprint.step(...)`. This exists because `step` is a
+// common identifier: a bare named import invites collisions with the consumer's own bindings, so
+// the README steers applications toward the default import and reserves `import { step }` for
+// modules where a bare `step` cannot be confused with anything else. The default is an ADDITIONAL
+// surface over the very same function, never a fork — `default.step === step` on both entries is
+// pinned by the 'default export (namespaced step)' suite in footprint.test.ts. index.ts re-exports
+// THIS object (`export { default } from ...`), so both entries hand out one identity, not two
+// parallel objects. Safe across the dual-published CJS build too: esbuild stamps its CommonJS
+// output with the __esModule marker, so bundler interop layers resolve the default binding to this
+// object rather than to module.exports itself.
+// See https://esbuild.github.io/content-types/#default-interop
+const footprint = { step };
+export default footprint;
+
 // The automatic pageview, extracted into a named export so the import-time side effect lives in
 // exactly ONE place. index.ts (the default `.` entry) calls this on import — that is the package's
 // "zero extra code" contract — while this module (the './step' entry) only defines it and never
