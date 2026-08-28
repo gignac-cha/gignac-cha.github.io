@@ -13,19 +13,47 @@
     // value disables the allowlist entirely and leaves the collector open. Full semantics and
     // the reasoning (a tripwire, not an authentication boundary) live on the allowlist block in
     // worker.ts; pinned by the 'origin allowlist (COLLECTOR_ORIGINS)' suite in worker.test.ts.
-    "COLLECTOR_ORIGINS": "https://gignac-cha.github.io"
+    //
+    // Entries are matched EXACTLY — an origin is a scheme + host + port triple, so every site
+    // needs its own entry: a custom domain does not inherit its *.pages.dev address, and Pages
+    // preview deployments (<hash>.<project>.pages.dev) mint a fresh origin per build and are
+    // therefore uncollectable by design. Paths never matter. Adding a site here is only half the
+    // job — the site itself must also seed the endpoint and load the package.
+    // See https://developer.mozilla.org/en-US/docs/Web/API/Location/origin
+    "COLLECTOR_ORIGINS": [
+      "https://gignac-cha.github.io",
+      "https://mediapedia-prototype.pages.dev",
+      "https://ai-newscast.pages.dev",
+      "https://audio-underview.pages.dev",
+      "https://audio-underview-prototype.pages.dev",
+      "https://gacha-game-template.pages.dev",
+      "https://gacha.nomine.kr",
+      "https://my-seito-list.pages.dev",
+      "https://doscord.pages.dev"
+    ]
   },
   "pipelines": [
     {
       "binding": "STREAM",
-      // The `footprint_trail` stream on the outlook Cloudflare account (c85e85e2…). Created with
-      // HTTP ingest DISABLED — this binding is its only producer — and the 8-column structured
-      // schema kept in stream-schema.json, which must stay in lockstep with FootprintRecord in
-      // footprints.ts (see the comment there). Downstream, a pipeline delivers the
-      // stream into the R2 Data Catalog sink as Parquet: bucket `footprint`, Iceberg table
-      // `footprint.trail`. Recreating the stream mints a NEW id, so this value must be updated
-      // whenever the pipeline setup is rebuilt. See https://developers.cloudflare.com/pipelines/
-      "stream": "c7ab2d9a9aba48a18b91737f1a00ebe5"
+      // The `footprint_trail_wide` stream on the outlook Cloudflare account (c85e85e2…): HTTP
+      // ingest DISABLED (this binding is its only producer) and the 24-column structured schema
+      // in stream-schema.json, which must stay in lockstep with FootprintRecord in footprints.ts
+      // (see the comment there). Downstream, a pipeline delivers it into the R2 Data Catalog sink
+      // as Parquet: bucket `footprint`, Iceberg table `footprint.trail_wide`.
+      //
+      // This field takes a stream ID, not a name. The column split required a NEW stream because
+      // Pipelines can neither change a stream's schema after creation nor attach a second sink to
+      // an existing Iceberg table, so the whole chain was created fresh on 2026-08-28:
+      //   stream   footprint_trail_wide          34e5f4734a52481693563333632905c3  (the id below)
+      //   sink     footprint_trail_wide_sink     e6fe1bd2884e4ee0b73cb8eb8f654780  → footprint.trail_wide
+      //   pipeline footprint_trail_wide_pipeline INSERT INTO <sink> SELECT * FROM <stream>
+      // The predecessor `footprint_trail` (id c7ab2d9a9aba48a18b91737f1a00ebe5) keeps its
+      // 8-column schema and its own table, and is deliberately not reused: Pipelines SILENTLY
+      // DISCARDS events that do not match a stream's schema, so aiming these 24-column rows at it
+      // would lose every one of them with no error anywhere. Its table `footprint.trail` still
+      // holds the pre-split history and is not deleted; the tracker simply no longer reads it.
+      // See https://developers.cloudflare.com/pipelines/streams/writing-to-streams/#configure-pipeline-binding
+      "stream": "34e5f4734a52481693563333632905c3"
     }
   ]
 }

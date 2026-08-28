@@ -140,6 +140,14 @@ export interface ViewsByCountryRow {
   views: number;
   visitors: number;
 }
+export interface UserAgentRow {
+  // The raw request header, verbatim — grouping happens on the exact string server-side, and the
+  // compact display name is derived client-side (toUserAgentLabel). null when the client sent no
+  // User-Agent header at all.
+  user_agent: string | null;
+  views: number;
+  visitors: number;
+}
 // Sparse: only the hours that actually saw traffic come back, so the viewer zero-fills all 24 bins
 // (fillMissingHours in tools/zero-filling.ts) before drawing.
 export interface ViewsByHourRow {
@@ -256,6 +264,7 @@ export const QUERY_NAMES = {
   accessibilitySignals: 'accessibility-signals',
   botsByHour: 'bots-by-hour',
   viewsByMinute: 'views-by-minute',
+  userAgents: 'user-agents',
 } as const;
 
 // Carries the upstream status alongside the message so a caller can distinguish a rejected request

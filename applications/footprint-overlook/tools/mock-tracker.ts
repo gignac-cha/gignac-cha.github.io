@@ -237,6 +237,20 @@ const VERIFIED_BOT_CATEGORY_DISTRIBUTION: DistributionEntry[] = [
   { name: 'Advertising & Marketing', weight: 1 },
 ];
 
+// The request User-Agent header, VERBATIM — the mock mirrors the live mix: a couple of frozen
+// Chromium signatures that dominate (Chromium reduced the UA so whole browser populations share
+// one exact string, which is why grouping on it is even meaningful), real Safari with its
+// Version/N token, one crawler carrying a full browser signature, and the null row for clients
+// that sent no header at all. Realistic full-length strings on purpose: the panel's label
+// heuristic (toUserAgentLabel) and its tooltip both need production-shaped input in local dev.
+const USER_AGENT_DISTRIBUTION: DistributionEntry[] = [
+  { name: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', weight: 9 },
+  { name: 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', weight: 6 },
+  { name: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15', weight: 3 },
+  { name: 'Mozilla/5.0 (compatible; AhrefsBot/7.0; +http://ahrefs.com/robot/)', weight: 2 },
+  { name: null, weight: 1 },
+];
+
 // `arguments` as the trail worker stores it: the JSON array string of a footprint(...arguments_)
 // call. The empty array is deliberately ABSENT — top-events filters `arguments != '[]'` server
 // side, so an empty row could never come back from that query.
@@ -1325,6 +1339,27 @@ const CATALOG: QueryDefinition[] = [
         rows.push({ minute: minuteIso, views });
       }
       return rows;
+    },
+  },
+  {
+    name: 'user-agents',
+    description: 'Views and distinct visitors per User-Agent header within a date range.',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+      { name: 'limit', type: 'integer', required: false, default: 10, minimum: 1, maximum: 50 },
+    ],
+    rows: (values, ownerUUIDs) => {
+      const from = dateOf(values, 'from');
+      const to = dateOf(values, 'to');
+      const total = sumFootprintsInRange(from, to, withOwnerOf(values, ownerUUIDs));
+      return distributeTotal(USER_AGENT_DISTRIBUTION, total, `user-agents:${from}:${to}`, limitOf(values)).map(
+        (row) => ({
+          user_agent: row.name,
+          views: row.count,
+          visitors: visitorsForViews(row.count, `user-agent-visitors:${from}:${to}:${String(row.name)}`),
+        }),
+      );
     },
   },
 ];

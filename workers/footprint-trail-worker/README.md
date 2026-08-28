@@ -23,7 +23,12 @@ The table format is open (Iceberg), so heavier ad-hoc engines (DuckDB, PyIceberg
 | `GET /health` | `200 ok` |
 | anything else (including `OPTIONS` — no preflight ever happens) | `405` |
 
-Record fields (nested values stay JSON strings so the columnar schema is stable): `received_at`, `uuid`, `origin`, `href`, `user_agent`, `arguments` (verbatim `step()` arguments), `cf` (Cloudflare request metadata: country, colo, …), `payload` (full original JSON — lossless, replayable).
+Each record is a **24-column wide row** (every column a string; see `stream-schema.json` and `FootprintRecord` in `footprints.ts`), because R2 SQL's `json_get_*()` fails the whole query when the column it reads is over 2000 bytes:
+
+- **Verbatim archive** — `headers` (all request headers except `cookie`/`authorization`, which are never stored anywhere), `cf` (Cloudflare request metadata: country, colo, …), `payload` (full original JSON — lossless, replayable). Nothing queries these.
+- **Split for querying** — `received_at`, plus `headers__origin` / `headers__referer` / `headers__user_agent` / `headers__sec_ch_ua`, `cf__tlsClientAuth` / `cf__tlsExportedAuthenticator` / `cf__edgeL4` / `cf__requestHeaderNames`, `payload__uuid` / `payload__arguments` (verbatim `step()` arguments) / `payload__location__href` / `payload__location` / `payload__document__referrer` / `payload__document` / `payload__navigator__userAgent` / `payload__navigator__userAgentHints` / `payload__navigator`, and the three `*_remains` leftovers (`headers_remains`, `cf_remains`, `payload_remains`).
+
+`__` reads as a JSON path descent, `_remains` as "the source minus what was lifted out of it". Promoted scalars (uuid, URLs, user agent) hold the raw string, so they compare directly in SQL; container columns hold JSON text.
 
 ## Development
 

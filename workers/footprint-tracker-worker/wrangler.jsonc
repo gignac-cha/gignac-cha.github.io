@@ -19,24 +19,39 @@
 
     // Fully qualified `namespace.table` name of the Iceberg table to query. Must stay in
     // lockstep with the trail worker's Pipelines sink (bucket `footprint`, table
-    // `footprint.trail` — see ../footprint-trail-worker/wrangler.jsonc). Re-validated against
-    // /^[A-Za-z0-9_.]+$/ in queries.ts before every use.
-    "TABLE_NAME": "footprint.trail",
+    // `footprint.trail_wide` — see ../footprint-trail-worker/wrangler.jsonc). Re-validated
+    // against /^[A-Za-z0-9_.]+$/ in queries.ts before every use; that this exact value passes
+    // is pinned by 'accepts namespace.table style names' in queries.test.ts.
+    //
+    // `_wide` is the column-split table: every column queries.ts reads is a value the trail
+    // worker split out of the original headers/cf/payload JSON at write time, so that no
+    // json_get_* input can cross R2 SQL's undocumented 2000-byte ceiling (error 40004) the way
+    // `payload` did on 225 of 280 rows in the old `footprint.trail`. Pipelines cannot change a
+    // stream's schema or re-point a sink, so the wide schema had to arrive as a NEW stream, sink
+    // and table; the old `footprint.trail` still exists, unread by this worker. Full rationale
+    // and migration order in documents/2026-08-27-footprint-trail-column-split-design.md.
+    "TABLE_NAME": "footprint.trail_wide",
 
     // CORS allowlist (comma-separated): the two local dev viewers plus the deployed
     // footprint-overlook viewer on Cloudflare Pages. Only an EXACT match is reflected, and an
     // empty value means no cross-origin reader at all (deny by default) — full semantics on
     // corsHeaders in cors.ts; pinned by the 'CORS posture on /queries' suite in worker.test.ts.
-    "VIEWER_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173,https://footprint-overlook.pages.dev",
+    "VIEWER_ORIGINS": [
+      "http://localhost:5173",
+      "http://127.0.0.1:5173",
+      "https://footprint-overlook.pages.dev"
+    ],
 
-    // Owner-visit exclusion (comma-separated visitor uuids): footprints whose `uuid` column
+    // Owner-visit exclusion (comma-separated visitor uuids): footprints whose `payload__uuid`
+    // column (the wide table's split-out copy of payload.uuid, served to callers as `uuid`)
     // matches one of these are excluded from EVERY query by default, so the site owner's own
     // browsing does not inflate their own analytics. An EMPTY value means the feature is off —
     // that is the committed default, because the owner uuid is personal to whoever deploys this
     // and belongs in their own config, not in the repository.
     //
     // How to find your uuid: open the site, then read the value footprint stored under the
-    // `footprint` key in localStorage (it is the same value the `uuid` column carries). One
+    // `footprint` key in localStorage (it is the same value the `payload__uuid` column carries,
+    // and the same value every response's `uuid` field shows). One
     // browser profile is one uuid, so list every browser/device you browse your own site from.
     //
     // Semantics: excluded means the rows still exist in the table and are still collected — only

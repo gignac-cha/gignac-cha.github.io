@@ -93,8 +93,9 @@ export class ConfigurationError extends Error {}
 // queries.test.ts.
 const TABLE_NAME_PATTERN = /^[A-Za-z0-9_.]+$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-// Owner uuids are compared against the `uuid` column, whose values the footprint library mints
-// itself (crypto.randomUUID(), or a short fallback id). The allowlist is a little wider than
+// Owner uuids are compared against the `payload__uuid` column (the split-out scalar copy of
+// payload.uuid — see the column-map comment above CATALOG), whose values the footprint library
+// mints itself (crypto.randomUUID(), or a short fallback id). The allowlist is a little wider than
 // canonical UUID syntax on purpose — it also admits the fallback ids — while still excluding
 // every character that could end the surrounding single-quoted literal or start a comment. The
 // 128-character cap keeps a pathological config from inflating the query string without bound.
@@ -126,15 +127,21 @@ const BOT_USER_AGENT_HINTS = [
   'wget',
 ] as const;
 
-// A footprint counts as a bot when user_agent matches ANY hint (OR-chain). SQL three-valued
-// logic makes a NULL user_agent yield NULL from every ILIKE, so the surrounding CASE WHEN
-// falls through to ELSE 0 — an absent User-Agent is "not a bot" rather than an error or a match.
+// A footprint counts as a bot when headers__user_agent matches ANY hint (OR-chain). That column
+// is the raw `User-Agent` request header the trail worker splits out of `headers` (measured
+// 112B average, 140B max), so it is matched DIRECTLY: ILIKE is not json_get_*, so the 2000-byte
+// limit that forces the guards below does not apply to it at all. SQL three-valued logic makes a
+// NULL headers__user_agent yield NULL from every ILIKE, so the surrounding CASE WHEN falls
+// through to ELSE 0 — an absent User-Agent is "not a bot" rather than an error or a match.
 const BOT_USER_AGENT_CONDITION = BOT_USER_AGENT_HINTS.map(
-  (hint) => `user_agent ILIKE '%${hint}%'`,
+  (hint) => `headers__user_agent ILIKE '%${hint}%'`,
 ).join(' OR ');
 
-// Cloudflare's own bot verdict, carried in the request metadata the trail worker stores as the
-// `cf` JSON column: cf.verifiedBotCategory names the category ('Search Engine Crawler',
+// Cloudflare's own bot verdict, read from `cf_remains` — the request metadata the trail worker
+// stores after splitting the four bulky sub-objects (tlsClientAuth, tlsExportedAuthenticator,
+// edgeL4, requestHeaderNames) out of `cf`, which leaves the ~24 scalars including
+// verifiedBotCategory in 780B average / 837B max instead of the original column's 1849B max.
+// verifiedBotCategory names the category ('Search Engine Crawler',
 // 'Monitoring & Analytics', ...) for a bot Cloudflare has VERIFIED, and is the EMPTY STRING for
 // everyone else (the key is always present — see the predicate comment below, which pins the
 // live-table measurement). It is a far stronger signal than the User-Agent heuristic — it is Cloudflare's own
@@ -143,17 +150,19 @@ const BOT_USER_AGENT_CONDITION = BOT_USER_AGENT_HINTS.map(
 // catches unverified scrapers Cloudflare has no verdict for.
 // See https://developers.cloudflare.com/bots/concepts/bot/#verified-bots and
 // https://developers.cloudflare.com/workers/runtime-apis/request/#incomingrequestcfproperties
-const VERIFIED_BOT_CATEGORY = "CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END";
+const VERIFIED_BOT_CATEGORY = "CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'verifiedBotCategory') END";
 // TWO predicates, and BOTH are load-bearing — this was measured against the live table, not
 // guessed:
 //   - `!= ''` carries the ordinary case. Cloudflare always SETS cf.verifiedBotCategory; for a
 //     request that is not a verified bot it sets it to the EMPTY STRING rather than omitting the
-//     key. A probe of the live table confirmed it (strpos(cf, 'verifiedBotCategory') found the
-//     key at a real offset while json_get_str returned ''), so without this predicate every
-//     human visit would be classified as a bot.
-//   - `IS NOT NULL` carries the other case. `cf` is a nullable column — the trail worker writes
-//     NULL when request.cf is absent (local development, non-Cloudflare replays; see toRecord()
-//     in workers/footprint-trail-worker/footprints.ts) — and json_get_str on a NULL input is
+//     key. A probe of the live pre-split table confirmed it (strpos(cf, 'verifiedBotCategory')
+//     found the key at a real offset while json_get_str returned ''), so without this predicate
+//     every human visit would be classified as a bot. The split moved the key from `cf` to
+//     `cf_remains` verbatim — the trail worker copies the value, it does not normalize it — so
+//     the measurement carries over unchanged.
+//   - `IS NOT NULL` carries the other case. `cf_remains` is a nullable column — the trail worker
+//     writes NULL when request.cf is absent (local development, non-Cloudflare replays; see
+//     toRecord() in workers/footprint-trail-worker/footprints.ts) — and json_get_str on a NULL input is
 //     NULL, which `!= ''` would evaluate to NULL, i.e. NOT true, but only by relying on SQL
 //     three-valued logic inside a CASE that also ORs other terms. Saying it outright is cheaper
 //     to read than to re-derive.
@@ -215,7 +224,7 @@ const ownerExclusion = (
     return '';
   }
   const literals = ownerUUIDs.map((uuid) => `'${assertOwnerUUID(uuid)}'`).join(', ');
-  return ` ${keyword} uuid NOT IN (${literals})`;
+  return ` ${keyword} payload__uuid NOT IN (${literals})`;
 };
 
 const clamp = (value: number, minimum: number, maximum: number): number =>
@@ -347,29 +356,73 @@ const INCLUDE_OWNER_PARAMETER: ParameterDescriptor = {
 // date functions. Both are therefore UTC by construction, because received_at is stamped in UTC
 // by the trail worker; there is no local-time path anywhere in this API.
 //
-// The dimensional queries read the two JSON string columns the trail worker stores — `cf`
-// (Cloudflare request metadata) and `payload` (the browser snapshot) — with R2 SQL's json_get_*
-// scalar functions. Nested paths are extra arguments, NOT a dotted string:
-// json_get_str(payload, 'document', 'referrer'). The JSON paths mirror collect() in
-// packages/footprint/footprint.ts and mergeUserAgentHints() in packages/footprint/payload.ts —
-// changing a key there silently turns these columns to NULL, so the two must be edited
-// together. json_get_* on an absent path returns NULL, which is a legitimate bucket here
-// ("unreported"), not an error: older rows and non-browser clients simply group under null.
+// COLUMN MAP — every query below reads the WIDE table (`footprint.trail_wide`), whose columns
+// the trail worker splits out of the three originals at write time. The originals (`headers`,
+// `cf`, `payload`) are still stored verbatim for archival and backfill, but NOTHING here reads
+// them: `payload` alone averaged 1933B with a 2153B maximum, and 225 of 280 live rows were over
+// the 2000-byte json_get_* ceiling described below, which turned referrer/language/screen/color
+// panels into all-NULL "unreported". The split is what makes them readable again.
+//   scalar columns, referenced DIRECTLY (raw strings, no JSON quoting, so no json_get_* and
+//   therefore no guard — and being URLs or a User-Agent, no byte ceiling applies to them):
+//     payload__uuid                 visitor id            → aliased back to `uuid`
+//     payload__location__href       visited URL           → aliased back to `href`
+//     payload__document__referrer   document.referrer     → aliased back to `referrer`
+//     headers__origin               Origin header         → aliased back to `origin`
+//     headers__user_agent           User-Agent header     → aliased back to `user_agent`
+//   payload__arguments (→ aliased back to `arguments`) is referenced directly too, but it is a
+//   JSON ARRAY string, not a raw scalar: top-events compares and groups it as an opaque string,
+//   so no json_get_* ever parses it — which matters, because it is the one column whose length
+//   is developer-controlled and unbounded (see the top-events comment).
+//   JSON container columns, read with json_get_* one level shallower than before:
+//     payload_remains  screen / connection / colorScheme / reducedMotion … (857B avg, 947B max)
+//     payload__location            location minus href (45B avg)
+//     payload__navigator           navigator minus userAgent/userAgentHints (234B avg)
+//     payload__navigator__userAgentHints  the UA-CH subtree (395B avg)
+//     cf_remains                   cf minus its four bulky sub-objects (780B avg)
+// The wide table also carries payload__navigator__userAgent — the BROWSER-reported User-Agent —
+// which nothing here reads: the old `user_agent` column was always the request HEADER, so bot
+// detection keeps reading headers__user_agent and the two must not be confused.
 //
-// EVERY json_get_* call below is wrapped in `CASE WHEN octet_length(column) <= 2000 THEN ... END`,
-// and the guard is load-bearing, not defensive: R2 SQL rejects json_get_*() on any input value
-// over 2000 bytes by FAILING THE WHOLE QUERY (code 40004 "argument 1 exceeds the maximum byte
-// length of 2000"), measured live the moment the first real browser payload reached 2013 bytes —
-// five dashboard panels 502'd at once. CASE short-circuits per row (verified against the live
-// table with that same oversized row present), so an oversized payload/cf degrades to the NULL
-// "unreported" bucket instead of taking the query down. Real payloads routinely straddle 2KB, so
-// removing a guard reintroduces a failure that only appears once real traffic arrives.
-// Pinned by 'guards every json_get_* read against the 2000-byte limit' in queries.test.ts.
+// RESPONSE FIELD NAMES DO NOT MOVE WITH THE COLUMNS. The /queries catalog — query names,
+// parameter descriptors — and every row field name served to the viewer stay byte-identical to
+// the pre-split API, which is why the split columns are aliased straight back in the outermost
+// select list (`payload__uuid AS uuid`, `headers__origin AS origin`, …) and the overlook viewer
+// needs no change at all. GROUP BY follows whatever the pre-split SQL grouped by: a plain column
+// becomes the new column name (GROUP BY payload__location__href), while an expression alias
+// stays the alias (GROUP BY referrer, GROUP BY day) — the alias resolution the engine already
+// proved it does for the substr() buckets. Pinned by 'aliases every split column back to its
+// contract response field name' in queries.test.ts.
+//
+// Nested paths are extra arguments, NOT a dotted string: json_get_str(payload__location,
+// 'search'). The JSON paths mirror collect() in packages/footprint/footprint.ts and
+// mergeUserAgentHints() in packages/footprint/payload.ts, one level shallower because the
+// container is now the column — changing a key THERE, or a split rule in the trail worker's
+// toRecord(), silently turns these columns to NULL, so the three must be edited together.
+// json_get_* on an absent path returns NULL, which is a legitimate bucket here ("unreported"),
+// not an error: rows that predate a field and non-browser clients simply group under null.
+//
+// EVERY json_get_* call below is STILL wrapped in `CASE WHEN octet_length(column) <= 2000 THEN
+// ... END`, the split columns included. R2 SQL rejects json_get_*() on any input value over 2000
+// bytes by FAILING THE WHOLE QUERY (code 40004 "argument 1 exceeds the maximum byte length of
+// 2000" — an undocumented hard limit, re-measured 2026-08-27 and not configurable), which is how
+// five dashboard panels 502'd at once the moment the first real browser payload reached 2013
+// bytes. Today no split column comes close (947B is the largest measured), so the guard never
+// fires — it is kept as INSURANCE, because these columns hold variable-length data (a longer
+// language list, a new UA-CH brand, a bigger cf scalar set) and the day one of them crosses 2KB
+// the guard degrades that row to the NULL "unreported" bucket instead of taking the whole panel
+// down. CASE short-circuits per row (verified against the live pre-split table with an oversized
+// row present) and costs nothing when it never trips. Pinned by 'guards every json_get_* read
+// against the 2000-byte limit' and, for the column split's own failure mode — a guard that names
+// a DIFFERENT column than the read it wraps — by 'guards every json_get_* on the very column it
+// reads', both in queries.test.ts.
 //
 // The exact SQL of every query is pinned character-for-character in queries.test.ts and, as sent
 // over the wire, by 'sends the exact by-day SQL with inclusive from / exclusive to' in
-// worker.test.ts. Every string below was additionally executed once against the live
-// footprint.trail table (HTTP 200) before being pinned.
+// worker.test.ts. Every PRE-SPLIT string was executed once against the live footprint.trail
+// table (HTTP 200) before being pinned; the wide-table rewrites here are pinned by construction
+// only — `footprint.trail_wide` does not exist yet (it is created in the migration of the
+// column-split design, documents/2026-08-27-footprint-trail-column-split-design.md §7), so each
+// one still owes that same live probe before this worker is deployed against it.
 // See https://developers.cloudflare.com/r2-sql/sql-reference/scalar-functions/
 const CATALOG: QueryDefinition[] = [
   {
@@ -391,9 +444,9 @@ const CATALOG: QueryDefinition[] = [
       // assertOwnerUUID re-validation is defense in depth on top of validateParameters' string
       // branch — the value is quoted into SQL, so it gets the same double gate as OWNER_UUIDS.
       const uuidCondition =
-        typeof values.uuid === 'string' ? ` WHERE uuid = '${assertOwnerUUID(values.uuid)}'` : '';
+        typeof values.uuid === 'string' ? ` WHERE payload__uuid = '${assertOwnerUUID(values.uuid)}'` : '';
       const ownerCondition = ownerExclusion(values, ownerUUIDs, uuidCondition === '' ? 'WHERE' : 'AND');
-      return `SELECT received_at, uuid, origin, href, user_agent, arguments, ${VERIFIED_BOT_CATEGORY} AS verified_bot_category FROM ${assertTableName(table)}${uuidCondition}${ownerCondition} ORDER BY received_at DESC LIMIT ${values.limit}`;
+      return `SELECT received_at, payload__uuid AS uuid, headers__origin AS origin, payload__location__href AS href, headers__user_agent AS user_agent, payload__arguments AS arguments, ${VERIFIED_BOT_CATEGORY} AS verified_bot_category FROM ${assertTableName(table)}${uuidCondition}${ownerCondition} ORDER BY received_at DESC LIMIT ${values.limit}`;
     },
   },
   {
@@ -414,7 +467,7 @@ const CATALOG: QueryDefinition[] = [
       { name: 'to', type: 'date', required: true },
     ],
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT substr(received_at, 1, 10) AS day, COUNT(DISTINCT uuid) AS visitors FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY day ORDER BY day`,
+      `SELECT substr(received_at, 1, 10) AS day, COUNT(DISTINCT payload__uuid) AS visitors FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY day ORDER BY day`,
   },
   {
     name: 'top-pages',
@@ -425,7 +478,7 @@ const CATALOG: QueryDefinition[] = [
       { name: 'limit', type: 'integer', required: false, default: 10, minimum: 1, maximum: 50 },
     ],
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT href, COUNT(*) AS footprints FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY href ORDER BY footprints DESC LIMIT ${values.limit}`,
+      `SELECT payload__location__href AS href, COUNT(*) AS footprints FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY payload__location__href ORDER BY footprints DESC LIMIT ${values.limit}`,
   },
   {
     name: 'top-origins',
@@ -436,7 +489,7 @@ const CATALOG: QueryDefinition[] = [
       { name: 'limit', type: 'integer', required: false, default: 10, minimum: 1, maximum: 50 },
     ],
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT origin, COUNT(*) AS footprints FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY origin ORDER BY footprints DESC LIMIT ${values.limit}`,
+      `SELECT headers__origin AS origin, COUNT(*) AS footprints FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY headers__origin ORDER BY footprints DESC LIMIT ${values.limit}`,
   },
   {
     name: 'bots-by-day',
@@ -465,7 +518,7 @@ const CATALOG: QueryDefinition[] = [
     // came back on another day, so the period-wide distinct count has to be asked for as a
     // period-wide query. The viewer divides views by visitors for its "views per visitor" card.
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT COUNT(*) AS views, COUNT(DISTINCT uuid) AS visitors FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')}`,
+      `SELECT COUNT(*) AS views, COUNT(DISTINCT payload__uuid) AS visitors FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')}`,
   },
   {
     name: 'top-referrers',
@@ -475,12 +528,18 @@ const CATALOG: QueryDefinition[] = [
       { name: 'to', type: 'date', required: true },
       { name: 'limit', type: 'integer', required: false, default: 10, minimum: 1, maximum: 50 },
     ],
+    // No json_get_* and no octet_length guard anywhere in this query: the split stores
+    // document.referrer as its own raw-string column, so this is a plain column read.
+    // That is also what fixes it — a referrer is an unbounded URL, and while it lived inside
+    // `payload` it dragged that column over the 2000-byte json_get_* ceiling (225 of 280 live
+    // rows), which is precisely why this panel read all-NULL before the split. Pinned by 'reads
+    // the referrer straight off its own column, with no json_get and no guard' in queries.test.ts.
     // document.referrer is '' for a direct visit and NULL for a row that predates the payload
     // field; both are returned as their own buckets rather than filtered away, because "how much
     // traffic is direct" is exactly what the viewer's 유입 경로 panel is asking. Bucketing the
     // two together is the VIEWER's presentation decision, not this query's.
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'document', 'referrer') END AS referrer, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY referrer ORDER BY views DESC LIMIT ${values.limit}`,
+      `SELECT payload__document__referrer AS referrer, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY referrer ORDER BY views DESC LIMIT ${values.limit}`,
   },
   {
     name: 'views-by-country',
@@ -490,11 +549,12 @@ const CATALOG: QueryDefinition[] = [
       { name: 'to', type: 'date', required: true },
       { name: 'limit', type: 'integer', required: false, default: 10, minimum: 1, maximum: 50 },
     ],
-    // cf.country is Cloudflare's own edge geolocation, not a client-reported field, so it cannot
-    // be spoofed by the browser. It is NULL when the request carried no cf metadata at all
-    // (local development, replayed rows) — a real bucket the viewer labels 미상.
+    // cf.country — carried in cf_remains after the split — is Cloudflare's own edge
+    // geolocation, not a client-reported field, so it cannot be spoofed by the browser. It is
+    // NULL when the request carried no cf metadata at all (local development, replayed rows) —
+    // a real bucket the viewer labels 미상.
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'country') END AS country, COUNT(*) AS views, COUNT(DISTINCT uuid) AS visitors FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY country ORDER BY views DESC LIMIT ${values.limit}`,
+      `SELECT CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'country') END AS country, COUNT(*) AS views, COUNT(DISTINCT payload__uuid) AS visitors FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY country ORDER BY views DESC LIMIT ${values.limit}`,
   },
   {
     name: 'views-by-hour',
@@ -519,13 +579,15 @@ const CATALOG: QueryDefinition[] = [
       { name: 'limit', type: 'integer', required: false, default: 10, minimum: 1, maximum: 50 },
     ],
     // Path confirmed against mergeUserAgentHints() in packages/footprint/payload.ts, which is
-    // what lands at payload.navigator.userAgentHints — `platform` ('macOS', 'Windows', ...) and
+    // what lands in the payload__navigator__userAgentHints column (the subtree the trail worker
+    // splits off navigator) — so the read is one level shallower than the pre-split
+    // json_get_str(payload, 'navigator', 'userAgentHints', ...): `platform` ('macOS', 'Windows', ...) and
     // `mobile` (boolean) are its low-entropy fields, present without the async
     // getHighEntropyValues() call. Both are NULL on browsers with no navigator.userAgentData
     // (Safari, Firefox), so the null bucket here means "did not report", not "unknown device".
     // See https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'navigator', 'userAgentHints', 'platform') END AS platform, CASE WHEN octet_length(payload) <= 2000 THEN json_get_bool(payload, 'navigator', 'userAgentHints', 'mobile') END AS mobile, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY platform, mobile ORDER BY views DESC LIMIT ${values.limit}`,
+      `SELECT CASE WHEN octet_length(payload__navigator__userAgentHints) <= 2000 THEN json_get_str(payload__navigator__userAgentHints, 'platform') END AS platform, CASE WHEN octet_length(payload__navigator__userAgentHints) <= 2000 THEN json_get_bool(payload__navigator__userAgentHints, 'mobile') END AS mobile, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY platform, mobile ORDER BY views DESC LIMIT ${values.limit}`,
   },
   {
     name: 'views-by-color-scheme',
@@ -535,7 +597,7 @@ const CATALOG: QueryDefinition[] = [
       { name: 'to', type: 'date', required: true },
     ],
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'colorScheme') END AS color_scheme, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY color_scheme ORDER BY views DESC`,
+      `SELECT CASE WHEN octet_length(payload_remains) <= 2000 THEN json_get_str(payload_remains, 'colorScheme') END AS color_scheme, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY color_scheme ORDER BY views DESC`,
   },
   {
     name: 'top-languages',
@@ -547,9 +609,10 @@ const CATALOG: QueryDefinition[] = [
     ],
     // navigator.language (the single preferred tag, e.g. 'ko-KR'), not navigator.languages —
     // the payload carries both, but the array cannot be grouped on and the preferred tag is what
-    // a language breakdown means.
+    // a language breakdown means. Both live in payload__navigator (navigator minus userAgent and
+    // userAgentHints), which is why the path here is one key, not 'navigator' plus one key.
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'navigator', 'language') END AS language, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY language ORDER BY views DESC LIMIT ${values.limit}`,
+      `SELECT CASE WHEN octet_length(payload__navigator) <= 2000 THEN json_get_str(payload__navigator, 'language') END AS language, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY language ORDER BY views DESC LIMIT ${values.limit}`,
   },
   {
     name: 'views-by-screen-width',
@@ -559,15 +622,16 @@ const CATALOG: QueryDefinition[] = [
       { name: 'to', type: 'date', required: true },
     ],
     // Bucketing happens HERE rather than in the viewer so the wire carries five rows instead of
-    // one row per distinct pixel width. The CASE has no ELSE on purpose: a row whose
-    // payload.screen.width is absent yields NULL from json_get_int, every comparison against it
-    // is NULL (never true), and a CASE with no matching branch evaluates to NULL — so unreported
-    // widths land in their own null bucket instead of being mislabelled as the smallest one.
-    // Verified against the live table before pinning (a bucket probe returned HTTP 200 with a
-    // null width_bucket row). The boundaries are the common CSS breakpoints, and the labels are
+    // one row per distinct pixel width. `screen` was never split into its own column — it stays
+    // nested inside payload_remains — so the path keeps both keys and only the column changes.
+    // The CASE has no ELSE on purpose: a row whose screen.width is absent yields NULL from
+    // json_get_int, every comparison against it is NULL (never true), and a CASE with no matching
+    // branch evaluates to NULL — so unreported widths land in their own null bucket instead of
+    // being mislabelled as the smallest one. Verified against the live pre-split table before
+    // pinning (a bucket probe returned HTTP 200 with a null width_bucket row). The boundaries are the common CSS breakpoints, and the labels are
     // stable identifiers — the Korean display strings live in the viewer.
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN CASE WHEN json_get_int(payload, 'screen', 'width') < 600 THEN 'under-600' WHEN json_get_int(payload, 'screen', 'width') < 1024 THEN '600-to-1023' WHEN json_get_int(payload, 'screen', 'width') < 1440 THEN '1024-to-1439' WHEN json_get_int(payload, 'screen', 'width') < 1920 THEN '1440-to-1919' WHEN json_get_int(payload, 'screen', 'width') >= 1920 THEN '1920-and-above' END END AS width_bucket, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY width_bucket ORDER BY views DESC`,
+      `SELECT CASE WHEN octet_length(payload_remains) <= 2000 THEN CASE WHEN json_get_int(payload_remains, 'screen', 'width') < 600 THEN 'under-600' WHEN json_get_int(payload_remains, 'screen', 'width') < 1024 THEN '600-to-1023' WHEN json_get_int(payload_remains, 'screen', 'width') < 1440 THEN '1024-to-1439' WHEN json_get_int(payload_remains, 'screen', 'width') < 1920 THEN '1440-to-1919' WHEN json_get_int(payload_remains, 'screen', 'width') >= 1920 THEN '1920-and-above' END END AS width_bucket, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY width_bucket ORDER BY views DESC`,
   },
   {
     name: 'top-events',
@@ -577,15 +641,23 @@ const CATALOG: QueryDefinition[] = [
       { name: 'to', type: 'date', required: true },
       { name: 'limit', type: 'integer', required: false, default: 10, minimum: 1, maximum: 50 },
     ],
-    // `arguments` is the JSON array string the library sends for footprint(...arguments_); a
-    // plain page view sends none, which the trail worker stores as the literal two-character
-    // string '[]' (never NULL — see toRecord() in workers/footprint-trail-worker/footprints.ts).
-    // Comparing against that exact literal is therefore the whole "was this an event?" test, and
-    // it needs no JSON parsing. Grouping on the raw string means two calls with the same
+    // payload__arguments (served as `arguments`, the unchanged response field name) is the JSON
+    // array string the library sends for footprint(...arguments_); the automatic pageview sends
+    // the empty array, stored as the literal two-character string '[]'. The column is NULLABLE:
+    // a client that omits `arguments` entirely stores NULL, not a fabricated '[]' — the library
+    // always sends the key, so NULL marks non-library POSTs (bots, curl). See toRecord() in
+    // workers/footprint-trail-worker/footprints.ts, pinned there by 'tolerates a minimal payload,
+    // keeping nullable fields as null'. It has its own column because its length is
+    // developer-controlled — an event with a fat argument list is exactly the kind of value that
+    // must not be able to push a shared column over the json_get_* ceiling.
+    // Comparing against the '[]' literal is therefore the whole "was this an event?" test, and it
+    // needs no JSON parsing: `!= '[]'` drops pageviews directly and drops NULL rows through SQL
+    // three-valued logic (NULL != '[]' is NULL, never true) — both are "not an event".
+    // Grouping on the raw string means two calls with the same
     // arguments in the same order collapse into one row; decoding the JSON for display is the
     // viewer's job.
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT arguments, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND arguments != '[]'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY arguments ORDER BY views DESC LIMIT ${values.limit}`,
+      `SELECT payload__arguments AS arguments, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND payload__arguments != '[]'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY payload__arguments ORDER BY views DESC LIMIT ${values.limit}`,
   },
   {
     name: 'verified-bot-categories',
@@ -609,8 +681,12 @@ const CATALOG: QueryDefinition[] = [
   // match it character for character, because the dashboard was built and tested against the
   // mock. Every construct they lean on (window functions, CTEs, JOINs between CTEs, HAVING,
   // regexp_match capture indexing, date_trunc over CAST, now() - INTERVAL) was individually
-  // probed against the live table before any of this was written — R2 SQL documents none of
-  // them, and this catalog's house rule is measurement over guessing.
+  // probed against the live pre-split table before any of this was written — R2 SQL documents
+  // none of them, and this catalog's house rule is measurement over guessing. The column split
+  // renamed the columns those constructs read (uuid → payload__uuid, href →
+  // payload__location__href) without touching a single construct, so what was probed still
+  // holds; the CTE and subquery internals carry the new names verbatim and only the OUTERMOST
+  // select list aliases back to the response field names the contract fixes.
   // --------------------------------------------------------------------------------------------
   {
     name: 'utm-breakdown',
@@ -619,12 +695,14 @@ const CATALOG: QueryDefinition[] = [
       { name: 'from', type: 'date', required: true },
       { name: 'to', type: 'date', required: true },
     ],
+    // location.search is read out of payload__location (location minus href — href moved to its
+    // own column precisely because a URL has no length bound), so the path is one key deep.
     // regexp_match returns the capture-group array and indexing is 1-BASED — [1] is the first
     // capture (probed live: [2] on a single-group pattern is NULL, not an error). Visits with no
     // utm_* collapse into the all-null row, which the contract requires ("utm 없는 방문은
     // 전부-null 한 행으로 합산") — the dashboard's 미보고 path renders it.
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN regexp_match(json_get_str(payload, 'location', 'search'), 'utm_source=([^&]+)')[1] END AS source, CASE WHEN octet_length(payload) <= 2000 THEN regexp_match(json_get_str(payload, 'location', 'search'), 'utm_medium=([^&]+)')[1] END AS medium, CASE WHEN octet_length(payload) <= 2000 THEN regexp_match(json_get_str(payload, 'location', 'search'), 'utm_campaign=([^&]+)')[1] END AS campaign, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY source, medium, campaign ORDER BY views DESC`,
+      `SELECT CASE WHEN octet_length(payload__location) <= 2000 THEN regexp_match(json_get_str(payload__location, 'search'), 'utm_source=([^&]+)')[1] END AS source, CASE WHEN octet_length(payload__location) <= 2000 THEN regexp_match(json_get_str(payload__location, 'search'), 'utm_medium=([^&]+)')[1] END AS medium, CASE WHEN octet_length(payload__location) <= 2000 THEN regexp_match(json_get_str(payload__location, 'search'), 'utm_campaign=([^&]+)')[1] END AS campaign, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY source, medium, campaign ORDER BY views DESC`,
   },
   {
     name: 'new-vs-returning-by-day',
@@ -638,7 +716,7 @@ const CATALOG: QueryDefinition[] = [
     // every day of the range. Only rows with a uuid participate — a null uuid cannot be tracked
     // across days, and counting it as forever-new would inflate new_visitors.
     buildSQL: (table, values, ownerUUIDs) =>
-      `WITH first_seen AS (SELECT uuid, MIN(substr(received_at, 1, 10)) AS first_day FROM ${assertTableName(table)} WHERE uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY uuid), daily AS (SELECT DISTINCT substr(received_at, 1, 10) AS day, uuid FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')}) SELECT daily.day AS day, COUNT(CASE WHEN first_seen.first_day = daily.day THEN 1 END) AS new_visitors, COUNT(CASE WHEN first_seen.first_day <> daily.day THEN 1 END) AS returning_visitors FROM daily JOIN first_seen ON daily.uuid = first_seen.uuid GROUP BY day ORDER BY day`,
+      `WITH first_seen AS (SELECT payload__uuid, MIN(substr(received_at, 1, 10)) AS first_day FROM ${assertTableName(table)} WHERE payload__uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY payload__uuid), daily AS (SELECT DISTINCT substr(received_at, 1, 10) AS day, payload__uuid FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND payload__uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')}) SELECT daily.day AS day, COUNT(CASE WHEN first_seen.first_day = daily.day THEN 1 END) AS new_visitors, COUNT(CASE WHEN first_seen.first_day <> daily.day THEN 1 END) AS returning_visitors FROM daily JOIN first_seen ON daily.payload__uuid = first_seen.payload__uuid GROUP BY day ORDER BY day`,
   },
   {
     name: 'visit-depth',
@@ -651,7 +729,7 @@ const CATALOG: QueryDefinition[] = [
     // The CASE tests descend so each row hits exactly one bucket; ELSE '1' carries the remaining
     // single-view visitors.
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT CASE WHEN footprints >= 11 THEN '11-plus' WHEN footprints >= 6 THEN '6-10' WHEN footprints >= 3 THEN '3-5' WHEN footprints = 2 THEN '2' ELSE '1' END AS depth_bucket, COUNT(*) AS visitors FROM (SELECT uuid, COUNT(*) AS footprints FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY uuid) GROUP BY depth_bucket ORDER BY visitors DESC`,
+      `SELECT CASE WHEN footprints >= 11 THEN '11-plus' WHEN footprints >= 6 THEN '6-10' WHEN footprints >= 3 THEN '3-5' WHEN footprints = 2 THEN '2' ELSE '1' END AS depth_bucket, COUNT(*) AS visitors FROM (SELECT payload__uuid, COUNT(*) AS footprints FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND payload__uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY payload__uuid) GROUP BY depth_bucket ORDER BY visitors DESC`,
   },
   {
     name: 'weekly-retention',
@@ -665,7 +743,7 @@ const CATALOG: QueryDefinition[] = [
     // draws is eight columns wide — SQL doing this arithmetic on TIMESTAMPs would be both
     // unverified dialect territory and harder to pin in tests than plain Date math).
     buildSQL: (table, values, ownerUUIDs) =>
-      `WITH cohort AS (SELECT uuid, MIN(date_trunc('week', CAST(received_at AS TIMESTAMP))) AS cohort_week_start FROM ${assertTableName(table)} WHERE uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY uuid), activity AS (SELECT DISTINCT uuid, date_trunc('week', CAST(received_at AS TIMESTAMP)) AS active_week_start FROM ${assertTableName(table)} WHERE uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')}) SELECT cohort.cohort_week_start AS cohort_week_start, activity.active_week_start AS active_week_start, COUNT(DISTINCT activity.uuid) AS visitors FROM activity JOIN cohort ON activity.uuid = cohort.uuid WHERE cohort.cohort_week_start >= date_trunc('week', CAST('${values.from}' AS TIMESTAMP)) AND cohort.cohort_week_start < CAST('${values.to}' AS TIMESTAMP) GROUP BY 1, 2 ORDER BY 1, 2`,
+      `WITH cohort AS (SELECT payload__uuid, MIN(date_trunc('week', CAST(received_at AS TIMESTAMP))) AS cohort_week_start FROM ${assertTableName(table)} WHERE payload__uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY payload__uuid), activity AS (SELECT DISTINCT payload__uuid, date_trunc('week', CAST(received_at AS TIMESTAMP)) AS active_week_start FROM ${assertTableName(table)} WHERE payload__uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')}) SELECT cohort.cohort_week_start AS cohort_week_start, activity.active_week_start AS active_week_start, COUNT(DISTINCT activity.payload__uuid) AS visitors FROM activity JOIN cohort ON activity.payload__uuid = cohort.payload__uuid WHERE cohort.cohort_week_start >= date_trunc('week', CAST('${values.from}' AS TIMESTAMP)) AND cohort.cohort_week_start < CAST('${values.to}' AS TIMESTAMP) GROUP BY 1, 2 ORDER BY 1, 2`,
     mapRows: (rows) =>
       rows.flatMap((row) => {
         const cohortStart = new Date(String(row.cohort_week_start));
@@ -692,7 +770,7 @@ const CATALOG: QueryDefinition[] = [
     // ever — a returning visitor's next-day entry page is a landing again. href can be NULL
     // (older rows), which stays as its own bucket per the dashboard's 미보고 rule.
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT href, COUNT(*) AS landings FROM (SELECT href, ROW_NUMBER() OVER (PARTITION BY uuid, substr(received_at, 1, 10) ORDER BY received_at) AS visit_index FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')}) WHERE visit_index = 1 GROUP BY href ORDER BY landings DESC LIMIT ${values.limit}`,
+      `SELECT payload__location__href AS href, COUNT(*) AS landings FROM (SELECT payload__location__href, ROW_NUMBER() OVER (PARTITION BY payload__uuid, substr(received_at, 1, 10) ORDER BY received_at) AS visit_index FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND payload__uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')}) WHERE visit_index = 1 GROUP BY payload__location__href ORDER BY landings DESC LIMIT ${values.limit}`,
   },
   {
     name: 'page-transitions',
@@ -706,7 +784,7 @@ const CATALOG: QueryDefinition[] = [
     // transition, so from_href IS NULL is filtered — that null means "nothing before this",
     // unlike the null HREF buckets elsewhere which mean "unreported".
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT from_href, to_href, COUNT(*) AS transitions FROM (SELECT href AS to_href, LAG(href) OVER (PARTITION BY uuid ORDER BY received_at) AS from_href FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')}) WHERE from_href IS NOT NULL GROUP BY from_href, to_href ORDER BY transitions DESC LIMIT ${values.limit}`,
+      `SELECT from_href, to_href, COUNT(*) AS transitions FROM (SELECT payload__location__href AS to_href, LAG(payload__location__href) OVER (PARTITION BY payload__uuid ORDER BY received_at) AS from_href FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}' AND payload__uuid IS NOT NULL${ownerExclusion(values, ownerUUIDs, 'AND')}) WHERE from_href IS NOT NULL GROUP BY from_href, to_href ORDER BY transitions DESC LIMIT ${values.limit}`,
   },
   {
     name: 'connection-types',
@@ -716,7 +794,7 @@ const CATALOG: QueryDefinition[] = [
       { name: 'to', type: 'date', required: true },
     ],
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'connection', 'effectiveType') END AS effective_type, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY effective_type ORDER BY views DESC`,
+      `SELECT CASE WHEN octet_length(payload_remains) <= 2000 THEN json_get_str(payload_remains, 'connection', 'effectiveType') END AS effective_type, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY effective_type ORDER BY views DESC`,
   },
   {
     name: 'device-capabilities',
@@ -730,7 +808,7 @@ const CATALOG: QueryDefinition[] = [
     // belongs. The nested CASE keeps the single octet_length guard around every json_get_* read
     // (the same shape views-by-screen-width uses).
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN CASE WHEN json_get_int(payload, 'navigator', 'deviceMemory') >= 8 THEN '8-and-above' WHEN json_get_int(payload, 'navigator', 'deviceMemory') >= 4 THEN '4-to-7' WHEN json_get_int(payload, 'navigator', 'deviceMemory') >= 0 THEN 'under-4' END END AS memory_bucket, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY memory_bucket ORDER BY views DESC`,
+      `SELECT CASE WHEN octet_length(payload__navigator) <= 2000 THEN CASE WHEN json_get_int(payload__navigator, 'deviceMemory') >= 8 THEN '8-and-above' WHEN json_get_int(payload__navigator, 'deviceMemory') >= 4 THEN '4-to-7' WHEN json_get_int(payload__navigator, 'deviceMemory') >= 0 THEN 'under-4' END END AS memory_bucket, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY memory_bucket ORDER BY views DESC`,
   },
   {
     name: 'accessibility-signals',
@@ -740,7 +818,7 @@ const CATALOG: QueryDefinition[] = [
       { name: 'to', type: 'date', required: true },
     ],
     buildSQL: (table, values, ownerUUIDs) =>
-      `SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_bool(payload, 'reducedMotion') END AS reduced_motion, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY reduced_motion ORDER BY views DESC`,
+      `SELECT CASE WHEN octet_length(payload_remains) <= 2000 THEN json_get_bool(payload_remains, 'reducedMotion') END AS reduced_motion, COUNT(*) AS views FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY reduced_motion ORDER BY views DESC`,
   },
   {
     name: 'bots-by-hour',
@@ -779,6 +857,27 @@ const CATALOG: QueryDefinition[] = [
       }
       return filled;
     },
+  },
+  {
+    name: 'user-agents',
+    description: 'Views and distinct visitors per User-Agent header within a date range.',
+    parameters: [
+      { name: 'from', type: 'date', required: true },
+      { name: 'to', type: 'date', required: true },
+      { name: 'limit', type: 'integer', required: false, default: 10, minimum: 1, maximum: 50 },
+    ],
+    // headers__user_agent — the REQUEST HEADER, deliberately not payload__navigator__userAgent
+    // (see the COLUMN MAP above): the header arrives on every delivery including non-browser
+    // clients, so this panel counts bots and curl alongside real browsers, which is the point —
+    // it answers "what is actually hitting the sites". A raw-string scalar column, so no
+    // json_get_* and no octet_length guard apply. It is NULL only when a client sent no
+    // User-Agent header at all — a real bucket the viewer labels 미보고. Grouping on the exact
+    // string is intentional: Chromium's frozen UA makes same-browser visitors collapse into one
+    // row (that reduction IS the statistic), while the distinct payload__uuid count alongside
+    // shows how many visitors share each string — the same pairing views-by-country serves.
+    // Pinned by 'builds user-agents SQL grouping the raw header column' in queries.test.ts.
+    buildSQL: (table, values, ownerUUIDs) =>
+      `SELECT headers__user_agent AS user_agent, COUNT(*) AS views, COUNT(DISTINCT payload__uuid) AS visitors FROM ${assertTableName(table)} WHERE received_at >= '${values.from}' AND received_at < '${values.to}'${ownerExclusion(values, ownerUUIDs, 'AND')} GROUP BY headers__user_agent ORDER BY views DESC LIMIT ${values.limit}`,
   },
 ];
 

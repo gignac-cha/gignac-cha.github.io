@@ -8,6 +8,7 @@ import {
   toCountryLabel,
   toPlatformLabel,
   toReferrerLabel,
+  toUserAgentLabel,
   toWidthBucketLabel,
   UNKNOWN_LABEL,
   UNREPORTED_LABEL,
@@ -203,5 +204,51 @@ describe('toColorSchemeLabel', () => {
 
   it('passes an unexpected value through verbatim', () => {
     expect(toColorSchemeLabel('no-preference')).toBe('no-preference');
+  });
+});
+
+describe('toUserAgentLabel', () => {
+  it('renders an absent header as the unreported bucket', () => {
+    expect(toUserAgentLabel(null)).toBe(UNREPORTED_LABEL);
+    expect(toUserAgentLabel('')).toBe(UNREPORTED_LABEL);
+    expect(toUserAgentLabel('   ')).toBe(UNREPORTED_LABEL);
+  });
+
+  it('labels a desktop Chromium signature with family, major and operating system', () => {
+    expect(
+      toUserAgentLabel('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36'),
+    ).toBe('Chrome 151 · Windows');
+    // Chromium's frozen mobile UA — the exact string every Android Chrome 151 user shares.
+    expect(
+      toUserAgentLabel('Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36'),
+    ).toBe('Chrome 151 · Android');
+  });
+
+  it('prefers a derivative browser over the engine tokens it also carries', () => {
+    expect(
+      toUserAgentLabel('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.2535.51'),
+    ).toBe('Edge 125 · Windows');
+  });
+
+  it('labels real Safari through its Version token and iOS despite the like-Mac marker', () => {
+    expect(
+      toUserAgentLabel('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15'),
+    ).toBe('Safari 17 · macOS');
+    expect(
+      toUserAgentLabel('Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/151.0.0.0 Mobile/15E148 Safari/604.1'),
+    ).toBe('Chrome 151 · iOS');
+  });
+
+  it('names a bot by its product token even inside a full browser signature', () => {
+    expect(toUserAgentLabel('Mozilla/5.0 (compatible; AhrefsBot/7.0; +http://ahrefs.com/robot/)')).toBe('AhrefsBot');
+    expect(
+      toUserAgentLabel('Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/136.0.0.0 Safari/537.36'),
+    ).toBe('bingbot');
+  });
+
+  it('falls back to product and version for non-browser tools', () => {
+    expect(toUserAgentLabel('curl/8.0')).toBe('curl 8.0');
+    expect(toUserAgentLabel('node')).toBe('node');
+    expect(toUserAgentLabel('python-requests/2.31')).toBe('python-requests 2.31');
   });
 });

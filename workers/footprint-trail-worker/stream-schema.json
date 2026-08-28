@@ -1,12 +1,28 @@
 {
   "fields": [
     { "name": "received_at", "type": "string", "required": true },
-    { "name": "uuid", "type": "string", "required": false },
-    { "name": "origin", "type": "string", "required": false },
-    { "name": "href", "type": "string", "required": false },
-    { "name": "user_agent", "type": "string", "required": false },
-    { "name": "arguments", "type": "string", "required": true },
+    { "name": "headers", "type": "string", "required": false },
+    { "name": "headers_remains", "type": "string", "required": false },
+    { "name": "headers__origin", "type": "string", "required": false },
+    { "name": "headers__referer", "type": "string", "required": false },
+    { "name": "headers__user_agent", "type": "string", "required": false },
+    { "name": "headers__sec_ch_ua", "type": "string", "required": false },
     { "name": "cf", "type": "string", "required": false },
-    { "name": "payload", "type": "string", "required": true }
+    { "name": "cf_remains", "type": "string", "required": false },
+    { "name": "cf__tlsClientAuth", "type": "string", "required": false },
+    { "name": "cf__tlsExportedAuthenticator", "type": "string", "required": false },
+    { "name": "cf__edgeL4", "type": "string", "required": false },
+    { "name": "cf__requestHeaderNames", "type": "string", "required": false },
+    { "name": "payload", "type": "string", "required": true },
+    { "name": "payload_remains", "type": "string", "required": false },
+    { "name": "payload__uuid", "type": "string", "required": false },
+    { "name": "payload__arguments", "type": "string", "required": false },
+    { "name": "payload__location", "type": "string", "required": false },
+    { "name": "payload__location__href", "type": "string", "required": false },
+    { "name": "payload__document", "type": "string", "required": false },
+    { "name": "payload__document__referrer", "type": "string", "required": false },
+    { "name": "payload__navigator", "type": "string", "required": false },
+    { "name": "payload__navigator__userAgent", "type": "string", "required": false },
+    { "name": "payload__navigator__userAgentHints", "type": "string", "required": false }
   ]
 }

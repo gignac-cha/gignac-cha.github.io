@@ -13,7 +13,7 @@ import {
   type QueryDefinition,
 } from './queries.ts';
 
-const TABLE = 'footprint.trail';
+const TABLE = 'footprint.trail_wide';
 const RANGE = 'from=2026-07-01&to=2026-07-17';
 
 // Every query now takes the validated OWNER_UUIDS list as a third buildSQL argument. It defaults
@@ -31,7 +31,7 @@ const expectRejected = (name: string, search: string) => {
 };
 
 describe('listQueries', () => {
-  it('exposes exactly the twenty-seven catalog queries in order', () => {
+  it('exposes exactly the twenty-eight catalog queries in order', () => {
     expect(listQueries().map((query) => query.name)).toEqual([
       'recent-footprints',
       'footprints-by-day',
@@ -60,6 +60,7 @@ describe('listQueries', () => {
       'accessibility-signals',
       'bots-by-hour',
       'views-by-minute',
+      'user-agents',
     ]);
   });
 
@@ -109,7 +110,7 @@ describe('listQueries', () => {
 describe('recent-footprints SQL', () => {
   it('defaults limit to 20 when omitted and selects the verified-bot category', () => {
     expect(build('recent-footprints', '')).toBe(
-      "SELECT received_at, uuid, origin, href, user_agent, arguments, CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END AS verified_bot_category FROM footprint.trail ORDER BY received_at DESC LIMIT 20",
+      "SELECT received_at, payload__uuid AS uuid, headers__origin AS origin, payload__location__href AS href, headers__user_agent AS user_agent, payload__arguments AS arguments, CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'verifiedBotCategory') END AS verified_bot_category FROM footprint.trail_wide ORDER BY received_at DESC LIMIT 20",
     );
   });
 
@@ -131,19 +132,19 @@ describe('recent-footprints SQL', () => {
 describe('by-day SQL', () => {
   it('builds footprints-by-day with inclusive from / exclusive to', () => {
     expect(build('footprints-by-day', RANGE)).toBe(
-      "SELECT substr(received_at, 1, 10) AS day, COUNT(*) AS footprints FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY day ORDER BY day",
+      "SELECT substr(received_at, 1, 10) AS day, COUNT(*) AS footprints FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY day ORDER BY day",
     );
   });
 
-  it('builds unique-visitors-by-day with COUNT(DISTINCT uuid)', () => {
+  it('builds unique-visitors-by-day with COUNT(DISTINCT payload__uuid)', () => {
     expect(build('unique-visitors-by-day', RANGE)).toBe(
-      "SELECT substr(received_at, 1, 10) AS day, COUNT(DISTINCT uuid) AS visitors FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY day ORDER BY day",
+      "SELECT substr(received_at, 1, 10) AS day, COUNT(DISTINCT payload__uuid) AS visitors FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY day ORDER BY day",
     );
   });
 
   it('builds bots-by-day ORing the verified-bot category with the UA heuristic', () => {
     expect(build('bots-by-day', RANGE)).toBe(
-      "SELECT substr(received_at, 1, 10) AS day, COUNT(*) AS footprints, SUM(CASE WHEN (CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END IS NOT NULL AND CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END != '') OR user_agent ILIKE '%bot%' OR user_agent ILIKE '%crawler%' OR user_agent ILIKE '%spider%' OR user_agent ILIKE '%headless%' OR user_agent ILIKE '%scraper%' OR user_agent ILIKE '%python-requests%' OR user_agent ILIKE '%curl%' OR user_agent ILIKE '%wget%' THEN 1 ELSE 0 END) AS bot_footprints FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY day ORDER BY day",
+      "SELECT substr(received_at, 1, 10) AS day, COUNT(*) AS footprints, SUM(CASE WHEN (CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'verifiedBotCategory') END IS NOT NULL AND CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'verifiedBotCategory') END != '') OR headers__user_agent ILIKE '%bot%' OR headers__user_agent ILIKE '%crawler%' OR headers__user_agent ILIKE '%spider%' OR headers__user_agent ILIKE '%headless%' OR headers__user_agent ILIKE '%scraper%' OR headers__user_agent ILIKE '%python-requests%' OR headers__user_agent ILIKE '%curl%' OR headers__user_agent ILIKE '%wget%' THEN 1 ELSE 0 END) AS bot_footprints FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY day ORDER BY day",
     );
   });
 
@@ -161,7 +162,7 @@ describe('by-day SQL', () => {
     // The two panels would silently disagree about what "verified bot" means if either grew its
     // own copy of the predicate, so the shared constant is asserted here rather than assumed.
     const predicate =
-      "CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END IS NOT NULL AND CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END != ''";
+      "CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'verifiedBotCategory') END IS NOT NULL AND CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'verifiedBotCategory') END != ''";
     expect(build('bots-by-day', RANGE)).toContain(predicate);
     expect(build('verified-bot-categories', RANGE)).toContain(predicate);
   });
@@ -170,13 +171,13 @@ describe('by-day SQL', () => {
 describe('top-* SQL', () => {
   it('builds top-pages grouped by href with default limit 10', () => {
     expect(build('top-pages', RANGE)).toBe(
-      "SELECT href, COUNT(*) AS footprints FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY href ORDER BY footprints DESC LIMIT 10",
+      "SELECT payload__location__href AS href, COUNT(*) AS footprints FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY payload__location__href ORDER BY footprints DESC LIMIT 10",
     );
   });
 
   it('builds top-origins grouped by origin', () => {
     expect(build('top-origins', RANGE)).toBe(
-      "SELECT origin, COUNT(*) AS footprints FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY origin ORDER BY footprints DESC LIMIT 10",
+      "SELECT headers__origin AS origin, COUNT(*) AS footprints FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY headers__origin ORDER BY footprints DESC LIMIT 10",
     );
   });
 
@@ -185,14 +186,17 @@ describe('top-* SQL', () => {
   });
 });
 
-// Each of the strings pinned below was executed once, verbatim, against the live footprint.trail
-// table (read-only, HTTP 200) before being pinned — the R2 SQL dialect is a subset with no
-// published grammar, so "it compiles in TypeScript" proves nothing about whether the engine
-// accepts json_get_bool in a GROUP BY or a CASE with no ELSE.
+// The PRE-SPLIT form of each string pinned below was executed once, verbatim, against the live
+// footprint.trail table (read-only, HTTP 200) before it was first pinned — the R2 SQL dialect is
+// a subset with no published grammar, so "it compiles in TypeScript" proves nothing about whether
+// the engine accepts json_get_bool in a GROUP BY or a CASE with no ELSE. The column split rewrote
+// the column NAMES these strings read (design section 6) without touching a single construct, and
+// footprint.trail_wide does not exist yet, so the wide forms below carry that probe only by
+// inheritance: each still owes one live read before this worker is deployed against the new table.
 describe('period-summary SQL', () => {
   it('builds a single-row total views / distinct visitors summary', () => {
     expect(build('period-summary', RANGE)).toBe(
-      "SELECT COUNT(*) AS views, COUNT(DISTINCT uuid) AS visitors FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17'",
+      "SELECT COUNT(*) AS views, COUNT(DISTINCT payload__uuid) AS visitors FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17'",
     );
   });
 
@@ -209,37 +213,46 @@ describe('period-summary SQL', () => {
 describe('dimensional SQL (payload / cf JSON columns)', () => {
   it('builds top-referrers grouped by payload.document.referrer', () => {
     expect(build('top-referrers', RANGE)).toBe(
-      "SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'document', 'referrer') END AS referrer, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY referrer ORDER BY views DESC LIMIT 10",
+      "SELECT payload__document__referrer AS referrer, COUNT(*) AS views FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY referrer ORDER BY views DESC LIMIT 10",
     );
   });
 
   it('builds views-by-country with both views and distinct visitors', () => {
     expect(build('views-by-country', RANGE)).toBe(
-      "SELECT CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'country') END AS country, COUNT(*) AS views, COUNT(DISTINCT uuid) AS visitors FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY country ORDER BY views DESC LIMIT 10",
+      "SELECT CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'country') END AS country, COUNT(*) AS views, COUNT(DISTINCT payload__uuid) AS visitors FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY country ORDER BY views DESC LIMIT 10",
+    );
+  });
+
+  it('builds user-agents SQL grouping the raw header column', () => {
+    // A raw-string scalar column: no json_get_*, no octet_length guard — and the request HEADER,
+    // not payload__navigator__userAgent (see the query's own comment for why the header is the
+    // right source for "what is hitting the sites").
+    expect(build('user-agents', RANGE)).toBe(
+      "SELECT headers__user_agent AS user_agent, COUNT(*) AS views, COUNT(DISTINCT payload__uuid) AS visitors FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY headers__user_agent ORDER BY views DESC LIMIT 10",
     );
   });
 
   it('builds views-by-hour bucketing on the UTC hour characters of received_at', () => {
     expect(build('views-by-hour', RANGE)).toBe(
-      "SELECT substr(received_at, 12, 2) AS hour, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY hour ORDER BY hour",
+      "SELECT substr(received_at, 12, 2) AS hour, COUNT(*) AS views FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY hour ORDER BY hour",
     );
   });
 
   it('builds top-platforms grouped by the client-hint platform and mobile flag', () => {
     expect(build('top-platforms', RANGE)).toBe(
-      "SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'navigator', 'userAgentHints', 'platform') END AS platform, CASE WHEN octet_length(payload) <= 2000 THEN json_get_bool(payload, 'navigator', 'userAgentHints', 'mobile') END AS mobile, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY platform, mobile ORDER BY views DESC LIMIT 10",
+      "SELECT CASE WHEN octet_length(payload__navigator__userAgentHints) <= 2000 THEN json_get_str(payload__navigator__userAgentHints, 'platform') END AS platform, CASE WHEN octet_length(payload__navigator__userAgentHints) <= 2000 THEN json_get_bool(payload__navigator__userAgentHints, 'mobile') END AS mobile, COUNT(*) AS views FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY platform, mobile ORDER BY views DESC LIMIT 10",
     );
   });
 
   it('builds views-by-color-scheme grouped by payload.colorScheme', () => {
     expect(build('views-by-color-scheme', RANGE)).toBe(
-      "SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'colorScheme') END AS color_scheme, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY color_scheme ORDER BY views DESC",
+      "SELECT CASE WHEN octet_length(payload_remains) <= 2000 THEN json_get_str(payload_remains, 'colorScheme') END AS color_scheme, COUNT(*) AS views FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY color_scheme ORDER BY views DESC",
     );
   });
 
   it('builds top-languages grouped by payload.navigator.language', () => {
     expect(build('top-languages', RANGE)).toBe(
-      "SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'navigator', 'language') END AS language, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY language ORDER BY views DESC LIMIT 10",
+      "SELECT CASE WHEN octet_length(payload__navigator) <= 2000 THEN json_get_str(payload__navigator, 'language') END AS language, COUNT(*) AS views FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY language ORDER BY views DESC LIMIT 10",
     );
   });
 
@@ -247,35 +260,37 @@ describe('dimensional SQL (payload / cf JSON columns)', () => {
     // No ELSE is the point: an absent payload.screen.width must land in its own NULL bucket
     // instead of being folded into 'under-600'.
     expect(build('views-by-screen-width', RANGE)).toBe(
-      "SELECT CASE WHEN octet_length(payload) <= 2000 THEN CASE WHEN json_get_int(payload, 'screen', 'width') < 600 THEN 'under-600' WHEN json_get_int(payload, 'screen', 'width') < 1024 THEN '600-to-1023' WHEN json_get_int(payload, 'screen', 'width') < 1440 THEN '1024-to-1439' WHEN json_get_int(payload, 'screen', 'width') < 1920 THEN '1440-to-1919' WHEN json_get_int(payload, 'screen', 'width') >= 1920 THEN '1920-and-above' END END AS width_bucket, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY width_bucket ORDER BY views DESC",
+      "SELECT CASE WHEN octet_length(payload_remains) <= 2000 THEN CASE WHEN json_get_int(payload_remains, 'screen', 'width') < 600 THEN 'under-600' WHEN json_get_int(payload_remains, 'screen', 'width') < 1024 THEN '600-to-1023' WHEN json_get_int(payload_remains, 'screen', 'width') < 1440 THEN '1024-to-1439' WHEN json_get_int(payload_remains, 'screen', 'width') < 1920 THEN '1440-to-1919' WHEN json_get_int(payload_remains, 'screen', 'width') >= 1920 THEN '1920-and-above' END END AS width_bucket, COUNT(*) AS views FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY width_bucket ORDER BY views DESC",
     );
   });
 
   it('builds top-events excluding the empty argument list', () => {
     expect(build('top-events', RANGE)).toBe(
-      "SELECT arguments, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND arguments != '[]' GROUP BY arguments ORDER BY views DESC LIMIT 10",
+      "SELECT payload__arguments AS arguments, COUNT(*) AS views FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND payload__arguments != '[]' GROUP BY payload__arguments ORDER BY views DESC LIMIT 10",
     );
   });
 
   it('builds verified-bot-categories excluding null and empty categories', () => {
     expect(build('verified-bot-categories', RANGE)).toBe(
-      "SELECT CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END AS category, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END IS NOT NULL AND CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END != '' GROUP BY category ORDER BY views DESC",
+      "SELECT CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'verifiedBotCategory') END AS category, COUNT(*) AS views FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'verifiedBotCategory') END IS NOT NULL AND CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'verifiedBotCategory') END != '' GROUP BY category ORDER BY views DESC",
     );
   });
 
   it('reads the JSON paths the footprint library actually writes', () => {
-    // Guards against a rename in packages/footprint (collect() / mergeUserAgentHints()) silently
-    // turning these columns into all-NULL: the paths are asserted as literal argument lists, so a
-    // drifting key breaks a test here instead of quietly blanking a dashboard panel.
+    // Guards against a rename in packages/footprint (collect() / mergeUserAgentHints()) — or a
+    // changed split rule in the trail worker's toRecord() — silently turning these columns into
+    // all-NULL: column AND path are asserted as one literal argument list, so drift in either
+    // breaks a test here instead of quietly blanking a dashboard panel. Every path is one level
+    // shallower than before the column split, because the container is now the column itself.
     const paths = [
-      ["top-referrers", "CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'document', 'referrer') END"],
-      ["top-platforms", "CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'navigator', 'userAgentHints', 'platform') END"],
-      ["top-platforms", "CASE WHEN octet_length(payload) <= 2000 THEN json_get_bool(payload, 'navigator', 'userAgentHints', 'mobile') END"],
-      ["top-languages", "CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'navigator', 'language') END"],
-      ["views-by-color-scheme", "CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'colorScheme') END"],
-      ["views-by-screen-width", "json_get_int(payload, 'screen', 'width')"],
-      ["views-by-country", "CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'country') END"],
-      ["verified-bot-categories", "CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END"],
+      ["top-referrers", "SELECT payload__document__referrer AS referrer"],
+      ["top-platforms", "CASE WHEN octet_length(payload__navigator__userAgentHints) <= 2000 THEN json_get_str(payload__navigator__userAgentHints, 'platform') END"],
+      ["top-platforms", "CASE WHEN octet_length(payload__navigator__userAgentHints) <= 2000 THEN json_get_bool(payload__navigator__userAgentHints, 'mobile') END"],
+      ["top-languages", "CASE WHEN octet_length(payload__navigator) <= 2000 THEN json_get_str(payload__navigator, 'language') END"],
+      ["views-by-color-scheme", "CASE WHEN octet_length(payload_remains) <= 2000 THEN json_get_str(payload_remains, 'colorScheme') END"],
+      ["views-by-screen-width", "json_get_int(payload_remains, 'screen', 'width')"],
+      ["views-by-country", "CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'country') END"],
+      ["verified-bot-categories", "CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'verifiedBotCategory') END"],
     ] as const;
     for (const [name, path] of paths) {
       expect(build(name, RANGE)).toContain(path);
@@ -297,15 +312,15 @@ describe('dimensional SQL (payload / cf JSON columns)', () => {
 describe('owner exclusion (OWNER_UUIDS)', () => {
   const OWNERS = ['owner-1', 'owner-2'];
 
-  it('appends an AND uuid NOT IN clause to a ranged query', () => {
+  it('appends an AND payload__uuid NOT IN clause to a ranged query', () => {
     expect(build('footprints-by-day', RANGE, OWNERS)).toBe(
-      "SELECT substr(received_at, 1, 10) AS day, COUNT(*) AS footprints FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND uuid NOT IN ('owner-1', 'owner-2') GROUP BY day ORDER BY day",
+      "SELECT substr(received_at, 1, 10) AS day, COUNT(*) AS footprints FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND payload__uuid NOT IN ('owner-1', 'owner-2') GROUP BY day ORDER BY day",
     );
   });
 
-  it('inserts a WHERE uuid NOT IN clause into recent-footprints, which has no WHERE of its own', () => {
+  it('inserts a WHERE payload__uuid NOT IN clause into recent-footprints, which has no WHERE of its own', () => {
     expect(build('recent-footprints', '', OWNERS)).toBe(
-      "SELECT received_at, uuid, origin, href, user_agent, arguments, CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END AS verified_bot_category FROM footprint.trail WHERE uuid NOT IN ('owner-1', 'owner-2') ORDER BY received_at DESC LIMIT 20",
+      "SELECT received_at, payload__uuid AS uuid, headers__origin AS origin, payload__location__href AS href, headers__user_agent AS user_agent, payload__arguments AS arguments, CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'verifiedBotCategory') END AS verified_bot_category FROM footprint.trail_wide WHERE payload__uuid NOT IN ('owner-1', 'owner-2') ORDER BY received_at DESC LIMIT 20",
     );
   });
 
@@ -331,7 +346,7 @@ describe('owner exclusion (OWNER_UUIDS)', () => {
       for (const definition of QUERY_DEFINITIONS) {
         const values = validateParameters(definition, new URLSearchParams(search));
         expect(definition.buildSQL(TABLE, values, OWNERS)).toContain(
-          "uuid NOT IN ('owner-1', 'owner-2')",
+          "payload__uuid NOT IN ('owner-1', 'owner-2')",
         );
       }
     }
@@ -343,7 +358,7 @@ describe('owner exclusion (OWNER_UUIDS)', () => {
     // index rather than by re-pinning every string.
     for (const name of ['top-pages', 'top-referrers', 'views-by-screen-width', 'top-events']) {
       const sql = build(name, RANGE, OWNERS);
-      const exclusion = sql.indexOf('uuid NOT IN');
+      const exclusion = sql.indexOf('payload__uuid NOT IN');
       expect(exclusion).toBeGreaterThan(sql.indexOf('WHERE'));
       expect(exclusion).toBeLessThan(sql.indexOf('GROUP BY'));
     }
@@ -541,7 +556,10 @@ describe('SQL injection attempts are rejected', () => {
 
 describe('assertTableName', () => {
   it('accepts namespace.table style names', () => {
-    expect(assertTableName('footprint.trail')).toBe('footprint.trail');
+    // The first line is not a sample: it is the exact TABLE_NAME wrangler.jsonc ships after the
+    // column split, so the underscore in `trail_wide` is checked against TABLE_NAME_PATTERN here
+    // rather than at deploy time, where a rejected name would surface as a blanket 502.
+    expect(assertTableName('footprint.trail_wide')).toBe('footprint.trail_wide');
     expect(assertTableName('namespace_1.table_2')).toBe('namespace_1.table_2');
   });
 
@@ -622,6 +640,108 @@ describe('json_get_* byte-size guard', () => {
   });
 });
 
+// ------------------------------------------------------------------------------------------------
+// The column split (documents/2026-08-27-footprint-trail-column-split-design.md). The catalog now
+// queries footprint.trail_wide, whose columns the trail worker splits out of the original
+// headers/cf/payload JSON at write time. These four suites pin the properties that survive the
+// rename — they are what makes the split invisible to the overlook viewer and safe against the
+// 2000-byte json_get_* ceiling that forced it.
+// ------------------------------------------------------------------------------------------------
+describe('column split (footprint.trail_wide)', () => {
+  // Every query built with one representative set of values, so a sweep does not have to
+  // re-derive parameters per definition.
+  const buildEvery = (): Array<[string, string]> =>
+    QUERY_DEFINITIONS.map((definition) => {
+      const values = validateParameters(
+        definition,
+        definition.parameters.some((parameter) => parameter.type === 'date')
+          ? new URLSearchParams(`${RANGE}&limit=10`)
+          : new URLSearchParams(''),
+      );
+      return [definition.name, definition.buildSQL(TABLE, values, [])];
+    });
+
+  it('aliases every split column back to its contract response field name', () => {
+    // Design principle 4: the response row field names are the API contract, so the split may
+    // rename COLUMNS but never FIELDS — the overlook viewer ships unchanged against this worker.
+    // Each pair below is the one place a rename could leak to the wire.
+    const aliases: Array<[string, string, string]> = [
+      ['recent-footprints', 'payload__uuid', 'uuid'],
+      ['recent-footprints', 'headers__origin', 'origin'],
+      ['recent-footprints', 'payload__location__href', 'href'],
+      ['recent-footprints', 'headers__user_agent', 'user_agent'],
+      ['recent-footprints', 'payload__arguments', 'arguments'],
+      ['top-pages', 'payload__location__href', 'href'],
+      ['top-origins', 'headers__origin', 'origin'],
+      ['top-events', 'payload__arguments', 'arguments'],
+      ['top-referrers', 'payload__document__referrer', 'referrer'],
+      ['top-landings', 'payload__location__href', 'href'],
+      ['page-transitions', 'payload__location__href', 'to_href'],
+    ];
+    for (const [name, column, field] of aliases) {
+      expect(build(name, RANGE), `${name}: ${column} must be served as ${field}`).toContain(
+        `${column} AS ${field}`,
+      );
+    }
+    // The aggregate field names are equally part of the contract even where no column was
+    // renamed under them, so the full select list of the widest query is pinned as one string.
+    expect(build('recent-footprints', '')).toContain(
+      'SELECT received_at, payload__uuid AS uuid, headers__origin AS origin, payload__location__href AS href, headers__user_agent AS user_agent, payload__arguments AS arguments, ',
+    );
+  });
+
+  it('reads the referrer straight off its own column, with no json_get and no guard', () => {
+    // The one dimensional panel the split turns into a plain column read: document.referrer is
+    // an unbounded URL, and while it lived inside `payload` it was a first-class reason that
+    // column crossed the 2000-byte json_get_* ceiling on 225 of 280 live rows. A future edit that
+    // "restores symmetry" by wrapping it in a guarded json_get_str would reintroduce exactly the
+    // failure the split removed, so the ABSENCE of both is asserted, not just the presence of the
+    // column reference.
+    const sql = build('top-referrers', RANGE);
+    expect(sql).toContain('SELECT payload__document__referrer AS referrer,');
+    expect(sql).not.toContain('json_get');
+    expect(sql).not.toContain('octet_length');
+  });
+
+  it('guards every json_get_* on the very column it reads', () => {
+    // Stronger than the byte-size sweep above, which only asks whether SOME enclosing CASE is a
+    // guard: after the split there are seven readable JSON columns, so a copy-paste could easily
+    // guard octet_length(payload_remains) while reading json_get_str(payload__navigator, …) —
+    // a guard that can never fire for the value it is supposed to protect. The walk keeps the
+    // guarded column name on the CASE stack and requires an exact match.
+    const tokenPattern = /CASE WHEN octet_length\((\w+)\) <= 2000 THEN|CASE|END|json_get_\w+\((\w+)/g;
+    for (const [name, sql] of buildEvery()) {
+      const caseStack: Array<string | null> = [];
+      for (const match of sql.matchAll(tokenPattern)) {
+        if (match[1] !== undefined) {
+          caseStack.push(match[1]);
+        } else if (match[2] !== undefined) {
+          expect(
+            caseStack.includes(match[2]),
+            `${name}: json_get_* on ${match[2]} at index ${match.index} is guarded by ${JSON.stringify(caseStack)}`,
+          ).toBe(true);
+        } else if (match[0] === 'CASE') {
+          caseStack.push(null);
+        } else {
+          caseStack.pop();
+        }
+      }
+    }
+  });
+
+  it('never reads the archival headers / cf / payload columns', () => {
+    // Design principle 1: the three original JSON columns are kept byte-for-byte for archival and
+    // backfill, and are NOT query inputs — they are the columns whose size breaks json_get_*.
+    // A bare `payload`, `cf` or `headers` anywhere in a built query means someone reached past
+    // the split; the word boundaries keep payload_remains / cf_remains / headers__origin out of
+    // the match.
+    const archival = /(?<![_A-Za-z0-9])(payload|cf|headers)(?![_A-Za-z0-9])/;
+    for (const [name, sql] of buildEvery()) {
+      expect(archival.test(sql), `${name}: reads an archival column — ${sql}`).toBe(false);
+    }
+  });
+});
+
 describe('findQuery', () => {
   it('returns undefined for an unknown query name', () => {
     expect(findQuery('does-not-exist')).toBeUndefined();
@@ -636,80 +756,81 @@ describe('findQuery', () => {
 
 // ------------------------------------------------------------------------------------------------
 // The eleven queries added for the overlook's new analytics sections. Every pinned string below
-// was executed once against the live footprint.trail table (HTTP 200, plausible rows) before
-// being pinned — the same house rule as the original sixteen. The constructs they rely on
+// was executed in its pre-split form against the live footprint.trail table (HTTP 200, plausible
+// rows) before being pinned — the same house rule, and the same inheritance caveat, as the
+// dimensional suite above. The constructs they rely on
 // (window functions, CTE JOINs, regexp_match indexing, now() - INTERVAL, date_trunc over CAST)
 // were probed individually first; see the comment block above the queries in queries.ts.
 // ------------------------------------------------------------------------------------------------
 describe('new analytics SQL (batch of eleven)', () => {
   it('builds utm-breakdown with one guard per regexp extraction and 1-based capture index', () => {
     expect(build('utm-breakdown', RANGE)).toBe(
-      "SELECT CASE WHEN octet_length(payload) <= 2000 THEN regexp_match(json_get_str(payload, 'location', 'search'), 'utm_source=([^&]+)')[1] END AS source, CASE WHEN octet_length(payload) <= 2000 THEN regexp_match(json_get_str(payload, 'location', 'search'), 'utm_medium=([^&]+)')[1] END AS medium, CASE WHEN octet_length(payload) <= 2000 THEN regexp_match(json_get_str(payload, 'location', 'search'), 'utm_campaign=([^&]+)')[1] END AS campaign, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY source, medium, campaign ORDER BY views DESC",
+      "SELECT CASE WHEN octet_length(payload__location) <= 2000 THEN regexp_match(json_get_str(payload__location, 'search'), 'utm_source=([^&]+)')[1] END AS source, CASE WHEN octet_length(payload__location) <= 2000 THEN regexp_match(json_get_str(payload__location, 'search'), 'utm_medium=([^&]+)')[1] END AS medium, CASE WHEN octet_length(payload__location) <= 2000 THEN regexp_match(json_get_str(payload__location, 'search'), 'utm_campaign=([^&]+)')[1] END AS campaign, COUNT(*) AS views FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY source, medium, campaign ORDER BY views DESC",
     );
   });
 
   it('builds new-vs-returning-by-day with an unbounded first_seen CTE and a range-bound daily CTE', () => {
     expect(build('new-vs-returning-by-day', RANGE)).toBe(
-      "WITH first_seen AS (SELECT uuid, MIN(substr(received_at, 1, 10)) AS first_day FROM footprint.trail WHERE uuid IS NOT NULL GROUP BY uuid), daily AS (SELECT DISTINCT substr(received_at, 1, 10) AS day, uuid FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND uuid IS NOT NULL) SELECT daily.day AS day, COUNT(CASE WHEN first_seen.first_day = daily.day THEN 1 END) AS new_visitors, COUNT(CASE WHEN first_seen.first_day <> daily.day THEN 1 END) AS returning_visitors FROM daily JOIN first_seen ON daily.uuid = first_seen.uuid GROUP BY day ORDER BY day",
+      "WITH first_seen AS (SELECT payload__uuid, MIN(substr(received_at, 1, 10)) AS first_day FROM footprint.trail_wide WHERE payload__uuid IS NOT NULL GROUP BY payload__uuid), daily AS (SELECT DISTINCT substr(received_at, 1, 10) AS day, payload__uuid FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND payload__uuid IS NOT NULL) SELECT daily.day AS day, COUNT(CASE WHEN first_seen.first_day = daily.day THEN 1 END) AS new_visitors, COUNT(CASE WHEN first_seen.first_day <> daily.day THEN 1 END) AS returning_visitors FROM daily JOIN first_seen ON daily.payload__uuid = first_seen.payload__uuid GROUP BY day ORDER BY day",
     );
   });
 
   it('builds visit-depth with the contract bucket labels in descending CASE order', () => {
     expect(build('visit-depth', RANGE)).toBe(
-      "SELECT CASE WHEN footprints >= 11 THEN '11-plus' WHEN footprints >= 6 THEN '6-10' WHEN footprints >= 3 THEN '3-5' WHEN footprints = 2 THEN '2' ELSE '1' END AS depth_bucket, COUNT(*) AS visitors FROM (SELECT uuid, COUNT(*) AS footprints FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND uuid IS NOT NULL GROUP BY uuid) GROUP BY depth_bucket ORDER BY visitors DESC",
+      "SELECT CASE WHEN footprints >= 11 THEN '11-plus' WHEN footprints >= 6 THEN '6-10' WHEN footprints >= 3 THEN '3-5' WHEN footprints = 2 THEN '2' ELSE '1' END AS depth_bucket, COUNT(*) AS visitors FROM (SELECT payload__uuid, COUNT(*) AS footprints FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND payload__uuid IS NOT NULL GROUP BY payload__uuid) GROUP BY depth_bucket ORDER BY visitors DESC",
     );
   });
 
   it('builds weekly-retention over cohort/activity CTEs joined on uuid', () => {
     expect(build('weekly-retention', RANGE)).toBe(
-      "WITH cohort AS (SELECT uuid, MIN(date_trunc('week', CAST(received_at AS TIMESTAMP))) AS cohort_week_start FROM footprint.trail WHERE uuid IS NOT NULL GROUP BY uuid), activity AS (SELECT DISTINCT uuid, date_trunc('week', CAST(received_at AS TIMESTAMP)) AS active_week_start FROM footprint.trail WHERE uuid IS NOT NULL) SELECT cohort.cohort_week_start AS cohort_week_start, activity.active_week_start AS active_week_start, COUNT(DISTINCT activity.uuid) AS visitors FROM activity JOIN cohort ON activity.uuid = cohort.uuid WHERE cohort.cohort_week_start >= date_trunc('week', CAST('2026-07-01' AS TIMESTAMP)) AND cohort.cohort_week_start < CAST('2026-07-17' AS TIMESTAMP) GROUP BY 1, 2 ORDER BY 1, 2",
+      "WITH cohort AS (SELECT payload__uuid, MIN(date_trunc('week', CAST(received_at AS TIMESTAMP))) AS cohort_week_start FROM footprint.trail_wide WHERE payload__uuid IS NOT NULL GROUP BY payload__uuid), activity AS (SELECT DISTINCT payload__uuid, date_trunc('week', CAST(received_at AS TIMESTAMP)) AS active_week_start FROM footprint.trail_wide WHERE payload__uuid IS NOT NULL) SELECT cohort.cohort_week_start AS cohort_week_start, activity.active_week_start AS active_week_start, COUNT(DISTINCT activity.payload__uuid) AS visitors FROM activity JOIN cohort ON activity.payload__uuid = cohort.payload__uuid WHERE cohort.cohort_week_start >= date_trunc('week', CAST('2026-07-01' AS TIMESTAMP)) AND cohort.cohort_week_start < CAST('2026-07-17' AS TIMESTAMP) GROUP BY 1, 2 ORDER BY 1, 2",
     );
   });
 
   it('builds top-landings from a ROW_NUMBER window partitioned by visitor AND day', () => {
     expect(build('top-landings', `${RANGE}&limit=10`)).toBe(
-      "SELECT href, COUNT(*) AS landings FROM (SELECT href, ROW_NUMBER() OVER (PARTITION BY uuid, substr(received_at, 1, 10) ORDER BY received_at) AS visit_index FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND uuid IS NOT NULL) WHERE visit_index = 1 GROUP BY href ORDER BY landings DESC LIMIT 10",
+      "SELECT payload__location__href AS href, COUNT(*) AS landings FROM (SELECT payload__location__href, ROW_NUMBER() OVER (PARTITION BY payload__uuid, substr(received_at, 1, 10) ORDER BY received_at) AS visit_index FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND payload__uuid IS NOT NULL) WHERE visit_index = 1 GROUP BY payload__location__href ORDER BY landings DESC LIMIT 10",
     );
   });
 
   it('builds page-transitions from LAG pairs, dropping rows with no predecessor', () => {
     expect(build('page-transitions', `${RANGE}&limit=10`)).toBe(
-      "SELECT from_href, to_href, COUNT(*) AS transitions FROM (SELECT href AS to_href, LAG(href) OVER (PARTITION BY uuid ORDER BY received_at) AS from_href FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND uuid IS NOT NULL) WHERE from_href IS NOT NULL GROUP BY from_href, to_href ORDER BY transitions DESC LIMIT 10",
+      "SELECT from_href, to_href, COUNT(*) AS transitions FROM (SELECT payload__location__href AS to_href, LAG(payload__location__href) OVER (PARTITION BY payload__uuid ORDER BY received_at) AS from_href FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' AND payload__uuid IS NOT NULL) WHERE from_href IS NOT NULL GROUP BY from_href, to_href ORDER BY transitions DESC LIMIT 10",
     );
   });
 
   it('builds connection-types guarded', () => {
     expect(build('connection-types', RANGE)).toBe(
-      "SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_str(payload, 'connection', 'effectiveType') END AS effective_type, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY effective_type ORDER BY views DESC",
+      "SELECT CASE WHEN octet_length(payload_remains) <= 2000 THEN json_get_str(payload_remains, 'connection', 'effectiveType') END AS effective_type, COUNT(*) AS views FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY effective_type ORDER BY views DESC",
     );
   });
 
   it('builds device-capabilities with one outer guard around the nested bucket CASE', () => {
     expect(build('device-capabilities', RANGE)).toBe(
-      "SELECT CASE WHEN octet_length(payload) <= 2000 THEN CASE WHEN json_get_int(payload, 'navigator', 'deviceMemory') >= 8 THEN '8-and-above' WHEN json_get_int(payload, 'navigator', 'deviceMemory') >= 4 THEN '4-to-7' WHEN json_get_int(payload, 'navigator', 'deviceMemory') >= 0 THEN 'under-4' END END AS memory_bucket, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY memory_bucket ORDER BY views DESC",
+      "SELECT CASE WHEN octet_length(payload__navigator) <= 2000 THEN CASE WHEN json_get_int(payload__navigator, 'deviceMemory') >= 8 THEN '8-and-above' WHEN json_get_int(payload__navigator, 'deviceMemory') >= 4 THEN '4-to-7' WHEN json_get_int(payload__navigator, 'deviceMemory') >= 0 THEN 'under-4' END END AS memory_bucket, COUNT(*) AS views FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY memory_bucket ORDER BY views DESC",
     );
   });
 
   it('builds accessibility-signals guarded', () => {
     expect(build('accessibility-signals', RANGE)).toBe(
-      "SELECT CASE WHEN octet_length(payload) <= 2000 THEN json_get_bool(payload, 'reducedMotion') END AS reduced_motion, COUNT(*) AS views FROM footprint.trail WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY reduced_motion ORDER BY views DESC",
+      "SELECT CASE WHEN octet_length(payload_remains) <= 2000 THEN json_get_bool(payload_remains, 'reducedMotion') END AS reduced_motion, COUNT(*) AS views FROM footprint.trail_wide WHERE received_at >= '2026-07-01' AND received_at < '2026-07-17' GROUP BY reduced_motion ORDER BY views DESC",
     );
   });
 
   it('builds bots-by-hour with the same bot predicate bots-by-day uses', () => {
     const sql = build('bots-by-hour', RANGE);
     expect(sql).toContain("substr(received_at, 12, 2) AS hour");
-    expect(sql).toContain('SUM(CASE WHEN (CASE WHEN octet_length(cf) <= 2000 THEN');
+    expect(sql).toContain('SUM(CASE WHEN (CASE WHEN octet_length(cf_remains) <= 2000 THEN');
     // The heuristic OR-chain must be byte-identical to bots-by-day's, so the two panels can
     // never disagree about what a bot is.
     const botsByDay = build('bots-by-day', RANGE);
-    const heuristicOf = (text: string) => text.slice(text.indexOf('OR user_agent ILIKE'), text.indexOf(' THEN 1 ELSE 0'));
+    const heuristicOf = (text: string) => text.slice(text.indexOf('OR headers__user_agent ILIKE'), text.indexOf(' THEN 1 ELSE 0'));
     expect(heuristicOf(sql)).toBe(heuristicOf(botsByDay));
   });
 
   it('builds views-by-minute anchored to now() with the clamped minutes literal', () => {
     expect(build('views-by-minute', '')).toBe(
-      "SELECT substr(received_at, 1, 16) AS minute, COUNT(*) AS views FROM footprint.trail WHERE CAST(received_at AS TIMESTAMP) >= now() - INTERVAL '30' MINUTE GROUP BY minute ORDER BY minute",
+      "SELECT substr(received_at, 1, 16) AS minute, COUNT(*) AS views FROM footprint.trail_wide WHERE CAST(received_at AS TIMESTAMP) >= now() - INTERVAL '30' MINUTE GROUP BY minute ORDER BY minute",
     );
     expect(build('views-by-minute', 'minutes=9999')).toContain("INTERVAL '120' MINUTE");
     expect(build('views-by-minute', 'minutes=0')).toContain("INTERVAL '1' MINUTE");
@@ -719,30 +840,33 @@ describe('new analytics SQL (batch of eleven)', () => {
 describe('recent-footprints uuid parameter', () => {
   it('narrows to the visitor when uuid is provided', () => {
     expect(build('recent-footprints', 'limit=20&uuid=abc-123')).toBe(
-      "SELECT received_at, uuid, origin, href, user_agent, arguments, CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END AS verified_bot_category FROM footprint.trail WHERE uuid = 'abc-123' ORDER BY received_at DESC LIMIT 20",
+      "SELECT received_at, payload__uuid AS uuid, headers__origin AS origin, payload__location__href AS href, headers__user_agent AS user_agent, payload__arguments AS arguments, CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'verifiedBotCategory') END AS verified_bot_category FROM footprint.trail_wide WHERE payload__uuid = 'abc-123' ORDER BY received_at DESC LIMIT 20",
     );
   });
 
   it('keeps the pre-uuid SQL byte-identical when uuid is absent', () => {
     expect(build('recent-footprints', 'limit=20')).toBe(
-      "SELECT received_at, uuid, origin, href, user_agent, arguments, CASE WHEN octet_length(cf) <= 2000 THEN json_get_str(cf, 'verifiedBotCategory') END AS verified_bot_category FROM footprint.trail ORDER BY received_at DESC LIMIT 20",
+      "SELECT received_at, payload__uuid AS uuid, headers__origin AS origin, payload__location__href AS href, headers__user_agent AS user_agent, payload__arguments AS arguments, CASE WHEN octet_length(cf_remains) <= 2000 THEN json_get_str(cf_remains, 'verifiedBotCategory') END AS verified_bot_category FROM footprint.trail_wide ORDER BY received_at DESC LIMIT 20",
     );
   });
 
   it('chains uuid and owner exclusion with AND', () => {
     expect(build('recent-footprints', 'uuid=abc-123', ['owner-1'])).toContain(
-      "WHERE uuid = 'abc-123' AND uuid NOT IN ('owner-1')",
+      "WHERE payload__uuid = 'abc-123' AND payload__uuid NOT IN ('owner-1')",
     );
   });
 
   it('rejects a uuid that tries to break out of its quotes', () => {
-    expectRejected('recent-footprints', "uuid=abc'; DROP TABLE footprint.trail; --");
+    expectRejected('recent-footprints', "uuid=abc'; DROP TABLE footprint.trail_wide; --");
     expectRejected('recent-footprints', 'uuid=abc 123');
     expectRejected('recent-footprints', `uuid=${'a'.repeat(129)}`);
   });
 
   it('treats an empty uuid as absent (URLSearchParams yields empty strings)', () => {
-    expect(build('recent-footprints', 'uuid=')).not.toContain('WHERE uuid =');
+    // `uuid = '` (no WHERE prefix, trailing quote) catches a leaked filter on ANY uuid-carrying
+    // column — `WHERE payload__uuid = '…'` and the pre-split `WHERE uuid = '…'` alike — whereas
+    // anchoring on WHERE plus one exact column name would silently miss the other shape.
+    expect(build('recent-footprints', 'uuid=')).not.toContain("uuid = '");
   });
 });
 

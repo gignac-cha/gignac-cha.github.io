@@ -201,3 +201,78 @@ export function toColorSchemeLabel(colorScheme: string | null | undefined): stri
   }
   return colorScheme;
 }
+
+// Browser families for toUserAgentLabel, tried in order. Derivatives must precede their engines:
+// every Chromium UA also carries 'Chrome' and 'Safari' tokens (and every UA at all opens with
+// 'Mozilla'), so Edge/Opera/Samsung claim their strings before Chrome can, and Chrome before
+// Safari. Real Safari is the one family matched through 'Version/N' — no other current browser
+// ships that token, while Safari never ships a bare version on its 'Safari/605…' build token.
+// See https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/User-Agent
+const BROWSER_FAMILIES: ReadonlyArray<readonly [string, RegExp]> = [
+  ['Edge', /\bEdg(?:e|A|iOS)?\/(\d+)/],
+  ['Opera', /\bOPR\/(\d+)/],
+  ['Samsung Internet', /\bSamsungBrowser\/(\d+)/],
+  ['Firefox', /\b(?:Firefox|FxiOS)\/(\d+)/],
+  ['Chrome', /\b(?:Chrome|CriOS)\/(\d+)/],
+  ['Safari', /\bVersion\/(\d+).*\bSafari\//],
+];
+
+// iPhone/iPad must be tested before the Mac tokens: every iOS UA says 'like Mac OS X', so the
+// order IS the disambiguation. Windows goes first only because it is the cheapest common case.
+function detectOperatingSystem(userAgent: string): string | null {
+  if (/\bWindows NT\b/.test(userAgent)) {
+    return 'Windows';
+  }
+  if (/\b(?:iPhone|iPad|iPod)\b/.test(userAgent)) {
+    return 'iOS';
+  }
+  if (/\bCrOS\b/.test(userAgent)) {
+    return 'ChromeOS';
+  }
+  if (/\bMac OS X\b|\bMacintosh\b/.test(userAgent)) {
+    return 'macOS';
+  }
+  if (/\bAndroid\b/.test(userAgent)) {
+    return 'Android';
+  }
+  if (/\bLinux\b/.test(userAgent)) {
+    return 'Linux';
+  }
+  return null;
+}
+
+// User-Agent header -> a compact ranked-bar label ('Chrome 151 · Windows', 'AhrefsBot',
+// 'curl 8.0'). The raw header is 100-140 characters of boilerplate and a ranked bar has room for
+// a name; the verbatim string still reaches the reader through the bar's fullLabel tooltip. This
+// is a DISPLAY heuristic, deliberately not the tracker's bot predicate — the worker classifies,
+// this only names, and the two may disagree without either being wrong.
+//
+// Bots are named first, because a crawler UA often embeds a complete browser signature
+// ('… AppleWebKit … bingbot/2.0 … Chrome/136 …') that the family table would otherwise claim as
+// Chrome. The token containing bot/crawler/spider is the name crawl operators actually publish
+// (AhrefsBot, bingbot, Googlebot-Image), so it is shown as matched, not normalized.
+// Pinned by the 'toUserAgentLabel' suite in dimension-labels.test.ts.
+export function toUserAgentLabel(userAgent: string | null | undefined): string {
+  if (typeof userAgent !== 'string' || userAgent.trim().length === 0) {
+    return UNREPORTED_LABEL;
+  }
+  const raw = userAgent.trim();
+  const bot = raw.match(/([A-Za-z0-9._-]*(?:bot|crawler|spider)[A-Za-z0-9._-]*)/i);
+  if (bot) {
+    return bot[1];
+  }
+  const operatingSystem = detectOperatingSystem(raw);
+  for (const [familyName, pattern] of BROWSER_FAMILIES) {
+    const match = raw.match(pattern);
+    if (match) {
+      return operatingSystem === null ? `${familyName} ${match[1]}` : `${familyName} ${match[1]} · ${operatingSystem}`;
+    }
+  }
+  // No browser signature at all: a tool like 'curl/8.0' or a bare product name like 'node'.
+  // Major.minor is kept (unlike the majors above) because tool versions are short already.
+  const product = raw.match(/^([A-Za-z0-9._+-]+)(?:\/(\d+(?:\.\d+)?))?/);
+  if (product) {
+    return product[2] === undefined ? product[1] : `${product[1]} ${product[2]}`;
+  }
+  return raw.slice(0, 40);
+}

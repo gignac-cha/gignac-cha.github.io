@@ -17,6 +17,20 @@ describe('parseAllowlist', () => {
     expect(parseAllowlist('')).toEqual([]);
     expect(parseAllowlist(undefined)).toEqual([]);
   });
+
+  // The shape the Wrangler config actually declares: workerd delivers a JSON array var to the
+  // Worker as a real array, so the parser must take one without splitting it into characters.
+  it('takes an array as-is, trimming and dropping empty entries', () => {
+    expect(parseAllowlist(['http://localhost:5173', ' https://viewer.example ', '', '  '])).toEqual([
+      'http://localhost:5173',
+      'https://viewer.example',
+    ]);
+    expect(parseAllowlist([])).toEqual([]);
+  });
+
+  it('produces the same list from both shapes', () => {
+    expect(parseAllowlist(['a', 'b', 'c'])).toEqual(parseAllowlist('a, b, c'));
+  });
 });
 
 describe('corsHeaders', () => {

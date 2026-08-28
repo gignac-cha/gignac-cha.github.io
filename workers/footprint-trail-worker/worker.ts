@@ -1,4 +1,4 @@
-import { buildFootprint, parsePayload, toRecord } from './footprints.ts';
+import { buildFootprint, buildHeaders, parsePayload, toRecord } from './footprints.ts';
 
 // 64 KiB is the ceiling a well-behaved client can ever send: the W3C Beacon spec lets user agents
 // cap the total in-flight sendBeacon payload, and Chromium enforces exactly 64 KiB — so the
@@ -14,12 +14,24 @@ const MAXIMUM_BODY_BYTES = 64 * 1024;
 // https://www.rfc-editor.org/rfc/rfc9110.html#name-405-method-not-allowed
 const ALLOWED_METHODS = 'GET, HEAD, POST, OPTIONS';
 
-// COLLECTOR_ORIGINS (comma-separated) parsed into a set; whitespace-tolerant, empty entries
-// dropped. An empty result means "no allowlist" and the collector stays fully open.
-const parseAllowedOrigins = (raw: string | undefined): Set<string> =>
+// COLLECTOR_ORIGINS parsed into a set; whitespace-tolerant, empty entries dropped. An empty
+// result means "no allowlist" and the collector stays fully open.
+//
+// A LIST and a comma-separated STRING are both accepted, because the same variable arrives in
+// different shapes depending on where it was set. The Wrangler config declares it as a JSON
+// array — vars take "text strings or JSON values", and workerd hands a declared array to the
+// Worker as a real JavaScript array (measured against workerd 1.20260710.1:
+// Array.isArray(env.COLLECTOR_ORIGINS) is true) — which is what keeps adding a site to a
+// one-line diff instead of an edit inside one long delimited string. Every other channel is
+// text-only: a value typed into the Cloudflare dashboard or written to .dev.vars is always a
+// string, so dropping the comma form would silently empty the allowlist the first time someone
+// edits the variable outside this file.
+// See https://developers.cloudflare.com/workers/configuration/environment-variables/
+// Pinned by the 'origin allowlist (COLLECTOR_ORIGINS)' suite in worker.test.ts, which asserts
+// both shapes gate identically.
+const parseAllowedOrigins = (raw: string | string[] | undefined): Set<string> =>
   new Set(
-    (raw ?? '')
-      .split(',')
+    (Array.isArray(raw) ? raw : (raw ?? '').split(','))
       .map((origin) => origin.trim())
       .filter((origin) => origin.length > 0),
   );
@@ -124,10 +136,16 @@ export default {
       return new Response(null, { status: 400 });
     }
 
+    // The ENTIRE header set travels into the record — not the two values (Origin, User-Agent) the
+    // old narrow row promoted — because the stored row splits four header columns out of it and
+    // keeps the rest queryable in `headers_remains`: Sec-CH-UA, Accept-Language, DNT and whatever
+    // browsers add next become analyzable without another schema change. buildHeaders() owns the
+    // one filtering rule that matters (cookie/authorization are dropped, never stored) and the
+    // lowercasing the column names depend on; see its comment in footprints.ts. Pinned by 'never
+    // stores the cookie or authorization header in any column' in worker.test.ts.
     const footprint = buildFootprint(payload, {
       receivedAt: new Date().toISOString(),
-      origin: request.headers.get('Origin') ?? undefined,
-      userAgent: request.headers.get('User-Agent') ?? undefined,
+      headers: buildHeaders(request.headers),
       cf: request.cf as Record<string, unknown> | undefined,
     });
     // The 204 must not wait for stream delivery: sendBeacon/keepalive-fetch clients never read

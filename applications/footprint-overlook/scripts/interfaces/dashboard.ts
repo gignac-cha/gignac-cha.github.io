@@ -32,6 +32,7 @@ import {
   toCountryLabel,
   toPlatformLabel,
   toReferrerLabel,
+  toUserAgentLabel,
   toWidthBucketLabel,
   UNREPORTED_LABEL,
 } from '../tools/dimension-labels.ts';
@@ -61,6 +62,7 @@ import {
   type TopPlatformRow,
   type TopReferrerRow,
   type UniqueVisitorsByDayRow,
+  type UserAgentRow,
   type UtmBreakdownRow,
   type VerifiedBotCategoryRow,
   type ViewsByColorSchemeRow,
@@ -260,6 +262,12 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
   const environmentSection = createSection({ title: '방문 환경', subtitle: 'top-languages · views-by-screen-width', className: 'rank-panel' });
   root.appendChild(platformsSection.element);
   root.appendChild(environmentSection.element);
+
+  // Distinct from 플랫폼·기기 above on BOTH axes: the source is the request HEADER (delivered by
+  // every client, bots and curl included) where top-platforms reads Client Hints (browser-only,
+  // absent on Safari/Firefox), and the grain is the exact UA string where top-platforms buckets.
+  const userAgentsSection = createSection({ title: 'User-Agent 분포', subtitle: 'user-agents · 요청 헤더 원문 기준', className: 'rank-panel' });
+  root.appendChild(userAgentsSection.element);
 
   const eventsSection = createSection({ title: '이벤트', subtitle: 'top-events · footprint(...) 호출 인자', className: 'rank-panel' });
   const botCategoriesSection = createSection({ title: '봇 분류', subtitle: 'verified-bot-categories · Cloudflare 검증 봇', className: 'rank-panel' });
@@ -1066,6 +1074,25 @@ export function createDashboard(options: { endpoint: string; onChangeEndpoint: (
               fullLabel: `${toCountryLabel(row.country)} (${toDisplayText(row.country)}) · 방문자 ${formatCount(row.visitors)}`,
               value: row.views,
               isUnreported: row.country === null,
+            })),
+          ),
+      }),
+
+      createPanelPlan<UserAgentRow>({
+        queryName: QUERY_NAMES.userAgents,
+        parameters: dayParameters,
+        cacheKey: rangeKey,
+        sections: [userAgentsSection],
+        render: (result) =>
+          renderRankedPanel(userAgentsSection, result, 'User-Agent 데이터가 없습니다.', (rows) =>
+            rows.map((row) => ({
+              // The bar shows the compact family name; the verbatim header — the actual GROUP BY
+              // key — survives in the tooltip, so two rows that compact to the same label (e.g.
+              // two Chrome minors sharing a major) stay distinguishable on hover.
+              label: toUserAgentLabel(row.user_agent),
+              fullLabel: `${toDisplayText(row.user_agent, UNREPORTED_LABEL)} · 방문자 ${formatCount(row.visitors)}`,
+              value: row.views,
+              isUnreported: row.user_agent === null,
             })),
           ),
       }),

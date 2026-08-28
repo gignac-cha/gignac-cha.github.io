@@ -9,7 +9,7 @@ import {
 import { queryR2SQL } from './r2-sql.ts';
 
 // footprint-tracker: the read side of the footprint family — a read-only, parameterized JSON
-// query API over the collected footprints (Iceberg table `footprint.trail`, queried through
+// query API over the collected footprints (Iceberg table `footprint.trail_wide`, queried through
 // R2 SQL, https://developers.cloudflare.com/r2-sql/). This module is deliberately a THIN layer:
 // routing, CORS application, the upstream call, and error mapping live here, while everything
 // with logic in it is delegated to pure modules that unit-test without workerd — parameter

@@ -2,15 +2,22 @@
 // computation for one origin — so the policy unit-tests without workerd (cors.test.ts) while
 // the route stays in charge of WHERE the headers apply (only /queries*, see worker.ts).
 
-// VIEWER_ORIGINS (comma-separated) parsed into a list; whitespace-tolerant, empty entries
-// dropped. NOTE the polarity difference from the trail collector: an empty allowlist here
-// means NO cross-origin reader is ever reflected (deny by default — the data is still served,
-// but browsers cannot read it cross-origin), whereas the trail worker's empty
-// COLLECTOR_ORIGINS leaves its collector open. Do not copy semantics between the two workers.
-// Pinned by 'returns only Vary: Origin when the allowlist is empty' in cors.test.ts.
-export const parseAllowlist = (raw: string | undefined): string[] =>
-  (raw ?? '')
-    .split(',')
+// VIEWER_ORIGINS parsed into a list; whitespace-tolerant, empty entries dropped. NOTE the
+// polarity difference from the trail collector: an empty allowlist here means NO cross-origin
+// reader is ever reflected (deny by default — the data is still served, but browsers cannot read
+// it cross-origin), whereas the trail worker's empty COLLECTOR_ORIGINS leaves its collector open.
+// Do not copy semantics between the two workers.
+//
+// A LIST and a comma-separated STRING are both accepted, matching parseAllowedOrigins in the
+// trail worker — the Wrangler config declares the variable as a JSON array (delivered to the
+// Worker as a real array), while the Cloudflare dashboard and .dev.vars can only hold text. The
+// full reasoning lives on that function; the two workers deliberately parse their origin lists
+// the same way even though they gate on the result differently.
+// See https://developers.cloudflare.com/workers/configuration/environment-variables/
+// Pinned by 'returns only Vary: Origin when the allowlist is empty' and the array-shape cases in
+// cors.test.ts.
+export const parseAllowlist = (raw: string | string[] | undefined): string[] =>
+  (Array.isArray(raw) ? raw : (raw ?? '').split(','))
     .map((entry) => entry.trim())
     .filter((entry) => entry.length > 0);
 
