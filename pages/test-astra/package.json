@@ -1,0 +1,12 @@
+{
+  "name": "@pages/test-astra",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Visualization test for GPT 6 Astra",
+  "scripts": {
+    "copy": "mkdir -p ../../page/test-astra && rsync -a --exclude='.*' --exclude=node_modules --exclude=package.json --exclude='*.test.cjs' --exclude=build-vendor.cjs --exclude=vendor-entry.js ./ ../../page/test-astra/"
+  },
+  "license": "ISC",
+  "packageManager": "pnpm@10.11.0"
+}

@@ -92,6 +92,8 @@ importers:
 
   pages/sort: {}
 
+  pages/test-astra: {}
+
   pages/video-shadow: {}
 
   pages/waterfall: {}
