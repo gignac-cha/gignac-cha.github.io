@@ -5,11 +5,10 @@
   "main": "index.js",
   "scripts": {
     "build": "esbuild random.ts range.ts --outdir=. --platform=browser --target=esnext --format=esm",
-    "copy": "rsync random.js range.js ../../page/modules/",
+    "copy": "mkdir -p ../../page/modules && rsync random.js range.js ../../page/modules/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.11.0"
+  "license": "ISC"
 }

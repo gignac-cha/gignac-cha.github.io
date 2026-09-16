@@ -12,7 +12,7 @@ export interface LanguageModelDiagnosis {
 }
 
 // 크롬 런타임이 요구하는 출력 언어 옵션입니다. availability() 와 create() 에 동일하게 전달합니다.
-const LANGUAGE_MODEL_OUTPUT_OPTIONS: LanguageModelCreateCoreOptions = {
+const LANGUAGE_MODEL_OUTPUT_OPTIONS: LanguageModelCreateCoreOptions & { outputLanguage: string } = {
   outputLanguage: 'en',
   expectedOutputs: [{ type: 'text', languages: ['en'] }],
 };

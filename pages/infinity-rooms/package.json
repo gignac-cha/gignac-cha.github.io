@@ -14,20 +14,20 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.11.0",
   "devDependencies": {
     "@types/d3": "^7.4.3",
-    "@types/dom-chromium-ai": "^0.0.16",
-    "@types/node": "^25.9.1",
-    "@types/three": "^0.184.1",
+    "@types/dom-chromium-ai": "^0.0.17",
+    "@types/node": "^25.9.6",
+    "@types/three": "^0.186.0",
     "@vitejs/plugin-basic-ssl": "^2.3.0",
-    "sass": "^1.99.0",
-    "typescript": "^6.0.3",
-    "vite": "^8.0.13",
-    "vitest": "^4.1.7"
+    "sass": "^1.104.1",
+    "typescript": "catalog:",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.0"
   },
   "dependencies": {
     "d3": "^7.9.0",
-    "three": "^0.184.0"
-  }
+    "three": "^0.186.0"
+  },
+  "type": "module"
 }

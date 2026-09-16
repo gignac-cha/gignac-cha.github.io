@@ -50,13 +50,15 @@ export default class Canvas {
 
   constructor(element: HTMLCanvasElement) {
     this._element = element;
+    this._context = this.getContext(element);
   }
 
-  private setContext() {
-    const context: CanvasRenderingContext2D | null = this._element.getContext('2d');
-    if (context) {
-      this._context = context;
+  private getContext(element: HTMLCanvasElement): CanvasRenderingContext2D {
+    const context: CanvasRenderingContext2D | null = element.getContext('2d');
+    if (!context) {
+      throw new Error('Canvas 2D context is unavailable.');
     }
+    return context;
   }
 
   addEventListener(...args: Parameters<typeof this._element.addEventListener>) {
@@ -70,7 +72,9 @@ export default class Canvas {
   }
 
   set element(_element: HTMLCanvasElement) {
+    const context = this.getContext(_element);
     this._element = _element;
+    this._context = context;
   }
   private get context(): CanvasRenderingContext2D {
     return this._context;
@@ -81,14 +85,14 @@ export default class Canvas {
   }
   set width(value: number) {
     this._element.setAttribute('width', `${value}`);
-    this.setContext();
+    this._context = this.getContext(this._element);
   }
   get height(): number {
     return this._element.height;
   }
   set height(value: number) {
     this._element.setAttribute('height', `${value}`);
-    this.setContext();
+    this._context = this.getContext(this._element);
   }
 
   private getBuilder(
