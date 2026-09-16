@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#121415" />
+    <meta name="description" content="Magnetic Loom. A study of threads, tension, and invisible attraction." />
+    <title>Magnetic Loom</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="script.js"></script>
+    <script>
+      try {
+        localStorage.setItem('footprint:endpoint', 'https://footprint-trail.tes-cha.workers.dev/');
+      } catch {}
+    </script>
+    <script type="module" src="https://fastly.jsdelivr.net/npm/@tes.cha/footprint/footprint.bundle.js"></script>
+  </head>
+  <body>
+    <div class="study magnetic-loom">
+      <header class="study-header">
+        <div class="study-identity">
+          <span class="study-eyebrow">FIELD NOTES / 006</span>
+          <h1>Magnetic Loom<span>.</span></h1>
+          <p>The shape of an invisible pull.</p>
+        </div>
+        <div class="study-actions" role="group" aria-label="Artwork controls">
+          <button id="play" class="tool" type="button" aria-label="Pause" data-tip="Pause" data-icon="pause"></button>
+          <button id="reset" class="tool" type="button" aria-label="Reset composition" data-tip="Reset composition" data-icon="rotate-ccw"></button>
+          <button id="save" class="tool" type="button" aria-label="Save image" data-tip="Save image" data-icon="download"></button>
+          <button id="fullscreen" class="tool" type="button" aria-label="Fullscreen" data-tip="Fullscreen" data-icon="maximize"></button>
+        </div>
+      </header>
+      <main class="study-stage" id="stage" aria-label="Magnetic Loom artwork">
+        <canvas id="canvas" role="img" aria-label="Continuous silver, coral, and teal threads woven around magnetic poles"></canvas>
+        <div id="poles" class="loom-poles" role="group" aria-label="Magnetic poles"></div>
+        <div class="study-stats" aria-hidden="true"><span>264 FILAMENTS</span><span>SILVER / CORAL / TEAL</span></div>
+        <div class="study-readout" aria-hidden="true"><span id="pole-readout">04 / 06 POLES</span><span id="motion-readout">IN MOTION</span></div>
+        <p id="notice" class="study-notice" role="status"></p>
+        <noscript><p class="loom-error">JavaScript is required to render this artwork.</p></noscript>
+      </main>
+      <footer class="study-controls">
+        <fieldset class="control">
+          <legend>POLES <output id="pole-count">4 / 6</output></legend>
+          <div class="pole-tools">
+            <button id="add-positive" type="button" class="tool positive" aria-label="Add positive pole" data-tip="Add positive pole" data-icon="plus"></button>
+            <button
+              id="add-negative"
+              type="button"
+              class="tool negative"
+              aria-label="Add negative pole"
+              data-tip="Add negative pole"
+              data-icon="minus"
+            ></button>
+            <button id="remove-pole" type="button" class="tool" aria-label="Remove selected pole" data-tip="Remove selected pole" data-icon="x"></button>
+          </div>
+        </fieldset>
+        <fieldset class="control">
+          <legend>POLARITY <output id="selected-pole">01</output></legend>
+          <div class="segments">
+            <label class="positive" data-tip="Positive polarity"
+              ><input type="radio" name="polarity" value="1" checked aria-label="Positive polarity" /><span data-icon="plus"></span
+            ></label>
+            <label class="negative" data-tip="Negative polarity"
+              ><input type="radio" name="polarity" value="-1" aria-label="Negative polarity" /><span data-icon="minus"></span
+            ></label>
+          </div>
+        </fieldset>
+        <div class="control">
+          <label for="tension" class="control-label">TENSION <output id="tension-value">42%</output></label
+          ><input id="tension" type="range" min="0" max="100" value="42" />
+        </div>
+        <div class="control">
+          <label for="strength" class="control-label">STRENGTH <output id="strength-value">68%</output></label
+          ><input id="strength" type="range" min="0" max="100" value="68" />
+        </div>
+      </footer>
+      <div class="colophon"><span>A STUDY OF INVISIBLE FORCES</span><span>MAGNETIC LOOM / 2026</span></div>
+    </div>
+  </body>
+</html>

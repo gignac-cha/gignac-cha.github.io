@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#181c1b">
+    <meta name="description" content="Chromatic Cells. An evolving mosaic of color, adjacency, and possibility. Study 08.">
+    <title>Chromatic Cells</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23ed806f' d='M2 2h13v13H2zM17 17h13v13H17z'/%3E%3Cpath fill='%23a8d9bb' d='M17 2h13v13H17z'/%3E%3Cpath fill='%23a59bcf' d='M2 17h13v13H2z'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="script.js"></script>
+    <script>try { localStorage.setItem('footprint:endpoint', 'https://footprint-trail.tes-cha.workers.dev/'); } catch {}</script>
+    <script type="module" src="https://fastly.jsdelivr.net/npm/@tes.cha/footprint/footprint.bundle.js"></script>
+  </head>
+  <body>
+    <div class="study chromatic-study">
+      <header class="study-header">
+        <div class="study-identity">
+          <span class="study-eyebrow">COLOR &amp; CHANCE / STUDY 08</span>
+          <h1>Chromatic Cells<span class="title-stop">.</span></h1>
+          <p>A small agreement between colors.</p>
+        </div>
+        <div class="study-actions" role="group" aria-label="Mosaic controls">
+          <button type="button" class="tool" id="play" data-icon="pause" data-tip="Pause" title="Pause" aria-label="Pause"></button>
+          <button type="button" class="tool" id="step" data-icon="plus" data-tip="One growth step" title="One growth step" aria-label="One growth step"></button>
+          <button type="button" class="tool" id="new" data-icon="shuffle" data-tip="New composition" title="New composition" aria-label="New composition"></button>
+          <button type="button" class="tool" id="reset" data-icon="rotate-ccw" data-tip="Reset composition" title="Reset composition" aria-label="Reset composition"></button>
+          <button type="button" class="tool" id="clear" data-icon="x" data-tip="Clear cells" title="Clear cells" aria-label="Clear cells"></button>
+          <button type="button" class="tool" id="save" data-icon="download" data-tip="Save image" title="Save image" aria-label="Save image"></button>
+          <button type="button" class="tool" id="fullscreen" data-icon="maximize" data-tip="Fullscreen" title="Fullscreen" aria-label="Fullscreen"></button>
+        </div>
+      </header>
+
+      <main class="study-stage" id="stage" aria-label="Chromatic Cells artwork">
+        <canvas id="canvas" tabindex="0" role="application" aria-label="Interactive mosaic. Arrow keys select a cell, Enter plants the selected color, Space pauses, and period advances one step." aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight Enter Space ."></canvas>
+        <div class="study-stats" aria-hidden="true"><span><i class="state-mark"></i><span id="state">GROWING</span></span><span id="edition">ARRANGEMENT 008</span></div>
+        <div class="study-readout" aria-hidden="true"><span id="population">000 / 000</span><span class="coverage"><i id="coverage"></i></span><span id="position">CHROMATIC FIELD</span></div>
+        <p id="notice" class="study-notice" role="status" aria-live="polite"></p>
+        <noscript><p class="study-notice visible">JavaScript is required to render this artwork.</p></noscript>
+      </main>
+
+      <footer class="study-controls">
+        <fieldset class="control palette-control"><legend>Seed color <span id="color-name">Coral</span></legend>
+          <div class="swatches">
+            <label class="swatch ivory" title="Ivory"><input type="radio" name="color" value="0" aria-label="Ivory"><i></i></label>
+            <label class="swatch coral" title="Coral"><input type="radio" name="color" value="1" aria-label="Coral" checked><i></i></label>
+            <label class="swatch mint" title="Mint"><input type="radio" name="color" value="2" aria-label="Mint"><i></i></label>
+            <label class="swatch jade" title="Jade"><input type="radio" name="color" value="3" aria-label="Jade"><i></i></label>
+            <label class="swatch iris" title="Iris"><input type="radio" name="color" value="4" aria-label="Iris"><i></i></label>
+            <label class="swatch saffron" title="Saffron"><input type="radio" name="color" value="5" aria-label="Saffron"><i></i></label>
+          </div>
+        </fieldset>
+        <div class="control"><label for="scale" class="control-label">Cell scale <output id="scale-value">30 px</output></label><input id="scale" type="range" min="20" max="52" value="30" step="2"></div>
+        <div class="control"><label for="tempo" class="control-label">Growth <output id="tempo-value">18 / s</output></label><input id="tempo" type="range" min="2" max="60" value="18" step="2"></div>
+        <div class="control inlay-control"><span class="control-label">Surface</span><label class="toggle"><span>Inlays</span><input id="inlays" type="checkbox" role="switch" checked><i aria-hidden="true"></i></label></div>
+      </footer>
+      <div class="colophon"><span>ADJACENCY / POSSIBILITY</span><span>CHROMATIC CELLS / 2026</span></div>
+    </div>
+  </body>
+</html>
