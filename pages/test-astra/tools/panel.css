@@ -1,0 +1,83 @@
+.colophon:has(> .experiment-panel-trigger) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 10px;
+}
+.colophon:has(> .experiment-panel-trigger) > :last-child { text-align: right; }
+.experiment-panel-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+.experiment-panel-trigger:hover { background: color-mix(in srgb, currentColor 10%, transparent); }
+.experiment-panel-trigger svg { width: 13px; height: 13px; flex: 0 0 13px; stroke-width: 1.75; }
+.experiment-panel {
+  --panel-background: #151c1e;
+  --panel-foreground: #e4eae6;
+  --panel-muted: #b6c3be;
+  --panel-border: #364342;
+  --panel-focus: #b9daca;
+  color-scheme: dark;
+  position: fixed;
+  inset: 16px 16px auto auto;
+  margin: 0;
+  width: min(420px, calc(100% - 32px));
+  max-width: none;
+  max-height: calc(100svh - 32px);
+  padding: 24px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  background: var(--panel-background);
+  color: var(--panel-foreground);
+  box-shadow: 0 16px 60px #0003;
+  font: 14px/1.8 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  text-align: left;
+  letter-spacing: 0;
+}
+.experiment-panel[data-theme="light"] {
+  --panel-background: #f1f4ef;
+  --panel-foreground: #283739;
+  --panel-muted: #475a54;
+  --panel-border: #bac8bf;
+  --panel-focus: #974932;
+  color-scheme: light;
+}
+.experiment-panel::backdrop { background: #080c1070; }
+.experiment-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.experiment-panel-heading h2 { margin: 0; font: italic 28px/1.2 Georgia, "Times New Roman", serif; overflow-wrap: anywhere; }
+.experiment-panel-close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+.experiment-panel-close:hover { background: color-mix(in srgb, currentColor 10%, transparent); }
+.experiment-panel-close svg { width: 18px; height: 18px; stroke-width: 1.75; }
+.experiment-panel-content { margin: 22px 0; color: var(--panel-muted); overflow-wrap: anywhere; word-break: keep-all; }
+.experiment-panel-content p { margin: 0 0 16px; }
+.experiment-panel-content p:last-child { margin-bottom: 0; }
+.experiment-panel-navigation { border-top: 1px solid var(--panel-border); padding-top: 16px; }
+.experiment-panel-navigation a { color: var(--panel-foreground); text-underline-offset: 4px; }
+.experiment-panel :focus-visible { outline: 2px solid var(--panel-focus); outline-offset: 3px; }
+@media (max-width: 600px) {
+  .experiment-panel { inset: auto 12px 12px; width: calc(100% - 24px); max-height: calc(100svh - 24px); padding: 20px; }
+}

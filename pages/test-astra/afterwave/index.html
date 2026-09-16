@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0c0e10">
+    <meta name="description" content="Afterwave. A living surface that holds the trace of a passing touch.">
+    <title>Afterwave</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230c0e10'/%3E%3Ctext x='7' y='25' fill='%23d6ddd2' font-family='Georgia' font-size='27' font-style='italic'%3Ea%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="script.js"></script>
+    <script>try { localStorage.setItem('footprint:endpoint', 'https://footprint-trail.tes-cha.workers.dev/'); } catch {}</script>
+    <script type="module" src="https://fastly.jsdelivr.net/npm/@tes.cha/footprint/footprint.bundle.js"></script>
+  </head>
+  <body>
+    <div class="page">
+      <header class="header">
+        <div class="identity">
+          <span class="eyebrow">FIELD NOTES &nbsp;/&nbsp; 002</span>
+          <h1>Afterwave<span>.</span></h1>
+          <p>Nothing leaves all at once.</p>
+        </div>
+        <div class="header-right">
+          <div class="live"><span></span><output id="live-label">IN MOTION</output></div>
+          <div class="actions" role="group" aria-label="Playback and image">
+            <button id="play" class="icon" aria-label="Pause" data-tip="Pause" data-icon="pause"></button>
+            <button id="reset" class="icon" aria-label="New composition" data-tip="New composition" data-icon="shuffle"></button>
+            <button id="clear" class="icon" aria-label="Still the surface" data-tip="Still the surface" data-icon="rotate-ccw"></button>
+            <i class="separator" aria-hidden="true"></i>
+            <button id="save" class="icon" aria-label="Save image" data-tip="Save image" data-icon="download"></button>
+            <button id="fullscreen" class="icon" aria-label="Fullscreen" data-tip="Fullscreen" data-icon="maximize"></button>
+          </div>
+        </div>
+      </header>
+
+      <main id="stage" aria-label="Interactive wave surface">
+        <canvas id="surface" role="img" aria-label="A metallic wave surface that preserves and propagates each touch"></canvas>
+        <div class="annotations" aria-hidden="true"><span>TRACES / <output id="trace-count">000</output></span><span id="material-label">01 &nbsp; / &nbsp; PLATINUM</span></div>
+        <div id="emitters" role="group" aria-label="Movable wave sources">
+          <button class="emitter" data-source="0" aria-label="Wave source one" aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight"><span>01</span><i></i></button>
+          <button class="emitter" data-source="1" aria-label="Wave source two" aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight"><span>02</span><i></i></button>
+        </div>
+        <div id="cursor" aria-hidden="true"></div>
+        <div class="surface-foot" aria-hidden="true"><span>CONTINUOUS FIELD</span><span id="elapsed">00:00.0</span></div>
+        <p id="notice" role="status"></p>
+        <noscript><p class="error">JavaScript is required to render the surface.</p></noscript>
+      </main>
+
+      <footer class="controls">
+        <fieldset class="material-group">
+          <legend>FINISH</legend>
+          <div class="materials">
+            <label class="material platinum" data-tip="Platinum"><input type="radio" name="material" value="0" aria-label="Platinum finish" checked><span></span></label>
+            <label class="material nacre" data-tip="Nacre"><input type="radio" name="material" value="1" aria-label="Nacre finish"><span></span></label>
+            <label class="material graphite" data-tip="Graphite"><input type="radio" name="material" value="2" aria-label="Graphite finish"><span></span></label>
+          </div>
+        </fieldset>
+        <div class="range-group"><label for="memory">MEMORY <output id="memory-value">80</output></label><input id="memory" type="range" min="0" max="100" value="80"></div>
+        <div class="range-group"><label for="radius">RIPPLE SIZE <output id="radius-value">22</output></label><input id="radius" type="range" min="10" max="40" value="22"></div>
+        <div class="range-group"><label for="light">LIGHT <output id="light-value">135&#176;</output></label><input id="light" type="range" min="0" max="360" value="135"></div>
+        <div class="toggles">
+          <label class="toggle"><span>SOURCES</span><input id="sources-on" type="checkbox" role="switch" checked><i aria-hidden="true"></i></label>
+          <label class="toggle"><span>ORBIT</span><input id="orbit" type="checkbox" role="switch"><i aria-hidden="true"></i></label>
+        </div>
+      </footer>
+      <div class="colophon"><span>THE MEMORY OF MOTION</span><span>AFTERWAVE / 2026</span></div>
+    </div>
+  </body>
+</html>
