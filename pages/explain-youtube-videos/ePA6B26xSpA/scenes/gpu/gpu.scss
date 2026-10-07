@@ -1,0 +1,151 @@
+.gpu-bezel {
+  fill: #050506;
+  stroke: var(--d-line);
+  stroke-width: 3;
+}
+.gpu-stand {
+  fill: var(--d-grid);
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.gpu-flash rect {
+  fill: none;
+  stroke: var(--d-yellow);
+  stroke-width: 2;
+}
+.gpu-caption {
+  font-size: 34px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.gpu-heading {
+  font-size: 44px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.gpu-sub {
+  font-size: 30px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.gpu-left {
+  text-anchor: start;
+}
+.gpu-engine {
+  fill: var(--d-green) !important;
+  font-weight: 700;
+}
+.gpu-task {
+  fill: color-mix(in srgb, var(--d-orange) 10%, transparent);
+  stroke: var(--d-line);
+  stroke-width: 2;
+
+  &.active {
+    fill: var(--d-orange);
+    stroke: var(--d-orange);
+  }
+  &.done {
+    fill: color-mix(in srgb, var(--d-orange) 35%, transparent);
+    stroke: var(--d-orange);
+  }
+}
+.gpu-core {
+  fill: color-mix(in srgb, var(--d-orange) 8%, transparent);
+  stroke: var(--d-orange);
+  stroke-width: 4;
+
+  &.active {
+    fill: color-mix(in srgb, var(--d-orange) 22%, transparent);
+  }
+}
+.gpu-person {
+  fill: var(--d-text);
+}
+.gpu-frame {
+  fill: color-mix(in srgb, var(--d-blue) 6%, transparent);
+  stroke: var(--d-blue);
+  stroke-width: 3;
+
+  &.engine {
+    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--d-green) 8%, transparent);
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--d-green) 60%, transparent));
+  }
+}
+.gpu-cells rect {
+  fill: color-mix(in srgb, var(--d-blue) 18%, transparent);
+  stroke: color-mix(in srgb, var(--d-blue) 45%, transparent);
+  stroke-width: 1.5;
+}
+.gpu-cells.lit rect {
+  fill: color-mix(in srgb, var(--d-blue) 70%, transparent);
+  stroke: var(--d-blue);
+}
+.gpu-chip .gpu-person {
+  fill: var(--d-background);
+}
+.gpu-net-edge {
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.gpu-net-node {
+  fill: var(--d-background);
+  stroke: var(--d-blue);
+  stroke-width: 3;
+}
+.gpu-op {
+  font-size: 34px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.gpu-token {
+  font-size: 30px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.gpu-arrow {
+  fill: none;
+  stroke: var(--d-muted);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.gpu-cuda-box {
+  fill: var(--d-background);
+  stroke: var(--d-green);
+  stroke-width: 3;
+}
+.gpu-cuda-text {
+  font-size: 30px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--d-green) !important;
+}
+.gpu-lane-name {
+  font-size: 32px;
+  font-weight: 700;
+}
+.gpu-track {
+  fill: var(--d-grid);
+}
+.gpu-bar {
+  fill: var(--d-muted);
+
+  &.fast {
+    fill: var(--d-blue);
+  }
+}
+.gpu-lane-label {
+  font-size: 30px;
+  font-weight: 600;
+  fill: var(--d-muted) !important;
+}
+.gpu-faster {
+  font-size: 32px;
+  font-weight: 700;
+  text-anchor: end;
+  fill: var(--d-yellow) !important;
+}
