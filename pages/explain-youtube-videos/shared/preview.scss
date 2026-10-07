@@ -1,0 +1,18 @@
+@use 'page';
+@use 'scenes';
+
+html, body {
+  overflow: hidden;
+}
+#scenes {
+  width: 100vw;
+  height: 100vh;
+  aspect-ratio: auto;
+}
+// 스크린샷이 전환 도중에 찍히지 않도록 전환 효과를 끈다.
+#scenes * {
+  transition: none !important;
+}
+.scene {
+  transition: none !important;
+}

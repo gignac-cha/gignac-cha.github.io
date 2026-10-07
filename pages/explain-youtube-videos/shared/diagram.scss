@@ -1,0 +1,31 @@
+.diagram {
+  --d-background: #0f1013;
+  --d-grid: #1c1d22;
+  --d-line: #3a3b44;
+  --d-text: #ededef;
+  --d-muted: #8b8b94;
+  --d-subtle: #55565e;
+  --d-blue: #5b9dff;
+  --d-orange: #ffad5b;
+  --d-green: #4fd18b;
+  --d-red: #ff6b6b;
+  --d-purple: #b18cff;
+  --d-yellow: #ffd75b;
+  background-color: var(--d-background);
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  text {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif;
+    fill: var(--d-text);
+  }
+}
+.diagram-title {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  fill: var(--d-muted) !important;
+}
