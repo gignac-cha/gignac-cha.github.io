@@ -3,6 +3,7 @@ import { renderSceneIndex } from '../shared/scene-index';
 import { syncScenes, type Scene } from '../shared/scenes';
 import { loadPlayer } from '../shared/youtube';
 import { createAlexNetTricksScene } from './scenes/alexnet-tricks/scene';
+import { createAttentionScene } from './scenes/attention/scene';
 import { createChatGPTScene } from './scenes/chatgpt/scene';
 import { createCnnScene } from './scenes/cnn/scene';
 import { createLstmScene } from './scenes/lstm/scene';
@@ -21,6 +22,7 @@ const scenes: Scene[] = [
   createAlexNetTricksScene(),
   createWord2VecScene(),
   createSeq2SeqScene(),
+  createAttentionScene(),
 ];
 
 const player = await loadPlayer('video');

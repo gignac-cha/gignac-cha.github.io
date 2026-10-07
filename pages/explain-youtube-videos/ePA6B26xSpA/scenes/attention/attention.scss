@@ -1,0 +1,106 @@
+.att-row-label {
+  font-size: 28px;
+  font-weight: 600;
+  fill: var(--d-muted) !important;
+}
+.att-chip {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 32px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  &.source.focus rect {
+    stroke: var(--d-yellow);
+    fill: color-mix(in srgb, var(--d-yellow) 16%, var(--d-background));
+  }
+  &.slot {
+    rect {
+      stroke-dasharray: 8 8;
+      stroke: var(--d-subtle);
+    }
+    text {
+      fill: var(--d-subtle) !important;
+    }
+    &.current rect {
+      stroke: var(--d-yellow);
+    }
+  }
+  &.output rect {
+    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--d-green) 16%, var(--d-background));
+  }
+}
+.att-summary {
+  line {
+    stroke: var(--d-line);
+    stroke-width: 3;
+  }
+}
+.att-summary-ring {
+  fill: var(--d-background);
+  stroke: var(--d-subtle);
+  stroke-width: 3;
+}
+.att-summary-label {
+  font-size: 28px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.att-link {
+  stroke: var(--d-yellow);
+  stroke-linecap: round;
+}
+.att-pointer {
+  fill: var(--d-yellow);
+}
+.att-matrix-label {
+  font-size: 30px;
+  font-weight: 600;
+  fill: var(--d-muted) !important;
+}
+.att-cell {
+  fill: var(--d-yellow);
+}
+.att-axis {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 3;
+}
+.att-axis-label {
+  font-size: 28px;
+  fill: var(--d-muted) !important;
+}
+.att-curve {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+
+  &.summary {
+    stroke: var(--d-red);
+  }
+  &.attention {
+    stroke: var(--d-green);
+  }
+  &.highlight {
+    stroke-width: 8;
+    filter: drop-shadow(0 0 10px var(--d-green));
+  }
+}
+.att-legend {
+  font-size: 30px;
+  font-weight: 700;
+
+  &.summary {
+    fill: var(--d-red) !important;
+  }
+  &.attention {
+    fill: var(--d-green) !important;
+  }
+}
