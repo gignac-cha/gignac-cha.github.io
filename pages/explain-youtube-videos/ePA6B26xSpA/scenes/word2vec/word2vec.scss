@@ -1,0 +1,196 @@
+.w2v-caption {
+  font-size: 28px;
+  font-weight: 600;
+  fill: var(--d-muted) !important;
+}
+.w2v-pixel {
+  &.w2v-pixel-empty {
+    fill: #191b21;
+  }
+  &.w2v-pixel-r {
+    fill: #e0524f;
+  }
+  &.w2v-pixel-g {
+    fill: var(--d-green);
+  }
+  &.w2v-pixel-s {
+    fill: #8a5a3a;
+  }
+}
+.w2v-number {
+  font-size: 28px;
+  font-weight: 600;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+  fill: var(--d-subtle) !important;
+
+  &.on-color {
+    fill: #0f1013 !important;
+  }
+}
+.w2v-big-word {
+  font-size: 104px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.w2v-codes {
+  font-size: 36px;
+  font-weight: 600;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+  fill: var(--d-blue) !important;
+}
+.w2v-no-link {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 3;
+  stroke-dasharray: 10 10;
+}
+.w2v-cross {
+  circle {
+    fill: var(--d-background);
+    stroke: var(--d-red);
+    stroke-width: 3;
+  }
+  path {
+    stroke: var(--d-red);
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+}
+
+.w2v-unknown {
+  line {
+    stroke: var(--d-line);
+    stroke-width: 3;
+    stroke-dasharray: 10 10;
+  }
+  circle {
+    fill: var(--d-background);
+    stroke: var(--d-subtle);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-muted) !important;
+  }
+}
+
+.w2v-grid line {
+  stroke: var(--d-grid);
+  stroke-width: 2;
+}
+
+.w2v-chip {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+}
+.w2v-chip-label {
+  font-size: 34px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.w2v-chip-id {
+  font-size: 28px;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+  fill: var(--d-subtle) !important;
+}
+.w2v-dot {
+  fill: var(--d-muted);
+}
+.w2v-label {
+  font-size: 30px;
+  fill: var(--d-muted) !important;
+  // 뒤로 지나가는 선이 글자를 가르지 않도록 배경색 테두리를 두른다.
+  paint-order: stroke;
+  stroke: var(--d-background);
+  stroke-width: 10px;
+  stroke-linejoin: round;
+}
+.w2v-point {
+  &.focus {
+    .w2v-dot {
+      fill: var(--d-blue);
+    }
+    .w2v-label {
+      font-weight: 700;
+      fill: var(--d-blue) !important;
+    }
+  }
+  &.reference {
+    .w2v-dot {
+      fill: var(--d-orange);
+    }
+    .w2v-label {
+      font-weight: 700;
+      fill: var(--d-orange) !important;
+    }
+  }
+  &.hit {
+    .w2v-dot {
+      fill: var(--d-green);
+    }
+    .w2v-label {
+      font-size: 34px;
+      font-weight: 700;
+      fill: var(--d-green) !important;
+    }
+  }
+}
+
+.w2v-friend {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-subtle);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+  }
+  text {
+    font-size: 28px;
+    text-anchor: middle;
+    fill: var(--d-muted) !important;
+  }
+}
+.w2v-friend-lines line {
+  stroke: var(--d-yellow);
+  stroke-width: 2;
+  stroke-opacity: .6;
+}
+
+.w2v-arrow {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  &.reference {
+    stroke: var(--d-orange);
+  }
+  &.result {
+    stroke: var(--d-blue);
+  }
+}
+.w2v-parallel {
+  fill: none;
+  stroke: var(--d-subtle);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+.w2v-target {
+  fill: none;
+  stroke: var(--d-green);
+  stroke-width: 3;
+  stroke-dasharray: 6 5;
+}
+.w2v-formula {
+  font-size: 34px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-text) !important;
+}
