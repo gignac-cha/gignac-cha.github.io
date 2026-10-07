@@ -1,0 +1,136 @@
+.cnn-card {
+  fill: color-mix(in srgb, var(--d-text) 4%, transparent);
+  stroke: var(--d-grid);
+  stroke-width: 2;
+}
+.cnn-stroke {
+  fill: none;
+  stroke: var(--d-text);
+  stroke-width: 12;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cnn-label {
+  font-size: 30px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.cnn-heading {
+  font-size: 30px;
+  font-weight: 600;
+}
+.cnn-center {
+  text-anchor: middle;
+}
+.cnn-note {
+  font-size: 28px;
+  fill: var(--d-muted) !important;
+}
+.cnn-cell {
+  fill: none;
+  stroke: var(--d-grid);
+  stroke-width: 1.5;
+}
+.cnn-ink {
+  fill: var(--d-text);
+}
+.cnn-window {
+  fill: color-mix(in srgb, var(--d-yellow) 10%, transparent);
+  stroke: var(--d-yellow);
+  stroke-width: 4;
+
+  &.cnn-same {
+    stroke-width: 6;
+  }
+}
+.cnn-link {
+  stroke: var(--d-yellow);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+}
+.cnn-cursor {
+  fill: none;
+  stroke: var(--d-yellow);
+  stroke-width: 3;
+}
+.cnn-weight {
+  stroke: var(--d-background);
+  stroke-width: 3;
+}
+.cnn-weight-plus {
+  fill: var(--d-blue);
+}
+.cnn-weight-minus {
+  fill: color-mix(in srgb, var(--d-red) 45%, var(--d-background));
+}
+.cnn-kernel-frame {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 6;
+
+  &.cnn-same {
+    stroke: var(--d-yellow);
+  }
+}
+.cnn-response {
+  fill: var(--d-blue);
+}
+.cnn-ring {
+  fill: none;
+  stroke: var(--d-green);
+  stroke-width: 4;
+}
+.cnn-kept {
+  fill: var(--d-green) !important;
+}
+.cnn-count {
+  font-size: 34px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.cnn-count-many {
+  text-anchor: end;
+  transition: fill .3s;
+
+  &.cnn-count-dropped {
+    fill: var(--d-subtle) !important;
+  }
+}
+.cnn-count-few {
+  text-anchor: start;
+  fill: var(--d-green) !important;
+}
+.cnn-strike {
+  stroke: var(--d-red);
+  stroke-width: 4;
+}
+.cnn-tile {
+  fill: color-mix(in srgb, var(--d-text) 4%, transparent);
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.cnn-tile-stroke {
+  fill: none;
+  stroke: var(--d-blue);
+  stroke-width: 9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cnn-fan line {
+  stroke: var(--d-line);
+  stroke-width: 1.5;
+}
+.cnn-bar-label {
+  font-size: 34px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.cnn-bar-track {
+  fill: color-mix(in srgb, var(--d-text) 6%, transparent);
+}
+.cnn-bar {
+  fill: var(--d-subtle);
+}
+.cnn-bar-win {
+  fill: var(--d-green);
+}
