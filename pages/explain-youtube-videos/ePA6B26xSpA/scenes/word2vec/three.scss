@@ -31,52 +31,9 @@
     stroke: var(--d-background);
     stroke-width: 6px;
   }
-  .w2v3-number {
-    font-size: 20px;
-    font-weight: 700;
-    text-anchor: middle;
-    font-variant-numeric: tabular-nums;
+  .w2v3-note {
+    font-size: 21px;
     fill: var(--d-subtle);
-
-    &.on-color {
-      fill: #0f1013;
-    }
-  }
-  .w2v3-chip {
-    rect {
-      fill: #1b1d23;
-      stroke: var(--d-line);
-      stroke-width: 2;
-    }
-  }
-  .w2v3-chip-label {
-    font-size: 32px;
-    font-weight: 600;
-    text-anchor: middle;
-  }
-  .w2v3-chip-id {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 24px;
-    text-anchor: middle;
-    fill: var(--d-subtle);
-  }
-  .w2v3-unknown {
-    stroke: var(--d-subtle);
-    stroke-width: 2;
-    stroke-dasharray: 8 8;
-  }
-  .w2v3-question {
-    circle {
-      fill: var(--d-background);
-      stroke: var(--d-line);
-      stroke-width: 2;
-    }
-    text {
-      font-size: 28px;
-      font-weight: 700;
-      text-anchor: middle;
-      fill: var(--d-muted);
-    }
   }
   .w2v3-friend-line {
     stroke: var(--d-orange);

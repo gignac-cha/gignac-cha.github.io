@@ -13,6 +13,8 @@ const places: Record<string, [number, number]> = {
   한국: [1060, 280], 일본: [1260, 230], 서울: [1120, 420], 도쿄: [1328, 378],
 };
 const fillOrder = ['포도', '바나나', '우유', '버스', '자전거', '남자', '여자', '왕', '여왕', '한국', '일본', '서울', '도쿄'];
+// 지도가 나오기 전 번호표가 붙은 세 기호의 자리. Three.js 판은 이 자리에서 3D 좌표로 옮겨 간다.
+export const triangle: Record<string, [number, number]> = { 사과: [520, 360], 배: [1080, 360], 자동차: [800, 700] };
 
 const apple = ['..sg..', '.rrrr.', 'rrrrrr', 'rrrrrr', '.rrrr.', '..rr..'];
 const brightness: Record<string, number> = { '.': 12, r: 186, g: 152, s: 71 };
@@ -73,7 +75,8 @@ const createPoint = (parent: SVGElement, name: string, id?: string): Point => {
   return { group, label, chip };
 };
 
-const createWord2VecBase = (): Scene => {
+// SVG 판. Three.js 판도 지도가 나오기 전(사진·기호·번호표)은 이 그림을 그대로 쓴다.
+export const createWord2VecSvg = (): Scene => {
   const { element, root } = createDiagram('w2v', '단어 좌표(Word2Vec)');
 
   const grid = svg('g', { class: 'w2v-grid' }, root);
@@ -88,7 +91,6 @@ const createWord2VecBase = (): Scene => {
   const written = createWord(root);
 
   const unknownEdges = svg('g', { class: 'w2v-unknown' }, root);
-  const triangle: Record<string, [number, number]> = { 사과: [520, 360], 배: [1080, 360], 자동차: [800, 700] };
   const pairs: Array<[string, string]> = [['사과', '배'], ['사과', '자동차'], ['배', '자동차']];
   const questions = pairs.map(([a, b]) => {
     const [x1, y1] = triangle[a];
@@ -261,6 +263,6 @@ const createWord2VecBase = (): Scene => {
 
 // 임시 비교용: 장면 오른쪽 위 탭으로 Three.js 판과 바꿔 본다. Three.js 는 이 탭을 고를 때만 불러온다.
 export const createWord2VecScene = (): Scene =>
-  withVariants(createWord2VecBase(), [
+  withVariants(createWord2VecSvg(), [
     { id: 'three', label: 'Three.js', load: () => import('./three').then(({ createWord2VecThree }) => createWord2VecThree()) },
   ]);

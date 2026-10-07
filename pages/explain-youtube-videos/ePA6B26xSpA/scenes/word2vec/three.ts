@@ -1,11 +1,14 @@
 import './three.scss';
 import * as THREE from 'three';
-import { appear, clamp, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
+import { appear, clamp, ease, HEIGHT, lerp, progress, setAttributes, svg, text, WIDTH } from '../../../shared/diagram';
 import { createThreeDiagram } from '../../../shared/three-diagram';
 import type { Variant } from '../../../shared/variants';
-import { end, king, map, pixels, seoul, symbols, word } from './timing';
+import { createWord2VecSvg, triangle } from './scene';
+import { end, king, map, seoul } from './timing';
 
-// Three.js 판 (임시 비교용): 단어가 실제 3D 좌표 공간에 놓이는 모습.
+// Three.js 판 (임시 비교용): 지도가 나오기 전(사진은 숫자 · 단어는 기호 · 번호표)은 SVG 판을 그대로 보여 주고,
+// "단어를 좌표로"부터 3D 좌표 공간으로 넘어간다. 처음엔 위에서 내려다봐 2D 격자처럼 보이다가 기울어지며 높이가 드러나고,
+// 번호표가 붙은 세 기호는 SVG 판의 자리에서 출발해 3D 좌표의 점이 된다.
 // 모든 움직임은 재생 시간만으로 정해지므로 탐색해도 같은 화면이 나온다.
 
 type Vec = [number, number, number];
@@ -53,12 +56,8 @@ const words: Record<string, { at: Vec; cluster: Cluster }> = {
 };
 const fillOrder = ['포도', '바나나', '우유', '버스', '자전거', '남자', '여자', '왕', '여왕', '한국', '일본', '서울', '도쿄'];
 
-// 지도가 나오기 전, 번호표가 붙은 기호로 떠 있던 자리.
-const tokens: Record<string, { from: Vec; id: string }> = {
-  사과: { from: [-2.8, 2.3, .8], id: '#1824' },
-  배: { from: [2.8, 2.3, .8], id: '#3301' },
-  자동차: { from: [0, .9, 1.8], id: '#907' },
-};
+// 번호표가 붙은 세 기호(SVG 판과 같은 번호).
+const ids: Record<string, string> = { 사과: '#1824', 배: '#3301', 자동차: '#907' };
 const teaFrom: Vec = [3, 3.6, -3.6];
 const friends: Array<{ name: string; at: Vec; shown: number }> = [
   { name: '컵', at: [-1.1, 3.6, -1.6], shown: map.friends[0] },
@@ -66,17 +65,13 @@ const friends: Array<{ name: string; at: Vec; shown: number }> = [
   { name: '아침', at: [-1, 1.4, -3.8], shown: map.friends[2] },
 ];
 
-// 사과 사진: 픽셀 밝기만큼 앞으로 솟아 숫자가 된다.
-const apple = ['..sg..', '.rrrr.', 'rrrrrr', 'rrrrrr', '.rrrr.', '..rr..'];
-const brightness: Record<string, number> = { '.': 12, r: 186, g: 152, s: 71 };
-const cellColors: Record<string, number> = { '.': 0x1c1e25, r: 0xe0524f, g: 0x4fd18b, s: 0x8a5a3a };
-const pixelPitch = .5;
-const pixelSize = .46;
+// SVG 판에서 3D 로 바뀌는 시간: "단어를 좌표로" 직전에 겹쳐 바뀐다.
+const handoff = { at: map.show, duration: .6 };
+// 실제 단어 벡터는 수백 차원이라는 주석: 지도를 다 그린 뒤 조용한 틈("스스로 그렸어요")에 나타나 끝까지 남는다.
+const noteAt = 1418.9;
 
 const shownAt = (name: string) => {
-  if (name === '사과') return symbols.apple;
-  if (name === '배') return symbols.pear;
-  if (name === '자동차') return symbols.car;
+  if (name === '사과' || name === '배' || name === '자동차') return map.show;
   if (name === '커피') return map.coffee;
   if (name === '차') return map.tea;
   return map.fill + fillOrder.indexOf(name) * .18;
@@ -86,7 +81,11 @@ const vector = (v: Vec) => new THREE.Vector3(v[0], v[1], v[2]);
 const format = (n: number) => `${n < 0 ? '−' : ''}${Math.abs(n).toFixed(1)}`;
 
 export const createWord2VecThree = (): Variant => {
+  // 지도가 나오기 전은 SVG 판 그대로. 3D 층은 그 위에 겹쳐 두고 "단어를 좌표로"부터 보인다.
+  const base = createWord2VecSvg();
   const { element, root, scene, camera, render, project, look } = createThreeDiagram('word2vec-three', '단어 좌표(Word2Vec)');
+  base.element.append(element);
+
   scene.fog = new THREE.Fog(0x0f1013, 16, 32);
   scene.add(new THREE.AmbientLight(0xffffff, .55));
   const sun = new THREE.DirectionalLight(0xffffff, 1.15);
@@ -105,23 +104,6 @@ export const createWord2VecThree = (): Variant => {
   gridGeometry.setAttribute('position', new THREE.Float32BufferAttribute(gridPoints, 3));
   const gridMaterial = new THREE.LineBasicMaterial({ color: 0x2c2d35, transparent: true, opacity: 0 });
   scene.add(new THREE.LineSegments(gridGeometry, gridMaterial));
-
-  // 사과 사진.
-  const pixelGroup = new THREE.Group();
-  pixelGroup.position.set(-2.8, .5, 0);
-  scene.add(pixelGroup);
-  const cellMaterials = Object.fromEntries(
-    Object.entries(cellColors).map(([cell, color]) => [cell, new THREE.MeshStandardMaterial({ color, roughness: .55, transparent: true })]),
-  );
-  const tileGeometry = new THREE.BoxGeometry(pixelSize, pixelSize, 1);
-  const tiles = apple.flatMap((row, y) =>
-    [...row].map((cell, x) => {
-      const mesh = new THREE.Mesh(tileGeometry, cellMaterials[cell]);
-      mesh.position.set((x - 2.5) * pixelPitch, (5 - y) * pixelPitch, 0);
-      pixelGroup.add(mesh);
-      return { mesh, cell, depth: .06 + (brightness[cell] / 186) * 1.2 };
-    }),
-  );
 
   // 단어 점: 공, 바닥까지 내린 선, 바닥의 고리로 높이를 읽게 한다.
   const sphereGeometry = new THREE.SphereGeometry(.16, 28, 18);
@@ -192,29 +174,8 @@ export const createWord2VecThree = (): Variant => {
 
   // 위에 겹치는 글자(SVG).
   const overlay = svg('g', {}, root);
-  const pixelNumbers = svg('g', {}, overlay);
-  const numberTexts = tiles.map(({ cell }) => text(pixelNumbers, 0, 0, String(brightness[cell]), { class: `w2v3-number ${cell === '.' ? '' : 'on-color'}` }));
-  const photoCaption = text(overlay, 0, 0, '사진', { class: 'w2v-caption', 'text-anchor': 'middle' });
-
-  const written = svg('g', {}, overlay);
-  text(written, 1150, 300, '단어', { class: 'w2v-caption', 'text-anchor': 'middle' });
-  text(written, 1150, 420, '사과', { class: 'w2v-big-word' });
-  const codes = text(written, 1150, 490, '49324 · 44284', { class: 'w2v-codes' });
-  const codesLabel = text(written, 1150, 536, '글자 번호일 뿐', { class: 'w2v-caption', 'text-anchor': 'middle' });
-  const noLink = svg('path', { class: 'w2v-no-link' }, written);
-  const cross = svg('g', { class: 'w2v-cross' }, written);
-  svg('circle', { r: 26 }, cross);
-  svg('path', { d: 'M-10 -10 L10 10 M10 -10 L-10 10' }, cross);
-
+  const note = text(overlay, 56, 114, '실제 단어 좌표는 300차원 · 3D로 줄여 본 모습', { class: 'w2v3-note' });
   const lines = svg('g', { class: 'w2v3-lines' }, overlay);
-  const unknownPairs: Array<[string, string]> = [['사과', '배'], ['사과', '자동차'], ['배', '자동차']];
-  const unknown = unknownPairs.map(() => {
-    const line = svg('line', { class: 'w2v3-unknown' }, lines);
-    const mark = svg('g', { class: 'w2v3-question' }, lines);
-    svg('circle', { r: 24 }, mark);
-    text(mark, 0, 10, '?');
-    return { line, mark };
-  });
   const friendLines = friends.map(() => ({ coffee: svg('line', { class: 'w2v3-friend-line' }, lines), tea: svg('line', { class: 'w2v3-friend-line' }, lines) }));
 
   const labels = svg('g', {}, overlay);
@@ -226,12 +187,13 @@ export const createWord2VecThree = (): Variant => {
     text(group, 0, 10, name);
     return group;
   });
-  const tokenChips = Object.fromEntries(
-    Object.entries(tokens).map(([name, { id }]) => {
-      const group = svg('g', { class: 'w2v3-chip' }, labels);
+  // 번호표: SVG 판과 같은 모양·자리라 판이 바뀌어도 그대로 이어진다.
+  const chips = Object.fromEntries(
+    Object.entries(ids).map(([name, id]) => {
+      const group = svg('g', { class: 'w2v-chip' }, labels);
       svg('rect', { x: -86, y: -36, width: 172, height: 72, rx: 36 }, group);
-      text(group, 0, 12, name, { class: 'w2v3-chip-label' });
-      text(group, 0, 74, id, { class: 'w2v3-chip-id' });
+      text(group, 0, 12, name, { class: 'w2v-chip-label' });
+      text(group, 0, 76, id, { class: 'w2v-chip-id' });
       return [name, group];
     }),
   );
@@ -241,29 +203,44 @@ export const createWord2VecThree = (): Variant => {
     text(overlay, 800, 862, '서울 − 한국 + 일본 ≈ 도쿄', { class: 'w2v3-formula' }),
   ];
 
-  // 카메라: 지도가 나오면 조금 물러나 높이를 잡고, 이야기 동안 천천히 돌며 깊이를 보여 준다.
+  // 카메라: 처음엔 위에서 내려다봐 SVG 판의 격자처럼 납작하게 보이다가, 기울어지며 세 번째 축(높이)이 드러난다.
+  // 그 뒤 이야기 동안 천천히 돌며 깊이를 보여 준다.
   const focus = new THREE.Vector3();
   const placeCamera = (time: number) => {
-    const onMap = ease(progress(time, map.show, 1.6));
+    const tilt = ease(progress(time, map.show + .3, 2.6));
     const sweep = clamp((time - map.show) / (end - map.show));
-    const azimuth = lerp(-.42, -.2, onMap) + onMap * .55 * Math.sin(Math.PI * sweep);
-    const elevation = lerp(.22, .46, onMap);
-    const radius = lerp(13, 16, onMap);
-    focus.set(lerp(-.6, 0, onMap), lerp(1.9, 1.5, onMap), 0);
+    const azimuth = lerp(0, -.2, tilt) + tilt * .55 * Math.sin(Math.PI * sweep);
+    const elevation = lerp(1.32, .46, tilt);
+    // 내려다볼 때는 격자 전체가 SVG 판 격자처럼 화면 안에 들어오게 멀리서 보고, 기울며 다가간다.
+    const radius = lerp(21, 16, tilt);
+    focus.set(0, lerp(.2, 1.5, tilt), 0);
     camera.position.set(
       focus.x + radius * Math.cos(elevation) * Math.sin(azimuth),
       focus.y + radius * Math.sin(elevation),
       focus.z + radius * Math.cos(elevation) * Math.cos(azimuth),
     );
     look(focus);
-    camera.updateMatrixWorld();
   };
 
-  // 시간에 따른 단어 자리: 기호는 지도로 옮겨 가고, 차는 커피 곁으로 끌려온다.
+  // 화면(SVG 좌표)의 점을, 3D 점 depthOf 와 같은 깊이의 3D 위치로 되돌린다.
+  const unproject = (x: number, y: number, depthOf: THREE.Vector3) => {
+    const depth = depthOf.clone().project(camera).z;
+    return new THREE.Vector3((x / WIDTH) * 2 - 1, 1 - (y / HEIGHT) * 2, depth).unproject(camera);
+  };
+
+  // 시간에 따른 단어 자리: 번호표 기호는 SVG 판의 자리에서 3D 좌표로 날아가고, 차는 커피 곁으로 끌려온다.
   const positionOf = (name: string, time: number): Vec => {
     const { at } = words[name];
-    if (name in tokens) {
-      return mix(tokens[name].from, at, ease(progress(time, map.place, 1)));
+    if (name in triangle) {
+      const t = ease(progress(time, map.place, 1));
+      if (t >= 1) {
+        return at;
+      }
+      const [sx, sy] = triangle[name];
+      const target = vector(at);
+      const goal = project(target);
+      const point = unproject(lerp(sx, goal.x, t), lerp(sy, goal.y, t), target);
+      return [point.x, point.y, point.z];
     }
     if (name === '차') {
       return mix(teaFrom, at, ease(progress(time, map.teaMove, 1.1)));
@@ -273,23 +250,20 @@ export const createWord2VecThree = (): Variant => {
 
   const screen = (v: Vec) => project(vector(v));
 
-  const update = (time: number) => {
+  const set = (target: HTMLElement, opacity: number) => {
+    const value = opacity >= 1 ? '' : opacity.toFixed(3);
+    if (target.style.opacity !== value) {
+      target.style.opacity = value;
+    }
+    const visibility = opacity > 0 ? '' : 'hidden';
+    if (target.style.visibility !== visibility) {
+      target.style.visibility = visibility;
+    }
+  };
+
+  const update3d = (time: number) => {
     placeCamera(time);
 
-    // 사진은 숫자.
-    const photo = appear(time, pixels.show, .4) * (1 - appear(time, symbols.show, .5));
-    const rise = ease(progress(time, pixels.numbers, .9));
-    pixelGroup.visible = photo > .001;
-    for (const material of Object.values(cellMaterials)) {
-      material.opacity = photo;
-    }
-    for (const { mesh, depth } of tiles) {
-      const value = lerp(.06, depth, rise);
-      mesh.scale.z = value;
-      mesh.position.z = value / 2;
-    }
-
-    // 지도.
     const onMap = appear(time, map.show, .6);
     gridMaterial.opacity = onMap * .9;
 
@@ -297,9 +271,11 @@ export const createWord2VecThree = (): Variant => {
       Object.keys(words).map((name) => {
         const position = positionOf(name, time);
         const shown = appear(time, shownAt(name), .4);
-        // 지도가 나오기 전 세 기호는 번호표로 보이고, 지도 위에서 점이 된다.
-        const asChip = name in tokens ? 1 - appear(time, map.place, .5) : 0;
-        return [name, { position, shown, dot: shown * (1 - asChip), asChip: shown * asChip }];
+        // 지도에 놓이기 전 세 기호는 번호표로 보이고, 좌표로 옮겨 가며 점이 된다.
+        const asChip = name in triangle ? 1 - appear(time, map.place, .5) : 0;
+        // 이름은 번호표가 거의 사라진 뒤에 붙여 두 글자가 겹쳐 보이지 않게 한다.
+        const label = name in triangle ? shown * appear(time, map.place + .35, .4) : shown;
+        return [name, { position, shown, dot: shown * (1 - asChip), asChip: shown * asChip, label }];
       }),
     );
 
@@ -344,45 +320,14 @@ export const createWord2VecThree = (): Variant => {
     render();
 
     // 글자(SVG)를 3D 위치에 붙인다.
-    setAttributes(pixelNumbers, { opacity: (appear(time, pixels.numbers + .3, .5) * photo).toFixed(3) });
-    tiles.forEach(({ mesh }, index) => {
-      const front = mesh.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, 0, mesh.scale.z / 2));
-      const { x, y } = project(front);
-      setAttributes(numberTexts[index], { x: x.toFixed(1), y: (y + 6).toFixed(1) });
-    });
-    const photoTop = project(pixelGroup.localToWorld(new THREE.Vector3(0, 6 * pixelPitch, 0)));
-    setAttributes(photoCaption, { x: photoTop.x.toFixed(1), y: (photoTop.y - 34).toFixed(1), opacity: photo.toFixed(3) });
-
-    setAttributes(written, { opacity: (appear(time, word.show, .4) * (1 - appear(time, symbols.show, .5))).toFixed(3) });
-    setAttributes(codes, { opacity: appear(time, word.codes).toFixed(3) });
-    setAttributes(codesLabel, { opacity: appear(time, word.codes + .4).toFixed(3) });
-    const photoCenter = project(pixelGroup.localToWorld(new THREE.Vector3(1.6, 2.6 * pixelPitch, .9)));
-    setAttributes(noLink, { d: `M1010 400 L${photoCenter.x.toFixed(1)} ${photoCenter.y.toFixed(1)}`, opacity: appear(time, word.noMeaning).toFixed(3) });
-    setAttributes(cross, {
-      transform: `translate(${((1010 + photoCenter.x) / 2).toFixed(1)} ${((400 + photoCenter.y) / 2).toFixed(1)})`,
-      opacity: appear(time, word.noMeaning + .3).toFixed(3),
-    });
-
-    // 번호표만 있을 때는 단어 사이 거리를 알 수 없다.
-    const notYet = appear(time, symbols.car, .5) * (1 - appear(time, map.show, .5));
-    unknownPairs.forEach(([a, b], index) => {
-      const p = screen(states[a].position);
-      const q = screen(states[b].position);
-      setAttributes(unknown[index].line, { x1: p.x.toFixed(1), y1: p.y.toFixed(1), x2: q.x.toFixed(1), y2: q.y.toFixed(1), opacity: notYet.toFixed(3) });
-      setAttributes(unknown[index].mark, {
-        transform: `translate(${((p.x + q.x) / 2).toFixed(1)} ${((p.y + q.y) / 2).toFixed(1)})`,
-        opacity: (appear(time, symbols.unknown + index * .2) * notYet).toFixed(3),
-      });
-    });
-
-    for (const [name, chip] of Object.entries(tokenChips)) {
+    for (const [name, chip] of Object.entries(chips)) {
       const { x, y } = screen(states[name].position);
       setAttributes(chip, { transform: `translate(${x.toFixed(1)} ${y.toFixed(1)})`, opacity: states[name].asChip.toFixed(3) });
     }
 
     for (const [name, label] of Object.entries(wordLabels)) {
       const { x, y } = screen(states[name].position);
-      setAttributes(label, { x: x.toFixed(1), y: (y - 30).toFixed(1), opacity: states[name].dot.toFixed(3), class: `w2v3-label ${role(name)}`.trim() });
+      setAttributes(label, { x: x.toFixed(1), y: (y - 30).toFixed(1), opacity: states[name].label.toFixed(3), class: `w2v3-label ${role(name)}`.trim() });
     }
     const appleSpot = screen(states.사과.position);
     setAttributes(vectorReadout, {
@@ -412,7 +357,20 @@ export const createWord2VecThree = (): Variant => {
     setAttributes(targets[1], { cx: tokyo.x.toFixed(1), cy: tokyo.y.toFixed(1), opacity: appear(time, seoul.plus + .7, .3).toFixed(3) });
     setAttributes(formulas[0], { opacity: (appear(time, king.queen) * (1 - appear(time, seoul.focus, .4))).toFixed(3) });
     setAttributes(formulas[1], { opacity: appear(time, seoul.tokyo).toFixed(3) });
+    setAttributes(note, { opacity: appear(time, noteAt, .6).toFixed(3) });
   };
 
-  return { element, update };
+  const update = (time: number) => {
+    // 3D 층(배경색이 있다)이 SVG 판 위로 서서히 겹쳐 오고, 다 덮이면 SVG 판은 그리지 않는다.
+    const shown = appear(time, handoff.at, handoff.duration);
+    set(element, shown);
+    if (shown < 1) {
+      base.update?.(time);
+    }
+    if (shown > 0) {
+      update3d(time);
+    }
+  };
+
+  return { element: base.element, update };
 };

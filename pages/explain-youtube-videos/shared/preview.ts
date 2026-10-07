@@ -9,5 +9,11 @@ export const renderPreview = (container: HTMLElement, scenes: Scene[]) => {
     container.append(scene.element);
     scene.update?.(time);
   }
+  // 헤드리스 브라우저는 창 크기를 다 맞추기 전에 한 번 그리므로, 크기가 바뀌면 다시 그린다(글자와 3D 위치가 맞도록).
+  window.addEventListener('resize', () => {
+    for (const scene of active) {
+      scene.update?.(time);
+    }
+  });
   document.title = `${time}s · ${active.map((scene) => scene.title).join(', ') || '장면 없음'}`;
 };
