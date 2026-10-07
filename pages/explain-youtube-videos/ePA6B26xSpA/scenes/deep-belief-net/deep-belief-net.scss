@@ -1,0 +1,127 @@
+.dbn-naive-floor {
+  fill: color-mix(in srgb, var(--d-muted) 22%, transparent);
+  stroke: var(--d-muted);
+  stroke-width: 2;
+
+  &.broken {
+    fill: color-mix(in srgb, var(--d-red) 18%, transparent);
+    stroke: var(--d-red);
+  }
+}
+.dbn-caption {
+  font-size: 30px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.dbn-slab {
+  fill: transparent;
+  stroke: var(--d-line);
+  stroke-width: 2;
+  stroke-dasharray: 10 10;
+
+  &.input {
+    fill: color-mix(in srgb, var(--d-text) 5%, transparent);
+    stroke-dasharray: none;
+  }
+  &.building {
+    fill: color-mix(in srgb, var(--d-blue) 8%, transparent);
+    stroke: var(--d-blue);
+    stroke-dasharray: none;
+  }
+  &.solid {
+    fill: color-mix(in srgb, var(--d-blue) 22%, transparent);
+    stroke: var(--d-blue);
+    stroke-width: 3;
+    stroke-dasharray: none;
+  }
+  &.trained {
+    fill: color-mix(in srgb, var(--d-green) 22%, transparent);
+    stroke: var(--d-green);
+    stroke-width: 3;
+    stroke-dasharray: none;
+  }
+}
+.dbn-layer-name {
+  font-size: 28px;
+  font-weight: 600;
+  text-anchor: end;
+  fill: var(--d-muted) !important;
+}
+.dbn-node {
+  fill: var(--d-background);
+  stroke: var(--d-muted);
+  stroke-width: 3;
+
+  &.building {
+    stroke: var(--d-blue);
+  }
+  &.solid {
+    fill: var(--d-blue);
+    stroke: var(--d-blue);
+  }
+  &.trained {
+    fill: var(--d-green);
+    stroke: var(--d-green);
+  }
+}
+.dbn-link {
+  stroke: var(--d-line);
+  stroke-width: 1.5;
+
+  &.hot {
+    stroke: var(--d-orange);
+    stroke-width: 2.5;
+  }
+  &.trained {
+    stroke: color-mix(in srgb, var(--d-green) 45%, transparent);
+  }
+}
+.dbn-particle {
+  fill: var(--d-yellow);
+}
+.dbn-pulse {
+  fill: var(--d-orange);
+  filter: drop-shadow(0 0 12px var(--d-orange));
+}
+.dbn-tag-body {
+  fill: color-mix(in srgb, var(--d-yellow) 18%, transparent);
+  stroke: var(--d-yellow);
+  stroke-width: 3;
+}
+.dbn-tag-hole {
+  fill: var(--d-background);
+  stroke: var(--d-yellow);
+  stroke-width: 2;
+}
+.dbn-tag-text {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.dbn-strike {
+  stroke: var(--d-red);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.dbn-trained {
+  font-size: 40px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-green) !important;
+}
+.dbn-depth {
+  fill: none;
+  stroke: var(--d-muted);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.dbn-deep-title {
+  font-size: 72px;
+  font-weight: 800;
+}
+.dbn-deep-sub {
+  font-size: 34px;
+  fill: var(--d-muted) !important;
+}
