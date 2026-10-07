@@ -2,6 +2,7 @@ import { seekFromHash } from '../shared/permalink';
 import { renderSceneIndex } from '../shared/scene-index';
 import { syncScenes, type Scene } from '../shared/scenes';
 import { loadPlayer } from '../shared/youtube';
+import { createAlexNetTricksScene } from './scenes/alexnet-tricks/scene';
 import { createChatGPTScene } from './scenes/chatgpt/scene';
 import { createCnnScene } from './scenes/cnn/scene';
 import { createLstmScene } from './scenes/lstm/scene';
@@ -15,6 +16,7 @@ const scenes: Scene[] = [
   createCnnScene(),
   createRnnScene(),
   createLstmScene(),
+  createAlexNetTricksScene(),
 ];
 
 const player = await loadPlayer('video');
