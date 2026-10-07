@@ -77,7 +77,7 @@ export const drawFace = (parent: Element, face: Face) => {
   return group;
 };
 
-// 얼굴을 width 픽셀 너비의 캔버스로 그린다. Three.js 판은 이 픽셀로 입자 색과 자리를 정한다.
+// 얼굴을 width 픽셀 너비의 캔버스로 그린다. 학습 중 출력과 Three.js 판의 그림이 이 픽셀을 쓴다.
 export const faceCanvas = (face: Face, width: number, grayscale: boolean) => {
   const large = document.createElement('canvas');
   large.width = FACE_WIDTH;
@@ -124,43 +124,3 @@ export const random = (seed: number) => () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
-type Point = [number, number];
-
-const onEllipse = (cx: number, cy: number, rx: number, ry: number, count: number): Point[] =>
-  Array.from({ length: count }, (_, i) => {
-    const angle = (i / count) * Math.PI * 2;
-    return [cx + Math.cos(angle) * rx, cy + Math.sin(angle) * ry];
-  });
-
-const onCubic = (p0: Point, p1: Point, p2: Point, p3: Point, count: number): Point[] =>
-  Array.from({ length: count }, (_, i) => {
-    const t = i / (count - 1);
-    const u = 1 - t;
-    return [0, 1].map((k) => u ** 3 * p0[k] + 3 * u * u * t * p1[k] + 3 * u * t * t * p2[k] + t ** 3 * p3[k]) as Point;
-  });
-
-const onQuad = (p0: Point, p1: Point, p2: Point, count: number): Point[] =>
-  Array.from({ length: count }, (_, i) => {
-    const t = i / (count - 1);
-    const u = 1 - t;
-    return [0, 1].map((k) => u * u * p0[k] + 2 * u * t * p1[k] + t * t * p2[k]) as Point;
-  });
-
-// 잡음 점들이 모여들 자리: 얼굴 윤곽, 머리선, 눈, 눈썹, 코, 입, 어깨선.
-export const faceOutline = (face: Face): Point[] => {
-  const left = 100 - face.spread;
-  const right = 100 + face.spread;
-  return [
-    ...onEllipse(100, 106, 52, 64, 40),
-    ...onCubic([46, 100], [42, 52], [70, 36], [100, 36], 10),
-    ...onCubic([100, 36], [130, 36], [160, 52], [154, 100], 10),
-    ...onEllipse(left, 104, 11 * face.eye, 6.5 * face.eye, 9),
-    ...onEllipse(right, 104, 11 * face.eye, 6.5 * face.eye, 9),
-    ...onQuad([left - 14, 90], [left, 84], [left + 14, 90], 5),
-    ...onQuad([right - 14, 90], [right, 84], [right + 14, 90], 5),
-    ...onQuad([100, 110], [93, 128], [97, 132], 5),
-    ...onQuad([82, 148], [100, 148 + face.mouth], [118, 148], 9),
-    ...onCubic([10, 240], [20, 192], [60, 180], [100, 178], 9),
-    ...onCubic([100, 178], [140, 180], [180, 192], [190, 240], 9),
-  ];
-};

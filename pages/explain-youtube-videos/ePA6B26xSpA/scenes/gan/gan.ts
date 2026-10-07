@@ -1,6 +1,7 @@
 import './gan.scss';
 import { appear, between, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import { drawFace, FACE_HEIGHT, FACE_WIDTH, faceImage, faceOutline, faces, random } from './face';
+import { drawFace, FACE_HEIGHT, FACE_WIDTH, faceImage, faces, random } from './face';
+import { frameImage, snapshots, trainingFrames, trainingStep } from './training';
 
 export interface GanTimeline {
   name: number;
@@ -34,6 +35,13 @@ const mix = (from: string, to: string, t: number) => {
 const setText = (element: Element, value: string) => {
   if (element.textContent !== value) {
     element.textContent = value;
+  }
+};
+
+// 같은 그림이면 다시 넣지 않는다(<image> 를 매 프레임 다시 읽지 않게).
+const setHref = (element: Element, value: string) => {
+  if (element.getAttribute('href') !== value) {
+    element.setAttribute('href', value);
   }
 };
 
@@ -151,25 +159,16 @@ export const createGan = (timeline: GanTimeline) => {
   const real = createSlot(790, 280, '진짜', 'real', 3);
   const fake = createSlot(790, 545, '가짜', 'fake', 7);
 
-  // 진짜 쪽 얼굴은 완성된 그림, 가짜 쪽은 잡음 점에서 얼굴로 모여든다.
+  // 진짜 쪽 얼굴은 완성된 그림. 가짜 쪽은 위조범이 학습할 때마다 같은 픽셀 칸을 새로 칠한 그림으로,
+  // 잡음에서 얼굴이 된다(점이 움직이는 게 아니라 칸의 값이 바뀐다).
   const scale = 170 / FACE_WIDTH;
   const realFace = drawFace(real.face, faces[1]);
   setAttributes(realFace, { transform: `scale(${scale}) translate(${-FACE_WIDTH / 2} ${-FACE_HEIGHT / 2})` });
   const generated = svg('g', { transform: `scale(${scale}) translate(${-FACE_WIDTH / 2} ${-FACE_HEIGHT / 2})` }, fake.face);
-  svg('rect', { width: FACE_WIDTH, height: FACE_HEIGHT, fill: '#1a1b20' }, generated);
+  const frames = trainingFrames().map(frameImage);
+  const pixels = [0, 1].map(() => svg('image', { width: FACE_WIDTH, height: FACE_HEIGHT, preserveAspectRatio: 'none', class: 'gan-pixels' }, generated));
   const generatedFace = drawFace(generated, faces[0]);
-  const next = random(11);
-  const targets = faceOutline(faces[0]);
-  const dots = [
-    ...targets.map((target) => ({ target, delay: next() * .8 })),
-    // 얼굴로 모이지 않고 사라지는 잡음
-    ...Array.from({ length: 50 }, () => ({ target: undefined, delay: next() * .8 })),
-  ].map(({ target, delay }) => ({
-    element: svg('circle', { r: 3.6, class: 'gan-dot' }, generated),
-    start: [8 + next() * 184, 8 + next() * 224] as [number, number],
-    target,
-    delay,
-  }));
+  const counter = text(fake.group, 0, 140, '', { class: 'gan-counter' });
   const nobody = text(fake.group, 0, 150, '세상에 없는 얼굴', { class: 'gan-nobody' });
 
   const judgeChip = createChip(machine, 1355, 284, '심판 · 고양이일까 개일까', 'judge');
@@ -280,18 +279,16 @@ export const createGan = (timeline: GanTimeline) => {
     setAttributes(feedbackHead, { opacity: progress(time, timeline.feedback + 1.1, .3).toFixed(3) });
     setAttributes(feedbackLabel, { opacity: appear(time, timeline.feedback + .6, .6).toFixed(3) });
 
-    // 잡음 점이 눈·코·입으로 모여든다
-    const formed = appear(time, timeline.formed, 1.2);
-    for (const dot of dots) {
-      const t = ease(progress(time, timeline.gather + dot.delay, 1.6));
-      const [x, y] = dot.target
-        ? [lerp(dot.start[0], dot.target[0], t), lerp(dot.start[1], dot.target[1], t)]
-        : dot.start;
-      const fade = dot.target ? 1 - formed : 1 - t;
-      setAttributes(dot.element, { cx: x.toFixed(1), cy: y.toFixed(1), opacity: (fade * .9).toFixed(3) });
-    }
-    setAttributes(generatedFace, { opacity: formed.toFixed(3) });
-    setAttributes(nobody, { opacity: appear(time, timeline.nobody, .5).toFixed(3) });
+    // 학습할 때마다 같은 칸을 통째로 새로 칠한다: 이전 출력 위로 새 출력이 번지고, 마지막엔 선명한 얼굴이 된다.
+    const step = trainingStep(time);
+    setHref(pixels[0], frames[step.from]);
+    setHref(pixels[1], frames[step.to]);
+    setAttributes(pixels[1], { opacity: step.blend.toFixed(3) });
+    setText(counter, `학습 ${snapshots[step.to]}회`);
+    const nobodyIn = appear(time, timeline.nobody, .5);
+    setAttributes(counter, { opacity: (appear(time, timeline.faces + .6, .5) * (1 - nobodyIn)).toFixed(3) });
+    setAttributes(generatedFace, { opacity: appear(time, timeline.formed, 1.2).toFixed(3) });
+    setAttributes(nobody, { opacity: nobodyIn.toFixed(3) });
 
     // 심판에서 붓으로
     setAttributes(judgeChip, { opacity: appear(time, timeline.judge, .5).toFixed(3) });

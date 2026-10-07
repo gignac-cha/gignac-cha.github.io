@@ -81,8 +81,15 @@
   .gan-noise {
     fill: var(--d-muted);
   }
-  .gan-dot {
-    fill: #d6d6de;
+  // 위조범이 학습할 때마다 새로 칠하는 출력(픽셀 칸이 보이게).
+  .gan-pixels {
+    image-rendering: pixelated;
+  }
+  .gan-counter {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 24px;
+    text-anchor: middle;
+    fill: var(--d-muted);
   }
   .gan-nobody {
     font-size: 30px;

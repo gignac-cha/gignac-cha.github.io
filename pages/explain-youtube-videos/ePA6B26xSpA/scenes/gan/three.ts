@@ -5,9 +5,11 @@ import { createThreeDiagram } from '../../../shared/three-diagram';
 import type { Variant } from '../../../shared/variants';
 import { FACE_HEIGHT, FACE_WIDTH, faceCanvas, faces, random } from './face';
 import { ganTimeline as T } from './timeline';
+import { GRID_HEIGHT, GRID_WIDTH, snapshots, trainingFrames, trainingStep } from './training';
 
 // Three.js 판 (임시 비교용). SVG 판(gan.ts)과 같은 시점에 같은 이야기를 하되,
-// 위조범·경찰은 입체 카드로, "잡음에서 얼굴로"와 "해마다 선명해진 그림"은 수천 개의 입자로 보여 준다.
+// 위조범·경찰은 입체 카드로, "잡음에서 얼굴로"는 같은 자리의 픽셀 타일이 학습할 때마다 새 값으로 칠해지는 판으로,
+// "해마다 선명해진 그림"은 점점 크고 선명해지는 입체 액자로 보여 준다.
 // 모든 움직임은 재생 시간만으로 정해진다(난수는 seed 고정).
 
 // SVG 좌표(1600×900)와 월드 좌표를 맞춘다: 카메라가 정면에서 보면 z=0 평면의 1 단위 = SVG 100px.
@@ -20,8 +22,6 @@ const baseDistance = 5.1 / Math.tan(THREE.MathUtils.degToRad(fov / 2));
 const ORANGE = 0xffad5b;
 const BLUE = 0x5b9dff;
 const GRAY = 0x6c6c74;
-
-const hexToRgb = (hex: number) => [(hex >> 16) & 255, (hex >> 8) & 255, hex & 255].map((v) => v / 255);
 
 // 위조범과 경찰의 실력. 번갈아 상대보다 조금씩 앞서 나간다(SVG 판과 같은 계산).
 const levels = (time: number) => {
@@ -144,91 +144,37 @@ const createStation = (color: number) => {
   return { group, body, edges };
 };
 
-// 입자 그림: 위치·색·투명도는 매 프레임 CPU 에서 정하고, 크기와 번짐은 uniform 으로.
-const pointsShader = {
-  vertexShader: `
-    attribute vec3 tint;
-    attribute float alpha;
-    uniform float uSize;
-    uniform float uPixels;
-    varying vec3 vTint;
-    varying float vAlpha;
-    void main() {
-      vec4 view = modelViewMatrix * vec4(position, 1.0);
-      gl_PointSize = max(uSize * uPixels / -view.z, 1.0);
-      gl_Position = projectionMatrix * view;
-      vTint = tint;
-      vAlpha = alpha;
-    }
-  `,
-  fragmentShader: `
-    uniform float uSoftness;
-    varying vec3 vTint;
-    varying float vAlpha;
-    void main() {
-      float d = length(gl_PointCoord - 0.5) * 2.0;
-      float crisp = 1.0 - smoothstep(0.82, 1.0, d);
-      float soft = exp(-d * d * 3.2);
-      float a = mix(crisp, soft, uSoftness) * vAlpha;
-      if (a < 0.01) discard;
-      gl_FragColor = vec4(vTint, a);
-    }
-  `,
-};
+// 해마다 커지고 선명해진 네 장: 그림 해상도와 색, 액자 높이(월드 단위).
+const stages = [
+  { pixels: 8, gray: true, height: .8, name: '흑백 8px' },
+  { pixels: 16, gray: true, height: 1.35, name: '흑백 16px' },
+  { pixels: 32, gray: false, height: 2.1, name: '컬러 32px' },
+  { pixels: FACE_WIDTH, gray: false, height: 3.1, name: '선명한 얼굴' },
+];
 
-// 얼굴 입자: 얼굴 그림(200×240)을 2px 간격으로 훑어 배경이 아닌 곳에 입자를 둔다.
-// 해마다 선명해지는 단계마다(8px → 16px → 32px → 원본) 자리와 색을 미리 계산해 둔다.
-const createFaceTargets = () => {
-  const face = faces[0];
-  const full = faceCanvas(face, FACE_WIDTH, false).getContext('2d')!.getImageData(0, 0, FACE_WIDTH, FACE_HEIGHT).data;
-  const backdrop = hexToRgb(parseInt(face.backdrop.slice(1), 16)).map((v) => v * 255);
-  const stages = [
-    { width: 8, gray: true },
-    { width: 16, gray: true },
-    { width: 32, gray: false },
-  ].map(({ width, gray }) => {
-    const canvas = faceCanvas(face, width, gray);
-    return { width, height: canvas.height, data: canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data };
-  });
-  const points: Array<{ x: number; y: number; z: number; color: number[]; stages: Array<{ x: number; y: number; color: number[] }> }> = [];
-  const jitter = random(29);
-  for (let y = 1; y < FACE_HEIGHT; y += 2) {
-    for (let x = 1; x < FACE_WIDTH; x += 2) {
-      const i = (y * FACE_WIDTH + x) * 4;
-      const color = [full[i], full[i + 1], full[i + 2]];
-      if (color.every((value, k) => Math.abs(value - backdrop[k]) < 10)) {
-        continue;
-      }
-      // 얼굴 가운데가 앞으로 나오도록 살짝 볼록하게.
-      const dx = (x - 100) / 62;
-      const dy = (y - 110) / 80;
-      const bulge = Math.sqrt(Math.max(0, 1 - dx * dx - dy * dy));
-      points.push({
-        x,
-        y,
-        z: bulge * 14,
-        color: color.map((v) => v / 255),
-        stages: stages.map(({ width, height, data }) => {
-          const cell = FACE_WIDTH / width;
-          const cx = Math.min(Math.floor(x / cell), width - 1);
-          const cy = Math.min(Math.floor((y / FACE_HEIGHT) * height), height - 1);
-          const j = (cy * width + cx) * 4;
-          return {
-            // 칸 가운데로 모으되 살짝 흩어 흐릿한 덩어리처럼 보이게.
-            x: (cx + .5) * cell + (jitter() - .5) * cell * .5,
-            y: ((cy + .5) / height) * FACE_HEIGHT + (jitter() - .5) * cell * .5,
-            color: [data[j], data[j + 1], data[j + 2]].map((v) => v / 255),
-          };
-        }),
-      });
-    }
+// 그림 한 장을 얇은 입체 액자로. 작은 그림은 픽셀 칸이 그대로 보이게 늘린다.
+const createPanel = (canvas: HTMLCanvasElement, width: number, height: number, pixelated: boolean) => {
+  const group = new THREE.Group();
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  if (pixelated) {
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
+    texture.generateMipmaps = false;
   }
-  return points;
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(width + .08, height + .08, .08), new THREE.MeshLambertMaterial({ color: 0x24262d, transparent: true }));
+  const picture = new THREE.Mesh(new THREE.PlaneGeometry(width, height), new THREE.MeshBasicMaterial({ map: texture, transparent: true }));
+  picture.position.z = .041;
+  const frame = createFrame(GRAY);
+  frame.scale.set(width + .08, height + .08, 1);
+  frame.position.z = .042;
+  group.add(slab, picture, frame);
+  return group;
 };
 
 export const createGanThree = (): Variant => {
   // 시야각은 공통 기본값(35°)과 같다.
-  const { element, root, renderer, scene, camera, render, project, look } = createThreeDiagram('gan gan-three', '생성적 적대 신경망(GAN)');
+  const { element, root, scene, camera, render, project, look } = createThreeDiagram('gan gan-three', '생성적 적대 신경망(GAN)');
 
   // 3D 위치 → SVG 좌표(1600×900)는 공통 project() 를 쓴다. 캔버스가 SVG 와 같은 16:9 상자에 그려지므로 그대로 맞는다.
 
@@ -293,41 +239,41 @@ export const createGanThree = (): Variant => {
   // 관 자체는 3D 곡선을 화면에 옮겨 SVG 로 그린다(앞으로 휘어 나와 원근이 보인다).
   const curveSamples = curve.getPoints(80);
 
-  // 2. 입자: 처음엔 장면 전체에 퍼진 잡음, 얼굴 자리로 모여 얼굴이 되고, 해마다 선명해진다.
-  const targets = createFaceTargets();
-  const extra = 1600;
-  const count = targets.length + extra;
-  const next = random(41);
-  const ambient = new Float32Array(count * 3);
-  const huddle = new Float32Array(count * 3);
-  const phase = new Float32Array(count * 3);
-  const delay = new Float32Array(count);
-  for (let i = 0; i < count; i++) {
-    ambient.set([(next() - .5) * 17, (next() - .5) * 9.6, -6 + next() * 8], i * 3);
-    // 얼굴 자리 주변에 뭉친 잡음 구름.
-    const r = Math.cbrt(next());
-    const theta = next() * Math.PI * 2;
-    const phi = Math.acos(2 * next() - 1);
-    huddle.set([Math.sin(phi) * Math.cos(theta) * 1.35 * r, Math.sin(phi) * Math.sin(theta) * 1.5 * r, Math.cos(phi) * .9 * r], i * 3);
-    phase.set([next() * Math.PI * 2, next() * Math.PI * 2, next() * Math.PI * 2], i * 3);
-    delay[i] = next();
-  }
-  const geometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(count * 3);
-  const tints = new Float32Array(count * 3);
-  const alphas = new Float32Array(count);
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geometry.setAttribute('tint', new THREE.BufferAttribute(tints, 3));
-  geometry.setAttribute('alpha', new THREE.BufferAttribute(alphas, 1));
-  const material = new THREE.ShaderMaterial({
-    ...pointsShader,
-    uniforms: { uSize: { value: .05 }, uPixels: { value: 500 }, uSoftness: { value: 1 } },
-    transparent: true,
-    depthWrite: false,
-  });
-  const cloud = new THREE.Points(geometry, material);
-  cloud.frustumCulled = false;
-  scene.add(cloud);
+  // 2. 위조범의 출력: 가짜 자리의 픽셀 타일(GRID_WIDTH×GRID_HEIGHT). 타일은 제자리에 있고, 학습할 때마다 값만 새로 칠해진다.
+  const slotFaceHeight = 2.04;
+  const frames = trainingFrames();
+  const tileWidth = 1.7 / GRID_WIDTH;
+  const tileHeight = slotFaceHeight / GRID_HEIGHT;
+  const tiles = new THREE.InstancedMesh(new THREE.BoxGeometry(tileWidth, tileHeight, .03), new THREE.MeshBasicMaterial({ transparent: true }), GRID_WIDTH * GRID_HEIGHT);
+  tiles.frustumCulled = false;
+  fakeSlot.add(tiles);
+  // 다 배운 뒤의 선명한 얼굴: 타일 바로 앞에 겹쳐 서서히 드러난다.
+  const generatedTexture = new THREE.CanvasTexture(faceCanvas(faces[0], FACE_WIDTH, false));
+  generatedTexture.colorSpace = THREE.SRGBColorSpace;
+  const generatedFace = new THREE.Mesh(new THREE.PlaneGeometry(1.7, slotFaceHeight), new THREE.MeshBasicMaterial({ map: generatedTexture, transparent: true, depthWrite: false }));
+  generatedFace.position.z = .03;
+  fakeSlot.add(generatedFace);
+  const tileMatrix = new THREE.Matrix4();
+  const tileColor = new THREE.Color();
+  const white = new THREE.Color(1, 1, 1);
+  // 학습 한 번: 모든 타일이 한꺼번에 새 값으로 바뀐다. 많이 바뀐 타일일수록 크게 튀어나오며 반짝인다.
+  const paintTiles = (from: Uint8ClampedArray, to: Uint8ClampedArray, blend: number) => {
+    const bump = Math.sin(Math.PI * blend);
+    for (let row = 0; row < GRID_HEIGHT; row++) {
+      for (let column = 0; column < GRID_WIDTH; column++) {
+        const i = row * GRID_WIDTH + column;
+        const o = i * 4;
+        const change = (Math.abs(to[o] - from[o]) + Math.abs(to[o + 1] - from[o + 1]) + Math.abs(to[o + 2] - from[o + 2])) / (3 * 255);
+        const lift = bump * Math.min(change * 2.5, 1);
+        tileMatrix.makeTranslation((column + .5) * tileWidth - .85, slotFaceHeight / 2 - (row + .5) * tileHeight, lift * .2);
+        tiles.setMatrixAt(i, tileMatrix);
+        const [r, g, b] = [0, 1, 2].map((c) => lerp(from[o + c], to[o + c], blend) / 255);
+        tiles.setColorAt(i, tileColor.setRGB(r, g, b, THREE.SRGBColorSpace).lerp(white, lift * .2));
+      }
+    }
+    tiles.instanceMatrix.needsUpdate = true;
+    tiles.instanceColor!.needsUpdate = true;
+  };
 
   // "세상에 없는 얼굴" 강조: 얼굴 뒤로 번지는 빛.
   const glowCanvas = document.createElement('canvas');
@@ -347,18 +293,23 @@ export const createGanThree = (): Variant => {
   glow.renderOrder = -1;
   scene.add(glow);
 
-  const noiseTint = [.62, .66, .78];
-  const slotFaceHeight = 2.04;
-  const growthCenter = new THREE.Vector3(0, .35, 0);
-  // 해마다 커지고 선명해지는 네 단계: 얼굴 높이(월드 단위), 입자 크기, 번짐.
-  const stageLook = [
-    { height: 1.25, size: .17, softness: 1 },
-    { height: 2.05, size: .13, softness: 1 },
-    { height: 3.05, size: .085, softness: .55 },
-    { height: 4.3, size: .052, softness: .05 },
-  ];
-  const stageAt = [T.early - .3, T.yearly, T.yearly + .7, T.yearly + 1.4];
-  const stageDuration = [.9, .6, .6, .6];
+  // 3. 해마다 커지고 선명해진 그림: 한 줄로 선 네 장의 입체 액자. 아래쪽을 맞춰 세운다.
+  const baseline = -1.2;
+  const gap = .7;
+  const widths = stages.map(({ height }) => (height * FACE_WIDTH) / FACE_HEIGHT);
+  const rowLeft = -(widths.reduce((sum, width) => sum + width, 0) + gap * (stages.length - 1)) / 2;
+  let left = rowLeft;
+  const panels = stages.map(({ pixels, gray, height }, k) => {
+    const width = widths[k];
+    const group = createPanel(faceCanvas(faces[0], pixels, gray), width, height, pixels < FACE_WIDTH);
+    const at = new THREE.Vector3(left + width / 2, baseline + height / 2, 0);
+    left += width + gap;
+    scene.add(group);
+    return { group, at, appearAt: k === 0 ? T.early : T.yearly + (k - 1) * .7 };
+  });
+  const rowRight = left - gap;
+  const growthTarget = new THREE.Vector3(0, -.2, 0);
+  const growthDistance = 12.5;
 
   // 3. SVG 겹침: 글자·계기판·배지·칩.
   const overlay = svg('g', {}, root);
@@ -414,11 +365,12 @@ export const createGanThree = (): Variant => {
   const judgeChip = createChip('심판 · 고양이일까 개일까', 'judge');
   const brushChip = createChip('붓 · 새 그림을 그린다', 'brush');
 
+  const counter = text(machineOverlay, 0, 0, '', { class: 'gan-counter' });
   const growthOverlay = svg('g', {}, overlay);
-  const stageTag = text(growthOverlay, 800, 0, '', { class: 'gan-three-stage' });
-  const firstLabel = text(growthOverlay, 800, 0, '작고 흐릿한 흑백', { class: 'gan-growth-label' });
-  const yearlyLabel = text(growthOverlay, 800, 0, '해마다 더 크고 더 선명하게', { class: 'gan-growth-caption' });
-  const stageNames = ['흑백 8px', '흑백 16px', '컬러 32px', '선명한 얼굴'];
+  const stageTags = stages.map(({ name }) => text(growthOverlay, 0, 0, name, { class: 'gan-three-stage' }));
+  const firstLabel = text(growthOverlay, 0, 0, '작고 흐릿한 흑백', { class: 'gan-growth-label' });
+  const growthArrow = svg('path', { class: 'gan-growth-arrow' }, growthOverlay);
+  const yearlyLabel = text(growthOverlay, 0, 0, '해마다 더 크고 더 선명하게', { class: 'gan-growth-caption' });
 
   // 3D 점 위에 SVG 를 붙인다. scale 은 그 자리에서 월드 1 단위가 몇 px 인지로 정한다.
   const anchor = (group: Element, position: THREE.Vector3, offset = { x: 0, y: 0 }) => {
@@ -440,13 +392,13 @@ export const createGanThree = (): Variant => {
   };
 
   const update = (time: number) => {
-    // 카메라: 천천히 흔들려 입체감을 주고, 얼굴이 모일 때는 가짜 자리로 다가갔다가, 성장 단계에서 가운데로.
+    // 카메라: 천천히 흔들려 입체감을 주고, 얼굴을 학습할 때는 가짜 자리로 다가갔다가, 성장 단계에서 액자 줄 가운데로.
     const focus = ease(progress(time, T.faces + .4, 2.2)) * (1 - ease(progress(time, T.early - .3, 1.2)));
     const growth = ease(progress(time, T.early - .3, 1.2));
     const target = new THREE.Vector3()
       .lerp(new THREE.Vector3(fakeAt.x * .3, fakeAt.y * .35, 0), focus)
-      .lerp(new THREE.Vector3(0, growthCenter.y * .6, 0), growth);
-    const distance = lerp(lerp(baseDistance, baseDistance * .9, focus), baseDistance * .92, growth);
+      .lerp(growthTarget, growth);
+    const distance = lerp(lerp(baseDistance, baseDistance * .9, focus), growthDistance, growth);
     // 흔들림은 카드와 칩이 화면 밖으로 나가지 않을 만큼만.
     const sway = time * .16;
     camera.position.set(target.x + Math.sin(sway) * .55, target.y + .2 + Math.sin(sway * .73) * .25, target.z + distance);
@@ -563,103 +515,49 @@ export const createGanThree = (): Variant => {
     setAttributes(judgeChip, { opacity: appear(time, T.judge, .5).toFixed(3) });
     setAttributes(brushChip, { opacity: appear(time, T.brush, .5).toFixed(3) });
 
-    // 입자
-    const ambientAlpha = lerp(.55, .13, appear(time, T.cards - .3, 1)) ;
-    const huddleIn = (i: number) => ease(progress(time, T.faces + delay[i] * .8, 2.2));
-    const gatherIn = (i: number) => ease(progress(time, T.gather + delay[i] * .9, 1.6));
-    const stageIn = stageAt.map((at, k) => ease(progress(time, at, stageDuration[k])));
-    const slotScale = slotFaceHeight / FACE_HEIGHT;
-    for (let i = 0; i < count; i++) {
-      const o = i * 3;
-      const drift = .18;
-      let x = ambient[o] + Math.sin(time * .35 + phase[o]) * drift;
-      let y = ambient[o + 1] + Math.sin(time * .3 + phase[o + 1]) * drift;
-      let z = ambient[o + 2] + Math.sin(time * .27 + phase[o + 2]) * drift;
-      const h = huddleIn(i);
-      const hx = fakeAt.x + huddle[o] + Math.sin(time * .9 + phase[o]) * .05;
-      const hy = fakeAt.y + huddle[o + 1] + Math.sin(time * .8 + phase[o + 1]) * .05;
-      const hz = huddle[o + 2] + Math.sin(time * .7 + phase[o + 2]) * .05;
-      x = lerp(x, hx, h);
-      y = lerp(y, hy, h);
-      z = lerp(z, hz, h);
-      let r = noiseTint[0];
-      let g = noiseTint[1];
-      let b = noiseTint[2];
-      let a = lerp(ambientAlpha, .85, h);
-      const point = targets[i];
-      const gather = gatherIn(i);
-      if (point) {
-        // 가짜 자리의 얼굴로 모인다.
-        x = lerp(x, fakeAt.x + (point.x - 100) * slotScale, gather);
-        y = lerp(y, fakeAt.y - (point.y - 120) * slotScale, gather);
-        z = lerp(z, point.z * slotScale, gather);
-        r = lerp(r, point.color[0], gather);
-        g = lerp(g, point.color[1], gather);
-        b = lerp(b, point.color[2], gather);
-        a = lerp(a, 1, gather);
-        // 해마다: 작고 흐릿한 흑백 → 크고 선명한 컬러.
-        stageIn.forEach((s, k) => {
-          if (s <= 0) {
-            return;
-          }
-          const scale = stageLook[k].height / FACE_HEIGHT;
-          const target = k < 3 ? point.stages[k] : { x: point.x, y: point.y, color: point.color };
-          x = lerp(x, growthCenter.x + (target.x - 100) * scale, s);
-          y = lerp(y, growthCenter.y - (target.y - 120) * scale, s);
-          z = lerp(z, k < 3 ? 0 : point.z * scale, s);
-          r = lerp(r, target.color[0], s);
-          g = lerp(g, target.color[1], s);
-          b = lerp(b, target.color[2], s);
-        });
-      } else {
-        // 얼굴이 되지 못한 잡음은 흩어지며 사라진다.
-        a *= 1 - gather;
-        z -= gather * 1.5;
-      }
-      positions[o] = x;
-      positions[o + 1] = y;
-      positions[o + 2] = z;
-      tints[o] = r;
-      tints[o + 1] = g;
-      tints[o + 2] = b;
-      alphas[i] = a;
+    // 위조범의 출력: 학습할 때마다 같은 타일을 새 값으로 칠하고, 다 배우면 선명한 얼굴이 드러난다.
+    const outputIn = fakeIn * morph * machineIn;
+    setOpacity(tiles, outputIn);
+    const step = trainingStep(time);
+    if (tiles.visible) {
+      paintTiles(frames[step.from], frames[step.to], step.blend);
     }
-    geometry.attributes.position.needsUpdate = true;
-    geometry.attributes.tint.needsUpdate = true;
-    geometry.attributes.alpha.needsUpdate = true;
-
-    // 입자 크기와 번짐: 퍼진 잡음 → 가짜 자리 얼굴(작고 또렷) → 단계별 성장.
-    const gathered = ease(progress(time, T.gather + .4, 1.6));
-    let size = lerp(.055, .03, gathered);
-    let softness = lerp(1, .25, appear(time, T.formed, 1.2));
-    stageIn.forEach((s, k) => {
-      size = lerp(size, stageLook[k].size, s);
-      softness = lerp(softness, stageLook[k].softness, s);
-    });
-    material.uniforms.uSize.value = size;
-    material.uniforms.uSoftness.value = softness;
-    // 캔버스는 요소 안의 16:9 상자에 그려진다. 첫 프레임에도 맞도록 요소 크기로 상자 높이를 계산한다.
-    const boxHeight = Math.min(element.clientHeight, (element.clientWidth * 9) / 16);
-    material.uniforms.uPixels.value = (boxHeight * renderer.getPixelRatio()) / (2 * Math.tan(THREE.MathUtils.degToRad(fov / 2)));
+    setOpacity(generatedFace, outputIn * appear(time, T.formed, 1.2));
+    const count = `학습 ${snapshots[step.to]}회`;
+    if (counter.textContent !== count) {
+      counter.textContent = count;
+    }
+    const nobodyIn = appear(time, T.nobody, .5);
+    anchor(counter, new THREE.Vector3(fakeSlot.position.x, fakeAt.y - slotFaceHeight / 2, 0), { x: 0, y: 40 });
+    setAttributes(counter, { opacity: (appear(time, T.faces + .6, .5) * (1 - nobodyIn)).toFixed(3) });
 
     // 세상에 없는 얼굴: 뒤에서 빛이 번진다.
-    const nobodyIn = appear(time, T.nobody, .5);
     const shine = nobodyIn * (.45 + .55 * Math.max(0, Math.sin(((time - T.nobody) / 1.6) * Math.PI)) * (time < T.nobody + 1.6 ? 1 : 0)) * (1 - growth);
     setOpacity(glow, shine);
     anchor(nobody, new THREE.Vector3(fakeAt.x, fakeAt.y - slotFaceHeight / 2 - .1, 0), { x: 0, y: 46 });
     setAttributes(nobody, { opacity: (nobodyIn * (1 - growth)).toFixed(3) });
 
-    // 해마다 선명해진 그림
-    const bottom = project(new THREE.Vector3(growthCenter.x, growthCenter.y - stageLook[3].height / 2, 0));
-    const current = stageIn.reduce((last, s, k) => (s > .5 ? k : last), 0);
-    const currentBottom = project(new THREE.Vector3(growthCenter.x, growthCenter.y - stageLook[current].height / 2, 0));
+    // 해마다 선명해진 그림: 작고 흐릿한 흑백 한 장 옆으로, 해마다 더 크고 선명한 그림이 돌아 들어온다.
     setAttributes(growthOverlay, { opacity: growth.toFixed(3) });
-    setAttributes(stageTag, { y: (currentBottom.y + 40).toFixed(1) });
-    if (stageTag.textContent !== stageNames[current]) {
-      stageTag.textContent = stageNames[current];
-    }
-    setAttributes(firstLabel, { y: (bottom.y + 98).toFixed(1), opacity: (appear(time, T.early + 1.2, .5) * (1 - appear(time, T.yearly, .4))).toFixed(3) });
-    setAttributes(yearlyLabel, { y: (bottom.y + 98).toFixed(1), opacity: appear(time, T.yearly + .6, .6).toFixed(3) });
+    panels.forEach(({ group, at, appearAt }, k) => {
+      const shown = appear(time, appearAt, .8);
+      group.position.set(at.x, at.y - (1 - shown) * .5, at.z);
+      group.rotation.set(0, (1 - shown) * -1.2 - at.x * .035, 0);
+      setOpacity(group, shown * growth);
+      anchor(stageTags[k], new THREE.Vector3(at.x, baseline - .08, 0), { x: 0, y: 34 });
+      setAttributes(stageTags[k], { opacity: shown.toFixed(3) });
+    });
+    anchor(firstLabel, new THREE.Vector3(panels[0].at.x, baseline - .08, 0), { x: 0, y: 84 });
+    setAttributes(firstLabel, { opacity: (appear(time, T.early + 1.2, .5) * (1 - appear(time, T.yearly, .4))).toFixed(3) });
+    const yearlyIn = appear(time, T.yearly + .6, .6);
+    const from = project(new THREE.Vector3(rowLeft, baseline - .75, 0));
+    const to = project(new THREE.Vector3(rowRight, baseline - .75, 0));
+    setAttributes(growthArrow, {
+      d: `M${from.x.toFixed(1)} ${from.y.toFixed(1)} L${to.x.toFixed(1)} ${to.y.toFixed(1)} M${(to.x - 18).toFixed(1)} ${(to.y - 12).toFixed(1)} L${to.x.toFixed(1)} ${to.y.toFixed(1)} L${(to.x - 18).toFixed(1)} ${(to.y + 12).toFixed(1)}`,
+      opacity: yearlyIn.toFixed(3),
+    });
+    anchor(yearlyLabel, new THREE.Vector3(0, baseline - .75, 0), { x: 0, y: 56 });
+    setAttributes(yearlyLabel, { opacity: yearlyIn.toFixed(3) });
 
     render();
   };
