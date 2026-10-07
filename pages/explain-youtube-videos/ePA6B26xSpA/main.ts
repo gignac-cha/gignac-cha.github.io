@@ -23,6 +23,7 @@ import { createPerceptronScene } from './scenes/perceptron/scene';
 import { createRnnScene } from './scenes/rnn/scene';
 import { createSeq2SeqScene } from './scenes/seq2seq/scene';
 import { createSvmScene } from './scenes/svm/scene';
+import { createVanishingGradientScene } from './scenes/vanishing-gradient/scene';
 import { createWord2VecScene } from './scenes/word2vec/scene';
 import { createXorScene } from './scenes/xor/scene';
 
@@ -33,6 +34,7 @@ const scenes: Scene[] = [
   createPerceptronScene(),
   createXorScene(),
   createBackpropagationScene(),
+  createVanishingGradientScene(),
   createSvmScene(),
   createCnnScene(),
   createRnnScene(),

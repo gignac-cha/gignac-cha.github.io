@@ -1,0 +1,127 @@
+.vanishing-gradient {
+  .vanishing-gradient-caption {
+    font-size: 36px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-text);
+
+    &.warning {
+      fill: var(--d-red);
+    }
+  }
+  .vanishing-gradient-baseline {
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  .vanishing-gradient-axis {
+    font-size: 28px;
+    text-anchor: start;
+    fill: var(--d-muted);
+  }
+  .vanishing-gradient-bar {
+    fill: var(--d-red);
+
+    &.front {
+      fill: color-mix(in srgb, var(--d-red) 60%, var(--d-subtle));
+    }
+  }
+  .vanishing-gradient-value {
+    font-size: 28px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--d-red);
+    font-variant-numeric: tabular-nums;
+  }
+  .vanishing-gradient-zero {
+    fill: none;
+    stroke: var(--d-muted);
+    stroke-width: 3;
+    stroke-dasharray: 10 8;
+  }
+  .vanishing-gradient-zero-label {
+    font-size: 32px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-muted);
+  }
+  .vanishing-gradient-layer {
+    fill: var(--d-grid);
+    stroke: var(--d-line);
+    stroke-width: 3;
+    transition: stroke .3s, fill .3s;
+
+    &.highlight {
+      stroke: var(--d-red);
+      stroke-dasharray: 8 6;
+    }
+    &.frozen {
+      fill: color-mix(in srgb, var(--d-blue) 8%, var(--d-background));
+      stroke: var(--d-subtle);
+    }
+    &.learning {
+      stroke: var(--d-green);
+      fill: color-mix(in srgb, var(--d-green) 10%, var(--d-background));
+    }
+  }
+  .vanishing-gradient-node {
+    fill: var(--d-background);
+    stroke: var(--d-muted);
+    stroke-width: 3;
+    transition: stroke .3s;
+
+    &.frozen {
+      stroke: var(--d-subtle);
+    }
+    &.learning {
+      stroke: var(--d-green);
+    }
+  }
+  .vanishing-gradient-edge {
+    stroke: var(--d-line);
+    stroke-width: 4;
+  }
+  .vanishing-gradient-index {
+    font-size: 28px;
+    text-anchor: middle;
+    fill: var(--d-subtle);
+  }
+  .vanishing-gradient-end {
+    font-size: 30px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--d-muted);
+  }
+  .vanishing-gradient-whisper {
+    fill: color-mix(in srgb, var(--d-red) 10%, var(--d-background));
+    stroke: color-mix(in srgb, var(--d-red) 50%, var(--d-line));
+    stroke-width: 2;
+  }
+  .vanishing-gradient-whisper-text {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-red);
+  }
+  .vanishing-gradient-pulse {
+    fill: var(--d-red);
+    filter: drop-shadow(0 0 12px var(--d-red));
+  }
+  .vanishing-gradient-stall {
+    font-size: 32px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-red);
+  }
+  .vanishing-gradient-verdict {
+    font-size: 32px;
+    font-weight: 700;
+    text-anchor: middle;
+
+    &.frozen {
+      fill: var(--d-muted);
+    }
+    &.learning {
+      fill: var(--d-green);
+    }
+  }
+}
