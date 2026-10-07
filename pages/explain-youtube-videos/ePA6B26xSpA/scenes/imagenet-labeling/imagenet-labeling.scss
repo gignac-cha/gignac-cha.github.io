@@ -1,0 +1,137 @@
+.imagenet-cells rect {
+  fill: var(--d-grid);
+
+  &.labeled {
+    fill: color-mix(in srgb, var(--d-green) 70%, transparent);
+  }
+  &.c0 {
+    fill: var(--d-blue);
+  }
+  &.c1 {
+    fill: var(--d-orange);
+  }
+  &.c2 {
+    fill: var(--d-green);
+  }
+  &.c3 {
+    fill: var(--d-purple);
+  }
+  &.c4 {
+    fill: var(--d-yellow);
+  }
+  &.c5 {
+    fill: var(--d-red);
+  }
+}
+.imagenet-tile {
+  fill: #1b1c22;
+  stroke: var(--d-line);
+  stroke-width: 2;
+
+  &.cat {
+    stroke: var(--d-blue);
+    stroke-width: 6;
+  }
+  &.dog {
+    stroke: var(--d-orange);
+    stroke-width: 6;
+  }
+}
+.imagenet-emoji {
+  font-size: 56px;
+  text-anchor: middle;
+}
+.imagenet-emoji-large {
+  font-size: 110px;
+}
+.imagenet-tag-band {
+  fill: var(--d-yellow);
+}
+.imagenet-tag-text {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: #1a1405 !important;
+}
+.imagenet-title {
+  font-size: 40px;
+  font-weight: 800;
+  fill: var(--d-yellow) !important;
+}
+.imagenet-people {
+  fill: var(--d-muted);
+
+  &.crowd {
+    fill: var(--d-green);
+  }
+}
+.imagenet-note {
+  font-size: 30px;
+  fill: var(--d-muted) !important;
+}
+.imagenet-center {
+  text-anchor: middle;
+}
+.imagenet-card {
+  fill: #17181d;
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.imagenet-question {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.imagenet-button {
+  fill: transparent;
+  stroke: var(--d-line);
+  stroke-width: 2;
+
+  &.pressed {
+    fill: var(--d-green);
+    stroke: var(--d-green);
+  }
+}
+.imagenet-button-text {
+  font-size: 28px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.imagenet-big {
+  font-size: 64px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--d-green) !important;
+}
+.imagenet-category-title {
+  font-size: 40px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.imagenet-chip {
+  fill: transparent;
+  stroke-width: 3;
+
+  &.c0 {
+    stroke: var(--d-blue);
+  }
+  &.c1 {
+    stroke: var(--d-orange);
+  }
+  &.c2 {
+    stroke: var(--d-green);
+  }
+  &.c3 {
+    stroke: var(--d-purple);
+  }
+  &.c4 {
+    stroke: var(--d-yellow);
+  }
+  &.c5 {
+    stroke: var(--d-red);
+  }
+}
+.imagenet-chip-text {
+  font-size: 28px;
+  text-anchor: middle;
+}

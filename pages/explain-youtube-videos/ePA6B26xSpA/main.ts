@@ -14,6 +14,7 @@ import {
   createGanWeaknessScene,
 } from './scenes/gan/scene';
 import { createGpuScene } from './scenes/gpu/scene';
+import { createImageNetLabelingScene } from './scenes/imagenet-labeling/scene';
 import { createLstmScene } from './scenes/lstm/scene';
 import { createRnnScene } from './scenes/rnn/scene';
 import { createSeq2SeqScene } from './scenes/seq2seq/scene';
@@ -30,6 +31,7 @@ const scenes: Scene[] = [
   createDeepBlueScene(),
   createDeepBeliefNetScene(),
   createGpuScene(),
+  createImageNetLabelingScene(),
   createAlexNetTricksScene(),
   createWord2VecScene(),
   createSeq2SeqScene(),
