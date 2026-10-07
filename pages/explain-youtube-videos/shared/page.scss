@@ -172,7 +172,8 @@ body.dragging {
     grid-template-columns: var(--index-column) var(--video-column) var(--split-column) minmax(0px, 1fr);
     grid-template-areas: 'index video split stage';
   }
-  body.index-floating .page-layout {
+  // 자동 숨김이면 목록 칸을 비우고 장면이 그 자리까지 쓴다.
+  body.index-autohide .page-layout {
     grid-template-columns: var(--video-column) var(--split-column) minmax(0px, 1fr);
     grid-template-areas: 'video split stage';
   }
@@ -395,18 +396,75 @@ body.pip {
   }
 }
 
-// 떠 있는 장면 인덱스 (shared/index-dock.ts): 머리를 잡고 옮기고, 오른쪽 아래 모서리로 크기를 바꾼다.
-body.index-floating .page-sidebar {
+// 자동 숨김 장면 목록 (shared/index-dock.ts): 가장자리로 접혀 탭만 남고, 탭에 마우스를 올리면 미끄러져 나온다.
+body.index-autohide .page-sidebar {
   position: fixed;
+  right: 24px;
   z-index: 55;
-  min-width: 280px;
-  min-height: 240px;
-  max-height: calc(100dvh - 24px);
+  width: 336px;
   margin: 0px;
-  resize: both;
   box-shadow: 0px 18px 48px rgba(0, 0, 0, .55), 0px 0px 0px 1px rgba(255, 255, 255, .06);
+  transform: translateX(calc(100% + 32px));
+  transition: transform .25s cubic-bezier(.2, .8, .2, 1);
 
-  .panel-label {
-    cursor: grab;
+  &.revealed {
+    transform: none;
   }
+}
+body.index-autohide.index-left .page-sidebar {
+  right: auto;
+  left: 24px;
+  transform: translateX(calc(-100% - 32px));
+
+  &.revealed {
+    transform: none;
+  }
+}
+.index-handle {
+  display: none;
+}
+body.index-autohide .index-handle {
+  position: fixed;
+  right: 0px;
+  z-index: 54;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 7px;
+  border: 1px solid var(--border);
+  border-right: 0px;
+  border-radius: 10px 0px 0px 10px;
+  background-color: var(--panel);
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: opacity .2s, background-color .15s, color .15s;
+
+  &:hover {
+    background-color: var(--panel-raised);
+    color: var(--text);
+  }
+  &.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+  span {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    writing-mode: vertical-rl;
+  }
+}
+body.index-autohide.index-left .index-handle {
+  right: auto;
+  left: 0px;
+  border-right: 1px solid var(--border);
+  border-left: 0px;
+  border-radius: 0px 10px 10px 0px;
 }

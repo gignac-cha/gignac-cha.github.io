@@ -1,116 +1,112 @@
 import './dock.scss';
-import { clamp, onDrag } from './drag';
 import { load, save } from './storage';
 
-type Dock = 'right' | 'left' | 'floating';
+type Side = 'right' | 'left';
 
 interface DockState {
-  dock: Dock;
-  x: number | null;
-  y: number | null;
-  width: number;
-  height: number | null;
+  side: Side;
+  autoHide: boolean;
 }
 
-const fallback: DockState = { dock: 'right', x: null, y: null, width: 336, height: null };
-const margin = 12;
+const fallback: DockState = { side: 'right', autoHide: false };
+const closeDelay = 350;
 
-const icons: Record<Dock, string> = {
+const icons = {
   left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16" /></svg>',
   right: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M15 4v16" /></svg>',
-  // 띄우기: 창 밖으로 나가는 화살표.
-  floating: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5" /><path d="M14 4h6v6" /><path d="M20 4l-9 9" /></svg>',
+  // 자동 숨김: 점선 테두리 안에서 가장자리로 접혀 들어가는 화살표.
+  autoHide: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" stroke-dasharray="3 3" /><path d="M10 9l3 3-3 3" /></svg>',
 };
-const labels: Record<Dock, string> = { left: '왼쪽에 고정', right: '오른쪽에 고정', floating: '띄우기' };
 
-// 장면 인덱스 자리: 오른쪽(기본)·왼쪽에 붙이거나, 떼어내 화면 위에 띄운다.
-// 띄운 상태에서는 머리를 잡고 옮기고, 오른쪽 아래 모서리(CSS resize)로 크기를 바꾼다.
-export const setupIndexDock = (panel: HTMLElement) => {
-  const state = load<DockState>('index', fallback);
+// 장면 목록 자리: 오른쪽(기본)·왼쪽에 고정하거나, 자동 숨김으로 둔다.
+// 자동 숨김이면 목록은 그쪽 가장자리로 접혀 얇은 탭만 남고, 탭에 마우스를 올리면 미끄러져 나왔다가 벗어나면 들어간다.
+export const setupIndexDock = (panel: HTMLElement, layout: HTMLElement) => {
+  const stored = load<Partial<DockState> & { dock?: string }>('index', fallback);
+  // 예전에 '띄우기'로 저장한 상태는 자동 숨김으로 옮긴다.
+  const state: DockState = {
+    side: stored.dock === 'left' ? 'left' : stored.side ?? 'right',
+    autoHide: Boolean(stored.autoHide) || stored.dock === 'floating',
+  };
+
   const label = panel.querySelector<HTMLElement>('.panel-label')!;
   const controls = document.createElement('div');
   controls.className = 'dock-controls';
   label.append(controls);
-  const buttons = (Object.keys(icons) as Dock[]).map((dock) => {
-    const button = document.createElement('button');
-    button.className = 'dock-button';
-    button.innerHTML = icons[dock];
-    button.title = labels[dock];
-    button.setAttribute('aria-label', labels[dock]);
-    button.addEventListener('click', () => {
-      state.dock = dock;
-      apply();
-      save('index', state);
-    });
-    controls.append(button);
-    return { dock, button };
+  const button = (icon: string, text: string, onClick: () => void) => {
+    const element = document.createElement('button');
+    element.className = 'dock-button';
+    element.innerHTML = icon;
+    element.title = text;
+    element.setAttribute('aria-label', text);
+    element.addEventListener('click', onClick);
+    controls.append(element);
+    return element;
+  };
+  const pinLeft = button(icons.left, '왼쪽에 고정', () => change({ side: 'left', autoHide: false }));
+  const pinRight = button(icons.right, '오른쪽에 고정', () => change({ side: 'right', autoHide: false }));
+  const autoHide = button(icons.autoHide, '자동 숨김', () => change({ side: state.side, autoHide: true }));
+
+  // 자동 숨김일 때 가장자리에 남는 탭.
+  const handle = document.createElement('button');
+  handle.className = 'index-handle';
+  handle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10" /></svg><span>장면 목록</span>';
+  handle.setAttribute('aria-label', '장면 목록 열기');
+  document.body.append(handle);
+
+  let closeTimer: number | undefined;
+  const reveal = (open: boolean) => {
+    window.clearTimeout(closeTimer);
+    panel.classList.toggle('revealed', open);
+    handle.classList.toggle('hidden', open);
+  };
+  const closeLater = () => {
+    window.clearTimeout(closeTimer);
+    closeTimer = window.setTimeout(() => reveal(false), closeDelay);
+  };
+  handle.addEventListener('pointerenter', () => state.autoHide && reveal(true));
+  handle.addEventListener('click', () => state.autoHide && reveal(true));
+  handle.addEventListener('pointerleave', () => state.autoHide && closeLater());
+  panel.addEventListener('pointerenter', () => window.clearTimeout(closeTimer));
+  panel.addEventListener('pointerleave', () => state.autoHide && closeLater());
+  panel.addEventListener('focusin', () => state.autoHide && reveal(true));
+  panel.addEventListener('focusout', (event) => {
+    if (state.autoHide && !panel.contains(event.relatedTarget as Node)) {
+      closeLater();
+    }
   });
 
+  // 자동 숨김일 때 목록은 레이아웃 영역 높이에 맞춰 가장자리에 붙는다.
   const place = () => {
-    const width = clamp(state.width, 280, window.innerWidth - margin * 2);
-    const height = clamp(state.height ?? Math.min(640, window.innerHeight - 200), 240, window.innerHeight - margin * 2);
-    const x = clamp(state.x ?? window.innerWidth - width - 24, margin, window.innerWidth - width - margin);
-    const y = clamp(state.y ?? 96, margin, window.innerHeight - height - margin);
-    return { x, y, width, height };
-  };
-  const position = () => {
-    const { x, y, width, height } = place();
-    panel.style.left = `${x}px`;
-    panel.style.top = `${y}px`;
-    panel.style.width = `${width}px`;
+    if (!state.autoHide) {
+      panel.style.removeProperty('top');
+      panel.style.removeProperty('height');
+      return;
+    }
+    const area = layout.getBoundingClientRect();
+    const top = area.top + 16;
+    const height = area.height - 32;
+    panel.style.top = `${top}px`;
     panel.style.height = `${height}px`;
+    handle.style.top = `${top + height / 2}px`;
   };
 
   const apply = () => {
-    document.body.classList.toggle('index-left', state.dock === 'left');
-    document.body.classList.toggle('index-floating', state.dock === 'floating');
-    if (state.dock === 'floating') {
-      position();
-    } else {
-      for (const property of ['left', 'top', 'width', 'height']) {
-        panel.style.removeProperty(property);
-      }
-    }
-    for (const { dock, button } of buttons) {
-      button.hidden = dock === state.dock;
-    }
+    document.body.classList.toggle('index-left', state.side === 'left');
+    document.body.classList.toggle('index-autohide', state.autoHide);
+    pinLeft.hidden = !state.autoHide && state.side === 'left';
+    pinRight.hidden = !state.autoHide && state.side === 'right';
+    autoHide.hidden = state.autoHide;
+    reveal(false);
     // 칸 배치가 바뀌므로 경계 조절 등 다른 모듈이 다시 계산하도록 알린다.
     window.dispatchEvent(new Event('resize'));
+    place();
+  };
+  const change = (next: DockState) => {
+    state.side = next.side;
+    state.autoHide = next.autoHide;
+    apply();
+    save('index', state);
   };
   apply();
-  window.addEventListener('resize', () => {
-    if (state.dock === 'floating') {
-      position();
-    }
-  });
-
-  // 모서리로 크기를 바꾸면 기억해 둔다.
-  new ResizeObserver(() => {
-    if (state.dock !== 'floating') {
-      return;
-    }
-    const width = panel.offsetWidth;
-    const height = panel.offsetHeight;
-    if (width !== state.width || height !== state.height) {
-      state.width = width;
-      state.height = height;
-      save('index', state);
-    }
-  }).observe(panel);
-
-  let origin = { x: 0, y: 0 };
-  onDrag(label, {
-    start: () => {
-      if (state.dock !== 'floating') {
-        return false;
-      }
-      origin = place();
-    },
-    move: (_, dx, dy) => {
-      state.x = origin.x + dx;
-      state.y = origin.y + dy;
-      position();
-    },
-    end: () => save('index', state),
-  });
+  window.addEventListener('resize', place);
 };

@@ -14,8 +14,9 @@ export const setupSplitter = (layout: HTMLElement, splitter: HTMLElement) => {
     const style = getComputedStyle(layout);
     return layout.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
   };
-  // 장면 칸이 너무 좁아지지 않도록: 경계 16px, 인덱스 336px + 여백 16px 를 뺀 나머지에서 장면 최소 폭을 남긴다.
-  const maximum = () => (contentWidth() - 16 - 352 - sceneMinimum) / contentWidth();
+  // 장면 칸이 너무 좁아지지 않도록: 경계 16px, 고정된 장면 목록 336px + 여백 16px 를 뺀 나머지에서 장면 최소 폭을 남긴다.
+  const indexWidth = () => (document.body.classList.contains('index-autohide') ? 0 : 352);
+  const maximum = () => (contentWidth() - 16 - indexWidth() - sceneMinimum) / contentWidth();
   const minimum = () => videoMinimum / contentWidth();
   const apply = () => layout.style.setProperty('--video-width', `${(clamp(ratio, minimum(), maximum()) * 100).toFixed(2)}%`);
   apply();

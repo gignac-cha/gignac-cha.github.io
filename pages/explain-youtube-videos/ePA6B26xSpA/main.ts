@@ -66,7 +66,7 @@ const element = (id: string) => document.getElementById(id)!;
 // 화면 배치는 저장된 상태로 플레이어를 기다리지 않고 바로 잡는다. 새로고침해도 그 화면 그대로.
 setupSplitter(element('layout'), element('splitter'));
 setupPip(element('pip-toggle') as HTMLButtonElement, element('video-panel'));
-setupIndexDock(element('scene-index'));
+setupIndexDock(element('scene-index'), element('layout'));
 setupTimelineDock(element('timeline-panel'), element('timeline-top'), element('timeline-bottom'));
 
 const player = await loadPlayer('video');
