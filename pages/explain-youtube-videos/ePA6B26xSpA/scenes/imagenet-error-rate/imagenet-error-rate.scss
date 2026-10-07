@@ -29,11 +29,45 @@
   stroke: var(--d-line);
   stroke-width: 2;
 
+  &.empty {
+    stroke-dasharray: 6 6;
+  }
+  &.trying {
+    stroke: var(--d-text);
+  }
+  &.miss {
+    fill: color-mix(in srgb, var(--d-red) 14%, transparent);
+    stroke: color-mix(in srgb, var(--d-red) 70%, transparent);
+  }
   &.hit {
     fill: color-mix(in srgb, var(--d-green) 25%, transparent);
     stroke: var(--d-green);
     stroke-width: 3;
   }
+}
+.error-rate-guess-mark {
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: middle;
+
+  &.miss {
+    fill: var(--d-red) !important;
+  }
+  &.hit {
+    fill: var(--d-green) !important;
+  }
+}
+// 정렬 후 1/4 영역.
+.error-rate-quadrant {
+  fill: none;
+  stroke: var(--d-text);
+  stroke-width: 3;
+  stroke-dasharray: 10 8;
+}
+.error-rate-quadrant-text {
+  font-size: 48px;
+  font-weight: 800;
+  text-anchor: middle;
 }
 .error-rate-guess-rank {
   font-size: 28px;
