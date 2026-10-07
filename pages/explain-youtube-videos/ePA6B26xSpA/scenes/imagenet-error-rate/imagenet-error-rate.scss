@@ -1,0 +1,122 @@
+.error-rate-heading {
+  font-size: 34px;
+  font-weight: 700;
+}
+.error-rate-good {
+  fill: var(--d-green) !important;
+}
+.error-rate-bad {
+  fill: var(--d-red) !important;
+}
+.error-rate-small {
+  font-size: 28px;
+  fill: var(--d-muted) !important;
+}
+.error-rate-center {
+  text-anchor: middle;
+}
+.error-rate-photo {
+  fill: #1b1c22;
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.error-rate-emoji {
+  font-size: 150px;
+  text-anchor: middle;
+}
+.error-rate-guess {
+  fill: transparent;
+  stroke: var(--d-line);
+  stroke-width: 2;
+
+  &.hit {
+    fill: color-mix(in srgb, var(--d-green) 25%, transparent);
+    stroke: var(--d-green);
+    stroke-width: 3;
+  }
+}
+.error-rate-guess-rank {
+  font-size: 28px;
+  font-weight: 700;
+  fill: var(--d-subtle) !important;
+}
+.error-rate-guess-text {
+  font-size: 28px;
+}
+.error-rate-wrong {
+  fill: var(--d-red);
+}
+.error-rate-right {
+  fill: var(--d-grid);
+  stroke: var(--d-line);
+  stroke-width: 1;
+}
+.error-rate-grid {
+  stroke: var(--d-grid);
+  stroke-width: 1.5;
+}
+.error-rate-baseline {
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.error-rate-tick {
+  font-size: 28px;
+  text-anchor: end;
+  fill: var(--d-subtle) !important;
+}
+.error-rate-bar {
+  fill: var(--d-subtle);
+
+  &.alexnet {
+    fill: var(--d-blue);
+  }
+}
+.error-rate-value {
+  font-size: 36px;
+  font-weight: 700;
+  text-anchor: middle;
+
+  &.alexnet {
+    font-size: 44px;
+  }
+}
+.error-rate-team {
+  font-size: 30px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.error-rate-note {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-blue) !important;
+}
+.error-rate-dash {
+  stroke: var(--d-muted);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+.error-rate-arrow {
+  fill: none;
+  stroke: var(--d-yellow);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.error-rate-gap-text {
+  font-size: 32px;
+  font-weight: 800;
+  fill: var(--d-yellow) !important;
+}
+.error-rate-turning-line {
+  stroke: var(--d-yellow);
+  stroke-width: 2;
+  stroke-dasharray: 4 10;
+  stroke-linecap: round;
+}
+.error-rate-turning-text {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
