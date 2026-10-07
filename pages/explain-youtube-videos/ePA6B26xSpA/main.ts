@@ -5,6 +5,7 @@ import { loadPlayer } from '../shared/youtube';
 import { createAlexNetTricksScene } from './scenes/alexnet-tricks/scene';
 import { createArtificialNeuronScene } from './scenes/artificial-neuron/scene';
 import { createAttentionScene } from './scenes/attention/scene';
+import { createBackpropagationScene } from './scenes/backpropagation/scene';
 import { createChatGPTScene } from './scenes/chatgpt/scene';
 import { createCnnScene } from './scenes/cnn/scene';
 import { createDeepBeliefNetScene } from './scenes/deep-belief-net/scene';
@@ -31,6 +32,7 @@ const scenes: Scene[] = [
   createArtificialNeuronScene(),
   createPerceptronScene(),
   createXorScene(),
+  createBackpropagationScene(),
   createSvmScene(),
   createCnnScene(),
   createRnnScene(),
