@@ -4,6 +4,7 @@ import { syncScenes, type Scene } from '../shared/scenes';
 import { loadPlayer } from '../shared/youtube';
 import { createChatGPTScene } from './scenes/chatgpt/scene';
 import { createCnnScene } from './scenes/cnn/scene';
+import { createLstmScene } from './scenes/lstm/scene';
 import { createRnnScene } from './scenes/rnn/scene';
 import { createSvmScene } from './scenes/svm/scene';
 
@@ -13,6 +14,7 @@ const scenes: Scene[] = [
   createSvmScene(),
   createCnnScene(),
   createRnnScene(),
+  createLstmScene(),
 ];
 
 const player = await loadPlayer('video');

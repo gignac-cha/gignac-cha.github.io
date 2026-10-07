@@ -1,0 +1,121 @@
+.lstm-belt {
+  fill: color-mix(in srgb, var(--d-green) 10%, var(--d-background));
+  stroke: var(--d-green);
+  stroke-width: 3;
+}
+.lstm-stripe {
+  stroke: color-mix(in srgb, var(--d-green) 30%, transparent);
+  stroke-width: 6;
+}
+.lstm-heading {
+  font-size: 30px;
+  font-weight: 600;
+}
+.lstm-center {
+  text-anchor: middle;
+}
+.lstm-note {
+  font-size: 28px;
+  fill: var(--d-muted) !important;
+}
+.lstm-chip {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-text);
+    stroke-width: 3;
+  }
+  text {
+    font-size: 28px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+}
+.lstm-memory-strong rect {
+  fill: color-mix(in srgb, var(--d-yellow) 18%, var(--d-background));
+  stroke: var(--d-yellow);
+}
+.lstm-rnn-line {
+  stroke: var(--d-line);
+  stroke-width: 3;
+  stroke-dasharray: 10 10;
+}
+.lstm-unit {
+  fill: color-mix(in srgb, var(--d-text) 5%, var(--d-background));
+  stroke: var(--d-line);
+  stroke-width: 3;
+}
+.lstm-unit-text {
+  font-size: 30px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.lstm-connector {
+  stroke: var(--d-line);
+  stroke-width: 3;
+  stroke-dasharray: 6 8;
+}
+.lstm-valve {
+  --valve-color: var(--d-subtle);
+
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-subtle);
+    stroke-width: 3;
+  }
+  &.lstm-open rect {
+    fill: color-mix(in srgb, var(--valve-color) 30%, var(--d-background));
+    stroke: var(--valve-color);
+    stroke-width: 4;
+  }
+  &.lstm-write {
+    --valve-color: var(--d-green);
+  }
+  &.lstm-read {
+    --valve-color: var(--d-blue);
+  }
+  &.lstm-forget {
+    --valve-color: var(--d-red);
+  }
+}
+.lstm-gate-label {
+  font-size: 28px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.lstm-cross {
+  fill: none;
+  stroke: var(--d-red);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+.lstm-word {
+  fill: var(--d-background);
+  stroke: var(--d-line);
+  stroke-width: 2;
+
+  &.lstm-word-key {
+    stroke: var(--d-yellow);
+    stroke-width: 4;
+  }
+}
+.lstm-word-text {
+  font-size: 30px;
+  text-anchor: middle;
+}
+.lstm-question {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.lstm-answer {
+  font-size: 32px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.lstm-bracket {
+  fill: none;
+  stroke: var(--d-muted);
+  stroke-width: 3;
+}
