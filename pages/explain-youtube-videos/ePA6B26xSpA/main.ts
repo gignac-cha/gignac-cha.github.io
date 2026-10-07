@@ -6,6 +6,7 @@ import { createAlexNetTricksScene } from './scenes/alexnet-tricks/scene';
 import { createAttentionScene } from './scenes/attention/scene';
 import { createChatGPTScene } from './scenes/chatgpt/scene';
 import { createCnnScene } from './scenes/cnn/scene';
+import { createDepthScene } from './scenes/depth/scene';
 import {
   createGanScene,
   createGanWeaknessScene,
@@ -29,6 +30,7 @@ const scenes: Scene[] = [
   createAttentionScene(),
   createGanScene(),
   createGanWeaknessScene(),
+  createDepthScene(),
 ];
 
 const player = await loadPlayer('video');
