@@ -23,6 +23,14 @@
     fill: var(--d-text);
   }
 }
+// 이름표가 바뀔 때 번지는 빛 (shared/swap-text.ts).
+.diagram text.swap-glow {
+  fill: none !important;
+  stroke: var(--d-yellow);
+  stroke-width: 7px;
+  stroke-linejoin: round;
+  filter: blur(5px);
+}
 .diagram-title {
   font-size: 26px;
   font-weight: 600;

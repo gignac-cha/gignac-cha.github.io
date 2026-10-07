@@ -1,6 +1,7 @@
 import './xor.scss';
 import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
 import type { Scene } from '../../../shared/scenes';
+import { createSwapText } from '../../../shared/swap-text';
 
 // 4:56 "대표적인 게 배타적 논리합" ~ 5:20 "아무도 몰랐다는 거죠".
 const start = 296.5;
@@ -121,7 +122,7 @@ const createXor = () => {
   const hidden2 = svg('circle', { class: 'xor-hidden xor-hidden-2', cx: nodes.h2.x, cy: nodes.h2.y, r: 46 }, network);
   svg('circle', { class: 'xor-output', cx: nodes.out.x, cy: nodes.out.y, r: 56 }, network);
   text(network, nodes.a.x, 760, '입력', { class: 'xor-layer-label' });
-  const hiddenLabel = text(network, nodes.h1.x, 760, '숨은 층', { class: 'xor-layer-label' });
+  const hiddenLabel = createSwapText(network, nodes.h1.x, 760, { class: 'xor-layer-label' });
   text(network, nodes.out.x, 760, '출력', { class: 'xor-layer-label' });
   const hiddenFrame = svg('rect', { class: 'xor-hidden-frame', x: nodes.h1.x - 66, y: nodes.h1.y - 80, width: 132, height: nodes.h2.y - nodes.h1.y + 160, rx: 24, opacity: 0 }, network);
 
@@ -247,8 +248,8 @@ const createXor = () => {
     const unknown = appear(time, unknownAt, .5);
     hiddenEdges.forEach((box, index) => setAttributes(box, { opacity: appear(time, unknownAt + .3 + index * .15, .3).toFixed(3) }));
     setAttributes(hiddenFrame, { opacity: unknown.toFixed(3) });
-    setText(hiddenLabel, time >= unknownAt ? '어떻게 가르치지?' : '숨은 층');
-    hiddenLabel.classList.toggle('unknown', time >= unknownAt);
+    hiddenLabel.update(time, (at) => (at >= unknownAt ? '어떻게 가르치지?' : '숨은 층'));
+    hiddenLabel.toggleClass('unknown', time >= unknownAt);
   };
 
   return { element, update };

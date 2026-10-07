@@ -1,6 +1,7 @@
 import './backpropagation.scss';
 import { appear, between, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
 import type { Scene } from '../../../shared/scenes';
+import { createSwapText } from '../../../shared/swap-text';
 
 // 6:10 "주제는 오차를 거꾸로 전파해 배우는 법" ~ 7:02 "스스로 쓸모 있는 특징을 찾아냈거든요".
 // 그 뒤 "학계의 분위기는 다시 달아올랐습니다"부터는 역사 이야기라 장면을 끈다.
@@ -99,7 +100,7 @@ const createBackpropagation = () => {
   const outputMark = text(body, output.x, output.y + 14, '', { class: 'backpropagation-output-mark' });
 
   // 열 이름과 책임 막대.
-  const labels = columns.map((column) => text(body, column.x, 740, column.layer, { class: 'backpropagation-label' }));
+  const labels = columns.map((column) => createSwapText(body, column.x, 740, { class: 'backpropagation-label' }));
   const bars = columns.slice(0, -1).map((column) => {
     svg('rect', { class: 'backpropagation-bar-track', x: column.x - 110, y: 770, width: 220, height: 18, rx: 9, opacity: 0 }, body);
     return svg('rect', { class: 'backpropagation-bar', x: column.x - 110, y: 770, width: 0, height: 18, rx: 9 }, body);
@@ -144,8 +145,8 @@ const createBackpropagation = () => {
 
     // 열 이름: 주방 비유 동안만 주방 역할로.
     labels.forEach((label, index) => {
-      setText(label, inKitchen ? columns[index].kitchen : columns[index].layer);
-      label.classList.toggle('kitchen', inKitchen);
+      label.update(time, (at) => (at >= kitchenAt && at < networkAt ? columns[index].kitchen : columns[index].layer));
+      label.toggleClass('kitchen', inKitchen);
     });
 
     // 앞으로 흐르는 신호.

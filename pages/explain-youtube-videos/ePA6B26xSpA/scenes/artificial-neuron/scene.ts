@@ -1,6 +1,7 @@
 import './artificial-neuron.scss';
 import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
 import type { Scene } from '../../../shared/scenes';
+import { createSwapText } from '../../../shared/swap-text';
 
 // 3:03 "뉴런에 주목했어요" ~ 3:37 "기계가 스스로 배우지는 못했던 겁니다".
 const start = 183.133;
@@ -109,7 +110,7 @@ const pulseAt = (events: number[], time: number) => {
 const createArtificialNeuron = () => {
   const { element, root } = createDiagram('artificial-neuron', '인공 뉴런');
 
-  const inputHeader = text(root, inputX, 180, '입력', { class: 'artificial-neuron-header' });
+  const inputHeader = createSwapText(root, inputX, 180, { class: 'artificial-neuron-header' });
   const network = svg('g', {}, root);
 
   const parts = inputs.map((input) => {
@@ -118,7 +119,7 @@ const createArtificialNeuron = () => {
     const to = { x: body.x + Math.cos(angle) * body.r, y: body.y + Math.sin(angle) * body.r };
     const edge = svg('line', { class: 'artificial-neuron-edge', x1: from.x, y1: from.y, x2: to.x, y2: to.y }, network);
     const node = svg('circle', { class: 'artificial-neuron-input', cx: inputX, cy: input.y, r: inputRadius }, network);
-    const label = text(network, inputX, input.y + 14, input.name, { class: 'artificial-neuron-input-label' });
+    const label = createSwapText(network, inputX, input.y + 14, { class: 'artificial-neuron-input-label' });
     const pulse = svg('circle', { class: 'artificial-neuron-pulse', r: 12, opacity: 0 }, network);
     const middle = { x: lerp(from.x, to.x, .5), y: lerp(from.y, to.y, .5) };
     const weight = svg('g', { transform: `translate(${middle.x.toFixed(1)} ${middle.y.toFixed(1)})`, opacity: 0 }, network);
@@ -130,12 +131,12 @@ const createArtificialNeuron = () => {
   // 뉴런 몸체: 들어온 신호의 합을 채우는 막대와 기준선.
   const bodyGroup = svg('g', { opacity: 0 }, root);
   svg('circle', { class: 'artificial-neuron-body', cx: body.x, cy: body.y, r: body.r }, bodyGroup);
-  const sumLabel = text(bodyGroup, meter.x + meter.width / 2, 352, '합', { class: 'artificial-neuron-meter-label' });
+  const sumLabel = createSwapText(bodyGroup, meter.x + meter.width / 2, 352, { class: 'artificial-neuron-meter-label' });
   svg('rect', { class: 'artificial-neuron-meter', x: meter.x, y: meter.top, width: meter.width, height: meter.bottom - meter.top, rx: 8 }, bodyGroup);
   const fill = svg('rect', { class: 'artificial-neuron-meter-fill', x: meter.x, y: meter.bottom, width: meter.width, height: 0, rx: 8 }, bodyGroup);
   const thresholdLine = svg('line', { class: 'artificial-neuron-threshold', x1: meter.x - 18, y1: thresholdY, x2: meter.x + meter.width + 18, y2: thresholdY }, bodyGroup);
   text(bodyGroup, meter.x + meter.width + 28, thresholdY + 10, '기준', { class: 'artificial-neuron-threshold-label' });
-  const bodyLabel = text(bodyGroup, body.x, body.y + body.r + 60, '뉴런', { class: 'artificial-neuron-body-label' });
+  const bodyLabel = createSwapText(bodyGroup, body.x, body.y + body.r + 60, { class: 'artificial-neuron-body-label' });
 
   // 출력.
   const outputGroup = svg('g', { opacity: 0 }, root);
@@ -155,6 +156,24 @@ const createArtificialNeuron = () => {
   svg('rect', { class: 'artificial-neuron-lock', x: -22, y: -6, width: 44, height: 36, rx: 6 }, lock);
   svg('path', { class: 'artificial-neuron-lock-shackle', d: 'M-13 -6 V-16 A13 13 0 0 1 13 -16 V-6' }, lock);
 
+  // 단계마다 같은 그림의 이름표가 바뀐다. 바뀌는 순간은 createSwapText 가 강조한다.
+  // 투표함 비유가 시작되면(vote) 이름표를 한 번에 바꾼다. 중간에 원래 이름으로 돌아갔다가 다시 바뀌지 않도록.
+  const voting = (time: number) => time >= vote && time < blank;
+  const headerAt = (time: number) => (voting(time) ? '주민' : '입력');
+  const sumAt = (time: number) => (voting(time) ? '찬성표' : '합');
+  const bodyAt = (time: number) => {
+    if (voting(time)) {
+      return '투표함';
+    }
+    return (time >= logic + 3.3 && time < vote) || time >= blank ? '인공 뉴런 · 1943' : '뉴런';
+  };
+  const inputAt = (input: (typeof parts)[number]['input']) => (time: number) => {
+    if (time >= logic && time < vote) {
+      return keyed(input.active, time, .2) > .5 ? '1' : '0';
+    }
+    return voting(time) ? input.ballot : input.name;
+  };
+
   const update = (time: number) => {
     const inVote = time >= vote && time < blank;
     const inLogic = time >= logic && time < vote;
@@ -163,21 +182,15 @@ const createArtificialNeuron = () => {
     setAttributes(bodyGroup, { opacity: appear(time, start + .3, .6).toFixed(3) });
     const networkOpacity = appear(time, 185.8, .6);
     setAttributes(network, { opacity: networkOpacity.toFixed(3) });
-    setAttributes(inputHeader, { opacity: networkOpacity.toFixed(3) });
+    setAttributes(inputHeader.group, { opacity: networkOpacity.toFixed(3) });
     setAttributes(outputGroup, { opacity: networkOpacity.toFixed(3) });
-    setText(inputHeader, inVote && time >= 202.8 ? '주민' : '입력');
+    inputHeader.update(time, headerAt);
 
     for (const part of parts) {
       const active = keyed(part.input.active, time, .2);
       part.node.classList.toggle('on', active > .5);
       part.edge.classList.toggle('on', active > .5);
-      let label = part.input.name;
-      if (inLogic) {
-        label = active > .5 ? '1' : '0';
-      } else if (inVote && time >= 202.8) {
-        label = part.input.ballot;
-      }
-      setText(part.label, label);
+      part.label.update(time, inputAt(part.input));
 
       const pulse = pulseAt(part.input.pulses, time);
       setAttributes(part.pulse, {
@@ -206,15 +219,9 @@ const createArtificialNeuron = () => {
     const height = ((meter.bottom - meter.top) * sum) / maximum;
     setAttributes(fill, { y: (meter.bottom - height).toFixed(1), height: height.toFixed(1) });
     thresholdLine.classList.toggle('crossed', sum >= threshold - .01);
-    setText(sumLabel, inVote && time >= 202.8 ? '찬성표' : '합');
+    sumLabel.update(time, sumAt);
 
-    let bodyText = '뉴런';
-    if (inVote && time >= 202.8) {
-      bodyText = '투표함';
-    } else if ((inLogic && time >= 199.8) || time >= blank) {
-      bodyText = '인공 뉴런 · 1943';
-    }
-    setText(bodyLabel, bodyText);
+    bodyLabel.update(time, bodyAt);
 
     const on = keyed(outputKeys, time, .2) > .5;
     outputNode.classList.toggle('on', on);
