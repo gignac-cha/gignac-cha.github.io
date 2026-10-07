@@ -2,9 +2,10 @@ import './backpropagation.scss';
 import { appear, between, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
 import type { Scene } from '../../../shared/scenes';
 
-// 6:10 "주제는 오차를 거꾸로 전파해 배우는 법" ~ 7:11 "또 한 벽이 나타납니다" 직전.
+// 6:10 "주제는 오차를 거꾸로 전파해 배우는 법" ~ 7:02 "스스로 쓸모 있는 특징을 찾아냈거든요".
+// 그 뒤 "학계의 분위기는 다시 달아올랐습니다"부터는 역사 이야기라 장면을 끈다.
 const start = 370.8;
-const end = 431.4;
+const end = 422.633;
 
 // 처음 소개: 앞으로 흐르고, 출력에서 틀리고, 거꾸로 흐른다.
 const introForward = 371.3;
@@ -28,6 +29,10 @@ const adjustAt = 411.4; // 조금씩 고치죠
 const deepAt = 412.8; // 여러 겹의 신경망을 드디어 가르칠 수
 const xorAt = 416.8; // XOR 문제도 풀 수 있게
 const featureAt = 420.4; // 숨은 층이 스스로 쓸모 있는 특징을
+
+// 설명이 쉬는 구간: 논문 역사, 비유에서 신경망으로 넘어가는 "바로 이것".
+// 끝난 단계가 아직 진행 중처럼 보이지 않도록 이때는 도식을 비활성 색으로 둔다.
+const restWindows: Array<[number, number]> = [[374.8, 381.3], [403.6, 405.7]];
 
 const columns = [
   { x: 250, count: 3, kitchen: '재료 손질', layer: '입력' },
@@ -59,14 +64,16 @@ const hopProgress = (time: number, at: number, column: number, backward: boolean
 
 const createBackpropagation = () => {
   const { element, root } = createDiagram('backpropagation', '역전파');
-  const caption = text(root, 800, 110, '', { class: 'backpropagation-caption', opacity: 0 });
+  // 제목을 뺀 도식 전체. 설명이 쉬는 구간에는 통째로 회색으로 가라앉힌다.
+  const body = svg('g', {}, root);
+  const caption = text(body, 800, 110, '', { class: 'backpropagation-caption', opacity: 0 });
 
   const nodes = columns.map((column) =>
     Array.from({ length: column.count }, (_, index) => ({ x: column.x, y: column.count === 1 ? rows[1] : rows[index] })),
   );
 
   // 연결: 굵기가 곧 무게. 고칠 때마다 조금씩 바뀐다.
-  const edgeLayer = svg('g', {}, root);
+  const edgeLayer = svg('g', {}, body);
   const edges = nodes.slice(0, -1).flatMap((from, column) =>
     from.flatMap((a, i) =>
       nodes[column + 1].map((b, j) => {
@@ -83,33 +90,33 @@ const createBackpropagation = () => {
   );
 
   const nodeElements = nodes.map((column, index) =>
-    column.map((node) => svg('circle', { class: `backpropagation-node ${index === columns.length - 1 ? 'output' : ''}`, cx: node.x, cy: node.y, r: index === columns.length - 1 ? 58 : 42 }, root)),
+    column.map((node) => svg('circle', { class: `backpropagation-node ${index === columns.length - 1 ? 'output' : ''}`, cx: node.x, cy: node.y, r: index === columns.length - 1 ? 58 : 42 }, body)),
   );
   const tints = nodes.map((column, index) =>
-    column.map((node) => svg('circle', { class: 'backpropagation-tint', cx: node.x, cy: node.y, r: index === columns.length - 1 ? 58 : 42, opacity: 0 }, root)),
+    column.map((node) => svg('circle', { class: 'backpropagation-tint', cx: node.x, cy: node.y, r: index === columns.length - 1 ? 58 : 42, opacity: 0 }, body)),
   );
   const output = nodes[columns.length - 1][0];
-  const outputMark = text(root, output.x, output.y + 14, '', { class: 'backpropagation-output-mark' });
+  const outputMark = text(body, output.x, output.y + 14, '', { class: 'backpropagation-output-mark' });
 
   // 열 이름과 책임 막대.
-  const labels = columns.map((column) => text(root, column.x, 740, column.layer, { class: 'backpropagation-label' }));
+  const labels = columns.map((column) => text(body, column.x, 740, column.layer, { class: 'backpropagation-label' }));
   const bars = columns.slice(0, -1).map((column) => {
-    svg('rect', { class: 'backpropagation-bar-track', x: column.x - 110, y: 770, width: 220, height: 18, rx: 9, opacity: 0 }, root);
-    return svg('rect', { class: 'backpropagation-bar', x: column.x - 110, y: 770, width: 0, height: 18, rx: 9 }, root);
+    svg('rect', { class: 'backpropagation-bar-track', x: column.x - 110, y: 770, width: 220, height: 18, rx: 9, opacity: 0 }, body);
+    return svg('rect', { class: 'backpropagation-bar', x: column.x - 110, y: 770, width: 0, height: 18, rx: 9 }, body);
   });
-  const barTracks = [...root.querySelectorAll('.backpropagation-bar-track')];
-  const barCaption = text(root, columns[0].x - 150, 785, '책임', { class: 'backpropagation-bar-caption', opacity: 0 });
+  const barTracks = [...body.querySelectorAll('.backpropagation-bar-track')];
+  const barCaption = text(body, columns[0].x - 150, 785, '책임', { class: 'backpropagation-bar-caption', opacity: 0 });
 
   // 손님의 불평.
-  const complaint = svg('g', { opacity: 0 }, root);
+  const complaint = svg('g', { opacity: 0 }, body);
   svg('path', { class: 'backpropagation-bubble', d: 'M1360 300 h190 a18 18 0 0 1 18 18 v64 a18 18 0 0 1 -18 18 h-150 l-36 34 l6 -34 h-10 a18 18 0 0 1 -18 -18 v-64 a18 18 0 0 1 18 -18 z' }, complaint);
   text(complaint, 1452, 362, '너무 짜요', { class: 'backpropagation-bubble-text' });
 
   // 오차 표시.
-  const errorLabel = text(root, output.x, output.y + 110, '오차', { class: 'backpropagation-error', opacity: 0 });
+  const errorLabel = text(body, output.x, output.y + 110, '오차', { class: 'backpropagation-error', opacity: 0 });
 
   // XOR 미니 평면.
-  const xor = svg('g', { opacity: 0, transform: 'translate(1370 150)' }, root);
+  const xor = svg('g', { opacity: 0, transform: 'translate(1370 150)' }, body);
   svg('rect', { class: 'backpropagation-xor-plane', x: 0, y: 0, width: 190, height: 190, rx: 14 }, xor);
   // 점 (0,1)·(1,0)만 가두는 띠: x + y 가 0.5 와 1.5 사이.
   svg('polygon', { class: 'backpropagation-xor-band', points: '0,0 47,0 190,143 190,190 143,190 0,47' }, xor);
@@ -121,13 +128,19 @@ const createBackpropagation = () => {
   text(xor, 95, 240, 'XOR ✓', { class: 'backpropagation-xor-label' });
 
   // 숨은 층이 찾은 특징.
-  const feature = svg('g', { opacity: 0 }, root);
+  const feature = svg('g', { opacity: 0 }, body);
   svg('rect', { class: 'backpropagation-feature-frame', x: columns[1].x - 80, y: 230, width: columns[2].x - columns[1].x + 160, height: 440, rx: 28 }, feature);
   text(feature, (columns[1].x + columns[2].x) / 2, 210, '스스로 찾은 특징', { class: 'backpropagation-feature-label' });
 
   const update = (time: number) => {
     const inKitchen = time >= kitchenAt && time < networkAt;
     setAttributes(root, { opacity: appear(time, start, .5).toFixed(3) });
+    const resting = Math.max(0, ...restWindows.map(([from, to]) => appear(time, from, .6) * (1 - appear(time, to - .5, .5))));
+    setAttributes(body, { opacity: lerp(1, .4, resting).toFixed(3) });
+    const filter = `grayscale(${resting.toFixed(3)})`;
+    if (body.style.filter !== filter) {
+      body.style.filter = filter;
+    }
 
     // 열 이름: 주방 비유 동안만 주방 역할로.
     labels.forEach((label, index) => {
