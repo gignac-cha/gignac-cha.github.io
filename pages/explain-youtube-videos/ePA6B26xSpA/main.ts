@@ -23,12 +23,14 @@ import { createRnnScene } from './scenes/rnn/scene';
 import { createSeq2SeqScene } from './scenes/seq2seq/scene';
 import { createSvmScene } from './scenes/svm/scene';
 import { createWord2VecScene } from './scenes/word2vec/scene';
+import { createXorScene } from './scenes/xor/scene';
 
 // 영상 순서대로 나열한다. 각 장면의 시간 구간과 세부 단계는 장면 폴더의 scene.ts에 있다.
 const scenes: Scene[] = [
   createChatGPTScene(),
   createArtificialNeuronScene(),
   createPerceptronScene(),
+  createXorScene(),
   createSvmScene(),
   createCnnScene(),
   createRnnScene(),
