@@ -21,13 +21,16 @@ export const syncScenes = (player: YT.Player, container: HTMLElement, scenes: Sc
   }
   const update = () => {
     const time = player.getCurrentTime();
+    let any = false;
     for (const scene of scenes) {
       const active = scene.start <= time && time < scene.end;
       scene.element.classList.toggle('active', active);
       if (active) {
+        any = true;
         scene.update?.(time);
       }
     }
+    container.classList.toggle('empty', !any);
     requestAnimationFrame(update);
   };
   update();

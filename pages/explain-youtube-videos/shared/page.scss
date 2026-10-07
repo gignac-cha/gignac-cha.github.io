@@ -78,8 +78,9 @@ html, body {
 }
 
 .page-layout {
-  // 헤더, 여백, 패널 라벨을 뺀 높이에 영상과 장면 두 개의 16:9 패널이 들어가도록 너비를 정한다.
-  --chrome: calc(var(--header-height) + 48px + 16px + 2 * 40px);
+  // 헤더, 여백, 패널 라벨, 재생 바를 뺀 높이에 영상과 장면 두 개의 16:9 패널이 들어가도록 너비를 정한다.
+  --chrome: calc(var(--header-height) + 48px + 2 * 16px + 2 * 40px + var(--timeline-height));
+  --timeline-height: 72px;
   display: grid;
   grid-template-columns: minmax(0px, calc((100dvh - var(--chrome)) * 8 / 9)) 320px;
   justify-content: center;
@@ -136,17 +137,13 @@ html, body {
   container-type: inline-size;
   background-image: radial-gradient(var(--border) 1px, transparent 1px);
   background-size: 16px 16px;
-
-  &::before {
-    content: '이 구간에는 장면이 없어요';
-    position: absolute;
-    inset: 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    color: var(--subtle);
-  }
+}
+// 장면이 없는 구간에서는 장면 패널 전체가 서서히 사라진다.
+.panel:has(> #scenes) {
+  transition: opacity .6s;
+}
+.panel:has(> #scenes.empty) {
+  opacity: 0;
 }
 
 @media (max-width: 960px) {

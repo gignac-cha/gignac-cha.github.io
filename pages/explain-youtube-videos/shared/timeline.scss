@@ -1,0 +1,126 @@
+#timeline {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  height: var(--timeline-height);
+  padding: 0px 18px;
+}
+.timeline-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  min-width: 0;
+  font-size: 13px;
+}
+.timeline-clock {
+  flex: none;
+  font-family: var(--monospace);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.timeline-separator {
+  margin: 0px 6px;
+  color: var(--subtle);
+}
+.timeline-total {
+  color: var(--muted);
+}
+.timeline-scene {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.timeline-track {
+  position: relative;
+  height: 20px;
+  cursor: pointer;
+  touch-action: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+}
+.timeline-rail {
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  left: 0px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 3px;
+  background-color: var(--border);
+  transition: height .15s, margin-top .15s;
+
+  .timeline-track:hover & {
+    height: 10px;
+    margin-top: -5px;
+  }
+}
+.timeline-played {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  border-radius: inherit;
+  background-color: rgba(255, 255, 255, .22);
+}
+// 장면이 있는 구간. 지금 재생 중인 장면은 강조색으로.
+.timeline-segment {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  min-width: 2px;
+  border-radius: 2px;
+  background-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  transition: background-color .2s;
+
+  &.active {
+    background-color: var(--accent);
+  }
+}
+.timeline-head {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0px 0px -7px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0px 0px 0px 3px rgba(0, 0, 0, .35);
+  pointer-events: none;
+}
+.timeline-hover,
+.timeline-tooltip {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s;
+
+  .timeline-track:hover & {
+    opacity: 1;
+  }
+}
+.timeline-hover {
+  top: 0px;
+  bottom: 0px;
+  width: 1px;
+  background-color: var(--muted);
+}
+.timeline-tooltip {
+  bottom: calc(100% + 8px);
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--panel-raised);
+  font-family: var(--monospace);
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+  transform: translateX(-50%);
+}

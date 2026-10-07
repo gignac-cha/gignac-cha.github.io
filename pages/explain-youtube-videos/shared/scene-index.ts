@@ -65,20 +65,41 @@ export const renderSceneIndex = (player: YT.Player, container: HTMLElement, scen
   });
   container.append(label, list);
 
+  // 목록 위에 마우스가 있을 때는 사용자가 훑어보는 중이므로 자동 스크롤하지 않는다.
+  let browsing = false;
+  list.addEventListener('pointerenter', () => (browsing = true));
+  list.addEventListener('pointerleave', () => (browsing = false));
+  let shown: HTMLElement | undefined;
+
   const update = () => {
     const time = player.getCurrentTime();
     const formatted = formatTime(time);
     if (clock.textContent !== formatted) {
       clock.textContent = formatted;
     }
+    let playing: HTMLElement | undefined;
     for (const { scene, element, chapters } of entries) {
       const active = scene.start <= time && time < scene.end;
       element.classList.toggle('active', active);
+      if (active) {
+        playing = element;
+      }
       const current = active ? chapters.findLast((chapter) => chapter.time <= time) : undefined;
       for (const chapter of chapters) {
         chapter.element.classList.toggle('active', chapter === current);
       }
     }
+    // 재생 중인 장면이 바뀌면 목록에서 보이는 자리로 옮긴다.
+    if (playing && playing !== shown && !browsing) {
+      const item = playing.getBoundingClientRect();
+      const view = list.getBoundingClientRect();
+      if (item.top < view.top) {
+        list.scrollBy({ top: item.top - view.top - 8, behavior: 'smooth' });
+      } else if (item.bottom > view.bottom) {
+        list.scrollBy({ top: item.bottom - view.bottom + 8, behavior: 'smooth' });
+      }
+    }
+    shown = playing;
     requestAnimationFrame(update);
   };
   update();

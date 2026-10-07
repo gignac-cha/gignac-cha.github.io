@@ -18,10 +18,13 @@
 .scene-index-item {
   border: 1px solid transparent;
   border-radius: 8px;
+  transition: background-color .2s, border-color .2s, box-shadow .2s;
 
+  // 재생 중인 장면: 재생 바의 강조색 구간과 같은 색으로 맞춘다.
   &.active {
-    background-color: var(--panel-raised);
-    border-color: var(--border);
+    background-color: color-mix(in srgb, var(--accent) 12%, var(--panel));
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    box-shadow: inset 3px 0px 0px var(--accent);
   }
 }
 .scene-index-row {

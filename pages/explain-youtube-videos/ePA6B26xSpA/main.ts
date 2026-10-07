@@ -1,6 +1,7 @@
 import { seekFromHash } from '../shared/permalink';
 import { renderSceneIndex } from '../shared/scene-index';
 import { syncScenes, type Scene } from '../shared/scenes';
+import { renderTimeline } from '../shared/timeline';
 import { loadPlayer } from '../shared/youtube';
 import { createAlexNetTricksScene } from './scenes/alexnet-tricks/scene';
 import { createArtificialNeuronScene } from './scenes/artificial-neuron/scene';
@@ -56,4 +57,5 @@ const scenes: Scene[] = [
 const player = await loadPlayer('video');
 syncScenes(player, document.getElementById('scenes')!, scenes);
 renderSceneIndex(player, document.getElementById('scene-index')!, scenes);
+renderTimeline(player, document.getElementById('timeline')!, scenes);
 seekFromHash(player);
