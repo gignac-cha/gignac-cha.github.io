@@ -1,4 +1,5 @@
 import { rememberPosition, seekFromHash } from '../shared/permalink';
+import { createPlayback } from '../shared/playback';
 import { setupIndexDock } from '../shared/index-dock';
 import { setupPip } from '../shared/pip';
 import { renderSceneIndex } from '../shared/scene-index';
@@ -70,8 +71,10 @@ setupIndexDock(element('scene-index'), element('layout'));
 setupTimelineDock(element('timeline-panel'), element('timeline-top'), element('timeline-bottom'));
 
 const player = await loadPlayer('video');
-syncScenes(player, element('scenes'), scenes, coverage);
-renderSceneIndex(player, element('scene-index'), scenes);
-renderTimeline(player, element('timeline'), scenes, coverage);
+// 장면·목록·재생 바는 매 프레임 보간한 같은 시계를 본다(2배속에서도 끊기지 않게).
+const playback = createPlayback(player);
+syncScenes(playback, element('scenes'), scenes, coverage);
+renderSceneIndex(playback, element('scene-index'), scenes, coverage);
+renderTimeline(playback, element('timeline'), scenes, coverage);
 seekFromHash(player);
 rememberPosition(player, 'ePA6B26xSpA');

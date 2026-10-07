@@ -1,4 +1,5 @@
 import './scenes.scss';
+import type { Playback } from './playback';
 
 export interface Chapter {
   time: number;
@@ -21,7 +22,7 @@ export interface Coverage {
 
 export const formatClock = (time: number) => `${Math.floor(time / 60)}:${String(Math.floor(time % 60)).padStart(2, '0')}`;
 
-export const syncScenes = (player: YT.Player, container: HTMLElement, scenes: Scene[], { exploredUntil }: Coverage = {}) => {
+export const syncScenes = (playback: Playback, container: HTMLElement, scenes: Scene[], { exploredUntil }: Coverage = {}) => {
   if (exploredUntil !== undefined) {
     container.dataset.explored = formatClock(exploredUntil);
   }
@@ -30,7 +31,7 @@ export const syncScenes = (player: YT.Player, container: HTMLElement, scenes: Sc
     container.append(element);
   }
   const update = () => {
-    const time = player.getCurrentTime();
+    const time = playback.time();
     let any = false;
     for (const scene of scenes) {
       const active = scene.start <= time && time < scene.end;

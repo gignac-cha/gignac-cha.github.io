@@ -1,4 +1,5 @@
 import './timeline.scss';
+import type { Playback } from './playback';
 import type { Coverage, Scene } from './scenes';
 
 const formatTime = (time: number) => {
@@ -23,7 +24,7 @@ const setText = (element: Element, content: string) => {
 };
 
 // 영상 아래의 재생 바. 장면 구간을 막대 위에 표시하고, 누르거나 끌어서 이동한다.
-export const renderTimeline = (player: YT.Player, container: HTMLElement, scenes: Scene[], { exploredUntil }: Coverage = {}) => {
+export const renderTimeline = (playback: Playback, container: HTMLElement, scenes: Scene[], { exploredUntil }: Coverage = {}) => {
   const header = create('div', 'timeline-header', container);
   const clock = create('div', 'timeline-clock', header);
   const current = create('time', 'timeline-current', clock);
@@ -73,7 +74,7 @@ export const renderTimeline = (player: YT.Player, container: HTMLElement, scenes
     }
     track.setPointerCapture(event.pointerId);
     scrub = timeAt(event);
-    player.seekTo(scrub, false);
+    playback.seek(scrub, false);
   });
   track.addEventListener('pointermove', (event) => {
     if (duration <= 0) {
@@ -87,14 +88,14 @@ export const renderTimeline = (player: YT.Player, container: HTMLElement, scenes
     setText(tooltip, scene ? `${formatTime(time)} · ${scene.title}` : isUnexplored(time) ? `${formatTime(time)} · 준비 중` : formatTime(time));
     if (scrub !== undefined) {
       scrub = time;
-      player.seekTo(scrub, false);
+      playback.seek(scrub, false);
     }
   });
   const release = (event: PointerEvent) => {
     if (scrub === undefined) {
       return;
     }
-    player.seekTo(timeAt(event), true);
+    playback.seek(timeAt(event));
     scrub = undefined;
   };
   track.addEventListener('pointerup', release);
@@ -103,20 +104,20 @@ export const renderTimeline = (player: YT.Player, container: HTMLElement, scenes
     const step = event.shiftKey ? 30 : 5;
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       event.preventDefault();
-      const time = player.getCurrentTime() + (event.key === 'ArrowLeft' ? -step : step);
-      player.seekTo(Math.min(Math.max(time, 0), duration), true);
+      const time = playback.time() + (event.key === 'ArrowLeft' ? -step : step);
+      playback.seek(Math.min(Math.max(time, 0), duration));
     }
   });
 
   const update = () => {
     if (duration <= 0) {
-      duration = player.getDuration();
+      duration = playback.duration();
       if (duration > 0) {
         layout();
       }
     }
     // 끄는 동안에는 플레이어가 따라오기 전이므로 손가락 위치를 보여 준다.
-    const time = scrub ?? player.getCurrentTime();
+    const time = scrub ?? playback.time();
     const position = `${ratio(time) * 100}%`;
     played.style.width = position;
     head.style.left = position;
