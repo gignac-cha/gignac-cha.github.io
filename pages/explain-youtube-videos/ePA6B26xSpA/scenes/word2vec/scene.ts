@@ -1,16 +1,8 @@
 import './word2vec.scss';
 import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
 import type { Scene } from '../../../shared/scenes';
-
-// 22:55.5 "사진은 그나마 숫자로 바꾸기 쉬운 편" ~ 24:00.7 "이제 단어의 좌표가 생겼으니 다음은 문장".
-const start = 1375.533;
-const end = 1440.667;
-const pixels = { show: start, numbers: 1378 };
-const word = { show: 1382.1, codes: 1383.4, noMeaning: 1385 };
-const symbols = { show: 1386.1, apple: 1387, pear: 1387.4, car: 1391.4, unknown: 1392.6 };
-const map = { show: 1397.533, place: 1398.9, coffee: 1407.8, friends: [1408.1, 1408.5, 1408.8], tea: 1411.1, teaFriends: 1411.9, teaMove: 1414.2, fill: 1416.5 };
-const king = { focus: 1422.3, minus: 1423.1, plus: 1424.5, queen: 1426.8, direction: 1428.3 };
-const seoul = { focus: 1431, minus: 1431.4, plus: 1432.2, tokyo: 1433.1 };
+import { withVariants } from '../../../shared/variants';
+import { end, king, map, pixels, seoul, start, symbols, word } from './timing';
 
 // 단어 지도 위의 자리. 관계가 같은 방향으로 놓이도록 남자→여자 와 왕→여왕, 한국→일본 과 서울→도쿄 를 나란히 둔다.
 const places: Record<string, [number, number]> = {
@@ -81,7 +73,7 @@ const createPoint = (parent: SVGElement, name: string, id?: string): Point => {
   return { group, label, chip };
 };
 
-export const createWord2VecScene = (): Scene => {
+const createWord2VecBase = (): Scene => {
   const { element, root } = createDiagram('w2v', '단어 좌표(Word2Vec)');
 
   const grid = svg('g', { class: 'w2v-grid' }, root);
@@ -266,3 +258,9 @@ export const createWord2VecScene = (): Scene => {
     ],
   };
 };
+
+// 임시 비교용: 장면 오른쪽 위 탭으로 Three.js 판과 바꿔 본다. Three.js 는 이 탭을 고를 때만 불러온다.
+export const createWord2VecScene = (): Scene =>
+  withVariants(createWord2VecBase(), [
+    { id: 'three', label: 'Three.js', load: () => import('./three').then(({ createWord2VecThree }) => createWord2VecThree()) },
+  ]);

@@ -1,25 +1,8 @@
 import './deep-belief-net.scss';
 import { appear, clamp, createDiagram, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
 import type { Scene } from '../../../shared/scenes';
-
-// 15:46 "심층 신뢰망" ~ 16:35 "층이 깊은 신경망의 학습이라는 뜻이죠".
-const start = 946.233;
-const end = 995.233;
-const at = {
-  outline: 946.6,
-  layerByLayer: 951.8,
-  allAtOnce: 956.7,
-  collapse: 957.6,
-  // 층마다 [올라오는 시점, 단단히 굳는 시점]
-  floors: [[959.5, 961], [961.6, 962.7], [962.7, 963.6], [964, 965.4]] as Array<[number, number]>,
-  summarize: 964,
-  noLabels: 968.3,
-  backprop: 971.3,
-  backpropEnd: 973.6,
-  trained: 973.8,
-  rename: 984.7,
-  deepLearning: 990.6,
-};
+import { withVariants } from '../../../shared/variants';
+import { at, end, start } from './timing';
 
 const centerX = 1100;
 const layers = [
@@ -38,7 +21,7 @@ const random = (seed: number) => {
 
 const nodeX = (layer: number, i: number) => centerX + (i - (layers[layer].count - 1) / 2) * spacing;
 
-export const createDeepBeliefNetScene = (): Scene => {
+const createDeepBeliefNetBase = (): Scene => {
   const { element, root } = createDiagram('deep-belief-net', '심층 신뢰망');
 
   // 왼쪽: 한꺼번에 올린 10층은 무너진다.
@@ -171,3 +154,9 @@ export const createDeepBeliefNetScene = (): Scene => {
     ],
   };
 };
+
+// 임시 비교용: 장면 오른쪽 위 탭으로 Three.js 판과 바꿔 본다. Three.js 는 이 탭을 고를 때만 불러온다.
+export const createDeepBeliefNetScene = (): Scene =>
+  withVariants(createDeepBeliefNetBase(), [
+    { id: 'three', label: 'Three.js', load: () => import('./three').then(({ createDeepBeliefNetThree }) => createDeepBeliefNetThree()) },
+  ]);

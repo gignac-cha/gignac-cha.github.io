@@ -1,45 +1,17 @@
 import type { Scene } from '../../../shared/scenes';
+import { withVariants } from '../../../shared/variants';
 import { createGan } from './gan';
+import { ganEnd, ganStart, ganTimeline } from './timeline';
 import { createGanWeakness } from './weakness';
 
-// 26:34 "생성적 적대 신경망" ~ 27:40 "해마다 더 크고 더 선명해졌어요".
-export const createGanScene = (): Scene => {
-  const timeline = {
-    name: 1595.8,
-    cards: 1598.4,
-    generator: 1601.8,
-    firstFake: 1605,
-    police: 1606.6,
-    real: 1608.6,
-    verdict: 1611.2,
-    feedback: 1612.1,
-    rounds: [
-      [1614.1, 'forge'],
-      [1617.1, 'police'],
-      [1619.2, 'forge'],
-      [1620.2, 'police'],
-      [1621.6, 'forge'],
-      [1622.7, 'police'],
-      [1625.3, 'forge'],
-      [1625.9, 'police'],
-      [1626.5, 'forge'],
-      [1627.1, 'police'],
-    ] as Array<[number, 'forge' | 'police']>,
-    indistinguishable: 1628.4,
-    faces: 1631,
-    gather: 1635.4,
-    formed: 1638.5,
-    nobody: 1640.8,
-    judge: 1643.2,
-    brush: 1646.1,
-    early: 1649.5,
-    yearly: 1657,
-  };
+// 26:34 "생성적 적대 신경망" ~ 27:40 "해마다 더 크고 더 선명해졌어요". 시점은 timeline.ts 에서 Three.js 판과 함께 쓴다.
+const createGanBase = (): Scene => {
+  const timeline = ganTimeline;
   return {
     ...createGan(timeline),
     title: '생성적 적대 신경망(GAN)',
-    start: 1594.6,
-    end: 1660.9,
+    start: ganStart,
+    end: ganEnd,
     chapters: [
       { time: timeline.cards, title: '위조범과 경찰' },
       { time: timeline.verdict, title: '진짜와 가짜 가려내기' },
@@ -73,3 +45,9 @@ export const createGanWeaknessScene = (): Scene => {
     ],
   };
 };
+
+// 임시 비교용: 장면 오른쪽 위 탭으로 Three.js 판과 바꿔 본다. Three.js 는 이 탭을 고를 때만 불러온다.
+export const createGanScene = (): Scene =>
+  withVariants(createGanBase(), [
+    { id: 'three', label: 'Three.js', load: () => import('./three').then(({ createGanThree }) => createGanThree()) },
+  ]);

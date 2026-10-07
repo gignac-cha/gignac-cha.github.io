@@ -77,8 +77,8 @@ export const drawFace = (parent: Element, face: Face) => {
   return group;
 };
 
-// 얼굴을 width 픽셀 너비의 작은 그림으로 그려 data URL로 돌려준다. 흐릿한 초기 생성 결과를 흉내 낸다.
-export const faceImage = (face: Face, width: number, grayscale: boolean) => {
+// 얼굴을 width 픽셀 너비의 캔버스로 그린다. Three.js 판은 이 픽셀로 입자 색과 자리를 정한다.
+export const faceCanvas = (face: Face, width: number, grayscale: boolean) => {
   const large = document.createElement('canvas');
   large.width = FACE_WIDTH;
   large.height = FACE_HEIGHT;
@@ -110,8 +110,11 @@ export const faceImage = (face: Face, width: number, grayscale: boolean) => {
     }
     target.putImageData(image, 0, 0);
   }
-  return small.toDataURL();
+  return small;
 };
+
+// 얼굴을 width 픽셀 너비의 작은 그림으로 그려 data URL로 돌려준다. 흐릿한 초기 생성 결과를 흉내 낸다.
+export const faceImage = (face: Face, width: number, grayscale: boolean) => faceCanvas(face, width, grayscale).toDataURL();
 
 // 결정적인 난수. 같은 seed면 늘 같은 배치가 나온다.
 export const random = (seed: number) => () => {

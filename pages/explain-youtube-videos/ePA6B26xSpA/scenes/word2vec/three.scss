@@ -1,0 +1,116 @@
+// Three.js 판(three.ts) 위에 겹치는 글자. 공간 위에서도 읽히도록 배경색 테두리를 두른다.
+.word2vec-three {
+  .w2v3-label {
+    font-size: 30px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--d-text);
+    paint-order: stroke;
+    stroke: var(--d-background);
+    stroke-width: 7px;
+    stroke-linejoin: round;
+
+    &.focus {
+      font-size: 36px;
+      fill: var(--d-yellow);
+    }
+    &.reference {
+      fill: #ffffff;
+    }
+    &.hit {
+      font-size: 36px;
+      fill: var(--d-green);
+    }
+  }
+  .w2v3-vector {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 24px;
+    text-anchor: middle;
+    fill: var(--d-muted);
+    paint-order: stroke;
+    stroke: var(--d-background);
+    stroke-width: 6px;
+  }
+  .w2v3-number {
+    font-size: 20px;
+    font-weight: 700;
+    text-anchor: middle;
+    font-variant-numeric: tabular-nums;
+    fill: var(--d-subtle);
+
+    &.on-color {
+      fill: #0f1013;
+    }
+  }
+  .w2v3-chip {
+    rect {
+      fill: #1b1d23;
+      stroke: var(--d-line);
+      stroke-width: 2;
+    }
+  }
+  .w2v3-chip-label {
+    font-size: 32px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .w2v3-chip-id {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 24px;
+    text-anchor: middle;
+    fill: var(--d-subtle);
+  }
+  .w2v3-unknown {
+    stroke: var(--d-subtle);
+    stroke-width: 2;
+    stroke-dasharray: 8 8;
+  }
+  .w2v3-question {
+    circle {
+      fill: var(--d-background);
+      stroke: var(--d-line);
+      stroke-width: 2;
+    }
+    text {
+      font-size: 28px;
+      font-weight: 700;
+      text-anchor: middle;
+      fill: var(--d-muted);
+    }
+  }
+  .w2v3-friend-line {
+    stroke: var(--d-orange);
+    stroke-opacity: .55;
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+  }
+  .w2v3-friend {
+    rect {
+      fill: color-mix(in srgb, var(--d-orange) 14%, var(--d-background));
+      stroke: var(--d-orange);
+      stroke-width: 2;
+      stroke-dasharray: 6 5;
+    }
+    text {
+      font-size: 26px;
+      font-weight: 600;
+      text-anchor: middle;
+      fill: var(--d-orange);
+    }
+  }
+  .w2v3-target {
+    fill: none;
+    stroke: var(--d-yellow);
+    stroke-width: 3;
+    stroke-dasharray: 7 6;
+  }
+  .w2v3-formula {
+    font-size: 40px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-text);
+    paint-order: stroke;
+    stroke: var(--d-background);
+    stroke-width: 8px;
+  }
+}

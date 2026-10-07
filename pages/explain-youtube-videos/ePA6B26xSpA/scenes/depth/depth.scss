@@ -97,3 +97,13 @@
     fill: var(--d-yellow);
   }
 }
+
+// Three.js 판(three.ts)에서 겹쳐 쓰는 글자.
+.depth-three {
+  .depth-abstract-label {
+    font-size: 30px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--d-yellow);
+  }
+}

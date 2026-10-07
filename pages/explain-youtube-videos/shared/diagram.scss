@@ -37,3 +37,18 @@
   letter-spacing: .02em;
   fill: var(--d-muted) !important;
 }
+// Three.js 판 (shared/three-diagram.ts): 캔버스는 뒤, SVG 는 앞에 겹친다.
+// 장면 영역을 꽉 채운다(비교 탭 스타일과 불러오는 순서가 바뀌어도 같도록 position 은 absolute 로).
+.three-diagram {
+  position: absolute;
+  inset: 0px;
+
+  > svg {
+    position: absolute;
+    inset: 0px;
+  }
+}
+// 캔버스는 SVG(1600×900, 가운데 맞춤)와 같은 16:9 상자에 놓아 3D 위치와 글자 위치가 맞게 한다.
+.three-diagram-canvas {
+  position: absolute;
+}
