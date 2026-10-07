@@ -6,6 +6,7 @@ import { createAlexNetTricksScene } from './scenes/alexnet-tricks/scene';
 import { createAttentionScene } from './scenes/attention/scene';
 import { createChatGPTScene } from './scenes/chatgpt/scene';
 import { createCnnScene } from './scenes/cnn/scene';
+import { createDeepBlueScene } from './scenes/deep-blue/scene';
 import { createDepthScene } from './scenes/depth/scene';
 import {
   createGanScene,
@@ -24,6 +25,7 @@ const scenes: Scene[] = [
   createCnnScene(),
   createRnnScene(),
   createLstmScene(),
+  createDeepBlueScene(),
   createAlexNetTricksScene(),
   createWord2VecScene(),
   createSeq2SeqScene(),
