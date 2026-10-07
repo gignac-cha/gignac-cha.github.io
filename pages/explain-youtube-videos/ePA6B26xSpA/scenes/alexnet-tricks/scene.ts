@@ -1,5 +1,5 @@
 import './alexnet-tricks.scss';
-import { appear, createDiagram, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
 import type { Scene } from '../../../shared/scenes';
 
 // 20:52.8 "알렉스넷에는 작지만 중요한 요령이 세 가지" ~ 21:27.6 "여기서 세 바퀴가 처음으로".
@@ -101,6 +101,8 @@ const createDropout = (root: SVGElement) => {
     ...node,
     ring: node.layer === 1 || node.layer === 2 ? svg('circle', { class: 'alexnet-ring', cx: node.x, cy: node.y, r: 38, pathLength: 1 }, panel) : undefined,
     circle: svg('circle', { class: 'alexnet-node', cx: node.x, cy: node.y, r: 26 }, panel),
+    // 쉬는 모습(점선 회색)을 위에 겹쳐 두고 투명도로 섞는다.
+    rest: svg('circle', { class: 'alexnet-node off', cx: node.x, cy: node.y, r: 26, opacity: 0 }, panel),
   }));
   const counter = text(panel, 795, 860, '', { class: 'alexnet-counter', 'text-anchor': 'middle' });
   const ringLabel = text(panel, 795, 236, '바깥 고리 · 쓰인 횟수', { class: 'alexnet-ring-label' });
@@ -115,23 +117,38 @@ const createDropout = (root: SVGElement) => {
     return draws[i] < .4 && lower < 3;
   };
 
+  // 회차가 바뀔 때 이전 회차 상태에서 새 상태로 이만큼 동안 섞는다(뚝뚝 끊기지 않게).
+  const blend = .35;
+  const offIn = (step: number, layer: number, i: number) => (resting(step, layer, i) ? 1 : 0);
+  const usageIn = (step: number, layer: number, i: number) => {
+    if (step < 0) {
+      return 0;
+    }
+    let used = 0;
+    for (let k = 0; k <= step; k++) {
+      used += resting(k, layer, i) ? 0 : 1;
+    }
+    return used / (step + 1);
+  };
+
   return (time: number) => {
     const step = time < dropout.steps ? -1 : Math.floor((time - dropout.steps) / dropout.stepLength);
-    const rest = new Set(nodes.filter(({ layer, i }) => resting(step, layer, i)).map(({ layer, i }) => `${layer}-${i}`));
+    const mix = step < 0 ? 0 : ease(progress(time, dropout.steps + step * dropout.stepLength, blend));
+    const off = new Map(
+      nodes.map(({ layer, i }) => [`${layer}-${i}`, step < 0 ? 0 : lerp(step > 0 ? offIn(step - 1, layer, i) : 0, offIn(step, layer, i), mix)]),
+    );
     for (const node of nodes) {
-      const off = rest.has(`${node.layer}-${node.i}`);
-      node.circle.classList.toggle('off', off);
+      const value = off.get(`${node.layer}-${node.i}`)!;
+      setAttributes(node.circle, { opacity: (1 - value).toFixed(3) });
+      setAttributes(node.rest, { opacity: value.toFixed(3) });
       if (node.ring) {
-        let used = 0;
-        for (let k = 0; k <= step; k++) {
-          used += resting(k, node.layer, node.i) ? 0 : 1;
-        }
-        const usage = step < 0 ? 0 : used / (step + 1);
+        const usage = lerp(usageIn(step - 1, node.layer, node.i), usageIn(step, node.layer, node.i), mix);
         setAttributes(node.ring, { 'stroke-dasharray': `${usage.toFixed(3)} 1`, opacity: appear(time, dropout.steps, .4).toFixed(3) });
       }
     }
     for (const { from, to, line } of edges) {
-      line.classList.toggle('off', rest.has(`${from.layer}-${from.i}`) || rest.has(`${to.layer}-${to.i}`));
+      const value = Math.max(off.get(`${from.layer}-${from.i}`)!, off.get(`${to.layer}-${to.i}`)!);
+      setAttributes(line, { opacity: lerp(.8, .08, value).toFixed(3) });
     }
     counter.textContent = step < 0 ? '' : `학습 ${step + 1}회째`;
     setAttributes(ringLabel, { opacity: appear(time, dropout.even - 2.3).toFixed(3) });

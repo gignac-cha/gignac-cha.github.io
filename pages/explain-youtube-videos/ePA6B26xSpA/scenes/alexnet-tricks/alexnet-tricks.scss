@@ -105,14 +105,10 @@
   stroke-width: 3;
 }
 
+// 투명도는 회차가 바뀔 때 섞이도록 scene.ts 가 시간에 맞춰 정한다.
 .alexnet-edge {
   stroke: var(--d-line);
   stroke-width: 2;
-  opacity: .8;
-
-  &.off {
-    opacity: .08;
-  }
 }
 .alexnet-node {
   fill: color-mix(in srgb, var(--alexnet-dropout) 22%, var(--d-background));
