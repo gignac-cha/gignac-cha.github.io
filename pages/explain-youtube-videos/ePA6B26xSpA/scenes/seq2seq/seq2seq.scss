@@ -1,0 +1,115 @@
+.s2s-caption {
+  font-size: 28px;
+  fill: var(--d-muted) !important;
+}
+.s2s-heading {
+  font-size: 32px;
+  font-weight: 700;
+}
+.s2s-chip {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 32px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  &.muted text {
+    fill: var(--d-muted) !important;
+  }
+  &.active rect {
+    stroke: var(--d-blue);
+    fill: color-mix(in srgb, var(--d-blue) 16%, var(--d-background));
+  }
+  &.output rect {
+    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--d-green) 16%, var(--d-background));
+  }
+}
+.s2s-pair-link {
+  stroke: var(--d-subtle);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+.s2s-awkward {
+  font-size: 40px;
+  font-weight: 700;
+}
+.s2s-squiggle {
+  fill: none;
+  stroke: var(--d-red);
+  stroke-width: 3;
+}
+.s2s-awkward-label {
+  font-size: 30px;
+  font-weight: 700;
+  fill: var(--d-red) !important;
+}
+.s2s-arrow {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.s2s-cell {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-line);
+    stroke-width: 3;
+  }
+  &.active rect {
+    fill: color-mix(in srgb, var(--d-blue) 18%, var(--d-background));
+    stroke: var(--d-blue);
+  }
+}
+.s2s-cell-label {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+
+  .active & {
+    fill: var(--d-text) !important;
+  }
+}
+.s2s-capsule-ring {
+  fill: color-mix(in srgb, var(--d-yellow) 8%, var(--d-background));
+  stroke: var(--d-yellow);
+  stroke-width: 4;
+
+  &.strained {
+    fill: color-mix(in srgb, var(--d-red) 10%, var(--d-background));
+    stroke: var(--d-red);
+    stroke-width: 6;
+  }
+}
+.s2s-capsule-bar {
+  fill: var(--d-yellow);
+}
+.s2s-packet {
+  fill: var(--d-yellow);
+}
+.s2s-long-line {
+  font-size: 30px;
+  font-weight: 600;
+  fill: var(--d-subtle) !important;
+
+  tspan.read {
+    fill: var(--d-blue);
+  }
+  tspan.faded {
+    fill: var(--d-subtle);
+    fill-opacity: .35;
+  }
+  &.output {
+    font-size: 34px;
+    fill: var(--d-green) !important;
+  }
+  tspan.garbled {
+    fill: var(--d-red);
+  }
+}

@@ -7,6 +7,7 @@ import { createChatGPTScene } from './scenes/chatgpt/scene';
 import { createCnnScene } from './scenes/cnn/scene';
 import { createLstmScene } from './scenes/lstm/scene';
 import { createRnnScene } from './scenes/rnn/scene';
+import { createSeq2SeqScene } from './scenes/seq2seq/scene';
 import { createSvmScene } from './scenes/svm/scene';
 import { createWord2VecScene } from './scenes/word2vec/scene';
 
@@ -19,6 +20,7 @@ const scenes: Scene[] = [
   createLstmScene(),
   createAlexNetTricksScene(),
   createWord2VecScene(),
+  createSeq2SeqScene(),
 ];
 
 const player = await loadPlayer('video');
