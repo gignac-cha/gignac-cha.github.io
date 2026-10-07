@@ -18,10 +18,10 @@ const margin = 12;
 const icons: Record<Dock, string> = {
   left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16" /></svg>',
   right: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M15 4v16" /></svg>',
-  // 떼어내기: 창 밖으로 나가는 화살표.
+  // 띄우기: 창 밖으로 나가는 화살표.
   floating: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5" /><path d="M14 4h6v6" /><path d="M20 4l-9 9" /></svg>',
 };
-const labels: Record<Dock, string> = { left: '왼쪽에 붙이기', right: '오른쪽에 붙이기', floating: '떼어내기' };
+const labels: Record<Dock, string> = { left: '왼쪽에 고정', right: '오른쪽에 고정', floating: '띄우기' };
 
 // 장면 인덱스 자리: 오른쪽(기본)·왼쪽에 붙이거나, 떼어내 화면 위에 띄운다.
 // 띄운 상태에서는 머리를 잡고 옮기고, 오른쪽 아래 모서리(CSS resize)로 크기를 바꾼다.

@@ -27,7 +27,7 @@ export const renderSceneIndex = (player: YT.Player, container: HTMLElement, scen
   const manual = load<Record<string, boolean>>('index-expanded', {});
   const clock = create('time', 'scene-index-clock', formatTime(0));
   // 라벨은 페이지에 미리 있을 수 있다(자리 바꾸기 버튼이 먼저 붙어 있으면 그 앞에 시계를 둔다).
-  const label = container.querySelector('.panel-label') ?? create('h2', 'panel-label', '장면 인덱스');
+  const label = container.querySelector('.panel-label') ?? create('h2', 'panel-label', '장면 목록');
   label.insertBefore(clock, label.querySelector('.dock-controls'));
   const list = create('ol', 'scene-index-list');
 
@@ -36,9 +36,14 @@ export const renderSceneIndex = (player: YT.Player, container: HTMLElement, scen
     const button = create('button', 'scene-index-scene');
     button.append(
       create('span', 'scene-index-number', String(index + 1).padStart(2, '0')),
+    );
+    // 제목이 한 줄을 다 쓰도록 시간 구간은 아래 줄에 둔다.
+    const text = create('span', 'scene-index-text');
+    text.append(
       create('span', 'scene-index-title', scene.title),
       create('time', 'scene-index-range', `${formatTime(scene.start)} – ${formatTime(scene.end)}`),
     );
+    button.append(text);
     button.addEventListener('click', () => player.seekTo(scene.start, true));
     const row = create('div', 'scene-index-row');
     row.append(button);
@@ -59,7 +64,7 @@ export const renderSceneIndex = (player: YT.Player, container: HTMLElement, scen
 
       const toggle = create('button', 'scene-index-toggle');
       toggle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6" /></svg>';
-      toggle.setAttribute('aria-label', '세부 단계 펼치기');
+      toggle.setAttribute('aria-label', '단계 펼치기');
       toggle.setAttribute('aria-expanded', 'false');
       toggle.addEventListener('click', () => {
         manual[sceneKey(scene)] = !item.classList.contains('expanded');
@@ -102,6 +107,7 @@ export const renderSceneIndex = (player: YT.Player, container: HTMLElement, scen
         element.classList.toggle('expanded', expanded);
         element.classList.toggle('manual', sceneKey(scene) in manual);
         toggle?.setAttribute('aria-expanded', String(expanded));
+        toggle?.setAttribute('aria-label', expanded ? '단계 접기' : '단계 펼치기');
       }
     }
     // 재생 중인 장면이 바뀌면 목록에서 보이는 자리로 옮긴다.

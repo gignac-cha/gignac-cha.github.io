@@ -44,7 +44,7 @@ const person = (parent: Element, x: number, y: number, size: number) => {
 };
 
 export const createImageNetLabelingScene = (): Scene => {
-  const { element, root } = createDiagram('imagenet-labeling', '이미지넷 · 이름표');
+  const { element, root } = createDiagram('imagenet-labeling', '이미지넷 이름표 붙이기');
 
   // 거대한 모자이크: 사진 한 장이 한 칸.
   const cellGroup = svg('g', { class: 'imagenet-cells' }, root);
@@ -156,7 +156,7 @@ export const createImageNetLabelingScene = (): Scene => {
   return {
     element,
     update,
-    title: '이미지넷 · 이름표',
+    title: '이미지넷 이름표 붙이기',
     start,
     end,
     chapters: [

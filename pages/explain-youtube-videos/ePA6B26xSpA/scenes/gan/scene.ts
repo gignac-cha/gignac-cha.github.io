@@ -37,7 +37,7 @@ export const createGanScene = (): Scene => {
   };
   return {
     ...createGan(timeline),
-    title: 'GAN',
+    title: '생성적 적대 신경망(GAN)',
     start: 1594.6,
     end: 1660.9,
     chapters: [

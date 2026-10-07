@@ -301,7 +301,7 @@ body.dragging {
   opacity: 1;
 }
 #scenes.unexplored::after {
-  content: '미탐색 구간\A ' attr(data-explored) ' 이후는 아직 장면을 만들지 않았어요';
+  content: '준비 중인 구간\A ' attr(data-explored) ' 이후 장면은 아직 만들고 있어요';
   position: absolute;
   inset: 0px;
   display: flex;

@@ -36,7 +36,7 @@ const toScreen = ([u, v]: [number, number]) => {
 };
 
 export const createSvmScene = (): Scene => {
-  const { element, root } = createDiagram('svm', '서포트 벡터 머신');
+  const { element, root } = createDiagram('svm', '서포트 벡터 머신(SVM)');
   const defs = svg('defs', {}, root);
   const clip = svg('clipPath', { id: 'svm-clip' }, defs);
   svg('rect', { x: 230, y: 130, width: 1140, height: 680, rx: 24 }, clip);
@@ -143,11 +143,11 @@ export const createSvmScene = (): Scene => {
   return {
     element,
     update,
-    title: '서포트 벡터 머신',
+    title: '서포트 벡터 머신(SVM)',
     start,
     end,
     chapters: [
-      { time: 478.4, title: '서포트 벡터 머신' },
+      { time: 478.4, title: '서포트 벡터 머신(SVM)' },
       { time: 480.6, title: '가장 넓은 길' },
       { time: testAt, title: '새 점도 바로 판정' },
       { time: fewAt, title: '적은 데이터로도' },

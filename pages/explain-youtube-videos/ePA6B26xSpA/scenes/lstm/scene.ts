@@ -64,7 +64,7 @@ const place = (element: Element, x: number, y: number, opacity: number) =>
   setAttributes(element, { transform: `translate(${x.toFixed(1)} ${y.toFixed(1)})`, opacity: opacity.toFixed(3) });
 
 export const createLstmScene = (): Scene => {
-  const { element, root } = createDiagram('lstm', 'LSTM');
+  const { element, root } = createDiagram('lstm', '장단기 기억(LSTM)');
   const defs = svg('defs', {}, root);
   const clip = svg('clipPath', { id: 'lstm-belt-clip' }, defs);
   svg('rect', { x: beltLeft, y: beltY - 36, width: beltRight - beltLeft, height: 72, rx: 36 }, clip);
@@ -180,7 +180,7 @@ export const createLstmScene = (): Scene => {
   return {
     element,
     update,
-    title: 'LSTM',
+    title: '장단기 기억(LSTM)',
     start,
     end,
     chapters: [

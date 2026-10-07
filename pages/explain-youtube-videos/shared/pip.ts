@@ -40,7 +40,7 @@ export const setupPip = (toggle: HTMLButtonElement, panel: HTMLElement) => {
   const apply = () => {
     document.body.classList.toggle('pip', state.on);
     toggle.setAttribute('aria-pressed', String(state.on));
-    toggle.querySelector('span')!.textContent = state.on ? '영상 제자리로' : '영상 띄우기';
+    toggle.querySelector('span')!.textContent = state.on ? '띄우기 해제' : '영상 띄우기';
     if (state.on) {
       const { x, y, width } = place();
       panel.style.left = `${x}px`;

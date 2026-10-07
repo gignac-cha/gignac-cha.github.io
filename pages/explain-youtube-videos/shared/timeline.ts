@@ -84,7 +84,7 @@ export const renderTimeline = (player: YT.Player, container: HTMLElement, scenes
     hover.style.left = position;
     tooltip.style.left = position;
     const scene = sceneAt(time);
-    setText(tooltip, scene ? `${formatTime(time)} · ${scene.title}` : isUnexplored(time) ? `${formatTime(time)} · 미탐색` : formatTime(time));
+    setText(tooltip, scene ? `${formatTime(time)} · ${scene.title}` : isUnexplored(time) ? `${formatTime(time)} · 준비 중` : formatTime(time));
     if (scrub !== undefined) {
       scrub = time;
       player.seekTo(scrub, false);
@@ -124,7 +124,7 @@ export const renderTimeline = (player: YT.Player, container: HTMLElement, scenes
     track.setAttribute('aria-valuenow', String(Math.floor(time)));
     const active = sceneAt(time);
     const outside = !active && isUnexplored(time);
-    setText(sceneName, active?.title ?? (outside ? '미탐색 구간' : ''));
+    setText(sceneName, active?.title ?? (outside ? '준비 중인 구간' : ''));
     sceneName.classList.toggle('unexplored', outside);
     for (const { scene, element } of segments) {
       element.classList.toggle('active', scene === active);

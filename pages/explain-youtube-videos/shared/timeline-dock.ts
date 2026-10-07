@@ -17,10 +17,10 @@ const margin = 12;
 const icons: Record<Dock, string> = {
   top: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14M12 20V9M7 13l5-5 5 5" /></svg>',
   bottom: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20h14M12 4v11M7 11l5 5 5-5" /></svg>',
-  // 떼어내기: 창 밖으로 나가는 화살표.
+  // 띄우기: 창 밖으로 나가는 화살표.
   floating: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5" /><path d="M14 4h6v6" /><path d="M20 4l-9 9" /></svg>',
 };
-const labels: Record<Dock, string> = { top: '위에 붙이기', bottom: '아래에 붙이기', floating: '떼어내기' };
+const labels: Record<Dock, string> = { top: '위쪽에 고정', bottom: '아래쪽에 고정', floating: '띄우기' };
 
 // 재생 바 자리: 아래(기본)·위에 붙이거나, 떼어내 화면 위에 띄운다. 띄운 상태에서는 머리 부분을 잡고 끌어 옮긴다.
 export const setupTimelineDock = (panel: HTMLElement, top: HTMLElement, bottom: HTMLElement) => {

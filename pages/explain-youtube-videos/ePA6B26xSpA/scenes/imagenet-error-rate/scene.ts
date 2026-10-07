@@ -41,7 +41,7 @@ const random = (seed: number) => {
 };
 
 export const createImageNetErrorRateScene = (): Scene => {
-  const { element, root } = createDiagram('imagenet-error-rate', '이미지넷 대회 · 오류율');
+  const { element, root } = createDiagram('imagenet-error-rate', '이미지넷 대회 오류율');
 
   // 왼쪽 A: 다섯 번 안에 맞히면 정답.
   const rules = svg('g', { class: 'error-rate-rules', transform: 'translate(380 80)' }, root);
@@ -161,7 +161,7 @@ export const createImageNetErrorRateScene = (): Scene => {
   return {
     element,
     update,
-    title: '이미지넷 대회 · 오류율',
+    title: '이미지넷 대회 오류율',
     start,
     end,
     chapters: [

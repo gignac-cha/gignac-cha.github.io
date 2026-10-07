@@ -23,7 +23,7 @@ export const setupSplitter = (layout: HTMLElement, splitter: HTMLElement) => {
 
   splitter.setAttribute('role', 'separator');
   splitter.setAttribute('aria-orientation', 'vertical');
-  splitter.setAttribute('aria-label', '영상과 장면 비율 조절');
+  splitter.setAttribute('aria-label', '영상·장면 크기 조절');
   splitter.tabIndex = 0;
 
   let from = ratio;

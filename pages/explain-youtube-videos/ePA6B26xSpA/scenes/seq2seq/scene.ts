@@ -181,12 +181,12 @@ const createModel = (root: SVGElement) => {
 };
 
 export const createSeq2SeqScene = (): Scene => {
-  const { element, root } = createDiagram('s2s', 'Seq2Seq');
+  const { element, root } = createDiagram('s2s', '시퀀스 투 시퀀스(Seq2Seq)');
   const renders = [createOldTranslation(root), createModel(root)];
   return {
     element,
     update: (time: number) => renders.forEach((render) => render(time)),
-    title: 'Seq2Seq',
+    title: '시퀀스 투 시퀀스(Seq2Seq)',
     start,
     end,
     chapters: [

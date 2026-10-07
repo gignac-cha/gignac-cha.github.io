@@ -12,7 +12,7 @@ const timeline = {
 
 export const createChatGPTScene = (): Scene => ({
   ...createChatGPT(timeline),
-  title: 'ChatGPT',
+  title: 'ChatGPT에 던진 질문',
   start: 0.267,
   end: 7.433,
   chapters: [

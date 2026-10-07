@@ -44,7 +44,7 @@ interface Node {
 }
 
 export const createDeepBlueScene = (): Scene => {
-  const { element, root: canvas } = createDiagram('deep-blue', '딥블루 · 탐색');
+  const { element, root: canvas } = createDiagram('deep-blue', '딥블루의 탐색');
 
   const fan = svg('g', { class: 'deep-blue-fan' }, canvas);
   const fanLines = Array.from({ length: 220 }, (_, i) => {
@@ -176,7 +176,7 @@ export const createDeepBlueScene = (): Scene => {
   return {
     element,
     update,
-    title: '딥블루 · 탐색',
+    title: '딥블루의 탐색',
     start,
     end,
     chapters: [

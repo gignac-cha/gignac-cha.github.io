@@ -81,7 +81,7 @@ const setText = (element: Element, content: string) => {
 };
 
 const createPerceptron = () => {
-  const { element, root } = createDiagram('perceptron', '퍼셉트론');
+  const { element, root } = createDiagram('perceptron', '퍼셉트론 학습');
 
   // 왼쪽: 입력 두 개, 무게 두 개, 합.
   const unit = svg('g', { opacity: 0 }, root);

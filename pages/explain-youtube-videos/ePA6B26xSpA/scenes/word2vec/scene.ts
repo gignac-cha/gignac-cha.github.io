@@ -82,7 +82,7 @@ const createPoint = (parent: SVGElement, name: string, id?: string): Point => {
 };
 
 export const createWord2VecScene = (): Scene => {
-  const { element, root } = createDiagram('w2v', 'Word2Vec');
+  const { element, root } = createDiagram('w2v', '단어 좌표(Word2Vec)');
 
   const grid = svg('g', { class: 'w2v-grid' }, root);
   for (let x = 100; x <= 1500; x += 100) {
@@ -252,7 +252,7 @@ export const createWord2VecScene = (): Scene => {
   return {
     element,
     update,
-    title: 'Word2Vec',
+    title: '단어 좌표(Word2Vec)',
     start,
     end,
     chapters: [

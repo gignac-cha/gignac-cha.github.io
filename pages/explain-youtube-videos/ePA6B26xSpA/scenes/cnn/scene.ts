@@ -92,7 +92,7 @@ const variants = [
 ];
 
 export const createCnnScene = (): Scene => {
-  const { element, root } = createDiagram('cnn', '합성곱 신경망 CNN');
+  const { element, root } = createDiagram('cnn', '합성곱 신경망(CNN)');
 
   // 1단계
   const handwriting = svg('g', {}, root);
@@ -310,7 +310,7 @@ export const createCnnScene = (): Scene => {
   return {
     element,
     update,
-    title: '합성곱 신경망 CNN',
+    title: '합성곱 신경망(CNN)',
     start,
     end,
     chapters: [

@@ -95,7 +95,7 @@ const rows = [
 ] as const;
 
 export const createDepth = (timeline: DepthTimeline) => {
-  const { element, root } = createDiagram('depth', '층이 깊을수록');
+  const { element, root } = createDiagram('depth', '깊이와 계층 특징');
 
   // 층별로 보는 것
   const hierarchy = svg('g', {}, root);

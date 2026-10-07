@@ -64,7 +64,7 @@ const person = (parent: Element, x: number, y: number, size: number) => {
 };
 
 export const createGpuScene = (): Scene => {
-  const { element, root } = createDiagram('gpu', 'GPU · 병렬 연산');
+  const { element, root } = createDiagram('gpu', 'GPU 병렬 연산');
 
   // A. 게임 화면: 수많은 점의 색을 동시에.
   const monitor = svg('g', { class: 'gpu-monitor' }, root);
@@ -233,7 +233,7 @@ export const createGpuScene = (): Scene => {
   return {
     element,
     update,
-    title: 'GPU · 병렬 연산',
+    title: 'GPU 병렬 연산',
     start,
     end,
     chapters: [

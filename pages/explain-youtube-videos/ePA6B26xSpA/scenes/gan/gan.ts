@@ -118,7 +118,7 @@ const createChip = (parent: Element, x: number, y: number, label: string, kind: 
 const slotSize = (morph: number) => ({ width: lerp(300, 170, morph), height: lerp(150, 204, morph) });
 
 export const createGan = (timeline: GanTimeline) => {
-  const { element, root } = createDiagram('gan', 'GAN · 생성적 적대 신경망');
+  const { element, root } = createDiagram('gan', '생성적 적대 신경망(GAN)');
 
   // 0. 이름
   const name = svg('g', { class: 'gan-name' }, root);

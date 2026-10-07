@@ -36,7 +36,7 @@ const xOf = (index: number) => firstX + index * stepX;
 const weights = (read: number) => words.map((_, index) => (index < read ? decay ** Math.max(read - index - 1, 0) : 0));
 
 export const createRnnScene = (): Scene => {
-  const { element, root } = createDiagram('rnn', '순환 신경망 RNN');
+  const { element, root } = createDiagram('rnn', '순환 신경망(RNN)');
 
   // 1단계
   const intro = svg('g', {}, root);
@@ -160,7 +160,7 @@ export const createRnnScene = (): Scene => {
   return {
     element,
     update,
-    title: '순환 신경망 RNN',
+    title: '순환 신경망(RNN)',
     start,
     end,
     chapters: [

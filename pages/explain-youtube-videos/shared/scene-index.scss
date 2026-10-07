@@ -73,6 +73,7 @@
   cursor: pointer;
 }
 .scene-index-scene {
+  align-items: flex-start;
   gap: 10px;
   padding: 10px 12px;
   border-radius: 8px;
@@ -85,6 +86,8 @@
   }
 }
 .scene-index-number {
+  // 제목 첫 줄과 높이를 맞춘다.
+  padding-top: 3px;
   font-family: var(--monospace);
   font-size: 11px;
   color: var(--subtle);
@@ -93,12 +96,15 @@
     color: var(--accent);
   }
 }
-.scene-index-title {
+.scene-index-text {
   flex: 1;
   min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.scene-index-title {
+  overflow-wrap: anywhere;
 }
 .scene-index-range {
   font-family: var(--monospace);
