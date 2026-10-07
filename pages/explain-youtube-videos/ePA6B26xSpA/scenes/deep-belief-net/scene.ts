@@ -21,11 +21,12 @@ const random = (seed: number) => {
 
 const nodeX = (layer: number, i: number) => centerX + (i - (layers[layer].count - 1) / 2) * spacing;
 
-const createDeepBeliefNetBase = (): Scene => {
+// naiveTower: false 면 왼쪽 탑을 그리지 않는다(Three.js 판이 그 자리에 3D 탑을 얹는다). 글자는 그대로 둔다.
+export const createDeepBeliefNetSvg = ({ naiveTower = true } = {}): Scene => {
   const { element, root } = createDiagram('deep-belief-net', '심층 신뢰망');
 
   // 왼쪽: 한꺼번에 올린 10층은 무너진다.
-  const naive = svg('g', { class: 'dbn-naive' }, root);
+  const naive = svg('g', { class: 'dbn-naive', display: naiveTower ? 'inline' : 'none' }, root);
   const naiveFloors = Array.from({ length: 10 }, (_, i) =>
     svg('rect', { x: 190, y: 742 - i * 44, width: 300, height: 36, rx: 6, class: 'dbn-naive-floor' }, naive),
   );
@@ -157,6 +158,6 @@ const createDeepBeliefNetBase = (): Scene => {
 
 // 임시 비교용: 장면 오른쪽 위 탭으로 Three.js 판과 바꿔 본다. Three.js 는 이 탭을 고를 때만 불러온다.
 export const createDeepBeliefNetScene = (): Scene =>
-  withVariants(createDeepBeliefNetBase(), [
+  withVariants(createDeepBeliefNetSvg(), [
     { id: 'three', label: 'Three.js', load: () => import('./three').then(({ createDeepBeliefNetThree }) => createDeepBeliefNetThree()) },
   ]);

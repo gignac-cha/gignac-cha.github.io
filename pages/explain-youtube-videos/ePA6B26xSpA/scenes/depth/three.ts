@@ -139,7 +139,8 @@ const setSlab = (
 };
 
 export const createDepthThree = (): Variant => {
-  const { element, root, renderer, scene, camera, render, project } = createThreeDiagram('depth depth-three', '깊이와 계층 특징');
+  // 정사영 카메라: 원근 없이 층의 두께와 높이를 그대로 비교한다.
+  const { element, root, renderer, scene, camera, render, project, look } = createThreeDiagram('depth depth-three', '깊이와 계층 특징', { orthographic: {} });
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   scene.fog = new THREE.Fog('#0f1013', 18, 34);
@@ -272,7 +273,7 @@ export const createDepthThree = (): Variant => {
     const orbit = Math.sin((time - timeline.alexnet) * .12) * .08;
     position.sub(target).applyAxisAngle(up, orbit).add(target);
     camera.position.copy(position);
-    camera.lookAt(target);
+    look(target);
     camera.updateMatrixWorld();
 
     // 알렉스넷: 가운데에 한 장씩 쌓이고, 층별 설명 때 왼쪽으로 비켜섰다가, 비교 때 촘촘해진다.

@@ -43,12 +43,39 @@
   position: absolute;
   inset: 0px;
 
+  // 글자 층은 시점 조작(캔버스 끌기)을 가로채지 않는다.
   > svg {
     position: absolute;
     inset: 0px;
+    pointer-events: none;
   }
 }
-// 캔버스는 SVG(1600×900, 가운데 맞춤)와 같은 16:9 상자에 놓아 3D 위치와 글자 위치가 맞게 한다.
-.three-diagram-canvas {
+// 캔버스는 SVG(1600×900, 가운데 맞춤)와 같은 좌표의 영역에 놓아 3D 위치와 글자 위치가 맞게 한다.
+.three-layer-canvas {
   position: absolute;
+  cursor: grab;
+  touch-action: none;
+
+  &.grabbing {
+    cursor: grabbing;
+  }
+}
+.three-view-reset {
+  position: absolute;
+  z-index: 1;
+  padding: 5px 10px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 999px;
+  background-color: rgba(15, 16, 19, .78);
+  color: var(--d-muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--d-text);
+  }
+  &[hidden] {
+    display: none;
+  }
 }

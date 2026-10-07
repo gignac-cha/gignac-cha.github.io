@@ -227,10 +227,8 @@ const createFaceTargets = () => {
 };
 
 export const createGanThree = (): Variant => {
-  const { element, root, renderer, scene, camera, render, project } = createThreeDiagram('gan gan-three', '생성적 적대 신경망(GAN)');
-  camera.fov = fov;
-  // 시야각을 바꿨으니 첫 프레임부터 글자 위치(project)와 입체가 같은 투영을 쓰도록 바로 반영한다.
-  camera.updateProjectionMatrix();
+  // 시야각은 공통 기본값(35°)과 같다.
+  const { element, root, renderer, scene, camera, render, project, look } = createThreeDiagram('gan gan-three', '생성적 적대 신경망(GAN)');
 
   // 3D 위치 → SVG 좌표(1600×900)는 공통 project() 를 쓴다. 캔버스가 SVG 와 같은 16:9 상자에 그려지므로 그대로 맞는다.
 
@@ -452,7 +450,7 @@ export const createGanThree = (): Variant => {
     // 흔들림은 카드와 칩이 화면 밖으로 나가지 않을 만큼만.
     const sway = time * .16;
     camera.position.set(target.x + Math.sin(sway) * .55, target.y + .2 + Math.sin(sway * .73) * .25, target.z + distance);
-    camera.lookAt(target);
+    look(target);
     camera.updateMatrixWorld();
 
     const machineIn = (1 - appear(time, T.early - .3, .6)) * appear(time, T.cards, .6);

@@ -86,7 +86,7 @@ const vector = (v: Vec) => new THREE.Vector3(v[0], v[1], v[2]);
 const format = (n: number) => `${n < 0 ? '−' : ''}${Math.abs(n).toFixed(1)}`;
 
 export const createWord2VecThree = (): Variant => {
-  const { element, root, scene, camera, render, project } = createThreeDiagram('word2vec-three', '단어 좌표(Word2Vec)');
+  const { element, root, scene, camera, render, project, look } = createThreeDiagram('word2vec-three', '단어 좌표(Word2Vec)');
   scene.fog = new THREE.Fog(0x0f1013, 16, 32);
   scene.add(new THREE.AmbientLight(0xffffff, .55));
   const sun = new THREE.DirectionalLight(0xffffff, 1.15);
@@ -255,7 +255,7 @@ export const createWord2VecThree = (): Variant => {
       focus.y + radius * Math.sin(elevation),
       focus.z + radius * Math.cos(elevation) * Math.cos(azimuth),
     );
-    camera.lookAt(focus);
+    look(focus);
     camera.updateMatrixWorld();
   };
 
