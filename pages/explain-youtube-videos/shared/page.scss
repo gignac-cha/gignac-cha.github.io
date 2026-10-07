@@ -1,0 +1,172 @@
+:root {
+  --background: #0b0b0c;
+  --panel: #151517;
+  --panel-raised: #1d1d20;
+  --border: #27272b;
+  --text: #ededef;
+  --muted: #a0a0a8;
+  --subtle: #6c6c74;
+  --accent: #5b9dff;
+  --radius: 12px;
+  --header-height: 64px;
+  --monospace: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+html, body {
+  margin: 0px;
+  padding: 0px;
+  background-color: var(--background);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: var(--header-height);
+  padding: 0px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.page-back {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: var(--muted);
+
+  &:hover {
+    background-color: var(--panel-raised);
+    color: var(--text);
+  }
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+.page-title {
+  min-width: 0;
+
+  h1 {
+    margin: 0px;
+    overflow: hidden;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  p {
+    margin: 2px 0px 0px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  a {
+    color: var(--accent);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.page-layout {
+  // 헤더, 여백, 패널 라벨을 뺀 높이에 영상과 장면 두 개의 16:9 패널이 들어가도록 너비를 정한다.
+  --chrome: calc(var(--header-height) + 48px + 16px + 2 * 40px);
+  display: grid;
+  grid-template-columns: minmax(0px, calc((100dvh - var(--chrome)) * 8 / 9)) 320px;
+  justify-content: center;
+  align-items: start;
+  gap: 24px;
+  padding: 24px;
+}
+.page-media {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.page-sidebar {
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - var(--header-height) - 48px);
+}
+
+.panel {
+  overflow: hidden;
+  background-color: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.panel-label {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 37px;
+  margin: 0px;
+  padding: 0px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  color: var(--muted);
+}
+
+#video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0px;
+}
+#scenes {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  container-type: inline-size;
+  background-image: radial-gradient(var(--border) 1px, transparent 1px);
+  background-size: 16px 16px;
+
+  &::before {
+    content: '이 구간에는 장면이 없어요';
+    position: absolute;
+    inset: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--subtle);
+  }
+}
+
+@media (max-width: 960px) {
+  .page-header {
+    padding: 0px 16px;
+  }
+  .page-layout {
+    grid-template-columns: minmax(0px, 1fr);
+    padding: 16px;
+  }
+  .page-sidebar {
+    position: static;
+    max-height: none;
+  }
+}
+
+.page-back {
+  transition: background-color .15s, color .15s, transform .1s;
+
+  &:active {
+    transform: scale(.92);
+  }
+}
