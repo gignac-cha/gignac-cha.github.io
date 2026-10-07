@@ -18,6 +18,7 @@ import { createGpuScene } from './scenes/gpu/scene';
 import { createImageNetErrorRateScene } from './scenes/imagenet-error-rate/scene';
 import { createImageNetLabelingScene } from './scenes/imagenet-labeling/scene';
 import { createLstmScene } from './scenes/lstm/scene';
+import { createPerceptronScene } from './scenes/perceptron/scene';
 import { createRnnScene } from './scenes/rnn/scene';
 import { createSeq2SeqScene } from './scenes/seq2seq/scene';
 import { createSvmScene } from './scenes/svm/scene';
@@ -27,6 +28,7 @@ import { createWord2VecScene } from './scenes/word2vec/scene';
 const scenes: Scene[] = [
   createChatGPTScene(),
   createArtificialNeuronScene(),
+  createPerceptronScene(),
   createSvmScene(),
   createCnnScene(),
   createRnnScene(),

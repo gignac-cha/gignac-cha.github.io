@@ -1,0 +1,186 @@
+.perceptron {
+  .perceptron-header {
+    font-size: 30px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--d-muted);
+  }
+  .perceptron-edge {
+    stroke: var(--d-line);
+    stroke-width: 4;
+  }
+  .perceptron-arrow {
+    fill: none;
+    stroke: var(--d-line);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .perceptron-input {
+    fill: color-mix(in srgb, var(--d-blue) 14%, var(--d-background));
+    stroke: var(--d-blue);
+    stroke-width: 4;
+  }
+  .perceptron-input-label {
+    font-size: 38px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .perceptron-weight {
+    fill: var(--d-background);
+    stroke: var(--d-muted);
+    stroke-width: 3;
+    transition: stroke .2s;
+
+    &.empty {
+      stroke-dasharray: 8 6;
+    }
+    &.changing {
+      stroke: var(--d-green);
+      filter: drop-shadow(0 0 10px color-mix(in srgb, var(--d-green) 60%, transparent));
+    }
+  }
+  .perceptron-weight-label {
+    font-size: 32px;
+    font-weight: 700;
+    text-anchor: middle;
+    font-variant-numeric: tabular-nums;
+  }
+  .perceptron-body {
+    fill: color-mix(in srgb, var(--d-purple) 8%, var(--d-background));
+    stroke: var(--d-purple);
+    stroke-width: 4;
+  }
+  .perceptron-sigma {
+    font-size: 56px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .perceptron-name {
+    font-size: 34px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .perceptron-loop {
+    fill: none;
+    stroke: var(--d-green);
+    stroke-width: 4;
+    stroke-dasharray: 10 8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .perceptron-loop-pulse {
+    fill: var(--d-green);
+    filter: drop-shadow(0 0 10px var(--d-green));
+  }
+  .perceptron-plane {
+    fill: var(--d-grid);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  .perceptron-region-positive {
+    fill: color-mix(in srgb, var(--d-blue) 12%, transparent);
+  }
+  .perceptron-region-negative {
+    fill: color-mix(in srgb, var(--d-orange) 10%, transparent);
+  }
+  .perceptron-line {
+    stroke: var(--d-text);
+    stroke-width: 5;
+  }
+  .perceptron-dot {
+    stroke: var(--d-background);
+    stroke-width: 3;
+
+    &.positive {
+      fill: var(--d-blue);
+    }
+    &.negative {
+      fill: var(--d-orange);
+    }
+  }
+  .perceptron-ring {
+    fill: none;
+    stroke: var(--d-red);
+    stroke-width: 4;
+  }
+  .perceptron-mark {
+    font-size: 30px;
+    font-weight: 700;
+    fill: var(--d-green);
+    paint-order: stroke;
+    stroke: var(--d-background);
+    stroke-width: 10;
+    stroke-linejoin: round;
+
+    &.wrong {
+      fill: var(--d-red);
+    }
+  }
+  .perceptron-done {
+    font-size: 32px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-green);
+  }
+  .perceptron-ground {
+    stroke: var(--d-line);
+    stroke-width: 4;
+  }
+  .perceptron-target {
+    fill: none;
+    stroke: var(--d-red);
+    stroke-width: 5;
+  }
+  .perceptron-target-center {
+    fill: var(--d-red);
+  }
+  .perceptron-person {
+    fill: none;
+    stroke: var(--d-text);
+    stroke-width: 5;
+  }
+  .perceptron-person-line {
+    fill: none;
+    stroke: var(--d-text);
+    stroke-width: 5;
+    stroke-linecap: round;
+  }
+  .perceptron-gauge {
+    fill: var(--d-grid);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  .perceptron-gauge-fill {
+    fill: var(--d-green);
+  }
+  .perceptron-trail {
+    fill: none;
+    stroke: var(--d-muted);
+    stroke-width: 3;
+    stroke-dasharray: 6 8;
+  }
+  .perceptron-ball {
+    fill: var(--d-yellow);
+  }
+  .perceptron-landing {
+    fill: none;
+    stroke: var(--d-muted);
+    stroke-width: 4;
+    stroke-linecap: round;
+
+    &.hit {
+      stroke: var(--d-green);
+    }
+  }
+  .perceptron-landing-label {
+    font-size: 30px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--d-muted);
+
+    &.hit {
+      fill: var(--d-green);
+    }
+  }
+}
