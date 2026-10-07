@@ -1,7 +1,11 @@
-import { seekFromHash } from '../shared/permalink';
+import { rememberPosition, seekFromHash } from '../shared/permalink';
+import { setupIndexDock } from '../shared/index-dock';
+import { setupPip } from '../shared/pip';
 import { renderSceneIndex } from '../shared/scene-index';
 import { syncScenes, type Scene } from '../shared/scenes';
+import { setupSplitter } from '../shared/splitter';
 import { renderTimeline } from '../shared/timeline';
+import { setupTimelineDock } from '../shared/timeline-dock';
 import { loadPlayer } from '../shared/youtube';
 import { createAlexNetTricksScene } from './scenes/alexnet-tricks/scene';
 import { createArtificialNeuronScene } from './scenes/artificial-neuron/scene';
@@ -54,8 +58,20 @@ const scenes: Scene[] = [
   createDepthScene(),
 ];
 
+// 30:00 까지 장면 작업을 마쳤다. 그 뒤는 재생 바와 장면 영역에 미탐색으로 표시한다. 전부 끝나면 지운다.
+const coverage = { exploredUntil: 1800 };
+
+const element = (id: string) => document.getElementById(id)!;
+
+// 화면 배치는 저장된 상태로 플레이어를 기다리지 않고 바로 잡는다. 새로고침해도 그 화면 그대로.
+setupSplitter(element('layout'), element('splitter'));
+setupPip(element('pip-toggle') as HTMLButtonElement, element('video-panel'));
+setupIndexDock(element('scene-index'));
+setupTimelineDock(element('timeline-panel'), element('timeline-top'), element('timeline-bottom'));
+
 const player = await loadPlayer('video');
-syncScenes(player, document.getElementById('scenes')!, scenes);
-renderSceneIndex(player, document.getElementById('scene-index')!, scenes);
-renderTimeline(player, document.getElementById('timeline')!, scenes);
+syncScenes(player, element('scenes'), scenes, coverage);
+renderSceneIndex(player, element('scene-index'), scenes);
+renderTimeline(player, element('timeline'), scenes, coverage);
 seekFromHash(player);
+rememberPosition(player, 'ePA6B26xSpA');

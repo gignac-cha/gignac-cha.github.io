@@ -1,5 +1,5 @@
 import './timeline.scss';
-import type { Scene } from './scenes';
+import type { Coverage, Scene } from './scenes';
 
 const formatTime = (time: number) => {
   const total = Math.max(Math.floor(time), 0);
@@ -23,7 +23,7 @@ const setText = (element: Element, content: string) => {
 };
 
 // 영상 아래의 재생 바. 장면 구간을 막대 위에 표시하고, 누르거나 끌어서 이동한다.
-export const renderTimeline = (player: YT.Player, container: HTMLElement, scenes: Scene[]) => {
+export const renderTimeline = (player: YT.Player, container: HTMLElement, scenes: Scene[], { exploredUntil }: Coverage = {}) => {
   const header = create('div', 'timeline-header', container);
   const clock = create('div', 'timeline-clock', header);
   const current = create('time', 'timeline-current', clock);
@@ -38,6 +38,8 @@ export const renderTimeline = (player: YT.Player, container: HTMLElement, scenes
   const rail = create('div', 'timeline-rail', track);
   const played = create('div', 'timeline-played', rail);
   const segments = scenes.map((scene) => ({ scene, element: create('div', 'timeline-segment', rail) }));
+  // 아직 장면 작업을 하지 않은 구간: 빗금으로 표시한다.
+  const unexplored = exploredUntil === undefined ? undefined : create('div', 'timeline-unexplored', rail);
   const head = create('div', 'timeline-head', track);
   const hover = create('div', 'timeline-hover', track);
   const tooltip = create('div', 'timeline-tooltip', track);
@@ -46,6 +48,7 @@ export const renderTimeline = (player: YT.Player, container: HTMLElement, scenes
   let scrub: number | undefined;
 
   const sceneAt = (time: number) => scenes.find((scene) => scene.start <= time && time < scene.end);
+  const isUnexplored = (time: number) => exploredUntil !== undefined && time >= exploredUntil;
   const ratio = (time: number) => (duration > 0 ? Math.min(Math.max(time / duration, 0), 1) : 0);
   const timeAt = (event: PointerEvent) => {
     const rect = track.getBoundingClientRect();
@@ -58,6 +61,10 @@ export const renderTimeline = (player: YT.Player, container: HTMLElement, scenes
       element.style.width = `${(ratio(scene.end) - ratio(scene.start)) * 100}%`;
     }
     setText(total, formatTime(duration));
+    if (unexplored && exploredUntil !== undefined) {
+      unexplored.style.left = `${ratio(exploredUntil) * 100}%`;
+      unexplored.style.width = `${(1 - ratio(exploredUntil)) * 100}%`;
+    }
   };
 
   track.addEventListener('pointerdown', (event) => {
@@ -77,7 +84,7 @@ export const renderTimeline = (player: YT.Player, container: HTMLElement, scenes
     hover.style.left = position;
     tooltip.style.left = position;
     const scene = sceneAt(time);
-    setText(tooltip, scene ? `${formatTime(time)} · ${scene.title}` : formatTime(time));
+    setText(tooltip, scene ? `${formatTime(time)} · ${scene.title}` : isUnexplored(time) ? `${formatTime(time)} · 미탐색` : formatTime(time));
     if (scrub !== undefined) {
       scrub = time;
       player.seekTo(scrub, false);
@@ -116,7 +123,9 @@ export const renderTimeline = (player: YT.Player, container: HTMLElement, scenes
     setText(current, formatTime(time));
     track.setAttribute('aria-valuenow', String(Math.floor(time)));
     const active = sceneAt(time);
-    setText(sceneName, active?.title ?? '');
+    const outside = !active && isUnexplored(time);
+    setText(sceneName, active?.title ?? (outside ? '미탐색 구간' : ''));
+    sceneName.classList.toggle('unexplored', outside);
     for (const { scene, element } of segments) {
       element.classList.toggle('active', scene === active);
     }

@@ -1,5 +1,6 @@
 import './scene-index.scss';
 import type { Scene } from './scenes';
+import { load, save } from './storage';
 
 const formatTime = (time: number) => {
   const minutes = Math.floor(time / 60);
@@ -18,10 +19,16 @@ const create = (tag: string, className?: string, text?: string) => {
   return element;
 };
 
+// 세부 단계는 재생 중인 장면만 자동으로 펼쳤다가 지나가면 접는다.
+// 사용자가 직접 펼치거나 접은 장면은 손댄 상태(dirty)로 기억해 자동으로 바꾸지 않고, 새로고침해도 유지한다.
+const sceneKey = (scene: Scene) => `${scene.start}:${scene.title}`;
+
 export const renderSceneIndex = (player: YT.Player, container: HTMLElement, scenes: Scene[]) => {
+  const manual = load<Record<string, boolean>>('index-expanded', {});
   const clock = create('time', 'scene-index-clock', formatTime(0));
-  const label = create('h2', 'panel-label', '장면 인덱스');
-  label.append(clock);
+  // 라벨은 페이지에 미리 있을 수 있다(자리 바꾸기 버튼이 먼저 붙어 있으면 그 앞에 시계를 둔다).
+  const label = container.querySelector('.panel-label') ?? create('h2', 'panel-label', '장면 인덱스');
+  label.insertBefore(clock, label.querySelector('.dock-controls'));
   const list = create('ol', 'scene-index-list');
 
   const entries = scenes.map((scene, index) => {
@@ -55,13 +62,13 @@ export const renderSceneIndex = (player: YT.Player, container: HTMLElement, scen
       toggle.setAttribute('aria-label', '세부 단계 펼치기');
       toggle.setAttribute('aria-expanded', 'false');
       toggle.addEventListener('click', () => {
-        const expanded = item.classList.toggle('expanded');
-        toggle.setAttribute('aria-expanded', String(expanded));
+        manual[sceneKey(scene)] = !item.classList.contains('expanded');
+        save('index-expanded', manual);
       });
       row.append(toggle);
     }
     list.append(item);
-    return { scene, element: item, chapters };
+    return { scene, element: item, chapters, toggle: item.querySelector('.scene-index-toggle') };
   });
   container.append(label, list);
 
@@ -70,6 +77,8 @@ export const renderSceneIndex = (player: YT.Player, container: HTMLElement, scen
   list.addEventListener('pointerenter', () => (browsing = true));
   list.addEventListener('pointerleave', () => (browsing = false));
   let shown: HTMLElement | undefined;
+  // 재생 바 위치나 창 크기가 바뀌면 목록 높이가 달라지므로, 재생 중인 항목을 다시 보이게 한다.
+  window.addEventListener('resize', () => (shown = undefined));
 
   const update = () => {
     const time = player.getCurrentTime();
@@ -78,7 +87,7 @@ export const renderSceneIndex = (player: YT.Player, container: HTMLElement, scen
       clock.textContent = formatted;
     }
     let playing: HTMLElement | undefined;
-    for (const { scene, element, chapters } of entries) {
+    for (const { scene, element, chapters, toggle } of entries) {
       const active = scene.start <= time && time < scene.end;
       element.classList.toggle('active', active);
       if (active) {
@@ -87,6 +96,12 @@ export const renderSceneIndex = (player: YT.Player, container: HTMLElement, scen
       const current = active ? chapters.findLast((chapter) => chapter.time <= time) : undefined;
       for (const chapter of chapters) {
         chapter.element.classList.toggle('active', chapter === current);
+      }
+      const expanded = manual[sceneKey(scene)] ?? active;
+      if (chapters.length > 0 && element.classList.contains('expanded') !== expanded) {
+        element.classList.toggle('expanded', expanded);
+        element.classList.toggle('manual', sceneKey(scene) in manual);
+        toggle?.setAttribute('aria-expanded', String(expanded));
       }
     }
     // 재생 중인 장면이 바뀌면 목록에서 보이는 자리로 옮긴다.

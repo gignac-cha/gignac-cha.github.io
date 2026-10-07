@@ -8,9 +8,11 @@
 }
 .timeline-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 14px;
   min-width: 0;
+  // 오른쪽 위 자리 바꾸기 버튼과 겹치지 않게.
+  padding-right: 64px;
   font-size: 13px;
 }
 .timeline-clock {
@@ -123,4 +125,37 @@
   color: var(--text);
   white-space: nowrap;
   transform: translateX(-50%);
+}
+
+// 재생 바 자리 바꾸기 버튼 (shared/timeline-dock.ts, 공통 스타일은 shared/dock.scss).
+.timeline-panel {
+  position: relative;
+}
+.timeline-dock {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+}
+.timeline-panel.floating {
+  position: fixed;
+  z-index: 60;
+  box-shadow: 0px 18px 48px rgba(0, 0, 0, .55), 0px 0px 0px 1px rgba(255, 255, 255, .06);
+  cursor: grab;
+
+  .timeline-track {
+    cursor: pointer;
+  }
+}
+
+// 아직 장면 작업을 하지 않은 구간.
+.timeline-unexplored {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  border-radius: 2px;
+  background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .16) 0px 3px, transparent 3px 7px);
+}
+.timeline-scene.unexplored {
+  font-weight: 500;
+  color: var(--subtle);
 }

@@ -15,10 +15,15 @@
         <h1>AI는 왜 갑자기 똑똑해졌나 — 1958년 퍼셉트론에서 2026년 GPT-6까지</h1>
         <p>메이커 에반 | Maker Evan · 1:02:51 · <a href="https://www.youtube.com/watch?v=ePA6B26xSpA" target="_blank" rel="noopener">YouTube에서 보기</a></p>
       </div>
+      <button id="pip-toggle" class="page-action" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><rect x="12" y="12" width="7" height="5" rx="1" /></svg>
+        <span>영상 띄우기</span>
+      </button>
     </header>
-    <main class="page-layout">
-      <div class="page-media">
-        <section class="panel">
+    <div id="timeline-top" class="page-timeline-slot top"></div>
+    <main id="layout" class="page-layout">
+      <div class="page-video-column">
+        <section id="video-panel" class="panel page-video">
           <h2 class="panel-label">원본 영상</h2>
           <iframe
             id="video"
@@ -28,16 +33,23 @@
             allowfullscreen
           ></iframe>
         </section>
-        <section class="panel">
-          <div id="timeline"></div>
-        </section>
-        <section class="panel">
-          <h2 class="panel-label">장면</h2>
-          <div id="scenes"></div>
-        </section>
       </div>
-      <aside id="scene-index" class="panel page-sidebar"></aside>
+      <div id="splitter" class="page-splitter"></div>
+      <section class="panel page-stage">
+        <h2 class="panel-label">장면</h2>
+        <div class="page-stage-area">
+          <div id="scenes"></div>
+        </div>
+      </section>
+      <aside id="scene-index" class="panel page-sidebar">
+        <h2 class="panel-label">장면 인덱스</h2>
+      </aside>
     </main>
+    <div id="timeline-bottom" class="page-timeline-slot bottom">
+      <section id="timeline-panel" class="panel timeline-panel">
+        <div id="timeline"></div>
+      </section>
+    </div>
     <script type="module" src="main.ts"></script>
   </body>
 </html>
