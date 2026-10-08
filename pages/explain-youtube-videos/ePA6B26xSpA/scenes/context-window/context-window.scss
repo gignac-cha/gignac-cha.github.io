@@ -1,0 +1,101 @@
+.cw-sentence {
+  font-size: 40px;
+  font-weight: 600;
+}
+.cw-chip {
+  rect {
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 2;
+  }
+  text {
+    font-size: 40px;
+    font-weight: 600;
+  }
+  // 토큰 앞에 붙은 공백.
+  .cw-space {
+    font-size: 30px;
+    fill: var(--d-muted);
+  }
+  @each $name in blue, purple, orange, green {
+    &.#{$name}.boxed rect {
+      fill: color-mix(in srgb, var(--d-#{$name}) 20%, var(--d-background));
+      stroke: color-mix(in srgb, var(--d-#{$name}) 70%, var(--d-background));
+    }
+  }
+}
+.cw-half-glyph {
+  font-size: 40px;
+  font-weight: 600;
+}
+.cw-bracket {
+  path {
+    fill: none;
+    stroke: var(--d-yellow);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 20px;
+    font-weight: 600;
+    fill: var(--d-yellow) !important;
+  }
+}
+.cw-counter {
+  font-size: 34px;
+  font-weight: 800;
+}
+.cw-note {
+  font-size: 20px;
+  fill: var(--d-muted) !important;
+}
+.cw-heading {
+  font-size: 28px;
+  font-weight: 700;
+
+  &.accent {
+    fill: var(--d-yellow) !important;
+  }
+}
+.cw-page-outline {
+  fill: var(--d-background);
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.cw-page-fill {
+  fill: color-mix(in srgb, var(--d-blue) 30%, var(--d-background));
+}
+.cw-page.first .cw-page-fill {
+  fill: color-mix(in srgb, var(--d-blue) 60%, var(--d-background));
+}
+.cw-page-line {
+  stroke: color-mix(in srgb, var(--d-text) 45%, transparent);
+  stroke-width: 2;
+}
+.cw-grid {
+  stroke: var(--d-grid);
+  stroke-width: 2;
+}
+.cw-axis {
+  font-size: 17px;
+  fill: var(--d-muted) !important;
+}
+.cw-model {
+  font-size: 17px;
+  font-weight: 600;
+}
+.cw-bar {
+  rect {
+    fill: color-mix(in srgb, var(--d-blue) 55%, var(--d-background));
+  }
+  &.latest rect {
+    fill: var(--d-yellow);
+  }
+}
+.cw-value {
+  font-size: 17px;
+  font-weight: 700;
+
+  .latest & {
+    fill: var(--d-yellow) !important;
+  }
+}

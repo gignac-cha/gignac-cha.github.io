@@ -16,6 +16,7 @@ import { createChatGPTScene } from './scenes/chatgpt/scene';
 import { createChatGptPiecesScene } from './scenes/chatgpt-pieces/scene';
 import { createClipScene } from './scenes/clip/scene';
 import { createCnnScene } from './scenes/cnn/scene';
+import { createContextWindowScene } from './scenes/context-window/scene';
 import { createDeepBeliefNetScene } from './scenes/deep-belief-net/scene';
 import { createDeepBlueScene } from './scenes/deep-blue/scene';
 import { createDepthScene } from './scenes/depth/scene';
@@ -80,6 +81,7 @@ const scenes: Scene[] = [
   createTestTimeComputeScene(),
   createToolAgentScene(),
   createGpt5RouterScene(),
+  createContextWindowScene(),
 ];
 
 // 30:00 까지 장면 작업을 마쳤다. 그 뒤는 재생 바와 장면 영역에 '준비 중'으로 표시한다. 전부 끝나면 지운다.
