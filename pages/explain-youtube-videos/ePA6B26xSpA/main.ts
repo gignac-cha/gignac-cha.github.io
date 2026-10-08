@@ -42,6 +42,7 @@ import { createLstmScene } from './scenes/lstm/scene';
 import { createNextWordScene } from './scenes/next-word/scene';
 import { createPerceptronScene } from './scenes/perceptron/scene';
 import { createReasoningModelScene } from './scenes/reasoning-model/scene';
+import { createResidualNetworkScene } from './scenes/residual-network/scene';
 import { createInstructGptScene, createRlhfScene } from './scenes/rlhf/scene';
 import { createRnnScene } from './scenes/rnn/scene';
 import { createGpt3ScaleScene, createScalingLawsScene } from './scenes/scaling-laws/scene';
@@ -81,6 +82,7 @@ const scenes: Scene[] = [
   createGanScene(),
   createGanWeaknessScene(),
   createDepthScene(),
+  createResidualNetworkScene(),
   createSelfAttentionScene(),
   createTransformerTranslationScene(),
   createTransformerEverywhereScene(),

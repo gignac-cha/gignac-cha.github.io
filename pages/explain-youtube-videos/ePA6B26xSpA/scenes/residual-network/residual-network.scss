@@ -1,0 +1,405 @@
+.residual-network {
+  .resnet-caption {
+    font-size: 36px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .resnet-layer {
+    &.shallow {
+      fill: var(--d-blue);
+    }
+    &.deep {
+      fill: var(--d-orange);
+    }
+    &.alex {
+      fill: var(--d-muted);
+    }
+  }
+  .resnet-stack-label {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+
+    &.shallow {
+      fill: var(--d-blue);
+    }
+    &.deep {
+      fill: var(--d-orange);
+    }
+    &.alex {
+      fill: var(--d-muted);
+    }
+  }
+  .resnet-chart-title {
+    font-size: 32px;
+    font-weight: 700;
+
+    &.small {
+      font-size: 28px;
+      fill: var(--d-muted);
+    }
+  }
+  .resnet-chart-subtitle {
+    font-size: 24px;
+    fill: var(--d-muted);
+  }
+  .resnet-axis {
+    fill: none;
+    stroke: var(--d-line);
+    stroke-width: 3;
+  }
+  .resnet-axis-label {
+    font-size: 22px;
+    fill: var(--d-subtle);
+  }
+  .resnet-curve {
+    fill: none;
+    stroke-width: 5;
+    stroke-linejoin: round;
+
+    &.shallow {
+      stroke: var(--d-blue);
+    }
+    &.deep {
+      stroke: var(--d-orange);
+    }
+  }
+  .resnet-curve-label {
+    font-size: 24px;
+    font-weight: 700;
+
+    &.shallow {
+      fill: var(--d-blue);
+    }
+    &.deep {
+      fill: var(--d-orange);
+    }
+  }
+  .highlight .resnet-axis {
+    stroke: var(--d-red);
+  }
+  .resnet-verdict {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-red);
+  }
+  .resnet-tag {
+    fill: color-mix(in srgb, var(--d-red) 12%, var(--d-background));
+    stroke: var(--d-red);
+    stroke-width: 2;
+  }
+  .resnet-tag-text {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-red);
+  }
+
+  // 굵기는 장면이 줄 길이에 맞춰 바꾼다(작아져도 선이 같은 굵기로 보이게).
+  .resnet-person {
+    fill: var(--d-grid);
+    stroke: var(--d-muted);
+    vector-effect: non-scaling-stroke;
+  }
+  .resnet-line-bracket {
+    fill: none;
+    stroke: var(--d-subtle);
+    stroke-width: 2;
+  }
+  .resnet-line-count {
+    font-size: 24px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-muted);
+  }
+  .resnet-travel-text {
+    font-size: 24px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--d-yellow);
+
+    &.garbled {
+      fill: var(--d-red);
+    }
+  }
+  .resnet-bubble {
+    fill: var(--d-grid);
+    stroke: var(--d-line);
+    stroke-width: 2;
+
+    &.broken {
+      stroke: var(--d-red);
+    }
+  }
+  .resnet-bubble-text {
+    font-size: 28px;
+    font-weight: 600;
+    text-anchor: middle;
+
+    &.broken {
+      fill: var(--d-red);
+    }
+  }
+  .resnet-runner {
+    fill: var(--d-yellow);
+    filter: drop-shadow(0 0 10px var(--d-yellow));
+  }
+  .resnet-back-runner {
+    fill: var(--d-red);
+    filter: drop-shadow(0 0 10px var(--d-red));
+  }
+  .resnet-back-note {
+    font-size: 28px;
+    text-anchor: middle;
+    fill: var(--d-red);
+  }
+
+  .resnet-box {
+    stroke-width: 3;
+
+    &.io {
+      fill: var(--d-grid);
+      stroke: var(--d-muted);
+    }
+    &.layer {
+      fill: color-mix(in srgb, var(--d-purple) 14%, var(--d-background));
+      stroke: var(--d-purple);
+    }
+  }
+  .resnet-box-text {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .resnet-flow {
+    fill: none;
+    stroke: var(--d-line);
+    stroke-width: 4;
+  }
+  .resnet-plus {
+    fill: var(--d-grid);
+    stroke: var(--d-green);
+    stroke-width: 3;
+  }
+  .resnet-plus-text {
+    font-size: 40px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-green);
+  }
+  .resnet-skip {
+    fill: none;
+    stroke: var(--d-green);
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+  .resnet-skip-label {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-green);
+  }
+  .resnet-residual-label {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-purple);
+  }
+  .resnet-strike-text {
+    font-size: 26px;
+    text-anchor: middle;
+    fill: var(--d-muted);
+  }
+  .resnet-strike-line {
+    stroke: var(--d-red);
+    stroke-width: 4;
+  }
+  .resnet-chip {
+    stroke-width: 2;
+
+    &.io {
+      fill: var(--d-grid);
+      stroke: var(--d-line);
+    }
+    &.residual {
+      fill: color-mix(in srgb, var(--d-purple) 14%, var(--d-background));
+      stroke: var(--d-purple);
+    }
+  }
+  .resnet-chip-text {
+    font-size: 24px;
+    font-weight: 600;
+    text-anchor: middle;
+    font-variant-numeric: tabular-nums;
+  }
+  .resnet-operator {
+    font-size: 44px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-muted);
+  }
+  .resnet-name {
+    font-size: 48px;
+    font-weight: 800;
+    text-anchor: middle;
+    fill: var(--d-green);
+  }
+  .resnet-pulse {
+    fill: var(--d-purple);
+    filter: drop-shadow(0 0 10px var(--d-purple));
+
+    &.skip {
+      fill: var(--d-green);
+      filter: drop-shadow(0 0 10px var(--d-green));
+    }
+    &.stairs {
+      fill: var(--d-purple);
+    }
+  }
+
+  .resnet-floor {
+    fill: var(--d-grid);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  .resnet-stairs {
+    fill: color-mix(in srgb, var(--d-purple) 22%, var(--d-background));
+    stroke: var(--d-purple);
+    stroke-width: 3;
+    stroke-linejoin: round;
+
+    &.idle {
+      fill: none;
+      stroke: var(--d-subtle);
+      stroke-dasharray: 6 6;
+    }
+  }
+  .resnet-idle-text {
+    font-size: 22px;
+    font-weight: 700;
+    text-anchor: end;
+    fill: var(--d-muted);
+  }
+  .resnet-shaft {
+    fill: color-mix(in srgb, var(--d-green) 10%, var(--d-background));
+    stroke: var(--d-green);
+    stroke-width: 3;
+  }
+  .resnet-car {
+    fill: var(--d-green);
+
+    &.moving {
+      filter: drop-shadow(0 0 14px var(--d-green));
+    }
+  }
+  .resnet-building-label {
+    font-size: 24px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--d-purple);
+
+    &.skip {
+      fill: var(--d-green);
+    }
+  }
+  .resnet-meter-title {
+    font-size: 28px;
+    font-weight: 700;
+    fill: var(--d-muted);
+  }
+  .resnet-meter-label {
+    font-size: 26px;
+  }
+  .resnet-meter-track {
+    fill: var(--d-grid);
+  }
+  .resnet-meter {
+    &.stairs {
+      fill: var(--d-purple);
+    }
+    &.skip {
+      fill: var(--d-green);
+    }
+  }
+  .resnet-noloss {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-green);
+  }
+
+  .resnet-baseline {
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  .resnet-cifar-bar {
+    fill: var(--d-green);
+  }
+  .resnet-bar-label {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .resnet-bar-note {
+    font-size: 20px;
+    text-anchor: middle;
+    fill: var(--d-muted);
+  }
+  .resnet-bar-value {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+    font-variant-numeric: tabular-nums;
+
+    &.resnet {
+      fill: var(--d-green);
+    }
+    &.human {
+      fill: var(--d-yellow);
+    }
+    &.past {
+      fill: var(--d-muted);
+    }
+  }
+  .resnet-better {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-green);
+  }
+  .resnet-ratio {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-muted);
+  }
+  .resnet-error-bar {
+    &.past {
+      fill: var(--d-subtle);
+    }
+    &.human {
+      fill: var(--d-yellow);
+    }
+    &.resnet {
+      fill: var(--d-orange);
+      transition: fill .3s;
+
+      &.winner {
+        fill: var(--d-green);
+      }
+    }
+  }
+  .resnet-human-line {
+    stroke: var(--d-yellow);
+    stroke-width: 2;
+    stroke-dasharray: 8 6;
+  }
+}
+// 막대 값 글자가 사람 기준선과 겹쳐도 읽히게 배경색 테두리를 두른다.
+.residual-network .resnet-bar-value {
+  paint-order: stroke;
+  stroke: var(--d-background);
+  stroke-width: 8px;
+  stroke-linejoin: round;
+}
