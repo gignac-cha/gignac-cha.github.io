@@ -1,0 +1,154 @@
+.rm-panel {
+  fill: #15161b;
+  stroke: var(--d-line);
+  stroke-width: 1.5;
+}
+.rm-name {
+  font-size: 26px;
+  font-weight: 800;
+}
+.diagram text.rm-date {
+  font-size: 20px;
+  text-anchor: end;
+  fill: var(--d-muted);
+}
+.rm-bubble {
+  fill: #2a2b33;
+}
+.diagram text.rm-mono {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 15px;
+  white-space: pre;
+}
+.rm-badge {
+  fill: color-mix(in srgb, var(--d-red) 16%, transparent);
+  stroke: color-mix(in srgb, var(--d-red) 70%, transparent);
+  stroke-width: 1.5;
+}
+.diagram text.rm-badge-text {
+  font-size: 17px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-red);
+}
+.diagram text.rm-answer {
+  font-size: 17px;
+  fill: #c9c9cf;
+}
+.diagram text.rm-fail {
+  font-size: 23px;
+  font-weight: 700;
+  fill: var(--d-red);
+}
+.diagram text.rm-success {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--d-green);
+}
+
+// 생각 중 표시: 생각하는 동안 글자가 숨 쉬듯 깜박인다(scene.ts 에서 재생 시간으로).
+.diagram text.rm-status {
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--d-muted);
+
+  &.active {
+    fill: var(--d-text);
+  }
+  &.glow {
+    fill: var(--d-yellow);
+  }
+}
+.diagram text.rm-long {
+  font-size: 19px;
+  text-anchor: end;
+  fill: var(--d-muted);
+}
+
+// 속으로 쓴 풀이 과정.
+.rm-cot {
+  fill: #121318;
+  stroke: var(--d-line);
+  stroke-width: 1.5;
+}
+.diagram text.rm-cot-text {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 13.5px;
+  fill: #8f96a6;
+  white-space: pre;
+}
+.diagram text.rm-count {
+  font-size: 18px;
+  font-weight: 700;
+  text-anchor: end;
+  fill: var(--d-yellow);
+}
+.rm-attempts {
+  fill: #121318;
+  stroke: var(--d-yellow);
+  stroke-width: 2;
+}
+.rm-attempt-title {
+  font-size: 21px;
+  font-weight: 700;
+}
+.diagram text.rm-attempt-work {
+  font-size: 18px;
+  fill: #b8d7ff;
+}
+.rm-mark {
+  font-size: 34px;
+  font-weight: 800;
+  text-anchor: middle;
+
+  &.no {
+    fill: var(--d-red) !important;
+  }
+  &.ok {
+    fill: var(--d-green) !important;
+  }
+}
+.rm-back {
+  fill: none;
+  stroke: var(--d-orange);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 3 7;
+}
+.diagram text.rm-back-text {
+  font-size: 17px;
+  font-weight: 700;
+  text-anchor: end;
+  fill: var(--d-orange);
+}
+
+// 성적.
+.rm-score-heading {
+  font-size: 24px;
+  font-weight: 700;
+}
+.diagram text.rm-score-label {
+  font-size: 21px;
+  font-weight: 600;
+  text-anchor: end;
+  fill: var(--d-muted);
+}
+.rm-score-track {
+  fill: var(--d-grid);
+}
+.rm-score-old {
+  fill: var(--d-subtle);
+}
+.rm-score-new {
+  fill: var(--d-blue);
+}
+.rm-score-value {
+  font-size: 22px;
+  font-weight: 800;
+}
+.diagram text.rm-source {
+  font-size: 16px;
+  text-anchor: end;
+  fill: var(--d-subtle);
+}
