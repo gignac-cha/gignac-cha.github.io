@@ -1,0 +1,87 @@
+.tt-heading {
+  font-size: 34px;
+  font-weight: 800;
+}
+.tt-note {
+  font-size: 22px;
+  fill: var(--d-muted) !important;
+}
+.tt-group-label {
+  font-size: 28px;
+  font-weight: 700;
+}
+.tt-row-label {
+  font-size: 24px;
+  font-weight: 600;
+  fill: var(--d-muted) !important;
+
+  &.transformer {
+    fill: var(--d-yellow) !important;
+  }
+}
+.tt-bar {
+  &.previous {
+    fill: var(--d-subtle);
+  }
+  &.transformer {
+    fill: var(--d-yellow);
+  }
+}
+.tt-value {
+  font-size: 26px;
+  font-weight: 700;
+  fill: var(--d-muted) !important;
+
+  &.transformer {
+    fill: var(--d-yellow) !important;
+  }
+}
+.tt-badge {
+  rect {
+    fill: var(--d-yellow);
+  }
+  text {
+    font-size: 22px;
+    font-weight: 800;
+    text-anchor: middle;
+    fill: var(--d-background) !important;
+  }
+}
+.tt-gpu {
+  > rect:first-child {
+    fill: #17181d;
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  .tt-gpu-fin {
+    fill: var(--d-subtle);
+  }
+  &.on {
+    > rect:first-child {
+      stroke: var(--d-green);
+    }
+    .tt-gpu-fin {
+      fill: var(--d-green);
+    }
+  }
+}
+.tt-track {
+  fill: #1c1d22;
+}
+.tt-fill {
+  fill: var(--d-green);
+}
+.tt-tick {
+  font-size: 22px;
+  fill: var(--d-muted) !important;
+
+  &.end {
+    font-weight: 800;
+    fill: var(--d-green) !important;
+  }
+}
+.tt-summary-text {
+  font-size: 36px;
+  font-weight: 800;
+  fill: var(--d-yellow) !important;
+}
