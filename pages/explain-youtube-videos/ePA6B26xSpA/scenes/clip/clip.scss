@@ -1,0 +1,192 @@
+.clip-name {
+  font-size: 96px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-anchor: middle;
+}
+.clip-caption {
+  font-size: 26px;
+  fill: var(--d-muted) !important;
+}
+.clip-count {
+  font-size: 72px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.clip-photo {
+  fill: #1b1c22;
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.clip-emoji {
+  text-anchor: middle;
+}
+.clip-stream-card {
+  > rect:first-child {
+    fill: color-mix(in srgb, var(--d-grid) 70%, var(--d-background));
+    stroke: var(--d-line);
+    stroke-width: 1.5;
+  }
+}
+.clip-stream-text {
+  font-size: 24px;
+  fill: var(--d-muted) !important;
+}
+.clip-cell {
+  rect {
+    fill: var(--d-grid);
+    stroke: var(--d-line);
+    stroke-width: 2;
+    transition: fill .2s, stroke .2s;
+  }
+  &.pair rect {
+    fill: color-mix(in srgb, var(--d-green) 26%, var(--d-background));
+    stroke: var(--d-green);
+    stroke-width: 3;
+  }
+}
+.clip-cell-mark {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: transparent !important;
+
+  .pair & {
+    fill: var(--d-green) !important;
+  }
+}
+.clip-word {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-blue);
+    stroke-width: 2.5;
+  }
+  text {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+}
+.clip-word,
+.clip-photo {
+  transition: opacity .3s;
+}
+.clip g.lit {
+  .clip-photo,
+  rect {
+    stroke: var(--d-yellow);
+    stroke-width: 5;
+  }
+}
+.clip g.dim {
+  filter: saturate(.2) brightness(.6);
+}
+.clip-map {
+  fill: color-mix(in srgb, var(--d-grid) 45%, var(--d-background));
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.clip-map-grid {
+  stroke: var(--d-grid);
+  stroke-width: 1.5;
+}
+.clip-map-label {
+  font-size: 28px;
+  font-weight: 700;
+  fill: var(--d-muted) !important;
+}
+.clip-crowd {
+  rect,
+  circle {
+    fill: var(--d-subtle);
+    opacity: .7;
+  }
+  circle {
+    fill: color-mix(in srgb, var(--d-blue) 50%, var(--d-subtle));
+  }
+  &.dim {
+    opacity: .4;
+  }
+}
+.clip-ring {
+  fill: color-mix(in srgb, var(--d-yellow) 8%, transparent);
+  stroke: var(--d-yellow);
+  stroke-width: 3;
+  stroke-dasharray: 10 8;
+}
+.clip-close-label {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.clip-heading {
+  font-size: 46px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.clip-prompt {
+  fill: var(--d-background);
+  stroke: var(--d-orange);
+  stroke-width: 2.5;
+}
+.clip-prompt-text {
+  font-size: 34px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.clip-prompt-english {
+  font-size: 20px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.clip-result {
+  fill: #f2efe6;
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.clip-note {
+  font-size: 20px;
+  fill: var(--d-subtle) !important;
+}
+.clip-arrow {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.clip-box {
+  fill: color-mix(in srgb, var(--d-blue) 14%, var(--d-background));
+  stroke: var(--d-blue);
+  stroke-width: 2.5;
+
+  &.diffusion {
+    fill: color-mix(in srgb, var(--d-purple) 14%, var(--d-background));
+    stroke: var(--d-purple);
+  }
+}
+.clip-box-text {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.clip-link {
+  stroke: var(--d-blue);
+  stroke-width: 2.5;
+  stroke-dasharray: 8 8;
+}
+.clip-packet {
+  fill: var(--d-blue);
+}
+.clip-prompt-dot {
+  fill: var(--d-orange);
+  stroke: var(--d-background);
+  stroke-width: 4;
+}
+.clip-prompt-point {
+  font-size: 30px;
+  font-weight: 700;
+  fill: var(--d-orange) !important;
+}
