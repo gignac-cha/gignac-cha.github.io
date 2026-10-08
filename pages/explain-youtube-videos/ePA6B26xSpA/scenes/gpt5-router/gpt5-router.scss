@@ -1,0 +1,135 @@
+.gr-frame {
+  fill: color-mix(in srgb, var(--d-text) 2%, var(--d-background));
+  stroke: var(--d-line);
+  stroke-width: 3;
+  stroke-dasharray: 12 10;
+
+  &.unified {
+    stroke: var(--d-blue);
+    stroke-dasharray: none;
+    filter: drop-shadow(0 0 14px color-mix(in srgb, var(--d-blue) 35%, transparent));
+  }
+}
+.gr-name {
+  font-size: 40px;
+  font-weight: 800;
+}
+.gr-card {
+  .gr-card-box {
+    fill: var(--d-background);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  &.fast.active .gr-card-box {
+    stroke: var(--d-yellow);
+    fill: color-mix(in srgb, var(--d-yellow) 10%, var(--d-background));
+  }
+  &.deep.active .gr-card-box {
+    stroke: var(--d-purple);
+    fill: color-mix(in srgb, var(--d-purple) 12%, var(--d-background));
+  }
+}
+.gr-icon {
+  fill: var(--d-text);
+}
+.fast .gr-icon {
+  fill: var(--d-yellow);
+}
+.deep .gr-icon {
+  fill: var(--d-purple);
+}
+.gr-card-title {
+  font-size: 30px;
+  font-weight: 700;
+}
+.gr-card-note {
+  font-size: 22px;
+  fill: var(--d-muted) !important;
+}
+.gr-meter-track {
+  fill: var(--d-grid);
+}
+.gr-meter {
+  fill: var(--d-yellow);
+
+  .deep & {
+    fill: var(--d-purple);
+  }
+}
+.gr-thinking {
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--d-purple) !important;
+}
+.gr-wires path {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 3;
+
+  &.active {
+    stroke: var(--d-text);
+  }
+}
+.gr-router {
+  circle {
+    fill: var(--d-background);
+    stroke: var(--d-blue);
+    stroke-width: 3;
+  }
+  text {
+    font-size: 24px;
+    font-weight: 800;
+  }
+  &.active circle {
+    fill: color-mix(in srgb, var(--d-blue) 22%, var(--d-background));
+  }
+}
+.gr-factor {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 19px;
+    fill: var(--d-muted) !important;
+  }
+  &.active {
+    rect {
+      stroke: var(--d-blue);
+      fill: color-mix(in srgb, var(--d-blue) 16%, var(--d-background));
+    }
+    text {
+      fill: var(--d-text) !important;
+    }
+  }
+}
+.gr-caption {
+  font-size: 28px;
+  font-weight: 600;
+}
+.gr-question {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-text);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 24px;
+    font-weight: 600;
+  }
+}
+.gr-dot {
+  fill: var(--d-text);
+  filter: drop-shadow(0 0 6px var(--d-text));
+
+  &.small {
+    fill: var(--d-blue);
+    filter: none;
+  }
+}
+.gr-crowd-label {
+  font-size: 26px;
+  font-weight: 700;
+  fill: var(--d-blue) !important;
+}
