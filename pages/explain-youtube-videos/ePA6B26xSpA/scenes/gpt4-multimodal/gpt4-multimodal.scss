@@ -1,0 +1,225 @@
+// 노트에 펜으로 그린 스케치.
+.mm-paper {
+  fill: #f1efe8;
+}
+.mm-pen {
+  fill: none;
+  stroke: #2a2d36;
+  stroke-width: 2;
+}
+.diagram text.mm-hand {
+  font-family: "Bradley Hand", "Noteworthy", "Chalkboard SE", "Segoe Print", cursive;
+  font-size: 23px;
+  fill: #20232b;
+}
+.diagram text.mm-hand-title {
+  font-size: 30px;
+}
+.mm-region {
+  fill: color-mix(in srgb, var(--d-yellow) 12%, transparent);
+  stroke: var(--d-yellow);
+  stroke-width: 2.5;
+  stroke-dasharray: 7 5;
+}
+.mm-region-tag {
+  fill: var(--d-yellow);
+}
+.diagram text.mm-region-text {
+  font-size: 17px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: #1a1b20;
+}
+.mm-caption {
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.diagram text.mm-caption-sub {
+  font-size: 19px;
+  text-anchor: middle;
+  fill: var(--d-muted);
+}
+.mm-arrow {
+  fill: none;
+  stroke: var(--d-muted);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 2 9;
+}
+.mm-arrow-years {
+  stroke: var(--d-subtle);
+}
+.diagram text.mm-years {
+  font-size: 24px;
+  font-weight: 700;
+  fill: var(--d-muted);
+}
+
+// 모델과 입력 칸.
+.mm-model {
+  fill: #17181e;
+  stroke: var(--d-line);
+  stroke-width: 2.5;
+  transition: stroke .3s;
+
+  &.lit {
+    stroke: var(--d-yellow);
+  }
+}
+.mm-model-name {
+  font-size: 54px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.diagram text.mm-model-date {
+  font-size: 22px;
+  text-anchor: middle;
+  fill: var(--d-muted);
+}
+.mm-port {
+  fill: #23252d;
+  stroke: var(--d-blue);
+  stroke-width: 2.5;
+  transition: stroke .3s, fill .3s;
+
+  &.lit {
+    fill: color-mix(in srgb, var(--d-yellow) 22%, #23252d);
+    stroke: var(--d-yellow);
+  }
+}
+.mm-port-ghost {
+  stroke: var(--d-subtle);
+}
+.mm-port-text {
+  font-size: 22px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.mm-ghost {
+  fill: none;
+  stroke: var(--d-subtle);
+  stroke-width: 2;
+  stroke-dasharray: 8 7;
+}
+.diagram text.mm-ghost-name {
+  font-size: 36px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--d-muted);
+}
+
+// 요청 문장.
+.mm-prompt {
+  fill: #1b1c22;
+  stroke: var(--d-line);
+  stroke-width: 1.5;
+}
+.diagram text.mm-prompt-label {
+  font-size: 17px;
+  font-weight: 700;
+  fill: var(--d-muted);
+}
+.mm-prompt-text {
+  font-size: 18px;
+}
+
+// 코드와 완성된 페이지.
+.mm-code {
+  fill: #121318;
+  stroke: var(--d-line);
+  stroke-width: 1.5;
+}
+.diagram text.mm-code-text {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 14px;
+  fill: #b8d7ff;
+  white-space: pre;
+}
+.mm-browser {
+  fill: #e6e6ea;
+}
+.mm-browser-dot {
+  fill: #b5b5bd;
+}
+.mm-page {
+  fill: lightblue;
+}
+.diagram text.mm-page-title {
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: darkblue;
+}
+.diagram text.mm-page-text {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  text-anchor: middle;
+  fill: #111;
+}
+.mm-page-button {
+  fill: #0d1490;
+
+  &.pressed {
+    fill: #3d48d8;
+  }
+}
+.diagram text.mm-page-button-text {
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  text-anchor: middle;
+  fill: #fff;
+}
+
+// 변호사 모의시험.
+.mm-exam-heading {
+  font-size: 26px;
+  font-weight: 700;
+}
+.diagram text.mm-exam-axis {
+  font-size: 18px;
+  fill: var(--d-subtle);
+}
+.mm-end {
+  text-anchor: end;
+}
+.mm-person {
+  fill: var(--d-line);
+
+  &.top {
+    fill: var(--d-blue);
+  }
+}
+.mm-bracket {
+  fill: none;
+  stroke: var(--d-blue);
+  stroke-width: 2.5;
+}
+.diagram text.mm-exam-top {
+  font-size: 24px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--d-blue);
+}
+.mm-marker {
+  stroke: var(--d-text);
+  stroke-width: 3;
+}
+.mm-marker-dim {
+  stroke: var(--d-muted);
+  stroke-dasharray: 5 5;
+}
+.mm-marker-text {
+  font-size: 22px;
+  font-weight: 700;
+}
+.diagram text.mm-marker-dim-text {
+  font-weight: 500;
+  fill: var(--d-muted);
+}
+.diagram text.mm-source {
+  font-size: 16px;
+  text-anchor: end;
+  fill: var(--d-subtle);
+}
