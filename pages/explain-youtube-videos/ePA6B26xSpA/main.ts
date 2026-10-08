@@ -28,6 +28,7 @@ import { createImageNetErrorRateScene } from './scenes/imagenet-error-rate/scene
 import { createImageNetLabelingScene } from './scenes/imagenet-labeling/scene';
 import { createLstmScene } from './scenes/lstm/scene';
 import { createPerceptronScene } from './scenes/perceptron/scene';
+import { createInstructGptScene, createRlhfScene } from './scenes/rlhf/scene';
 import { createRnnScene } from './scenes/rnn/scene';
 import { createSeq2SeqScene } from './scenes/seq2seq/scene';
 import { createStableDiffusionScene } from './scenes/stable-diffusion/scene';
@@ -63,6 +64,8 @@ const scenes: Scene[] = [
   createClipScene(),
   createStableDiffusionScene(),
   createGpt3LimitsScene(),
+  createRlhfScene(),
+  createInstructGptScene(),
 ];
 
 // 30:00 까지 장면 작업을 마쳤다. 그 뒤는 재생 바와 장면 영역에 '준비 중'으로 표시한다. 전부 끝나면 지운다.
