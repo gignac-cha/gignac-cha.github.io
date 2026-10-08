@@ -1,0 +1,172 @@
+// 알파고 장면들(두 눈, 37수와 78수, 알파고 제로)이 함께 쓰는 글자 스타일.
+.alphago,
+.alphago-moves,
+.alphago-zero {
+  .alphago-caption {
+    font-size: 36px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .alphago-board-note {
+    font-size: 22px;
+    text-anchor: middle;
+    fill: var(--d-muted);
+  }
+  .alphago-footnote {
+    font-size: 20px;
+    fill: var(--d-subtle);
+  }
+}
+
+.alphago {
+  .alphago-empty {
+    fill: var(--d-blue);
+  }
+  .alphago-candidate {
+    fill: color-mix(in srgb, var(--d-blue) 45%, transparent);
+    stroke: var(--d-blue);
+    stroke-width: 3;
+    filter: drop-shadow(0 0 8px var(--d-blue));
+  }
+  .alphago-gauge {
+    &.white {
+      fill: #f1efe9;
+    }
+    &.black {
+      fill: #2b2b2b;
+      stroke: var(--d-green);
+      stroke-width: 2;
+    }
+  }
+  .alphago-gauge-label {
+    font-size: 22px;
+    font-weight: 600;
+    fill: var(--d-muted);
+  }
+
+  .alphago-count-label {
+    font-size: 28px;
+    fill: var(--d-muted);
+  }
+  .alphago-count {
+    font-size: 52px;
+    font-weight: 800;
+
+    &.go {
+      fill: var(--d-yellow);
+    }
+  }
+  .alphago-exponent {
+    font-size: 30px;
+  }
+  .alphago-count-bar {
+    &.go {
+      fill: var(--d-yellow);
+    }
+    &.atoms {
+      fill: var(--d-muted);
+    }
+  }
+
+  .alphago-fan {
+    fill: none;
+    stroke: var(--d-blue);
+    stroke-width: 1.2;
+    opacity: .8;
+  }
+  .alphago-root {
+    fill: var(--d-text);
+  }
+  .alphago-tree-name {
+    font-size: 32px;
+    font-weight: 800;
+    text-anchor: middle;
+  }
+  .alphago-tree-detail {
+    font-size: 22px;
+    text-anchor: middle;
+    fill: var(--d-muted);
+  }
+  .alphago-tree-total {
+    font-size: 34px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-yellow);
+  }
+  .alphago-cross {
+    fill: none;
+    stroke: var(--d-red);
+    stroke-width: 10;
+    stroke-linecap: round;
+  }
+  .alphago-decade {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-muted);
+  }
+
+  .alphago-eye {
+    fill: var(--d-grid);
+    stroke-width: 3;
+
+    &.policy {
+      stroke: var(--d-blue);
+    }
+    &.value {
+      stroke: var(--d-green);
+    }
+  }
+  .alphago-eye-shape {
+    fill: var(--d-text);
+
+    &.policy {
+      stroke: var(--d-blue);
+      stroke-width: 3;
+    }
+    &.value {
+      stroke: var(--d-green);
+      stroke-width: 3;
+    }
+  }
+  .alphago-pupil {
+    &.policy {
+      fill: var(--d-blue);
+    }
+    &.value {
+      fill: var(--d-green);
+    }
+  }
+  .alphago-eye-title {
+    font-size: 34px;
+    font-weight: 800;
+  }
+  .alphago-eye-body {
+    font-size: 28px;
+    fill: var(--d-text);
+  }
+  .alphago-eye-detail {
+    font-size: 22px;
+    text-anchor: end;
+    fill: var(--d-muted);
+  }
+  .alphago-step {
+    fill: var(--d-grid);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  .alphago-step-title {
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .alphago-step-detail {
+    font-size: 22px;
+    fill: var(--d-muted);
+  }
+  .alphago-loop {
+    fill: none;
+    stroke: var(--d-yellow);
+    stroke-width: 5;
+    stroke-dasharray: 120 60;
+  }
+}
