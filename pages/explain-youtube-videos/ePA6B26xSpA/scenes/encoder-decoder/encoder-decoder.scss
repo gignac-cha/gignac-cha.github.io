@@ -1,0 +1,127 @@
+.ed {
+  --ed-encoder: var(--d-green);
+  --ed-decoder: var(--d-purple);
+}
+.ed-frame {
+  fill: none;
+  stroke-width: 3;
+
+  &.encoder {
+    stroke: var(--ed-encoder);
+  }
+  &.decoder {
+    stroke: var(--ed-decoder);
+  }
+}
+.ed-name {
+  font-size: 26px;
+  font-weight: 700;
+
+  &.encoder {
+    fill: var(--ed-encoder) !important;
+  }
+  &.decoder {
+    fill: var(--ed-decoder) !important;
+  }
+}
+.ed-chip {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 22px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  &.output rect {
+    stroke: var(--ed-decoder);
+  }
+  &.root rect {
+    stroke: #5b9dff;
+    fill: #0f1a2b;
+  }
+}
+.ed-pulse {
+  fill: var(--ed-encoder);
+}
+.ed-stack {
+  rect:not(.ed-stack-glow) {
+    stroke-width: 1.5;
+  }
+  &.encoder rect:not(.ed-stack-glow) {
+    fill: color-mix(in srgb, var(--ed-encoder) 28%, var(--d-background));
+    stroke: var(--ed-encoder);
+  }
+  &.decoder rect:not(.ed-stack-glow) {
+    fill: color-mix(in srgb, var(--ed-decoder) 28%, var(--d-background));
+    stroke: var(--ed-decoder);
+  }
+}
+.ed-stack-glow {
+  fill: none;
+  stroke: var(--d-yellow);
+  stroke-width: 5;
+}
+.ed-year {
+  font-size: 56px;
+  font-weight: 800;
+  fill: var(--d-muted) !important;
+}
+.ed-company {
+  font-size: 26px;
+  font-weight: 600;
+  fill: var(--d-muted) !important;
+}
+.ed-model-name {
+  font-size: 44px;
+  font-weight: 800;
+}
+.ed-model.encoder .ed-model-name {
+  fill: var(--ed-encoder) !important;
+}
+.ed-model.decoder .ed-model-name {
+  fill: var(--ed-decoder) !important;
+}
+.ed-model-detail {
+  font-size: 22px;
+  fill: var(--d-muted) !important;
+}
+.ed-branch {
+  fill: none;
+  stroke: #5b9dff;
+  stroke-width: 3;
+  stroke-dasharray: 1;
+}
+.ed-road-arrow {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ed-road.encoder {
+  .ed-road-arrow {
+    stroke: var(--ed-encoder);
+  }
+  text {
+    fill: var(--ed-encoder) !important;
+  }
+}
+.ed-road.decoder {
+  .ed-road-arrow {
+    stroke: var(--ed-decoder);
+  }
+  text {
+    fill: var(--ed-decoder) !important;
+  }
+}
+.ed-road-label {
+  font-size: 24px;
+  font-weight: 700;
+}
+.ed-question {
+  font-size: 36px;
+  font-weight: 800;
+  fill: var(--d-yellow) !important;
+}

@@ -22,6 +22,7 @@ import { createDeepBeliefNetScene } from './scenes/deep-belief-net/scene';
 import { createDeepBlueScene } from './scenes/deep-blue/scene';
 import { createDepthScene } from './scenes/depth/scene';
 import { createEmergenceScene } from './scenes/emergence/scene';
+import { createEncoderDecoderScene } from './scenes/encoder-decoder/scene';
 import { createFewShotScene } from './scenes/few-shot/scene';
 import {
   createGanScene,
@@ -81,6 +82,7 @@ const scenes: Scene[] = [
   createSelfAttentionScene(),
   createTransformerTranslationScene(),
   createTransformerEverywhereScene(),
+  createEncoderDecoderScene(),
   createBertSearchScene(),
   createGpt2Scene(),
   createScalingLawsScene(),
