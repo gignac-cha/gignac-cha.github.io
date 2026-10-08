@@ -1,0 +1,55 @@
+.te-link {
+  fill: none;
+  stroke: #5b9dff;
+  stroke-width: 3;
+  stroke-dasharray: 10 10;
+}
+.te-ripple {
+  fill: none;
+  stroke: #5b9dff;
+  stroke-width: 3;
+}
+.te-label {
+  font-size: 24px;
+  font-weight: 600;
+  fill: #8fb4ec !important;
+}
+.te-card {
+  rect {
+    fill: #15161b;
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+}
+.te-card-field {
+  font-size: 32px;
+  font-weight: 800;
+}
+.te-card-model {
+  font-size: 22px;
+  fill: var(--d-muted) !important;
+}
+.te-model {
+  rect {
+    fill: color-mix(in srgb, var(--d-green) 14%, var(--d-background));
+    stroke: var(--d-green);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 24px;
+    font-weight: 700;
+  }
+}
+.te-chatgpt {
+  font-size: 64px;
+  font-weight: 800;
+}
+.te-expansion {
+  font-size: 30px;
+  font-weight: 700;
+  fill: var(--d-muted) !important;
+}
+.te-chatgpt.highlight,
+.te-expansion.highlight {
+  fill: var(--d-yellow) !important;
+}

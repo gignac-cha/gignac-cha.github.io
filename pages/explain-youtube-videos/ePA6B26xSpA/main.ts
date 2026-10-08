@@ -48,6 +48,7 @@ import { createStableDiffusionScene } from './scenes/stable-diffusion/scene';
 import { createSvmScene } from './scenes/svm/scene';
 import { createTestTimeComputeScene } from './scenes/test-time-compute/scene';
 import { createToolAgentScene } from './scenes/tool-agent/scene';
+import { createTransformerEverywhereScene } from './scenes/transformer-everywhere/scene';
 import { createTransformerTranslationScene } from './scenes/transformer-translation/scene';
 import { createVanishingGradientScene } from './scenes/vanishing-gradient/scene';
 import { createWord2VecScene } from './scenes/word2vec/scene';
@@ -79,6 +80,7 @@ const scenes: Scene[] = [
   createDepthScene(),
   createSelfAttentionScene(),
   createTransformerTranslationScene(),
+  createTransformerEverywhereScene(),
   createBertSearchScene(),
   createGpt2Scene(),
   createScalingLawsScene(),
