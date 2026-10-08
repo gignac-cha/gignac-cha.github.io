@@ -1,0 +1,254 @@
+.lm-panel-frame {
+  fill: color-mix(in srgb, var(--d-text) 3%, var(--d-background));
+  stroke: var(--d-line);
+  stroke-width: 3;
+}
+.lm-slot {
+  fill: none;
+  stroke: var(--d-subtle);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+.lm-slot-caption {
+  font-size: 22px;
+  font-weight: 700;
+}
+.lm-header {
+  font-size: 42px;
+  font-weight: 800;
+}
+.lm-source {
+  font-size: 19px;
+  fill: var(--d-muted) !important;
+}
+.lm-label {
+  font-size: 22px;
+  fill: var(--d-muted) !important;
+
+  &.strong {
+    font-weight: 700;
+    fill: var(--d-text) !important;
+  }
+}
+.lm-value {
+  font-size: 26px;
+  font-weight: 800;
+}
+.lm-axis {
+  font-size: 18px;
+  fill: var(--d-muted) !important;
+}
+.lm-axis-line {
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+
+// 환각
+.lm-bubble {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 24px;
+  }
+  &.user rect {
+    fill: color-mix(in srgb, var(--d-blue) 18%, var(--d-background));
+    stroke: none;
+  }
+  &.bot.false rect {
+    stroke: var(--d-red);
+  }
+}
+.lm-reply-lead {
+  font-size: 28px !important;
+  font-weight: 700;
+}
+.lm-citation {
+  font-size: 26px !important;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace !important;
+}
+.lm-bubble.false .lm-citation {
+  text-decoration: line-through;
+  fill: var(--d-muted) !important;
+}
+.lm-stamp {
+  rect {
+    fill: color-mix(in srgb, var(--d-red) 16%, var(--d-background));
+    stroke: var(--d-red);
+    stroke-width: 4;
+  }
+  text {
+    font-size: 36px;
+    font-weight: 900;
+    fill: var(--d-red) !important;
+  }
+}
+
+// 전기와 칩
+.lm-power {
+  fill: var(--d-orange);
+
+  &.projected {
+    fill: color-mix(in srgb, var(--d-orange) 35%, var(--d-background));
+    stroke: var(--d-orange);
+    stroke-width: 2;
+    stroke-dasharray: 8 6;
+  }
+}
+.lm-chip {
+  rect {
+    fill: color-mix(in srgb, var(--d-green) 18%, var(--d-background));
+    stroke: var(--d-green);
+    stroke-width: 2;
+  }
+  path {
+    stroke: var(--d-green);
+    stroke-width: 2;
+  }
+}
+
+// 바닥나는 글
+.lm-window {
+  fill: color-mix(in srgb, var(--d-red) 10%, transparent);
+}
+.lm-window-label {
+  font-size: 19px;
+  font-weight: 700;
+  fill: var(--d-red) !important;
+}
+.lm-stock-band {
+  fill: color-mix(in srgb, var(--d-yellow) 10%, transparent);
+}
+.lm-stock {
+  stroke: var(--d-yellow);
+  stroke-width: 3;
+}
+.lm-point {
+  circle {
+    fill: var(--d-blue);
+  }
+}
+.lm-point-label {
+  font-size: 19px;
+  font-weight: 600;
+}
+.lm-trend {
+  fill: none;
+  stroke: var(--d-blue);
+  stroke-width: 3;
+  stroke-dasharray: 10 8;
+}
+.lm-hit {
+  fill: none;
+  stroke: var(--d-red);
+  stroke-width: 4;
+}
+
+// 다음 단어 너머
+.lm-word {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 22px;
+    font-weight: 600;
+  }
+  &.next rect {
+    stroke: var(--d-yellow);
+    stroke-dasharray: 6 5;
+  }
+  &.next text {
+    fill: var(--d-yellow) !important;
+  }
+}
+.lm-goal {
+  rect {
+    fill: none;
+    stroke: var(--d-text);
+    stroke-width: 2;
+    stroke-dasharray: 8 6;
+  }
+  text {
+    font-size: 26px;
+    font-weight: 700;
+  }
+}
+.lm-reach {
+  fill: none;
+  stroke: var(--d-muted);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.lm-cross path {
+  fill: none;
+  stroke: var(--d-red);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+.lm-loop {
+  fill: none;
+  stroke: var(--d-green);
+  stroke-width: 3;
+  stroke-dasharray: 10 8;
+}
+.lm-step {
+  rect {
+    fill: color-mix(in srgb, var(--d-green) 16%, var(--d-background));
+    stroke: var(--d-green);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 24px;
+    font-weight: 700;
+  }
+}
+.lm-ball {
+  fill: var(--d-orange);
+}
+.lm-ground {
+  stroke: var(--d-muted);
+  stroke-width: 3;
+}
+.lm-runner {
+  fill: var(--d-yellow);
+  filter: drop-shadow(0 0 6px var(--d-yellow));
+}
+
+// 믿고 맡기기
+.lm-task {
+  fill: var(--d-purple);
+}
+.lm-check {
+  rect {
+    fill: color-mix(in srgb, var(--d-yellow) 8%, var(--d-background));
+    stroke: var(--d-yellow);
+    stroke-width: 2;
+  }
+}
+.lm-check-title {
+  font-size: 30px;
+  font-weight: 800;
+}
+.lm-question {
+  font-size: 72px;
+  font-weight: 900;
+  fill: var(--d-yellow) !important;
+}
+
+// 세 번째 겨울?
+.lm-winter-title {
+  font-size: 84px;
+  font-weight: 900;
+  fill: #cfe3ff !important;
+}
+.lm-winter-note {
+  font-size: 32px;
+  fill: var(--d-muted) !important;
+}
+.lm-snow {
+  fill: #e8f1ff;
+}

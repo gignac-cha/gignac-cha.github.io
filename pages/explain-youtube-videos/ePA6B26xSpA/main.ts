@@ -31,6 +31,7 @@ import { createGpt5RouterScene } from './scenes/gpt5-router/scene';
 import { createGpuScene } from './scenes/gpu/scene';
 import { createImageNetErrorRateScene } from './scenes/imagenet-error-rate/scene';
 import { createImageNetLabelingScene } from './scenes/imagenet-labeling/scene';
+import { createLimitsScene } from './scenes/limits/scene';
 import { createLstmScene } from './scenes/lstm/scene';
 import { createPerceptronScene } from './scenes/perceptron/scene';
 import { createReasoningModelScene } from './scenes/reasoning-model/scene';
@@ -82,6 +83,7 @@ const scenes: Scene[] = [
   createToolAgentScene(),
   createGpt5RouterScene(),
   createContextWindowScene(),
+  createLimitsScene(),
 ];
 
 // 30:00 까지 장면 작업을 마쳤다. 그 뒤는 재생 바와 장면 영역에 '준비 중'으로 표시한다. 전부 끝나면 지운다.
