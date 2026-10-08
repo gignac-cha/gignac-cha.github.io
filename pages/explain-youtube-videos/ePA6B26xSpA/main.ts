@@ -21,6 +21,7 @@ import { createContextWindowScene } from './scenes/context-window/scene';
 import { createDeepBeliefNetScene } from './scenes/deep-belief-net/scene';
 import { createDeepBlueScene } from './scenes/deep-blue/scene';
 import { createDepthScene } from './scenes/depth/scene';
+import { createEmergenceScene } from './scenes/emergence/scene';
 import { createFewShotScene } from './scenes/few-shot/scene';
 import {
   createGanScene,
@@ -79,6 +80,7 @@ const scenes: Scene[] = [
   createScalingLawsScene(),
   createGpt3ScaleScene(),
   createFewShotScene(),
+  createEmergenceScene(),
   createClipScene(),
   createStableDiffusionScene(),
   createGpt3LimitsScene(),

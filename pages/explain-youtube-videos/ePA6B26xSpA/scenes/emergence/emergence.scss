@@ -1,0 +1,188 @@
+.em-axis {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 3;
+}
+.em-grid {
+  stroke: var(--d-grid);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+}
+.em-tick {
+  font-size: 22px;
+  fill: var(--d-muted) !important;
+}
+.em-axis-label {
+  font-size: 26px;
+  font-weight: 600;
+  fill: var(--d-muted) !important;
+}
+.em-curve {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  &.exact {
+    stroke: var(--d-orange);
+  }
+  &.partial {
+    stroke: var(--d-green);
+  }
+}
+.em-curve-label {
+  font-size: 26px;
+  font-weight: 700;
+
+  &.exact {
+    fill: var(--d-orange) !important;
+  }
+  &.partial {
+    fill: var(--d-green) !important;
+  }
+}
+.em-pointer {
+  fill: none;
+  stroke: var(--d-yellow);
+  stroke-width: 3;
+  stroke-dasharray: 6 6;
+}
+.em-emergence-text {
+  font-size: 44px;
+  font-weight: 800;
+  fill: var(--d-yellow) !important;
+}
+.em-emergence-sub {
+  font-size: 22px;
+  font-style: italic;
+  fill: var(--d-muted) !important;
+}
+.em-tube {
+  fill: #1b1c22;
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.em-bulb {
+  fill: var(--d-red);
+}
+.em-mercury {
+  fill: var(--d-red);
+}
+.em-zero-tick {
+  stroke: var(--d-blue);
+  stroke-width: 3;
+}
+.em-zero-label {
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--d-blue) !important;
+}
+.em-readout {
+  font-size: 36px;
+  font-weight: 800;
+}
+.em-cube {
+  fill: color-mix(in srgb, var(--d-blue) 30%, var(--d-background));
+  stroke: var(--d-blue);
+  stroke-width: 3;
+
+  &.ice {
+    fill: color-mix(in srgb, #dff1ff 55%, var(--d-background));
+    stroke: #dff1ff;
+  }
+}
+.em-crystal line {
+  stroke: #ffffff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: .8;
+}
+.em-state {
+  font-size: 34px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.em-scoring-title {
+  font-size: 30px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.em-problem {
+  font-size: 34px;
+  font-weight: 700;
+  font-family: Menlo, Consolas, monospace !important;
+}
+.em-problem-sub {
+  font-size: 26px;
+  fill: var(--d-muted) !important;
+}
+.em-digit {
+  font-size: 34px;
+  font-weight: 800;
+  font-family: Menlo, Consolas, monospace !important;
+
+  &.right {
+    fill: var(--d-green) !important;
+  }
+  &.wrong {
+    fill: var(--d-red) !important;
+  }
+}
+.em-card {
+  rect {
+    fill: #141519;
+    stroke-width: 2;
+  }
+  &.exact rect {
+    stroke: var(--d-orange);
+  }
+  &.partial rect {
+    stroke: var(--d-green);
+  }
+}
+.em-card-rule {
+  font-size: 28px;
+  font-weight: 700;
+}
+.em-card-note {
+  font-size: 21px;
+  fill: var(--d-muted) !important;
+}
+.em-card-score {
+  font-size: 40px;
+  font-weight: 800;
+
+  .exact & {
+    fill: var(--d-orange) !important;
+  }
+  .partial & {
+    fill: var(--d-green) !important;
+  }
+}
+.em-debate {
+  font-size: 30px;
+  font-weight: 700;
+  fill: var(--d-yellow) !important;
+}
+.em-fact-band {
+  fill: color-mix(in srgb, var(--d-yellow) 9%, transparent);
+}
+.em-fact-arrow {
+  fill: none;
+  stroke: var(--d-yellow);
+  stroke-width: 6;
+  stroke-dasharray: 1;
+}
+.em-fact-head {
+  fill: var(--d-yellow);
+}
+.em-fact-text {
+  font-size: 28px;
+  font-weight: 700;
+  fill: var(--d-yellow) !important;
+}
+.em-fact-line {
+  font-size: 34px;
+  font-weight: 800;
+  fill: var(--d-yellow) !important;
+}
