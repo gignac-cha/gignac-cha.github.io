@@ -42,6 +42,7 @@ import { createReasoningModelScene } from './scenes/reasoning-model/scene';
 import { createInstructGptScene, createRlhfScene } from './scenes/rlhf/scene';
 import { createRnnScene } from './scenes/rnn/scene';
 import { createGpt3ScaleScene, createScalingLawsScene } from './scenes/scaling-laws/scene';
+import { createSelfAttentionScene } from './scenes/self-attention/scene';
 import { createSeq2SeqScene } from './scenes/seq2seq/scene';
 import { createStableDiffusionScene } from './scenes/stable-diffusion/scene';
 import { createSvmScene } from './scenes/svm/scene';
@@ -75,6 +76,7 @@ const scenes: Scene[] = [
   createGanScene(),
   createGanWeaknessScene(),
   createDepthScene(),
+  createSelfAttentionScene(),
   createBertSearchScene(),
   createGpt2Scene(),
   createScalingLawsScene(),

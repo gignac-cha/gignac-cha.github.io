@@ -1,0 +1,163 @@
+.sa-chip {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-line);
+    stroke-width: 2;
+    transition: none;
+  }
+  text {
+    font-size: 30px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  &.reading rect,
+  &.spoken rect {
+    stroke: var(--d-yellow);
+    stroke-width: 3;
+  }
+  &.focus rect {
+    stroke: var(--d-yellow);
+    stroke-width: 3;
+    fill: color-mix(in srgb, var(--d-yellow) 22%, var(--d-background));
+  }
+  &.answer rect {
+    stroke: var(--d-green);
+    stroke-width: 3;
+    fill: color-mix(in srgb, var(--d-green) 18%, var(--d-background));
+  }
+  &.active rect {
+    stroke: color-mix(in srgb, var(--d-yellow) 70%, var(--d-line));
+  }
+}
+.sa-check {
+  circle {
+    fill: var(--d-green);
+  }
+  path {
+    fill: none;
+    stroke: var(--d-background);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+.sa-reader-box {
+  fill: color-mix(in srgb, var(--d-blue) 14%, var(--d-background));
+  stroke: var(--d-blue);
+  stroke-width: 2.5;
+}
+.sa-reader-label {
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.sa-reader-arrow {
+  fill: none;
+  stroke: var(--d-blue);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sa-strike {
+  fill: none;
+  stroke: var(--d-red);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+}
+.sa-arc {
+  fill: none;
+  stroke: var(--d-yellow);
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+}
+.sa-ripple {
+  fill: none;
+  stroke: var(--d-yellow);
+  stroke-width: 3;
+}
+.sa-question {
+  fill: none;
+  stroke: var(--d-muted);
+  stroke-width: 3;
+  stroke-dasharray: 8 8;
+}
+.sa-question-mark {
+  font-size: 34px;
+  font-weight: 800;
+  fill: var(--d-yellow) !important;
+}
+.sa-bar {
+  fill: var(--d-yellow);
+}
+.sa-caption {
+  font-size: 32px;
+  font-weight: 700;
+}
+// GPU 계산기 판.
+.sa-gpu-board {
+  fill: #15161b;
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.sa-gpu-title {
+  font-size: 28px;
+  font-weight: 800;
+}
+.sa-gpu-note {
+  font-size: 20px;
+  fill: var(--d-muted) !important;
+}
+.sa-core-idle {
+  fill: #3a3b45;
+}
+.sa-gpu.idle .sa-core-idle {
+  fill: #2c2d35;
+}
+.sa-core-lit {
+  fill: var(--d-green);
+}
+.sa-core-ring {
+  fill: none;
+  stroke: var(--d-green);
+  stroke-width: 3;
+}
+.sa-gpu-caption {
+  font-size: 26px;
+  font-weight: 600;
+  fill: var(--d-muted) !important;
+}
+// 은행 창구와 손님.
+.sa-booth-frame {
+  fill: #17181d;
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.sa-booth-label {
+  font-size: 20px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.sa-booth-desk {
+  stroke: var(--d-subtle);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.sa-booth-glow {
+  fill: none;
+  stroke: var(--d-green);
+  stroke-width: 4;
+}
+.sa-person {
+  circle,
+  rect {
+    fill: var(--d-muted);
+  }
+  &.teller {
+    circle,
+    rect {
+      fill: var(--d-blue);
+    }
+  }
+}
