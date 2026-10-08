@@ -37,6 +37,7 @@ import { createRnnScene } from './scenes/rnn/scene';
 import { createSeq2SeqScene } from './scenes/seq2seq/scene';
 import { createStableDiffusionScene } from './scenes/stable-diffusion/scene';
 import { createSvmScene } from './scenes/svm/scene';
+import { createTestTimeComputeScene } from './scenes/test-time-compute/scene';
 import { createVanishingGradientScene } from './scenes/vanishing-gradient/scene';
 import { createWord2VecScene } from './scenes/word2vec/scene';
 import { createXorScene } from './scenes/xor/scene';
@@ -74,6 +75,7 @@ const scenes: Scene[] = [
   createGpt4MultimodalScene(),
   createGpt4oScene(),
   createReasoningModelScene(),
+  createTestTimeComputeScene(),
 ];
 
 // 30:00 까지 장면 작업을 마쳤다. 그 뒤는 재생 바와 장면 영역에 '준비 중'으로 표시한다. 전부 끝나면 지운다.
