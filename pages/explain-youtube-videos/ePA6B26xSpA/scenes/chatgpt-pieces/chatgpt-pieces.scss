@@ -1,0 +1,109 @@
+.cp-heading {
+  font-size: 34px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.cp-lab {
+  rect {
+    fill: color-mix(in srgb, var(--d-grid) 40%, var(--d-background));
+    stroke: var(--d-line);
+    stroke-width: 2;
+    stroke-dasharray: 10 8;
+  }
+}
+.cp-lab-label {
+  font-size: 24px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.cp-block {
+  --tone: var(--d-blue);
+
+  &.green {
+    --tone: var(--d-green);
+  }
+  &.orange {
+    --tone: var(--d-orange);
+  }
+  &.purple {
+    --tone: var(--d-purple);
+  }
+  rect {
+    fill: color-mix(in srgb, var(--tone) 20%, var(--d-background));
+    stroke: var(--tone);
+    stroke-width: 3;
+  }
+}
+.cp-block-name {
+  font-size: 32px;
+  font-weight: 800;
+}
+.cp-block-year {
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: end;
+  fill: var(--d-muted) !important;
+}
+.cp-link {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 3;
+  stroke-dasharray: 10 6;
+}
+.cp-chat {
+  fill: #212121;
+  stroke: #3a3a3a;
+  stroke-width: 2;
+}
+.cp-chat-title {
+  font-size: 40px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.cp-chat-sub {
+  font-size: 22px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.cp-input {
+  rect {
+    fill: #303030;
+    stroke: #444;
+    stroke-width: 1.5;
+  }
+  &.lit rect {
+    stroke: var(--d-text);
+    stroke-width: 2.5;
+  }
+}
+.cp-placeholder {
+  font-size: 24px;
+  fill: #9a9a9a !important;
+}
+.cp-send {
+  fill: var(--d-text);
+}
+.cp-send-arrow {
+  fill: none;
+  stroke: #212121;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cp-bubble {
+  fill: #303030;
+}
+.cp-bubble-text {
+  font-size: 22px;
+  text-anchor: middle;
+}
+.cp-anyone {
+  font-size: 30px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.cp-person {
+  fill: var(--d-blue);
+}

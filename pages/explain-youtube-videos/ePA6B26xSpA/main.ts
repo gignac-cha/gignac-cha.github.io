@@ -13,6 +13,7 @@ import { createArtificialNeuronScene } from './scenes/artificial-neuron/scene';
 import { createAttentionScene } from './scenes/attention/scene';
 import { createBackpropagationScene } from './scenes/backpropagation/scene';
 import { createChatGPTScene } from './scenes/chatgpt/scene';
+import { createChatGptPiecesScene } from './scenes/chatgpt-pieces/scene';
 import { createClipScene } from './scenes/clip/scene';
 import { createCnnScene } from './scenes/cnn/scene';
 import { createDeepBeliefNetScene } from './scenes/deep-belief-net/scene';
@@ -66,6 +67,7 @@ const scenes: Scene[] = [
   createGpt3LimitsScene(),
   createRlhfScene(),
   createInstructGptScene(),
+  createChatGptPiecesScene(),
 ];
 
 // 30:00 까지 장면 작업을 마쳤다. 그 뒤는 재생 바와 장면 영역에 '준비 중'으로 표시한다. 전부 끝나면 지운다.
