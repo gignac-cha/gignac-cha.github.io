@@ -1,0 +1,123 @@
+.af-segment {
+  stroke-linecap: round;
+}
+.af-bead {
+  stroke: var(--d-background);
+  stroke-width: 1.2;
+}
+.af-truth {
+  fill: none;
+  stroke: #f4f4f6;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.af-truth-sample {
+  stroke: #f4f4f6;
+  stroke-width: 2;
+}
+.af-pocket-glow {
+  fill: var(--d-yellow);
+}
+.af-pocket-ring {
+  fill: none;
+  stroke: var(--d-yellow);
+  stroke-width: 2.5;
+}
+.af-drug-bond {
+  stroke: #f4f4f6;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.af-atom {
+  stroke: var(--d-background);
+  stroke-width: 1.5;
+}
+.af-atom-c {
+  fill: #c9ccd6;
+}
+.af-atom-n {
+  fill: var(--d-blue);
+}
+.af-atom-o {
+  fill: var(--d-red);
+}
+.af-label {
+  font-size: 26px;
+  text-anchor: middle;
+}
+.af-label-drug {
+  fill: var(--d-text) !important;
+}
+.af-label-pocket {
+  fill: var(--d-yellow) !important;
+  text-anchor: start;
+}
+.af-heading {
+  font-size: 24px;
+  fill: var(--d-muted) !important;
+}
+.af-heading-center {
+  text-anchor: middle;
+}
+.af-sequence {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace !important;
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: .06em;
+}
+.af-arrow {
+  stroke: var(--d-muted);
+  stroke-width: 3;
+}
+.af-arrow-head {
+  fill: var(--d-muted);
+}
+.af-question {
+  font-size: 72px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.af-model {
+  fill: #12233f;
+  stroke: var(--d-blue);
+  stroke-width: 2.5;
+}
+.af-model-text {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.af-accuracy {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-green) !important;
+}
+.af-legend {
+  font-size: 21px;
+  fill: var(--d-muted) !important;
+}
+.af-legend-center {
+  text-anchor: middle;
+}
+.af-note {
+  font-size: 21px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.af-counter {
+  font-size: 64px;
+  font-weight: 800;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+}
+.af-source {
+  font-size: 18px;
+  fill: var(--d-subtle) !important;
+}
+.af-caption {
+  font-size: 32px;
+  font-weight: 600;
+  text-anchor: middle;
+}

@@ -9,6 +9,7 @@ import { renderTimeline } from '../shared/timeline';
 import { setupTimelineDock } from '../shared/timeline-dock';
 import { loadPlayer } from '../shared/youtube';
 import { createAlexNetTricksScene } from './scenes/alexnet-tricks/scene';
+import { createAlphaFoldScene } from './scenes/alphafold/scene';
 import { createAlphaGoScene } from './scenes/alphago/scene';
 import { createAlphaGoMovesScene } from './scenes/alphago-moves/scene';
 import { createAlphaGoZeroScene } from './scenes/alphago-zero/scene';
@@ -107,6 +108,7 @@ const scenes: Scene[] = [
   createGpt3ScaleScene(),
   createFewShotScene(),
   createEmergenceScene(),
+  createAlphaFoldScene(),
   createClipScene(),
   createStableDiffusionScene(),
   createGpt3LimitsScene(),
