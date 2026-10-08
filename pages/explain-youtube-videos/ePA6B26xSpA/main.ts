@@ -25,6 +25,7 @@ import {
   createGanScene,
   createGanWeaknessScene,
 } from './scenes/gan/scene';
+import { createGpt2Scene } from './scenes/gpt2/scene';
 import { createGpt3LimitsScene } from './scenes/gpt3-limits/scene';
 import { createGpt4MultimodalScene } from './scenes/gpt4-multimodal/scene';
 import { createGpt4oScene } from './scenes/gpt4o/scene';
@@ -72,6 +73,7 @@ const scenes: Scene[] = [
   createGanWeaknessScene(),
   createDepthScene(),
   createBertSearchScene(),
+  createGpt2Scene(),
   createClipScene(),
   createStableDiffusionScene(),
   createGpt3LimitsScene(),
