@@ -11,6 +11,7 @@ import { loadPlayer } from '../shared/youtube';
 import { createAlexNetTricksScene } from './scenes/alexnet-tricks/scene';
 import { createAlphaGoScene } from './scenes/alphago/scene';
 import { createAlphaGoMovesScene } from './scenes/alphago-moves/scene';
+import { createAlphaGoZeroScene } from './scenes/alphago-zero/scene';
 import { createArtificialNeuronScene } from './scenes/artificial-neuron/scene';
 import { createAttentionScene } from './scenes/attention/scene';
 import { createBackpropagationScene } from './scenes/backpropagation/scene';
@@ -93,6 +94,7 @@ const scenes: Scene[] = [
   createDeepQNetworkScene(),
   createAlphaGoScene(),
   createAlphaGoMovesScene(),
+  createAlphaGoZeroScene(),
   createSelfAttentionScene(),
   createTransformerTranslationScene(),
   createTransformerEverywhereScene(),
