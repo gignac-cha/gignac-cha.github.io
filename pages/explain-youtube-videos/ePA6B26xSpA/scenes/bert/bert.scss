@@ -1,0 +1,219 @@
+.bt-name {
+  font-size: 120px;
+  font-weight: 800;
+  fill: var(--d-green) !important;
+}
+.bt-sub {
+  font-size: 28px;
+  fill: var(--d-muted) !important;
+}
+.bt-acronym {
+  font-size: 36px;
+  font-weight: 600;
+
+  tspan.key {
+    fill: var(--d-yellow);
+    font-weight: 800;
+  }
+}
+.bt-heading {
+  font-size: 30px;
+  font-weight: 700;
+  fill: var(--d-muted) !important;
+}
+// 다음 단어 대신 빈칸.
+.bt-next-text {
+  font-size: 30px;
+  font-weight: 600;
+  fill: var(--d-muted) !important;
+}
+.bt-strike {
+  fill: none;
+  stroke: var(--d-red);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+}
+.bt-test {
+  rect {
+    fill: #15161b;
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+}
+.bt-test-title {
+  font-size: 28px;
+  font-weight: 700;
+  fill: var(--d-muted) !important;
+}
+.bt-token {
+  font-size: 48px;
+  font-weight: 600;
+
+  &.answer {
+    fill: var(--d-green) !important;
+    font-weight: 800;
+  }
+}
+.bt-mask {
+  rect {
+    fill: color-mix(in srgb, var(--d-yellow) 18%, var(--d-background));
+    stroke: var(--d-yellow);
+    stroke-width: 3;
+  }
+}
+.bt-mask-label {
+  font-size: 30px;
+  font-weight: 800;
+  fill: var(--d-yellow) !important;
+}
+.bt-mask-question {
+  font-size: 44px;
+  font-weight: 800;
+  fill: var(--d-yellow) !important;
+}
+.bt-bracket {
+  fill: none;
+  stroke: var(--d-green);
+  stroke-width: 3;
+}
+.bt-arrow {
+  fill: none;
+  stroke: var(--d-green);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+}
+.bt-context-label {
+  font-size: 24px;
+  font-weight: 700;
+  fill: var(--d-green) !important;
+}
+.bt-both {
+  font-size: 34px;
+  font-weight: 800;
+  fill: var(--d-yellow) !important;
+}
+// 이야기꾼과 독해 선수.
+.bt-row-name {
+  font-size: 40px;
+  font-weight: 800;
+}
+.bt-row.gpt .bt-row-name {
+  fill: var(--d-purple) !important;
+}
+.bt-row.bert .bt-row-name {
+  fill: var(--d-green) !important;
+}
+.bt-row-note {
+  font-size: 26px;
+  fill: var(--d-muted) !important;
+}
+.bt-cell {
+  rect {
+    fill: var(--d-background);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 26px;
+    font-weight: 600;
+  }
+}
+.bt-row.gpt .bt-cell rect {
+  stroke: var(--d-purple);
+}
+.bt-row.bert .bt-cell rect {
+  stroke: var(--d-green);
+}
+// 빈칸(?)과 그 빈칸이 볼 수 있는 단어를 잇는 선.
+.bt-row .bt-cell.blank {
+  rect {
+    fill: color-mix(in srgb, var(--d-yellow) 18%, var(--d-background));
+    stroke: var(--d-yellow);
+  }
+  text {
+    font-size: 34px;
+    font-weight: 800;
+    fill: var(--d-yellow) !important;
+  }
+}
+.bt-link {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+}
+.bt-row.gpt .bt-link {
+  stroke: var(--d-purple);
+}
+.bt-row.bert .bt-link {
+  stroke: var(--d-green);
+}
+.bt-verdict {
+  font-size: 28px;
+  font-weight: 800;
+}
+.bt-row.gpt .bt-verdict {
+  fill: var(--d-purple) !important;
+}
+.bt-row.bert .bt-verdict {
+  fill: var(--d-green) !important;
+}
+.bt-unseen {
+  font-size: 20px;
+  fill: var(--d-subtle) !important;
+}
+.bt-cursor {
+  stroke: var(--d-purple);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+// 기록판.
+.bt-record-label {
+  font-size: 28px;
+  font-weight: 700;
+}
+.bt-record-bench {
+  font-size: 20px;
+  fill: var(--d-muted) !important;
+}
+.bt-track {
+  fill: #1a1b20;
+}
+.bt-bar {
+  &.previous {
+    fill: var(--d-subtle);
+  }
+  &.bert {
+    fill: var(--d-green);
+  }
+}
+.bt-record-value {
+  font-size: 24px;
+  font-weight: 700;
+
+  &.bert {
+    fill: var(--d-green) !important;
+  }
+}
+.bt-legend {
+  font-size: 22px;
+  fill: var(--d-muted) !important;
+}
+.bt-eleven {
+  font-size: 30px;
+  font-weight: 800;
+  fill: var(--d-green) !important;
+}
+.bt-advice {
+  rect {
+    fill: #15161b;
+    stroke: var(--d-yellow);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 30px;
+    font-weight: 700;
+    fill: var(--d-yellow) !important;
+  }
+}
