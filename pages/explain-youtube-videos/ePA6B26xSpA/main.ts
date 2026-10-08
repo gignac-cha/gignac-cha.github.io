@@ -49,6 +49,7 @@ import { createRnnScene } from './scenes/rnn/scene';
 import { createGpt3ScaleScene, createScalingLawsScene } from './scenes/scaling-laws/scene';
 import { createSelfAttentionScene } from './scenes/self-attention/scene';
 import { createSeq2SeqScene } from './scenes/seq2seq/scene';
+import { createSkipConnectionsScene } from './scenes/skip-connections/scene';
 import { createStableDiffusionScene } from './scenes/stable-diffusion/scene';
 import { createSvmScene } from './scenes/svm/scene';
 import { createTestTimeComputeScene } from './scenes/test-time-compute/scene';
@@ -85,6 +86,7 @@ const scenes: Scene[] = [
   createDepthScene(),
   createResidualNetworkScene(),
   createBatchNormalizationScene(),
+  createSkipConnectionsScene(),
   createSelfAttentionScene(),
   createTransformerTranslationScene(),
   createTransformerEverywhereScene(),
