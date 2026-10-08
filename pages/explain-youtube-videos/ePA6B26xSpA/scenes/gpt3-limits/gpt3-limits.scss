@@ -1,0 +1,82 @@
+.g3-panel {
+  fill: color-mix(in srgb, var(--d-grid) 55%, var(--d-background));
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.g3-panel-label {
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--d-muted) !important;
+}
+.g3-prompt {
+  font-size: 30px;
+  font-weight: 700;
+}
+.g3-placeholder {
+  font-size: 28px;
+  font-style: italic;
+  fill: var(--d-subtle) !important;
+}
+// 이어 쓴 글: 놀이터(Playground) 화면처럼 초록 바탕.
+.g3-generated-bg {
+  fill: color-mix(in srgb, var(--d-green) 22%, transparent);
+}
+.g3-generated {
+  font-size: 30px;
+  font-weight: 600;
+  fill: #d8f5e4 !important;
+}
+.g3-next-box {
+  fill: none;
+  stroke: var(--d-yellow);
+  stroke-width: 3;
+}
+.g3-skeleton {
+  fill: color-mix(in srgb, var(--d-green) 18%, transparent);
+}
+.g3-cursor {
+  fill: var(--d-text);
+}
+.g3-source {
+  font-size: 22px;
+  text-anchor: middle;
+  fill: var(--d-subtle) !important;
+}
+.g3-card {
+  fill: var(--d-background);
+  stroke: var(--d-line);
+  stroke-width: 2;
+
+  &.machine {
+    fill: color-mix(in srgb, var(--d-green) 12%, var(--d-background));
+    stroke: var(--d-green);
+  }
+}
+.g3-card-label {
+  font-size: 22px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.g3-card-text {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.g3-strike {
+  stroke: var(--d-red);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.g3-badge {
+  rect {
+    fill: color-mix(in srgb, var(--d-red) 14%, var(--d-background));
+    stroke: var(--d-red);
+    stroke-width: 2.5;
+  }
+  text {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-red) !important;
+  }
+}
