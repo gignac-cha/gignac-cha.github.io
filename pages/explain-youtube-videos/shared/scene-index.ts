@@ -3,10 +3,13 @@ import type { Playback } from './playback';
 import type { Coverage, Scene } from './scenes';
 import { load, save } from './storage';
 
+// 0.1초 단위. 1시간이 넘으면 YouTube처럼 h:mm:ss.s 로 쓴다.
 const formatTime = (time: number) => {
-  const minutes = Math.floor(time / 60);
-  const seconds = (time % 60).toFixed(1).padStart(4, '0');
-  return `${minutes}:${seconds}`;
+  const tenths = Math.round(time * 10);
+  const hours = Math.floor(tenths / 36000);
+  const minutes = Math.floor((tenths % 36000) / 600);
+  const seconds = ((tenths % 600) / 10).toFixed(1).padStart(4, '0');
+  return hours > 0 ? `${hours}:${String(minutes).padStart(2, '0')}:${seconds}` : `${minutes}:${seconds}`;
 };
 
 const create = (tag: string, className?: string, text?: string) => {
@@ -26,7 +29,9 @@ const sceneKey = (scene: Scene) => `${scene.start}:${scene.title}`;
 
 const formatRemaining = (seconds: number) => {
   const total = Math.max(Math.ceil(seconds), 0);
-  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+  const hours = Math.floor(total / 3600);
+  const rest = `${String(total % 60).padStart(2, '0')}`;
+  return hours > 0 ? `${hours}:${String(Math.floor((total % 3600) / 60)).padStart(2, '0')}:${rest}` : `${Math.floor(total / 60)}:${rest}`;
 };
 
 export const renderSceneIndex = (playback: Playback, container: HTMLElement, scenes: Scene[], { exploredUntil }: Coverage = {}) => {

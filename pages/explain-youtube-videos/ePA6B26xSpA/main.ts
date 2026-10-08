@@ -127,9 +127,6 @@ const scenes: Scene[] = [
   createLimitsScene(),
 ];
 
-// 30:00 까지 장면 작업을 마쳤다. 그 뒤는 재생 바와 장면 영역에 '준비 중'으로 표시한다. 전부 끝나면 지운다.
-const coverage = { exploredUntil: 1800 };
-
 const element = (id: string) => document.getElementById(id)!;
 
 // 화면 배치는 저장된 상태로 플레이어를 기다리지 않고 바로 잡는다. 새로고침해도 그 화면 그대로.
@@ -141,8 +138,8 @@ setupTimelineDock(element('timeline-panel'), element('timeline-top'), element('t
 const player = await loadPlayer('video');
 // 장면·목록·재생 바는 매 프레임 보간한 같은 시계를 본다(2배속에서도 끊기지 않게).
 const playback = createPlayback(player);
-syncScenes(playback, element('scenes'), scenes, coverage);
-renderSceneIndex(playback, element('scene-index'), scenes, coverage);
-renderTimeline(playback, element('timeline'), scenes, coverage);
+syncScenes(playback, element('scenes'), scenes);
+renderSceneIndex(playback, element('scene-index'), scenes);
+renderTimeline(playback, element('timeline'), scenes);
 seekFromHash(player);
 rememberPosition(player, 'ePA6B26xSpA');

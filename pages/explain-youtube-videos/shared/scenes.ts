@@ -20,7 +20,11 @@ export interface Coverage {
   exploredUntil?: number;
 }
 
-export const formatClock = (time: number) => `${Math.floor(time / 60)}:${String(Math.floor(time % 60)).padStart(2, '0')}`;
+export const formatClock = (time: number) => {
+  const total = Math.floor(time);
+  const rest = String(total % 60).padStart(2, '0');
+  return total >= 3600 ? `${Math.floor(total / 3600)}:${String(Math.floor((total % 3600) / 60)).padStart(2, '0')}:${rest}` : `${Math.floor(total / 60)}:${rest}`;
+};
 
 export const syncScenes = (playback: Playback, container: HTMLElement, scenes: Scene[], { exploredUntil }: Coverage = {}) => {
   if (exploredUntil !== undefined) {
