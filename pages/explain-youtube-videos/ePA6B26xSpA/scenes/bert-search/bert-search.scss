@@ -1,0 +1,118 @@
+.bs-box {
+  rect {
+    fill: #17181d;
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  .bs-icon {
+    fill: none;
+    stroke: var(--d-muted);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+}
+.bs-query {
+  font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace !important;
+  font-size: 40px;
+  white-space: pre;
+}
+.bs-mark {
+  fill: color-mix(in srgb, var(--d-yellow) 22%, transparent);
+  stroke: var(--d-yellow);
+  stroke-width: 2;
+}
+.bs-links {
+  path {
+    fill: none;
+    stroke: var(--d-yellow);
+    stroke-width: 3;
+    stroke-dasharray: 1;
+    stroke-linecap: round;
+  }
+}
+.bs-link-label {
+  font-size: 24px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.bs-result {
+  rect {
+    fill: #15161a;
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  &.after rect {
+    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--d-green) 9%, var(--d-background));
+  }
+}
+.bs-result-heading {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  fill: var(--d-muted) !important;
+
+  .after & {
+    fill: var(--d-green) !important;
+  }
+}
+.bs-result-body {
+  font-size: 34px;
+  font-weight: 700;
+}
+.bs-result-note {
+  font-size: 22px;
+  fill: var(--d-muted) !important;
+}
+.bs-cross {
+  fill: none;
+  stroke: var(--d-red);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.bs-check {
+  fill: none;
+  stroke: var(--d-green);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.bs-quote {
+  font-size: 40px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.bs-source {
+  font-size: 22px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.bs-share-icon {
+  rect {
+    fill: #17181d;
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  circle, line {
+    fill: none;
+    stroke: var(--d-subtle);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  &.lit {
+    rect {
+      fill: color-mix(in srgb, var(--d-yellow) 22%, var(--d-background));
+      stroke: var(--d-yellow);
+    }
+    circle, line {
+      stroke: var(--d-yellow);
+    }
+  }
+}
+.bs-share-label {
+  font-size: 26px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
