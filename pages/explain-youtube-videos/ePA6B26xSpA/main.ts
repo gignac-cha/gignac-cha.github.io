@@ -38,6 +38,7 @@ import { createImageNetErrorRateScene } from './scenes/imagenet-error-rate/scene
 import { createImageNetLabelingScene } from './scenes/imagenet-labeling/scene';
 import { createLimitsScene } from './scenes/limits/scene';
 import { createLstmScene } from './scenes/lstm/scene';
+import { createNextWordScene } from './scenes/next-word/scene';
 import { createPerceptronScene } from './scenes/perceptron/scene';
 import { createReasoningModelScene } from './scenes/reasoning-model/scene';
 import { createInstructGptScene, createRlhfScene } from './scenes/rlhf/scene';
@@ -83,6 +84,7 @@ const scenes: Scene[] = [
   createTransformerTranslationScene(),
   createTransformerEverywhereScene(),
   createEncoderDecoderScene(),
+  createNextWordScene(),
   createBertSearchScene(),
   createGpt2Scene(),
   createScalingLawsScene(),
