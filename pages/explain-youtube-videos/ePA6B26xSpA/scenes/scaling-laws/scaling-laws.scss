@@ -1,0 +1,354 @@
+.sl-card {
+  fill: #141519;
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.sl-paper-title {
+  font-size: 40px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.sl-paper-meta {
+  font-size: 24px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.sl-question {
+  font-size: 34px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.sl-heading-title {
+  font-size: 44px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.sl-heading-sub {
+  font-size: 24px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.sl-axis {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 3;
+}
+.sl-grid {
+  stroke: var(--d-grid);
+  stroke-width: 2;
+}
+.sl-tick-label {
+  font-size: 22px;
+  fill: var(--d-muted) !important;
+}
+.sl-axis-label {
+  font-size: 24px;
+  font-weight: 600;
+  fill: var(--d-muted) !important;
+}
+.sl-curve {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  &.measured {
+    stroke: var(--d-blue);
+  }
+  &.predicted {
+    stroke: var(--d-yellow);
+    stroke-width: 5;
+    stroke-dasharray: 2 11;
+  }
+  &.size-0 {
+    stroke: color-mix(in srgb, var(--d-green) 30%, var(--d-subtle));
+  }
+  &.size-1 {
+    stroke: color-mix(in srgb, var(--d-green) 55%, var(--d-subtle));
+  }
+  &.size-2 {
+    stroke: color-mix(in srgb, var(--d-green) 80%, var(--d-subtle));
+  }
+  &.size-3 {
+    stroke: var(--d-green);
+  }
+}
+.sl-law {
+  font-size: 26px;
+  font-weight: 600;
+  font-style: italic;
+  fill: var(--d-blue) !important;
+}
+.sl-predict-label {
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--d-yellow) !important;
+}
+.sl-guide {
+  stroke: var(--d-yellow);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+.sl-guide-label {
+  font-size: 24px;
+  font-weight: 700;
+  fill: var(--d-yellow) !important;
+}
+.sl-dot {
+  stroke: var(--d-background);
+  stroke-width: 3;
+
+  &.size-0 {
+    fill: color-mix(in srgb, var(--d-green) 30%, var(--d-subtle));
+  }
+  &.size-1 {
+    fill: color-mix(in srgb, var(--d-green) 55%, var(--d-subtle));
+  }
+  &.size-2 {
+    fill: color-mix(in srgb, var(--d-green) 80%, var(--d-subtle));
+  }
+  &.size-3 {
+    fill: var(--d-green);
+  }
+}
+.sl-size-header {
+  font-size: 22px;
+  fill: var(--d-muted) !important;
+}
+.sl-size-label {
+  font-size: 26px;
+  font-weight: 700;
+
+  &.size-0 {
+    fill: color-mix(in srgb, var(--d-green) 30%, var(--d-subtle)) !important;
+  }
+  &.size-1 {
+    fill: color-mix(in srgb, var(--d-green) 55%, var(--d-subtle)) !important;
+  }
+  &.size-2 {
+    fill: color-mix(in srgb, var(--d-green) 80%, var(--d-subtle)) !important;
+  }
+  &.size-3 {
+    fill: var(--d-green) !important;
+  }
+}
+.sl-note {
+  font-size: 28px;
+  font-weight: 700;
+  fill: var(--d-green) !important;
+}
+.sl-source {
+  font-size: 20px;
+  fill: var(--d-subtle) !important;
+}
+.sl-soil {
+  fill: color-mix(in srgb, #8a5a32 45%, var(--d-background));
+  stroke: #8a5a32;
+  stroke-width: 2;
+}
+.sl-crop {
+  fill: none;
+  stroke: var(--d-green);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.sl-farm-label {
+  font-size: 26px;
+  font-weight: 600;
+}
+.sl-farm-double {
+  path {
+    fill: none;
+    stroke: var(--d-yellow);
+    stroke-width: 3;
+  }
+  text {
+    font-size: 34px;
+    font-weight: 800;
+    fill: var(--d-yellow) !important;
+  }
+}
+.sl-cloud {
+  fill: #2a2c35;
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.sl-drop {
+  fill: var(--d-blue);
+}
+.sl-bag {
+  fill: color-mix(in srgb, var(--d-orange) 30%, var(--d-background));
+  stroke: var(--d-orange);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+.sl-bag-tie {
+  stroke: var(--d-orange);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.sl-table-title {
+  font-size: 30px;
+  font-weight: 700;
+}
+.sl-table-frame {
+  fill: #141519;
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.sl-table-head {
+  font-size: 22px;
+  font-weight: 600;
+  fill: var(--d-muted) !important;
+}
+.sl-table-rule {
+  stroke: var(--d-grid);
+  stroke-width: 2;
+}
+.sl-table-cell {
+  font-size: 30px;
+  font-weight: 600;
+}
+.sl-table-value {
+  font-size: 32px;
+  font-weight: 800;
+  fill: var(--d-green) !important;
+}
+.sl-table-note {
+  font-size: 20px;
+  fill: var(--d-muted) !important;
+}
+.sl-shift-prefix {
+  font-size: 34px;
+  fill: var(--d-muted) !important;
+}
+.sl-shift-word {
+  font-size: 52px;
+  font-weight: 800;
+  fill: var(--d-red) !important;
+
+  &.engineering {
+    fill: var(--d-green) !important;
+  }
+  &.swap-glow {
+    fill: none !important;
+  }
+}
+.sl-cursor {
+  line {
+    stroke: var(--d-yellow);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+  }
+  circle {
+    fill: var(--d-yellow);
+    stroke: var(--d-background);
+    stroke-width: 3;
+  }
+}
+.sl-readout {
+  rect {
+    fill: #141519;
+    stroke: var(--d-yellow);
+    stroke-width: 2;
+  }
+}
+.sl-readout-in {
+  font-size: 28px;
+  font-weight: 600;
+  fill: var(--d-muted) !important;
+}
+.sl-readout-out {
+  font-size: 34px;
+  font-weight: 800;
+  fill: var(--d-yellow) !important;
+}
+.sl-band {
+  rect {
+    fill: color-mix(in srgb, var(--d-blue) 7%, transparent);
+  }
+}
+.sl-band-label {
+  font-size: 22px;
+  fill: var(--d-blue) !important;
+}
+.sl-marker {
+  circle {
+    stroke: var(--d-background);
+    stroke-width: 3;
+  }
+  .sl-marker-ring {
+    fill: none;
+    stroke-width: 3;
+    opacity: .5;
+  }
+  &.gpt2 circle {
+    fill: var(--d-blue);
+  }
+  &.gpt2 .sl-marker-ring {
+    stroke: var(--d-blue);
+  }
+  &.gpt3 circle {
+    fill: var(--d-green);
+  }
+  &.gpt3 .sl-marker-ring {
+    stroke: var(--d-green);
+  }
+  &.pulse .sl-marker-ring {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px var(--d-green));
+  }
+}
+.sl-marker-name {
+  font-size: 30px;
+  font-weight: 800;
+
+  &.big {
+    font-size: 40px;
+    fill: var(--d-green) !important;
+  }
+}
+.sl-marker-date {
+  font-size: 22px;
+  fill: var(--d-muted) !important;
+}
+.sl-marker-count {
+  font-size: 26px;
+  fill: var(--d-muted) !important;
+
+  &.big {
+    font-size: 52px;
+    font-weight: 800;
+    fill: var(--d-yellow) !important;
+  }
+}
+.sl-ratio {
+  path {
+    fill: none;
+    stroke: var(--d-yellow);
+    stroke-width: 3;
+    stroke-dasharray: 1;
+  }
+}
+.sl-ratio-text {
+  font-size: 40px;
+  font-weight: 800;
+  fill: var(--d-yellow) !important;
+}
+.sl-computer {
+  rect {
+    fill: color-mix(in srgb, var(--d-green) 35%, var(--d-background));
+    stroke: var(--d-green);
+    stroke-width: 1;
+  }
+}
+.sl-computer-label {
+  font-size: 26px;
+  font-weight: 600;
+}
+.sl-computer-sub {
+  font-size: 22px;
+  fill: var(--d-muted) !important;
+}
