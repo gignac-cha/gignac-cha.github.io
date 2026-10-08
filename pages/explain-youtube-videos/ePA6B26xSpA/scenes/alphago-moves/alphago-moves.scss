@@ -1,0 +1,123 @@
+.alphago-moves {
+  .moves-fifth {
+    fill: color-mix(in srgb, var(--d-yellow) 55%, transparent);
+  }
+  .moves-fifth-label {
+    font-size: 22px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-yellow);
+  }
+  .moves-ring {
+    fill: none;
+    stroke: var(--d-blue);
+    stroke-width: 4;
+
+    &.lee {
+      stroke: var(--d-red);
+    }
+    &.glow {
+      stroke: var(--d-yellow);
+      filter: drop-shadow(0 0 10px var(--d-yellow));
+    }
+  }
+  .moves-question {
+    font-size: 40px;
+    font-weight: 900;
+    text-anchor: middle;
+    fill: var(--d-red);
+    paint-order: stroke;
+    stroke: #000;
+    stroke-width: 6px;
+  }
+  .moves-label {
+    font-size: 24px;
+    font-weight: 800;
+    fill: #fff;
+    paint-order: stroke;
+    stroke: #000;
+    stroke-width: 6px;
+  }
+  .moves-divine {
+    font-size: 30px;
+    font-weight: 900;
+    text-anchor: middle;
+    fill: var(--d-yellow);
+    paint-order: stroke;
+    stroke: #000;
+    stroke-width: 7px;
+  }
+  .moves-result {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-red);
+  }
+  .moves-info {
+    font-size: 32px;
+    font-weight: 700;
+  }
+  .moves-players {
+    font-size: 24px;
+    fill: var(--d-muted);
+  }
+  .moves-chance-title {
+    font-size: 26px;
+    font-weight: 600;
+    fill: var(--d-muted);
+  }
+  .moves-grid {
+    image-rendering: pixelated;
+  }
+  .moves-grid-frame {
+    fill: none;
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  .moves-chance {
+    font-size: 52px;
+    font-weight: 800;
+    fill: var(--d-yellow);
+  }
+  .moves-chance-note {
+    font-size: 22px;
+    fill: var(--d-muted);
+  }
+  .moves-chip {
+    stroke-width: 3;
+
+    &.alphago {
+      fill: color-mix(in srgb, var(--d-blue) 12%, var(--d-background));
+      stroke: var(--d-blue);
+    }
+    &.lee {
+      fill: color-mix(in srgb, var(--d-red) 14%, var(--d-background));
+      stroke: var(--d-red);
+    }
+    &.remember {
+      stroke: var(--d-yellow);
+      stroke-width: 5;
+      filter: drop-shadow(0 0 10px var(--d-yellow));
+    }
+  }
+  .moves-chip-round {
+    font-size: 22px;
+    text-anchor: middle;
+    fill: var(--d-muted);
+  }
+  .moves-chip-winner {
+    font-size: 24px;
+    font-weight: 800;
+    text-anchor: middle;
+  }
+  .moves-score {
+    font-size: 56px;
+    font-weight: 800;
+    text-anchor: middle;
+  }
+  .moves-spot {
+    fill: none;
+    stroke: var(--d-yellow);
+    stroke-width: 3;
+  }
+}

@@ -10,6 +10,7 @@ import { setupTimelineDock } from '../shared/timeline-dock';
 import { loadPlayer } from '../shared/youtube';
 import { createAlexNetTricksScene } from './scenes/alexnet-tricks/scene';
 import { createAlphaGoScene } from './scenes/alphago/scene';
+import { createAlphaGoMovesScene } from './scenes/alphago-moves/scene';
 import { createArtificialNeuronScene } from './scenes/artificial-neuron/scene';
 import { createAttentionScene } from './scenes/attention/scene';
 import { createBackpropagationScene } from './scenes/backpropagation/scene';
@@ -91,6 +92,7 @@ const scenes: Scene[] = [
   createSkipConnectionsScene(),
   createDeepQNetworkScene(),
   createAlphaGoScene(),
+  createAlphaGoMovesScene(),
   createSelfAttentionScene(),
   createTransformerTranslationScene(),
   createTransformerEverywhereScene(),
