@@ -1,0 +1,209 @@
+.sd-heading {
+  font-size: 56px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.sd-title {
+  font-size: 34px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.sd-caption {
+  font-size: 26px;
+  fill: var(--d-muted) !important;
+}
+.sd-arrow {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sd-file {
+  path {
+    fill: color-mix(in srgb, var(--d-purple) 16%, var(--d-background));
+    stroke: var(--d-purple);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .sd-file-fold {
+    fill: none;
+  }
+}
+.sd-file-title {
+  font-size: 34px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.sd-file-sub {
+  font-size: 24px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.sd-bar-track {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.sd-bar {
+  fill: var(--d-purple);
+}
+.sd-laptop {
+  rect,
+  path {
+    fill: var(--d-grid);
+    stroke: var(--d-line);
+    stroke-width: 3;
+  }
+}
+.sd-chip {
+  fill: color-mix(in srgb, var(--d-purple) 30%, var(--d-background)) !important;
+  stroke: var(--d-purple) !important;
+}
+.sd-chip-text {
+  font-size: 20px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.sd-edit {
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-green) !important;
+}
+.sd-frame {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.sd-funnel {
+  fill: color-mix(in srgb, var(--d-blue) 10%, transparent);
+  stroke: var(--d-blue);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+}
+.sd-funnel-text {
+  font-size: 24px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-blue) !important;
+}
+.stable-diffusion g.faded {
+  opacity: .35;
+  transition: opacity .4s;
+}
+.sd-loop {
+  path {
+    fill: none;
+    stroke: var(--d-purple);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+.sd-loop-text {
+  font-size: 26px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--d-purple) !important;
+}
+.sd-loop-dot {
+  fill: var(--d-yellow);
+}
+.sd-label {
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.sd-number {
+  font-size: 28px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+
+  &.accent {
+    fill: var(--d-yellow) !important;
+  }
+}
+.sd-ratio {
+  font-size: 40px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.sd-datacenter {
+  rect {
+    fill: var(--d-grid);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  .sd-led {
+    fill: var(--d-green);
+  }
+  &.off .sd-led {
+    fill: var(--d-subtle);
+  }
+}
+.sd-cross path {
+  fill: none;
+  stroke: var(--d-red);
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+.sd-gpu {
+  > rect:first-child {
+    fill: #23252d;
+    stroke: var(--d-green);
+    stroke-width: 3;
+  }
+}
+.sd-fan {
+  fill: #15161b;
+  stroke: var(--d-line);
+  stroke-width: 3;
+}
+.sd-fan-hub {
+  fill: var(--d-line);
+}
+.sd-blades {
+  stroke: var(--d-muted);
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+.sd-pcie {
+  fill: var(--d-yellow);
+  opacity: .8;
+}
+.sd-person {
+  fill: var(--d-blue);
+}
+.sd-spoke {
+  stroke: var(--d-line);
+  stroke-width: 2;
+  stroke-dasharray: 4 6;
+}
+.sd-variant {
+  rect {
+    fill: color-mix(in srgb, var(--d-green) 18%, var(--d-background));
+    stroke: var(--d-green);
+    stroke-width: 2.5;
+  }
+  text {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+}
+.sd-lead-caption {
+  font-size: 32px;
+}
+.sd-lead {
+  font-size: 96px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--d-orange) !important;
+
+  &.diffusion {
+    fill: var(--d-purple) !important;
+  }
+}
