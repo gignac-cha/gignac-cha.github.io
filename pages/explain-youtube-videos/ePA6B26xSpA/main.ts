@@ -12,6 +12,7 @@ import { createAlexNetTricksScene } from './scenes/alexnet-tricks/scene';
 import { createArtificialNeuronScene } from './scenes/artificial-neuron/scene';
 import { createAttentionScene } from './scenes/attention/scene';
 import { createBackpropagationScene } from './scenes/backpropagation/scene';
+import { createBatchNormalizationScene } from './scenes/batch-normalization/scene';
 import { createBertScene } from './scenes/bert/scene';
 import { createBertSearchScene } from './scenes/bert-search/scene';
 import { createChatGPTScene } from './scenes/chatgpt/scene';
@@ -83,6 +84,7 @@ const scenes: Scene[] = [
   createGanWeaknessScene(),
   createDepthScene(),
   createResidualNetworkScene(),
+  createBatchNormalizationScene(),
   createSelfAttentionScene(),
   createTransformerTranslationScene(),
   createTransformerEverywhereScene(),

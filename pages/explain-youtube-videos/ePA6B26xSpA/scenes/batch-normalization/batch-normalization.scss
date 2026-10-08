@@ -1,0 +1,182 @@
+.batch-normalization {
+  .bn-caption {
+    font-size: 36px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .bn-strip {
+    fill: var(--d-grid);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  .bn-zero {
+    stroke: var(--d-line);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+  }
+  .bn-layer-label {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-muted);
+  }
+  .bn-dot {
+    fill: var(--d-orange);
+    opacity: .8;
+
+    &.outside {
+      fill: var(--d-red);
+    }
+    &.tuned {
+      fill: var(--d-green);
+    }
+  }
+  .bn-overflow {
+    font-size: 22px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-red);
+  }
+  .bn-tuner {
+    fill: color-mix(in srgb, var(--d-green) 14%, var(--d-background));
+    stroke: var(--d-green);
+    stroke-width: 3;
+  }
+  .bn-tuner-text {
+    font-size: 24px;
+    font-weight: 800;
+    text-anchor: middle;
+    fill: var(--d-green);
+  }
+  .bn-formula {
+    font-size: 28px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--d-green);
+  }
+
+  .bn-wave-frame {
+    fill: none;
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  .bn-wave-axis {
+    stroke: var(--d-grid);
+    stroke-width: 2;
+  }
+  .bn-wave {
+    fill: none;
+    stroke: var(--d-blue);
+    stroke-width: 3;
+    stroke-linejoin: round;
+
+    &.broken {
+      stroke: var(--d-red);
+    }
+    &.stable {
+      stroke: var(--d-green);
+    }
+  }
+  .bn-wave-label {
+    font-size: 24px;
+    fill: var(--d-muted);
+  }
+  .bn-volume {
+    fill: var(--d-blue);
+    transition: fill .25s;
+
+    &.loud {
+      fill: var(--d-red);
+    }
+    &.quiet {
+      fill: var(--d-subtle);
+    }
+    &.tuned {
+      fill: var(--d-green);
+    }
+  }
+  .bn-volume-line {
+    stroke: var(--d-green);
+    stroke-width: 2;
+    stroke-dasharray: 8 6;
+  }
+  .bn-singer {
+    fill: var(--d-grid);
+    stroke: var(--d-muted);
+    stroke-width: 3;
+  }
+  .bn-mouth {
+    fill: var(--d-text);
+  }
+  .bn-body {
+    fill: var(--d-grid);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+
+  .bn-axis {
+    fill: none;
+    stroke: var(--d-line);
+    stroke-width: 3;
+  }
+  .bn-axis-label {
+    font-size: 24px;
+    fill: var(--d-subtle);
+  }
+  .bn-target {
+    stroke: var(--d-yellow);
+    stroke-width: 2;
+    stroke-dasharray: 10 8;
+  }
+  .bn-target-label {
+    font-size: 24px;
+    font-weight: 600;
+    fill: var(--d-yellow);
+  }
+  .bn-curve {
+    fill: none;
+    stroke-width: 5;
+
+    &.plain {
+      stroke: var(--d-muted);
+    }
+    &.tuned {
+      stroke: var(--d-green);
+    }
+  }
+  .bn-curve-label {
+    font-size: 28px;
+    font-weight: 700;
+
+    &.plain {
+      fill: var(--d-muted);
+    }
+    &.tuned {
+      fill: var(--d-green);
+    }
+  }
+  .bn-reach {
+    stroke: var(--d-green);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+
+    &.plain {
+      stroke: var(--d-muted);
+    }
+  }
+  .bn-reach-label {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--d-green);
+
+    &.plain {
+      fill: var(--d-muted);
+    }
+  }
+  .bn-note {
+    font-size: 28px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+}
