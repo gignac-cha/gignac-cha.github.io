@@ -1,0 +1,196 @@
+.diffusion-water {
+  fill: color-mix(in srgb, var(--d-blue) 7%, transparent);
+}
+.diffusion-haze {
+  fill: #6f5cff;
+}
+.diffusion-ink {
+  fill: #7a63ff;
+  opacity: .34;
+}
+.diffusion-glass {
+  fill: none;
+  stroke: var(--d-muted);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+.diffusion-drop {
+  fill: #7a63ff;
+}
+.diffusion-ripple {
+  fill: none;
+  stroke: #9d8dff;
+  stroke-width: 2;
+}
+// 채우기(대리석 그라데이션)는 판마다 id 가 달라 scene.ts 에서 style 로 넣는다.
+.diffusion-marble {
+  stroke: #8e8a82;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+.diffusion-marble-vein {
+  fill: none;
+  stroke: #9a958c;
+  stroke-width: 1.6;
+  opacity: .55;
+}
+.diffusion-marble-vein-thin {
+  stroke-width: 1;
+  opacity: .4;
+}
+.diffusion-marble-line {
+  stroke: #9a958c;
+  stroke-width: 1.5;
+}
+.diffusion-marble-chip {
+  fill: #e4e0d8;
+  stroke: #9a958c;
+  stroke-width: .8;
+}
+.diffusion-chisel-handle {
+  fill: #8a5a34;
+}
+.diffusion-chisel-blade {
+  fill: #b9c0cc;
+}
+.diffusion-rewind {
+  path {
+    fill: var(--d-yellow);
+  }
+}
+.diffusion-rewind-label {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.diffusion-picture {
+  image-rendering: pixelated;
+}
+.diffusion-frame {
+  fill: #000;
+  stroke: var(--d-line);
+  stroke-width: 3;
+
+  &.diffusion-frame-active {
+    stroke: var(--d-yellow);
+    stroke-width: 6;
+  }
+  &.diffusion-frame-done {
+    stroke: var(--d-green);
+    stroke-width: 6;
+  }
+}
+.diffusion-step-label {
+  font-size: 24px;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+  fill: var(--d-muted) !important;
+}
+.diffusion-step {
+  line {
+    stroke-width: 3;
+  }
+}
+.diffusion-step-forward {
+  line {
+    stroke: var(--d-muted);
+  }
+  path {
+    fill: var(--d-muted);
+  }
+}
+.diffusion-step-backward {
+  line {
+    stroke: var(--d-blue);
+  }
+  path {
+    fill: var(--d-blue);
+  }
+
+  &.diffusion-step-active {
+    line {
+      stroke: var(--d-yellow);
+      stroke-width: 5;
+    }
+    path {
+      fill: var(--d-yellow);
+    }
+  }
+}
+.diffusion-arrow-caption {
+  font-size: 24px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.diffusion-arrow-caption-network {
+  fill: var(--d-blue) !important;
+  font-weight: 600;
+}
+.diffusion-metaphor {
+  font-size: 24px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--d-yellow) !important;
+}
+.diffusion-once-arc {
+  fill: none;
+  stroke: var(--d-muted);
+  stroke-width: 3;
+  stroke-dasharray: 12 10;
+}
+.diffusion-once-head {
+  fill: var(--d-muted);
+}
+.diffusion-once-label {
+  font-size: 26px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}
+.diffusion-cross line {
+  stroke: var(--d-red);
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+.diffusion-prompt {
+  fill: #17181d;
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.diffusion-prompt-text {
+  font-size: 28px;
+  text-anchor: middle;
+}
+.diffusion-prompt-mark {
+  font-size: 48px;
+  font-weight: 700;
+  fill: var(--d-red) !important;
+}
+.diffusion-chip {
+  stroke-width: 2.5;
+}
+.diffusion-chip-ok {
+  fill: color-mix(in srgb, var(--d-green) 14%, transparent);
+  stroke: var(--d-green);
+}
+.diffusion-chip-missing {
+  fill: color-mix(in srgb, var(--d-red) 14%, transparent);
+  stroke: var(--d-red);
+  stroke-dasharray: 8 6;
+}
+.diffusion-chip-text {
+  font-size: 26px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.diffusion-caption {
+  font-size: 32px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.diffusion-note {
+  font-size: 21px;
+  text-anchor: middle;
+  fill: var(--d-muted) !important;
+}

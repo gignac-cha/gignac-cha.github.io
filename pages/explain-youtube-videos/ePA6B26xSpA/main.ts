@@ -28,6 +28,7 @@ import { createDeepBeliefNetScene } from './scenes/deep-belief-net/scene';
 import { createDeepBlueScene } from './scenes/deep-blue/scene';
 import { createDeepQNetworkScene } from './scenes/deep-q-network/scene';
 import { createDepthScene } from './scenes/depth/scene';
+import { createDiffusionScene } from './scenes/diffusion/scene';
 import { createEmergenceScene } from './scenes/emergence/scene';
 import { createEncoderDecoderScene } from './scenes/encoder-decoder/scene';
 import { createFewShotScene } from './scenes/few-shot/scene';
@@ -109,6 +110,7 @@ const scenes: Scene[] = [
   createFewShotScene(),
   createEmergenceScene(),
   createAlphaFoldScene(),
+  createDiffusionScene(),
   createClipScene(),
   createStableDiffusionScene(),
   createGpt3LimitsScene(),
