@@ -22,6 +22,7 @@ import { createCnnScene } from './scenes/cnn/scene';
 import { createContextWindowScene } from './scenes/context-window/scene';
 import { createDeepBeliefNetScene } from './scenes/deep-belief-net/scene';
 import { createDeepBlueScene } from './scenes/deep-blue/scene';
+import { createDeepQNetworkScene } from './scenes/deep-q-network/scene';
 import { createDepthScene } from './scenes/depth/scene';
 import { createEmergenceScene } from './scenes/emergence/scene';
 import { createEncoderDecoderScene } from './scenes/encoder-decoder/scene';
@@ -87,6 +88,7 @@ const scenes: Scene[] = [
   createResidualNetworkScene(),
   createBatchNormalizationScene(),
   createSkipConnectionsScene(),
+  createDeepQNetworkScene(),
   createSelfAttentionScene(),
   createTransformerTranslationScene(),
   createTransformerEverywhereScene(),
