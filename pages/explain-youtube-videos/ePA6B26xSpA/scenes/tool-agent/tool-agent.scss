@@ -1,0 +1,279 @@
+.ta-heading {
+  font-size: 34px;
+  font-weight: 700;
+}
+.ta-big {
+  font-size: 56px;
+  font-weight: 800;
+}
+.ta-caption {
+  font-size: 26px;
+  fill: var(--d-muted) !important;
+}
+.ta-arrow {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+// 생각 줄기
+.ta-trace-ghost {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 3;
+  stroke-dasharray: 6 10;
+  stroke-linejoin: round;
+}
+.ta-trace {
+  fill: none;
+  stroke: var(--d-purple);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ta-head {
+  fill: var(--d-yellow);
+  filter: drop-shadow(0 0 8px var(--d-yellow));
+}
+.ta-thought {
+  rect {
+    fill: color-mix(in srgb, var(--d-purple) 22%, var(--d-background));
+    stroke: var(--d-purple);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 22px;
+    font-weight: 700;
+  }
+}
+.ta-answer {
+  circle {
+    fill: color-mix(in srgb, var(--d-green) 22%, var(--d-background));
+    stroke: var(--d-green);
+    stroke-width: 3;
+  }
+  text {
+    font-size: 30px;
+    font-weight: 800;
+    fill: var(--d-green) !important;
+  }
+}
+.ta-icon {
+  fill: none;
+  stroke: var(--d-text);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  .ta-icon-cursor {
+    fill: var(--d-text);
+    stroke: var(--d-background);
+    stroke-width: 2;
+  }
+}
+.ta-card {
+  > rect {
+    fill: var(--d-background);
+    stroke: var(--d-line);
+    stroke-width: 2;
+    transition: none;
+  }
+  &.active > rect {
+    fill: color-mix(in srgb, var(--d-blue) 14%, var(--d-background));
+    stroke: var(--d-blue);
+  }
+}
+.ta-card-label {
+  font-size: 26px;
+  font-weight: 700;
+}
+.ta-bar {
+  fill: var(--d-subtle);
+
+  &.result {
+    fill: var(--d-green);
+  }
+}
+
+// 대답하는 기계 → 일하는 기계
+.ta-bubble {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 30px;
+    font-weight: 700;
+  }
+  &.reply rect {
+    stroke: var(--d-green);
+  }
+}
+.ta-divider {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 2;
+  stroke-dasharray: 6 10;
+}
+.ta-loop-ring {
+  fill: none;
+  stroke: var(--d-line);
+  stroke-width: 3;
+  stroke-dasharray: 10 10;
+}
+.ta-loop-step {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 28px;
+    font-weight: 700;
+    fill: var(--d-muted) !important;
+  }
+  &.active {
+    rect {
+      fill: color-mix(in srgb, var(--d-yellow) 16%, var(--d-background));
+      stroke: var(--d-yellow);
+    }
+    text {
+      fill: var(--d-text) !important;
+    }
+  }
+}
+
+// 브라우저와 코드 저장소 창
+.ta-panel {
+  > rect {
+    fill: color-mix(in srgb, var(--d-text) 3%, var(--d-background));
+    stroke: var(--d-line);
+    stroke-width: 2;
+  }
+}
+.ta-panel-rule {
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.ta-panel-dot {
+  fill: var(--d-subtle);
+}
+.ta-panel-title {
+  font-size: 18px;
+  fill: var(--d-muted) !important;
+}
+.ta-panel-heading {
+  font-size: 32px;
+  font-weight: 700;
+}
+.ta-address {
+  fill: var(--d-grid);
+}
+.ta-field {
+  fill: var(--d-background);
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.ta-typed {
+  fill: var(--d-text);
+}
+.ta-button {
+  rect:first-child {
+    fill: var(--d-blue);
+  }
+  .ta-button-text {
+    fill: var(--d-background);
+  }
+  &.pressed rect:first-child {
+    fill: color-mix(in srgb, var(--d-blue) 70%, white);
+  }
+}
+.ta-ripple {
+  fill: none;
+  stroke: var(--d-yellow);
+  stroke-width: 3;
+}
+.ta-cursor {
+  fill: var(--d-text);
+  stroke: var(--d-background);
+  stroke-width: 2;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .6));
+}
+.ta-code {
+  fill: var(--d-subtle);
+
+  &.bug {
+    fill: var(--d-red);
+  }
+  &.fixed {
+    fill: var(--d-green);
+  }
+}
+.ta-gutter {
+  font-size: 26px;
+  font-weight: 800;
+  fill: var(--d-red) !important;
+
+  &.plus {
+    fill: var(--d-green) !important;
+  }
+}
+.ta-status {
+  font-size: 28px;
+  font-weight: 700;
+  fill: var(--d-red) !important;
+
+  &.pass {
+    fill: var(--d-green) !important;
+  }
+  &.swap-glow {
+    fill: none !important;
+  }
+}
+.ta-task {
+  rect {
+    fill: color-mix(in srgb, var(--d-orange) 18%, var(--d-background));
+    stroke: var(--d-orange);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 24px;
+    font-weight: 700;
+  }
+}
+.ta-diff {
+  rect {
+    fill: var(--d-background);
+    stroke: var(--d-green);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 24px;
+    font-weight: 700;
+  }
+  .minus {
+    fill: var(--d-red);
+  }
+  .plus {
+    fill: var(--d-green);
+  }
+}
+
+// 하나로 모인 에이전트
+.ta-agent-ring {
+  fill: color-mix(in srgb, var(--d-yellow) 7%, var(--d-background));
+  stroke: var(--d-yellow);
+  stroke-width: 3;
+}
+.ta-tool-disc {
+  fill: var(--d-background);
+  stroke: var(--d-line);
+  stroke-width: 2;
+}
+.ta-tool-label {
+  font-size: 26px;
+  font-weight: 700;
+}
