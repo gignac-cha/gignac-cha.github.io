@@ -45,7 +45,7 @@ export const setupTimelineDock = (panel: HTMLElement, top: HTMLElement, bottom: 
 
   const place = () => {
     const width = Math.min(floatingWidth, window.innerWidth - margin * 2);
-    const height = panel.offsetHeight || 72;
+    const height = panel.offsetHeight > 0 ? panel.offsetHeight : 72;
     const x = clamp(state.x ?? (window.innerWidth - width) / 2, margin, window.innerWidth - width - margin);
     const y = clamp(state.y ?? window.innerHeight - height - 32, margin, window.innerHeight - height - margin);
     return { x, y, width };

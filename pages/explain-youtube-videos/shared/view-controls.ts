@@ -79,7 +79,7 @@ export const createViewControls = (surface: HTMLElement, camera: THREE.Perspecti
     camera.updateMatrixWorld();
     if (view.panX !== 0 || view.panY !== 0) {
       // 화면에서 끈 픽셀만큼 세계 좌표로 옮긴다.
-      const height = surface.clientHeight || 1;
+      const height = Math.max(surface.clientHeight, 1);
       const worldPerPixel =
         camera instanceof THREE.PerspectiveCamera
           ? (2 * offset.length() * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) / height

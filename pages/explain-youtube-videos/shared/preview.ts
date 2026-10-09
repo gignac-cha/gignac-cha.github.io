@@ -15,5 +15,5 @@ export const renderPreview = (container: HTMLElement, scenes: Scene[]) => {
       scene.update?.(time);
     }
   });
-  document.title = `${time}s · ${active.map((scene) => scene.title).join(', ') || '장면 없음'}`;
+  document.title = `${time}s · ${active.length > 0 ? active.map((scene) => scene.title).join(', ') : '장면 없음'}`;
 };

@@ -64,7 +64,10 @@ export const renderTimeline = (playback: Playback, container: HTMLElement, scene
 
   // 색은 페이지 토큰에서 읽는다.
   const style = getComputedStyle(container);
-  const token = (name: string, fallback: string) => style.getPropertyValue(name).trim() || fallback;
+  const token = (name: string, fallback: string) => {
+    const value = style.getPropertyValue(name).trim();
+    return value === '' ? fallback : value;
+  };
   const colors = {
     rail: token('--border', '#27272b'),
     accent: token('--accent', '#5b9dff'),
@@ -91,7 +94,7 @@ export const renderTimeline = (playback: Playback, container: HTMLElement, scene
   const draw = (time: number) => {
     const width = track.clientWidth;
     const height = track.clientHeight;
-    const scale = window.devicePixelRatio || 1;
+    const scale = window.devicePixelRatio > 0 ? window.devicePixelRatio : 1;
     const key = `${width}x${height}@${scale}:${Math.round(ratio(time) * width * 4)}:${pointerX === undefined ? '' : Math.round(pointerX)}:${lens.toFixed(3)}:${duration}`;
     if (key === drawn || !width || !height) {
       return;

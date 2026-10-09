@@ -142,7 +142,8 @@ export const createRnnScene = (): Scene => {
     setAttributes(memo, { transform: `translate(${memoX.toFixed(1)} ${memoY})`, opacity: appear(time, readAt + .3, .3).toFixed(3) });
     setAttributes(memoLink, { x1: memoX.toFixed(1), x2: memoX.toFixed(1), opacity: (appear(time, readAt + .3, .3) * (read < words.length ? 1 : 0)).toFixed(3) });
     const memoWeights = weights(read);
-    const memoTotal = memoWeights.reduce((sum, value) => sum + value, 0) || 1;
+    const weightSum = memoWeights.reduce((sum, value) => sum + value, 0);
+    const memoTotal = weightSum > 0 ? weightSum : 1;
     let x = -52;
     memoSegments.forEach((segment, index) => {
       const width = (104 * memoWeights[index]) / memoTotal;

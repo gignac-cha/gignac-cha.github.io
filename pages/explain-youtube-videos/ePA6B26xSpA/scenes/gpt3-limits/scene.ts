@@ -150,7 +150,8 @@ export const createGpt3LimitsScene = (): Scene => {
       });
     });
     if (time < at.lines[0]) {
-      const typedWidth = shown ? promptText.getComputedTextLength() || measure(shown) : 0;
+      const measured = shown ? promptText.getComputedTextLength() : 0;
+      const typedWidth = !shown ? 0 : measured > 0 ? measured : measure(shown);
       last = { x: panel.x + 36 + typedWidth + 6, y: lineY(0) };
     }
     const blink = Math.floor(time * 2.4) % 2 === 0;
