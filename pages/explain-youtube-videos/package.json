@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "build": "vite build",
+    "copy": "mkdir -p ../../page/explain-youtube-videos && rsync -a --delete dist/ ../../page/explain-youtube-videos/"
   },
   "keywords": [],
   "author": "",
