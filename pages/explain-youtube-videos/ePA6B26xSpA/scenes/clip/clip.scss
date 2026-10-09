@@ -1,0 +1,192 @@
+.clip-name {
+  font-size: 96px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-anchor: middle;
+}
+.clip-caption {
+  font-size: 26px;
+  fill: var(--diagram-muted) !important;
+}
+.clip-count {
+  font-size: 72px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--diagram-yellow) !important;
+}
+.clip-photo {
+  fill: #1b1c22;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.clip-emoji {
+  text-anchor: middle;
+}
+.clip-stream-card {
+  > rect:first-child {
+    fill: color-mix(in srgb, var(--diagram-grid) 70%, var(--diagram-background));
+    stroke: var(--diagram-line);
+    stroke-width: 1.5;
+  }
+}
+.clip-stream-text {
+  font-size: 24px;
+  fill: var(--diagram-muted) !important;
+}
+.clip-cell {
+  rect {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+    transition: fill .2s, stroke .2s;
+  }
+  &.pair rect {
+    fill: color-mix(in srgb, var(--diagram-green) 26%, var(--diagram-background));
+    stroke: var(--diagram-green);
+    stroke-width: 3;
+  }
+}
+.clip-cell-mark {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: transparent !important;
+
+  .pair & {
+    fill: var(--diagram-green) !important;
+  }
+}
+.clip-word {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-blue);
+    stroke-width: 2.5;
+  }
+  text {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+}
+.clip-word,
+.clip-photo {
+  transition: opacity .3s;
+}
+.clip g.lit {
+  .clip-photo,
+  rect {
+    stroke: var(--diagram-yellow);
+    stroke-width: 5;
+  }
+}
+.clip g.dim {
+  filter: saturate(.2) brightness(.6);
+}
+.clip-map {
+  fill: color-mix(in srgb, var(--diagram-grid) 45%, var(--diagram-background));
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.clip-map-grid {
+  stroke: var(--diagram-grid);
+  stroke-width: 1.5;
+}
+.clip-map-label {
+  font-size: 28px;
+  font-weight: 700;
+  fill: var(--diagram-muted) !important;
+}
+.clip-crowd {
+  rect,
+  circle {
+    fill: var(--diagram-subtle);
+    opacity: .7;
+  }
+  circle {
+    fill: color-mix(in srgb, var(--diagram-blue) 50%, var(--diagram-subtle));
+  }
+  &.dim {
+    opacity: .4;
+  }
+}
+.clip-ring {
+  fill: color-mix(in srgb, var(--diagram-yellow) 8%, transparent);
+  stroke: var(--diagram-yellow);
+  stroke-width: 3;
+  stroke-dasharray: 10 8;
+}
+.clip-close-label {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-yellow) !important;
+}
+.clip-heading {
+  font-size: 46px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.clip-prompt {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-orange);
+  stroke-width: 2.5;
+}
+.clip-prompt-text {
+  font-size: 34px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.clip-prompt-english {
+  font-size: 20px;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.clip-result {
+  fill: #f2efe6;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.clip-note {
+  font-size: 20px;
+  fill: var(--diagram-subtle) !important;
+}
+.clip-arrow {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.clip-box {
+  fill: color-mix(in srgb, var(--diagram-blue) 14%, var(--diagram-background));
+  stroke: var(--diagram-blue);
+  stroke-width: 2.5;
+
+  &.diffusion {
+    fill: color-mix(in srgb, var(--diagram-purple) 14%, var(--diagram-background));
+    stroke: var(--diagram-purple);
+  }
+}
+.clip-box-text {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.clip-link {
+  stroke: var(--diagram-blue);
+  stroke-width: 2.5;
+  stroke-dasharray: 8 8;
+}
+.clip-packet {
+  fill: var(--diagram-blue);
+}
+.clip-prompt-dot {
+  fill: var(--diagram-orange);
+  stroke: var(--diagram-background);
+  stroke-width: 4;
+}
+.clip-prompt-point {
+  font-size: 30px;
+  font-weight: 700;
+  fill: var(--diagram-orange) !important;
+}

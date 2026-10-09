@@ -1,0 +1,259 @@
+.limits-panel-frame {
+  fill: color-mix(in srgb, var(--diagram-text) 3%, var(--diagram-background));
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+}
+.limits-slot {
+  fill: none;
+  stroke: var(--diagram-subtle);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+.limits-slot-caption {
+  font-size: 22px;
+  font-weight: 700;
+}
+.limits-header {
+  font-size: 42px;
+  font-weight: 800;
+}
+.limits-source {
+  font-size: 19px;
+  fill: var(--diagram-muted) !important;
+}
+.limits-label {
+  font-size: 22px;
+  fill: var(--diagram-muted) !important;
+
+  &.strong {
+    font-weight: 700;
+    fill: var(--diagram-text) !important;
+  }
+}
+.limits-value {
+  font-size: 26px;
+  font-weight: 800;
+}
+.limits-axis {
+  font-size: 18px;
+  fill: var(--diagram-muted) !important;
+}
+.limits-axis-line {
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+
+// 환각
+.limits-bubble {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 24px;
+  }
+  &.user rect {
+    fill: color-mix(in srgb, var(--diagram-blue) 18%, var(--diagram-background));
+    stroke: none;
+  }
+  &.bot.false rect {
+    stroke: var(--diagram-red);
+  }
+}
+.limits-reply-lead {
+  font-size: 28px !important;
+  font-weight: 700;
+}
+.limits-citation {
+  font-size: 26px !important;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace !important;
+}
+.limits-bubble.false .limits-citation {
+  text-decoration: line-through;
+  fill: var(--diagram-muted) !important;
+}
+.limits-stamp {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-red) 16%, var(--diagram-background));
+    stroke: var(--diagram-red);
+    stroke-width: 4;
+  }
+  text {
+    font-size: 36px;
+    font-weight: 900;
+    fill: var(--diagram-red) !important;
+  }
+}
+
+// 전기와 칩
+.limits-power {
+  fill: var(--diagram-orange);
+
+  &.projected {
+    fill: color-mix(in srgb, var(--diagram-orange) 35%, var(--diagram-background));
+    stroke: var(--diagram-orange);
+    stroke-width: 2;
+    stroke-dasharray: 8 6;
+  }
+}
+.limits-chip {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-green) 18%, var(--diagram-background));
+    stroke: var(--diagram-green);
+    stroke-width: 2;
+  }
+  path {
+    stroke: var(--diagram-green);
+    stroke-width: 2;
+  }
+}
+
+// 바닥나는 글
+.limits-window {
+  fill: color-mix(in srgb, var(--diagram-red) 10%, transparent);
+}
+.limits-window-label {
+  font-size: 19px;
+  font-weight: 700;
+  fill: var(--diagram-red) !important;
+}
+.limits-stock-band {
+  fill: color-mix(in srgb, var(--diagram-yellow) 10%, transparent);
+}
+.limits-stock {
+  stroke: var(--diagram-yellow);
+  stroke-width: 3;
+}
+.limits-point {
+  circle {
+    fill: var(--diagram-blue);
+  }
+}
+.limits-point-label {
+  font-size: 19px;
+  font-weight: 600;
+  // 점선이 글자를 지나도 읽히게 카드 바탕색 테두리를 두른다.
+  paint-order: stroke;
+  stroke: color-mix(in srgb, var(--diagram-text) 3%, var(--diagram-background));
+  stroke-width: 8px;
+  stroke-linejoin: round;
+}
+.limits-trend {
+  fill: none;
+  stroke: var(--diagram-blue);
+  stroke-width: 3;
+  stroke-dasharray: 10 8;
+}
+.limits-hit {
+  fill: none;
+  stroke: var(--diagram-red);
+  stroke-width: 4;
+}
+
+// 다음 단어 너머
+.limits-word {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 22px;
+    font-weight: 600;
+  }
+  &.next rect {
+    stroke: var(--diagram-yellow);
+    stroke-dasharray: 6 5;
+  }
+  &.next text {
+    fill: var(--diagram-yellow) !important;
+  }
+}
+.limits-goal {
+  rect {
+    fill: none;
+    stroke: var(--diagram-text);
+    stroke-width: 2;
+    stroke-dasharray: 8 6;
+  }
+  text {
+    font-size: 26px;
+    font-weight: 700;
+  }
+}
+.limits-reach {
+  fill: none;
+  stroke: var(--diagram-muted);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.limits-cross path {
+  fill: none;
+  stroke: var(--diagram-red);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+.limits-loop {
+  fill: none;
+  stroke: var(--diagram-green);
+  stroke-width: 3;
+  stroke-dasharray: 10 8;
+}
+.limits-step {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-green) 16%, var(--diagram-background));
+    stroke: var(--diagram-green);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 24px;
+    font-weight: 700;
+  }
+}
+.limits-ball {
+  fill: var(--diagram-orange);
+}
+.limits-ground {
+  stroke: var(--diagram-muted);
+  stroke-width: 3;
+}
+.limits-runner {
+  fill: var(--diagram-yellow);
+  filter: drop-shadow(0 0 6px var(--diagram-yellow));
+}
+
+// 믿고 맡기기
+.limits-task {
+  fill: var(--diagram-purple);
+}
+.limits-check {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-yellow) 8%, var(--diagram-background));
+    stroke: var(--diagram-yellow);
+    stroke-width: 2;
+  }
+}
+.limits-check-title {
+  font-size: 30px;
+  font-weight: 800;
+}
+.limits-question {
+  font-size: 72px;
+  font-weight: 900;
+  fill: var(--diagram-yellow) !important;
+}
+
+// 세 번째 겨울?
+.limits-winter-title {
+  font-size: 84px;
+  font-weight: 900;
+  fill: #cfe3ff !important;
+}
+.limits-winter-note {
+  font-size: 32px;
+  fill: var(--diagram-muted) !important;
+}
+.limits-snow {
+  fill: #e8f1ff;
+}

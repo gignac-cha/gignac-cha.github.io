@@ -1,0 +1,15 @@
+html, body {
+  margin: 0px;
+  padding: 0px;
+  background-color: #333;
+  color: white;
+}
+#video {
+  display: block;
+  width: 100%;
+  max-width: 960px;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  margin: 0px auto;
+  border: 0px;
+}

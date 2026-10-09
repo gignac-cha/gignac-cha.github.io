@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI는 왜 갑자기 똑똑해졌나 — 1958년 퍼셉트론에서 2026년 GPT-6까지</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.scss" />
+  </head>
+  <body>
+    <header class="page-header">
+      <a class="page-back" href="../" aria-label="영상 목록으로">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+      </a>
+      <div class="page-title">
+        <h1>AI는 왜 갑자기 똑똑해졌나 — 1958년 퍼셉트론에서 2026년 GPT-6까지</h1>
+        <p>메이커 에반 | Maker Evan · 1:02:51 · <a href="https://www.youtube.com/watch?v=ePA6B26xSpA" target="_blank" rel="noopener">YouTube에서 보기</a></p>
+      </div>
+      <button id="pip-toggle" class="page-action" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><rect x="12" y="12" width="7" height="5" rx="1" /></svg>
+        <span>영상 띄우기</span>
+      </button>
+    </header>
+    <div id="timeline-top" class="page-timeline-slot top"></div>
+    <main id="layout" class="page-layout">
+      <div class="page-video-column">
+        <section id="video-panel" class="panel page-video">
+          <h2 class="panel-label">원본 영상</h2>
+          <iframe
+            id="video"
+            src="https://www.youtube.com/embed/ePA6B26xSpA?enablejsapi=1"
+            title="AI는 왜 갑자기 똑똑해졌나 — 1958년 퍼셉트론에서 2026년 GPT-6까지"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </section>
+        <section class="panel page-about" aria-labelledby="about-label">
+          <h2 id="about-label" class="panel-label">원본 영상과 이 페이지</h2>
+          <div class="page-about-body">
+            <dl class="page-about-source">
+              <dt>원본 영상</dt>
+              <dd><a href="https://www.youtube.com/watch?v=ePA6B26xSpA" target="_blank" rel="noopener">AI는 왜 갑자기 똑똑해졌나 — 1958년 퍼셉트론에서 2026년 GPT-6까지</a></dd>
+              <dt>채널</dt>
+              <dd><a href="https://www.youtube.com/@maker-evan" target="_blank" rel="noopener">메이커 에반 | Maker Evan</a></dd>
+              <dt>길이</dt>
+              <dd>1:02:51</dd>
+            </dl>
+            <ul>
+              <li>개인 학습 목적으로 만든 비공식 해설이에요. 원작자와 관계없어요.</li>
+              <li>영상은 YouTube 공식 퍼가기로만 재생하고, 그림은 내레이션의 개념을 새로 그린 것이에요.</li>
+              <li>영상과 내레이션의 저작권은 원작자에게 있어요. 틀린 내용이나 삭제 요청은 <a href="https://github.com/gignac-cha/gignac-cha.github.io/issues" target="_blank" rel="noopener">GitHub 이슈</a>로 알려 주세요.</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+      <div id="splitter" class="page-splitter"></div>
+      <section class="panel page-stage">
+        <h2 class="panel-label">장면</h2>
+        <div class="page-stage-area">
+          <div id="scenes"></div>
+        </div>
+      </section>
+      <aside id="scene-index" class="panel page-sidebar">
+        <h2 class="panel-label">장면 목록</h2>
+      </aside>
+    </main>
+    <div id="timeline-bottom" class="page-timeline-slot bottom">
+      <section id="timeline-panel" class="panel timeline-panel">
+        <div id="timeline"></div>
+      </section>
+    </div>
+    <script type="module" src="main.ts"></script>
+  </body>
+</html>

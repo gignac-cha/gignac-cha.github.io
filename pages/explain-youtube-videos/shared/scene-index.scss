@@ -1,0 +1,282 @@
+.scene-index-clock {
+  font-family: var(--monospace);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.scene-index-list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0px;
+  padding: 8px;
+  overflow-y: auto;
+  list-style: none;
+}
+.scene-index-item {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: background-color .2s, border-color .2s, box-shadow .2s;
+
+  // 재생 중인 장면: 재생 바의 강조색 구간과 같은 색으로 맞춘다.
+  &.active {
+    background-color: color-mix(in srgb, var(--accent) 12%, var(--panel));
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    box-shadow: inset 3px 0px 0px var(--accent);
+  }
+}
+.scene-index-row {
+  display: flex;
+  align-items: center;
+}
+.scene-index-toggle {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-right: 6px;
+  padding: 0px;
+  border: 0px;
+  border-radius: 6px;
+  background: none;
+  color: var(--subtle);
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, .06);
+    color: var(--text);
+  }
+  svg {
+    width: 16px;
+    height: 16px;
+    transition: transform .2s;
+
+    .expanded & {
+      transform: rotate(90deg);
+    }
+  }
+}
+.scene-index-scene,
+.scene-index-chapter-link {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 0px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.scene-index-scene {
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+
+  &:hover {
+    background-color: var(--panel-raised);
+  }
+}
+.scene-index-number {
+  // 제목 첫 줄과 높이를 맞춘다.
+  padding-top: 3px;
+  font-family: var(--monospace);
+  font-size: 11px;
+  color: var(--subtle);
+
+  .active > .scene-index-scene & {
+    color: var(--accent);
+  }
+}
+.scene-index-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.scene-index-title {
+  overflow-wrap: anywhere;
+}
+.scene-index-range {
+  font-family: var(--monospace);
+  font-size: 11px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.scene-index-chapters {
+  position: relative;
+  display: none;
+  margin: 0px 0px 8px;
+  padding: 0px 12px 0px 34px;
+  list-style: none;
+
+  .expanded > & {
+    display: block;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    bottom: 12px;
+    left: 17px;
+    width: 1px;
+    background-color: var(--border);
+  }
+}
+.scene-index-chapter {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -21px;
+    width: 9px;
+    height: 9px;
+    margin-top: -4.5px;
+    border: 1px solid var(--subtle);
+    border-radius: 50%;
+    background-color: var(--panel);
+  }
+  &.active::before {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0px 0px 0px 3px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+}
+.scene-index-chapter-link {
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--muted);
+
+  &:hover {
+    background-color: rgba(255, 255, 255, .04);
+    color: var(--text);
+  }
+  .active > & {
+    color: var(--text);
+  }
+  time {
+    font-family: var(--monospace);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: var(--subtle);
+  }
+}
+.scene-index-scene,
+.scene-index-chapter-link,
+.scene-index-toggle {
+  transition: background-color .15s, color .15s, transform .1s;
+
+  &:active {
+    background-color: rgba(255, 255, 255, .1);
+    transform: scale(.97);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+}
+// 라벨 줄: 제목 · 시계 · 자리 바꾸기 버튼.
+.scene-index-clock {
+  margin-left: auto;
+}
+// 재생 중인 장면 안의 진행.
+.scene-index-progress {
+  display: none;
+  height: 3px;
+  margin: -2px 12px 10px 34px;
+  overflow: hidden;
+  border-radius: 2px;
+  background-color: var(--border);
+
+  .active > & {
+    display: block;
+  }
+}
+.scene-index-progress-fill {
+  height: 100%;
+  background-color: var(--accent);
+}
+// 장면이 없는 구간: 다음 장면까지의 진행.
+.scene-index-gap {
+  display: none;
+
+  &.visible {
+    display: block;
+  }
+}
+.scene-index-gap-button {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px 12px 34px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color .15s, color .15s, border-color .15s;
+
+  &:hover:not([disabled]) {
+    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+    background-color: rgba(255, 255, 255, .03);
+    color: var(--text);
+  }
+  &[disabled] {
+    cursor: default;
+  }
+  .preparing & {
+    border-style: solid;
+    background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .03) 0px 6px, transparent 6px 12px);
+  }
+}
+.scene-index-gap-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.scene-index-gap-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.scene-index-gap-remaining {
+  flex: none;
+  font-family: var(--monospace);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--subtle);
+}
+.scene-index-gap-bar {
+  display: block;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 2px;
+  background-color: var(--border);
+
+  &[hidden] {
+    display: none;
+  }
+}
+.scene-index-gap-fill {
+  display: block;
+  height: 100%;
+  background-color: var(--muted);
+}

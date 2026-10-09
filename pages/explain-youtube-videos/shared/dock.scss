@@ -1,0 +1,35 @@
+// 패널 자리 바꾸기 버튼 (재생 바, 장면 인덱스).
+.dock-controls {
+  flex: none;
+  display: flex;
+  gap: 4px;
+}
+.dock-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0px;
+  border: 0px;
+  border-radius: 6px;
+  background: none;
+  color: var(--subtle);
+  cursor: pointer;
+  transition: background-color .15s, color .15s, transform .1s;
+
+  &:hover {
+    background-color: var(--panel-raised);
+    color: var(--text);
+  }
+  &:active {
+    transform: scale(.92);
+  }
+  &[hidden] {
+    display: none;
+  }
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+}

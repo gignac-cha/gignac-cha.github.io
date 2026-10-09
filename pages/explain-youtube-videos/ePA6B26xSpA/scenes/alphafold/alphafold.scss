@@ -1,0 +1,123 @@
+.alphafold-segment {
+  stroke-linecap: round;
+}
+.alphafold-bead {
+  stroke: var(--diagram-background);
+  stroke-width: 1.2;
+}
+.alphafold-truth {
+  fill: none;
+  stroke: #f4f4f6;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.alphafold-truth-sample {
+  stroke: #f4f4f6;
+  stroke-width: 2;
+}
+.alphafold-pocket-glow {
+  fill: var(--diagram-yellow);
+}
+.alphafold-pocket-ring {
+  fill: none;
+  stroke: var(--diagram-yellow);
+  stroke-width: 2.5;
+}
+.alphafold-drug-bond {
+  stroke: #f4f4f6;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.alphafold-atom {
+  stroke: var(--diagram-background);
+  stroke-width: 1.5;
+}
+.alphafold-atom-c {
+  fill: #c9ccd6;
+}
+.alphafold-atom-n {
+  fill: var(--diagram-blue);
+}
+.alphafold-atom-o {
+  fill: var(--diagram-red);
+}
+.alphafold-label {
+  font-size: 26px;
+  text-anchor: middle;
+}
+.alphafold-label-drug {
+  fill: var(--diagram-text) !important;
+}
+.alphafold-label-pocket {
+  fill: var(--diagram-yellow) !important;
+  text-anchor: start;
+}
+.alphafold-heading {
+  font-size: 24px;
+  fill: var(--diagram-muted) !important;
+}
+.alphafold-heading-center {
+  text-anchor: middle;
+}
+.alphafold-sequence {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace !important;
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: .06em;
+}
+.alphafold-arrow {
+  stroke: var(--diagram-muted);
+  stroke-width: 3;
+}
+.alphafold-arrow-head {
+  fill: var(--diagram-muted);
+}
+.alphafold-question {
+  font-size: 72px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-yellow) !important;
+}
+.alphafold-model {
+  fill: #12233f;
+  stroke: var(--diagram-blue);
+  stroke-width: 2.5;
+}
+.alphafold-model-text {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.alphafold-accuracy {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-green) !important;
+}
+.alphafold-legend {
+  font-size: 21px;
+  fill: var(--diagram-muted) !important;
+}
+.alphafold-legend-center {
+  text-anchor: middle;
+}
+.alphafold-note {
+  font-size: 21px;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.alphafold-counter {
+  font-size: 64px;
+  font-weight: 800;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+}
+.alphafold-source {
+  font-size: 18px;
+  fill: var(--diagram-subtle) !important;
+}
+.alphafold-caption {
+  font-size: 32px;
+  font-weight: 600;
+  text-anchor: middle;
+}

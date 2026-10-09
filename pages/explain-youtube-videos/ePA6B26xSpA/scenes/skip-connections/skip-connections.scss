@@ -1,0 +1,85 @@
+.skip-connections {
+  .skip-caption {
+    font-size: 36px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .skip-motif-box {
+    fill: color-mix(in srgb, var(--diagram-purple) 14%, var(--diagram-background));
+    stroke: var(--diagram-purple);
+    stroke-width: 3;
+  }
+  .skip-motif-text {
+    font-size: 32px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .skip-arc {
+    fill: none;
+    stroke: var(--diagram-green);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    &.glow {
+      filter: drop-shadow(0 0 10px var(--diagram-green));
+    }
+  }
+  .skip-arc-label {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-green);
+  }
+  .skip-heading {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .skip-flow {
+    stroke: var(--diagram-line);
+    stroke-width: 4;
+  }
+  .skip-block {
+    stroke-width: 3;
+
+    &.sublayer {
+      fill: color-mix(in srgb, var(--diagram-purple) 14%, var(--diagram-background));
+      stroke: var(--diagram-purple);
+    }
+    &.add {
+      fill: color-mix(in srgb, var(--diagram-green) 12%, var(--diagram-background));
+      stroke: var(--diagram-green);
+    }
+  }
+  .skip-block-text {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .skip-repeat {
+    font-size: 30px;
+    font-weight: 700;
+    fill: var(--diagram-muted);
+  }
+  .skip-gpt-layer {
+    fill: var(--diagram-purple);
+  }
+  .skip-gpt-arc {
+    fill: none;
+    stroke: var(--diagram-green);
+    stroke-width: 1.5;
+  }
+  .skip-gpt-count {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+}
+.skip-connections .skip-motif-plus {
+  fill: var(--diagram-grid);
+  stroke: var(--diagram-green);
+  stroke-width: 3;
+}

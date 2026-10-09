@@ -1,0 +1,161 @@
+.omni-name {
+  font-size: 80px;
+  font-weight: 800;
+  text-anchor: end;
+}
+.diagram text.omni-letter {
+  text-anchor: start;
+  transition: fill .3s;
+
+  &.lit {
+    fill: var(--diagram-yellow);
+  }
+}
+.diagram text.omni-date {
+  font-size: 22px;
+  text-anchor: middle;
+  fill: var(--diagram-muted);
+}
+.omni-meaning {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.diagram text.omni-band-label {
+  font-size: 24px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-muted);
+
+  &.lit {
+    fill: var(--diagram-text);
+  }
+}
+
+// 입력·출력 노드.
+.omni-node {
+  fill: #1b1c22;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.omni-icon-fill {
+  fill: var(--diagram-text);
+}
+.omni-icon-line {
+  fill: none;
+  stroke: var(--diagram-text);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.omni-node-label {
+  font-size: 22px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.diagram text.omni-off {
+  font-size: 26px;
+  font-weight: 800;
+  fill: var(--diagram-red);
+}
+.omni-wave {
+  fill: var(--diagram-blue);
+}
+.omni-edge {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+}
+.omni-dot {
+  fill: var(--diagram-blue);
+}
+
+// 모델 상자.
+.omni-box {
+  fill: #17181e;
+  stroke: var(--diagram-line);
+  stroke-width: 2.5;
+  transition: stroke .3s;
+
+  &.lit {
+    stroke: var(--diagram-yellow);
+  }
+  &.merged {
+    stroke: var(--diagram-blue);
+    stroke-width: 3;
+  }
+}
+.omni-box-title {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.omni-box-merged {
+  font-size: 46px;
+  font-weight: 800;
+}
+.diagram text.omni-box-subtitle {
+  font-size: 20px;
+  text-anchor: middle;
+  fill: var(--diagram-muted);
+}
+.omni-chip {
+  fill: #23252d;
+  stroke: var(--diagram-line);
+  stroke-width: 1.5;
+}
+.omni-chip-text {
+  font-size: 17px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.omni-free {
+  fill: color-mix(in srgb, var(--diagram-green) 18%, transparent);
+  stroke: var(--diagram-green);
+  stroke-width: 2;
+}
+.diagram text.omni-free-text {
+  font-size: 21px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-green);
+}
+
+// 응답 시간.
+.omni-axis {
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.omni-grid {
+  stroke: var(--diagram-grid);
+  stroke-width: 1.5;
+}
+.diagram text.omni-tick {
+  font-size: 18px;
+  text-anchor: middle;
+  fill: var(--diagram-subtle);
+}
+.omni-row-label {
+  font-size: 23px;
+  font-weight: 600;
+  text-anchor: end;
+}
+.omni-bar-old {
+  fill: var(--diagram-subtle);
+}
+.omni-bar-new {
+  fill: var(--diagram-blue);
+}
+.omni-row-value {
+  font-size: 23px;
+  font-weight: 700;
+}
+.diagram text.omni-human {
+  font-size: 22px;
+  fill: var(--diagram-blue);
+}
+.diagram text.omni-source {
+  font-size: 16px;
+  text-anchor: end;
+  fill: var(--diagram-subtle);
+}

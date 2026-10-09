@@ -1,0 +1,188 @@
+.emergence-axis {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+}
+.emergence-grid {
+  stroke: var(--diagram-grid);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+}
+.emergence-tick {
+  font-size: 22px;
+  fill: var(--diagram-muted) !important;
+}
+.emergence-axis-label {
+  font-size: 26px;
+  font-weight: 600;
+  fill: var(--diagram-muted) !important;
+}
+.emergence-curve {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  &.exact {
+    stroke: var(--diagram-orange);
+  }
+  &.partial {
+    stroke: var(--diagram-green);
+  }
+}
+.emergence-curve-label {
+  font-size: 26px;
+  font-weight: 700;
+
+  &.exact {
+    fill: var(--diagram-orange) !important;
+  }
+  &.partial {
+    fill: var(--diagram-green) !important;
+  }
+}
+.emergence-pointer {
+  fill: none;
+  stroke: var(--diagram-yellow);
+  stroke-width: 3;
+  stroke-dasharray: 6 6;
+}
+.emergence-emergence-text {
+  font-size: 44px;
+  font-weight: 800;
+  fill: var(--diagram-yellow) !important;
+}
+.emergence-emergence-subtitle {
+  font-size: 22px;
+  font-style: italic;
+  fill: var(--diagram-muted) !important;
+}
+.emergence-tube {
+  fill: #1b1c22;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.emergence-bulb {
+  fill: var(--diagram-red);
+}
+.emergence-mercury {
+  fill: var(--diagram-red);
+}
+.emergence-zero-tick {
+  stroke: var(--diagram-blue);
+  stroke-width: 3;
+}
+.emergence-zero-label {
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--diagram-blue) !important;
+}
+.emergence-readout {
+  font-size: 36px;
+  font-weight: 800;
+}
+.emergence-cube {
+  fill: color-mix(in srgb, var(--diagram-blue) 30%, var(--diagram-background));
+  stroke: var(--diagram-blue);
+  stroke-width: 3;
+
+  &.ice {
+    fill: color-mix(in srgb, #dff1ff 55%, var(--diagram-background));
+    stroke: #dff1ff;
+  }
+}
+.emergence-crystal line {
+  stroke: #ffffff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: .8;
+}
+.emergence-state {
+  font-size: 34px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.emergence-scoring-title {
+  font-size: 30px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.emergence-problem {
+  font-size: 34px;
+  font-weight: 700;
+  font-family: Menlo, Consolas, monospace !important;
+}
+.emergence-problem-subtitle {
+  font-size: 26px;
+  fill: var(--diagram-muted) !important;
+}
+.emergence-digit {
+  font-size: 34px;
+  font-weight: 800;
+  font-family: Menlo, Consolas, monospace !important;
+
+  &.right {
+    fill: var(--diagram-green) !important;
+  }
+  &.wrong {
+    fill: var(--diagram-red) !important;
+  }
+}
+.emergence-card {
+  rect {
+    fill: #141519;
+    stroke-width: 2;
+  }
+  &.exact rect {
+    stroke: var(--diagram-orange);
+  }
+  &.partial rect {
+    stroke: var(--diagram-green);
+  }
+}
+.emergence-card-rule {
+  font-size: 28px;
+  font-weight: 700;
+}
+.emergence-card-note {
+  font-size: 21px;
+  fill: var(--diagram-muted) !important;
+}
+.emergence-card-score {
+  font-size: 40px;
+  font-weight: 800;
+
+  .exact & {
+    fill: var(--diagram-orange) !important;
+  }
+  .partial & {
+    fill: var(--diagram-green) !important;
+  }
+}
+.emergence-debate {
+  font-size: 30px;
+  font-weight: 700;
+  fill: var(--diagram-yellow) !important;
+}
+.emergence-fact-band {
+  fill: color-mix(in srgb, var(--diagram-yellow) 9%, transparent);
+}
+.emergence-fact-arrow {
+  fill: none;
+  stroke: var(--diagram-yellow);
+  stroke-width: 6;
+  stroke-dasharray: 1;
+}
+.emergence-fact-head {
+  fill: var(--diagram-yellow);
+}
+.emergence-fact-text {
+  font-size: 28px;
+  font-weight: 700;
+  fill: var(--diagram-yellow) !important;
+}
+.emergence-fact-line {
+  font-size: 34px;
+  font-weight: 800;
+  fill: var(--diagram-yellow) !important;
+}

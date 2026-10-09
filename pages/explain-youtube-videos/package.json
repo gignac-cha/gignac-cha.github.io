@@ -1,0 +1,26 @@
+{
+  "name": "explain-youtube-videos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run",
+    "build": "vite build",
+    "copy": "mkdir -p ../../page/explain-youtube-videos && rsync -a --delete dist/ ../../page/explain-youtube-videos/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/three": "^0.186.0",
+    "@types/youtube": "^0.3.0",
+    "sass": "^1.105.1",
+    "typescript": "catalog:",
+    "vite": "^8.3.3",
+    "vitest": "^5.0.3"
+  },
+  "dependencies": {
+    "three": "^0.186.1"
+  }
+}

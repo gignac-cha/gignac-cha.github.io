@@ -1,0 +1,86 @@
+// 트랜스포머 설계도(blueprint.ts). 설계도처럼 파란 선으로 그린다.
+.blueprint-paper-sheet {
+  fill: #0f1a2b;
+  stroke: #24406a;
+  stroke-width: 2;
+}
+.blueprint-paper-line {
+  stroke: #16263f;
+  stroke-width: 1;
+}
+.blueprint-wire {
+  fill: none;
+  stroke: #8fb4ec;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blueprint-cross {
+  fill: none;
+  stroke: #8fb4ec;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blueprint-block-frame {
+  fill: rgba(91, 157, 255, .06);
+  stroke: #5b9dff;
+  stroke-width: 2.5;
+}
+.blueprint-n {
+  font-size: 26px;
+  font-weight: 800;
+  fill: #8fb4ec !important;
+}
+.blueprint-box {
+  rect {
+    fill: #142540;
+    stroke: #8fb4ec;
+    stroke-width: 1.5;
+  }
+  &.attention rect {
+    fill: #3a2c17;
+    stroke: var(--diagram-orange);
+  }
+  &.feed rect {
+    fill: #15304a;
+    stroke: var(--diagram-blue);
+  }
+  &.norm rect {
+    fill: #2b2a14;
+    stroke: #d9cf6a;
+  }
+}
+.blueprint-box-label {
+  font-size: 17px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.blueprint-caption {
+  font-size: 18px;
+  text-anchor: middle;
+  fill: #8fb4ec !important;
+}
+.blueprint-plus {
+  circle {
+    fill: #0f1a2b;
+    stroke: #8fb4ec;
+    stroke-width: 2;
+  }
+  path {
+    stroke: #8fb4ec;
+    stroke-width: 2;
+  }
+}
+.blueprint-wave {
+  circle {
+    fill: #0f1a2b;
+    stroke: #8fb4ec;
+    stroke-width: 2;
+  }
+  path {
+    fill: none;
+    stroke: #8fb4ec;
+    stroke-width: 2;
+  }
+}

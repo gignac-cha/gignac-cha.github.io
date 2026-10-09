@@ -1,0 +1,10 @@
+// shared/three-scene.ts: SVG 판과 Three.js 판을 같은 자리에 겹쳐 두고 하나만 보인다.
+// 감싸는 요소는 장면 공통 스타일(.scene, 영역 전체)로 자리를 잡는다.
+.scene-layer {
+  position: absolute;
+  inset: 0px;
+
+  &[hidden] {
+    display: none !important;
+  }
+}

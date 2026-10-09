@@ -1,0 +1,186 @@
+.perceptron {
+  .perceptron-header {
+    font-size: 30px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .perceptron-edge {
+    stroke: var(--diagram-line);
+    stroke-width: 4;
+  }
+  .perceptron-arrow {
+    fill: none;
+    stroke: var(--diagram-line);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .perceptron-input {
+    fill: color-mix(in srgb, var(--diagram-blue) 14%, var(--diagram-background));
+    stroke: var(--diagram-blue);
+    stroke-width: 4;
+  }
+  .perceptron-input-label {
+    font-size: 38px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .perceptron-weight {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-muted);
+    stroke-width: 3;
+    transition: stroke .2s;
+
+    &.empty {
+      stroke-dasharray: 8 6;
+    }
+    &.changing {
+      stroke: var(--diagram-green);
+      filter: drop-shadow(0 0 10px color-mix(in srgb, var(--diagram-green) 60%, transparent));
+    }
+  }
+  .perceptron-weight-label {
+    font-size: 32px;
+    font-weight: 700;
+    text-anchor: middle;
+    font-variant-numeric: tabular-nums;
+  }
+  .perceptron-body {
+    fill: color-mix(in srgb, var(--diagram-purple) 8%, var(--diagram-background));
+    stroke: var(--diagram-purple);
+    stroke-width: 4;
+  }
+  .perceptron-sigma {
+    font-size: 56px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .perceptron-name {
+    font-size: 34px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .perceptron-loop {
+    fill: none;
+    stroke: var(--diagram-green);
+    stroke-width: 4;
+    stroke-dasharray: 10 8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .perceptron-loop-pulse {
+    fill: var(--diagram-green);
+    filter: drop-shadow(0 0 10px var(--diagram-green));
+  }
+  .perceptron-plane {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .perceptron-region-positive {
+    fill: color-mix(in srgb, var(--diagram-blue) 12%, transparent);
+  }
+  .perceptron-region-negative {
+    fill: color-mix(in srgb, var(--diagram-orange) 10%, transparent);
+  }
+  .perceptron-line {
+    stroke: var(--diagram-text);
+    stroke-width: 5;
+  }
+  .perceptron-dot {
+    stroke: var(--diagram-background);
+    stroke-width: 3;
+
+    &.positive {
+      fill: var(--diagram-blue);
+    }
+    &.negative {
+      fill: var(--diagram-orange);
+    }
+  }
+  .perceptron-ring {
+    fill: none;
+    stroke: var(--diagram-red);
+    stroke-width: 4;
+  }
+  .perceptron-mark {
+    font-size: 30px;
+    font-weight: 700;
+    fill: var(--diagram-green);
+    paint-order: stroke;
+    stroke: var(--diagram-background);
+    stroke-width: 10;
+    stroke-linejoin: round;
+
+    &.wrong {
+      fill: var(--diagram-red);
+    }
+  }
+  .perceptron-done {
+    font-size: 32px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-green);
+  }
+  .perceptron-ground {
+    stroke: var(--diagram-line);
+    stroke-width: 4;
+  }
+  .perceptron-target {
+    fill: none;
+    stroke: var(--diagram-red);
+    stroke-width: 5;
+  }
+  .perceptron-target-center {
+    fill: var(--diagram-red);
+  }
+  .perceptron-person {
+    fill: none;
+    stroke: var(--diagram-text);
+    stroke-width: 5;
+  }
+  .perceptron-person-line {
+    fill: none;
+    stroke: var(--diagram-text);
+    stroke-width: 5;
+    stroke-linecap: round;
+  }
+  .perceptron-gauge {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .perceptron-gauge-fill {
+    fill: var(--diagram-green);
+  }
+  .perceptron-trail {
+    fill: none;
+    stroke: var(--diagram-muted);
+    stroke-width: 3;
+    stroke-dasharray: 6 8;
+  }
+  .perceptron-ball {
+    fill: var(--diagram-yellow);
+  }
+  .perceptron-landing {
+    fill: none;
+    stroke: var(--diagram-muted);
+    stroke-width: 4;
+    stroke-linecap: round;
+
+    &.hit {
+      stroke: var(--diagram-green);
+    }
+  }
+  .perceptron-landing-label {
+    font-size: 30px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+
+    &.hit {
+      fill: var(--diagram-green);
+    }
+  }
+}

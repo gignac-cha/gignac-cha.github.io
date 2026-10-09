@@ -1,0 +1,115 @@
+.seq2seq-caption {
+  font-size: 28px;
+  fill: var(--diagram-muted) !important;
+}
+.seq2seq-heading {
+  font-size: 32px;
+  font-weight: 700;
+}
+.seq2seq-chip {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 32px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  &.muted text {
+    fill: var(--diagram-muted) !important;
+  }
+  &.active rect {
+    stroke: var(--diagram-blue);
+    fill: color-mix(in srgb, var(--diagram-blue) 16%, var(--diagram-background));
+  }
+  &.output rect {
+    stroke: var(--diagram-green);
+    fill: color-mix(in srgb, var(--diagram-green) 16%, var(--diagram-background));
+  }
+}
+.seq2seq-pair-link {
+  stroke: var(--diagram-subtle);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+.seq2seq-awkward {
+  font-size: 40px;
+  font-weight: 700;
+}
+.seq2seq-squiggle {
+  fill: none;
+  stroke: var(--diagram-red);
+  stroke-width: 3;
+}
+.seq2seq-awkward-label {
+  font-size: 30px;
+  font-weight: 700;
+  fill: var(--diagram-red) !important;
+}
+.seq2seq-arrow {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.seq2seq-cell {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
+    stroke-width: 3;
+  }
+  &.active rect {
+    fill: color-mix(in srgb, var(--diagram-blue) 18%, var(--diagram-background));
+    stroke: var(--diagram-blue);
+  }
+}
+.seq2seq-cell-label {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+
+  .active & {
+    fill: var(--diagram-text) !important;
+  }
+}
+.seq2seq-capsule-ring {
+  fill: color-mix(in srgb, var(--diagram-yellow) 8%, var(--diagram-background));
+  stroke: var(--diagram-yellow);
+  stroke-width: 4;
+
+  &.strained {
+    fill: color-mix(in srgb, var(--diagram-red) 10%, var(--diagram-background));
+    stroke: var(--diagram-red);
+    stroke-width: 6;
+  }
+}
+.seq2seq-capsule-bar {
+  fill: var(--diagram-yellow);
+}
+.seq2seq-packet {
+  fill: var(--diagram-yellow);
+}
+.seq2seq-long-line {
+  font-size: 30px;
+  font-weight: 600;
+  fill: var(--diagram-subtle) !important;
+
+  tspan.read {
+    fill: var(--diagram-blue);
+  }
+  tspan.faded {
+    fill: var(--diagram-subtle);
+    fill-opacity: .35;
+  }
+  &.output {
+    font-size: 34px;
+    fill: var(--diagram-green) !important;
+  }
+  tspan.garbled {
+    fill: var(--diagram-red);
+  }
+}

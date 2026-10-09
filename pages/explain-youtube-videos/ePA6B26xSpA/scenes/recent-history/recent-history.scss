@@ -1,0 +1,181 @@
+.recent-history {
+  // 사건 색: 오픈AI 초록, 경쟁사 주황, 경보·사건 빨강, 접은 것 회색, 숫자 파랑, 오늘 노랑.
+  --rh-openai: var(--diagram-green);
+  --rh-rival: var(--diagram-orange);
+
+  .recent-history-legend {
+    text {
+      font-size: 17px;
+      fill: var(--diagram-muted);
+    }
+  }
+  .recent-history-swatch {
+    &.openai {
+      fill: var(--rh-openai);
+    }
+    &.rival {
+      fill: var(--rh-rival);
+    }
+  }
+
+  .recent-history-band {
+    fill: color-mix(in srgb, var(--diagram-yellow) 6%, transparent);
+  }
+  text.recent-history-band-label {
+    font-size: 20px;
+    font-weight: 700;
+    fill: var(--diagram-yellow);
+    &.glow {
+      filter: drop-shadow(0 0 8px color-mix(in srgb, var(--diagram-yellow) 70%, transparent));
+    }
+  }
+
+  .recent-history-axis {
+    stroke: var(--diagram-line);
+    stroke-width: 3;
+  }
+  .recent-history-tick {
+    path {
+      stroke: var(--diagram-line);
+      stroke-width: 2;
+    }
+    text {
+      font-size: 14px;
+      fill: var(--diagram-subtle);
+    }
+    &.year text {
+      font-size: 16px;
+      font-weight: 700;
+      fill: var(--diagram-muted);
+    }
+  }
+
+  .recent-history-monthly {
+    path {
+      fill: none;
+      stroke: var(--diagram-muted);
+      stroke-width: 2;
+    }
+    text {
+      font-size: 17px;
+      font-weight: 600;
+      fill: var(--diagram-muted);
+    }
+  }
+
+  .recent-history-event {
+    --rh-color: var(--rh-openai);
+    &.rival {
+      --rh-color: var(--rh-rival);
+    }
+    &.alarm,
+    &.incident {
+      --rh-color: var(--diagram-red);
+    }
+    &.closed {
+      --rh-color: var(--diagram-muted);
+    }
+
+    .recent-history-stem {
+      fill: none;
+      stroke: color-mix(in srgb, var(--rh-color) 45%, transparent);
+      stroke-width: 1.5;
+    }
+    .recent-history-dot {
+      fill: var(--rh-color);
+      stroke: var(--diagram-background);
+      stroke-width: 3;
+    }
+    .recent-history-span {
+      fill: color-mix(in srgb, var(--rh-color) 55%, transparent);
+    }
+    // 이름표 둘레를 배경색으로 둘러 뒤로 지나가는 줄기를 가린다.
+    text.recent-history-date,
+    text.recent-history-name {
+      paint-order: stroke;
+      stroke: var(--diagram-background);
+      stroke-width: 7px;
+      stroke-linejoin: round;
+    }
+    text.recent-history-date {
+      font-size: 15px;
+      fill: var(--diagram-muted);
+    }
+    text.recent-history-name {
+      font-size: 20px;
+      font-weight: 700;
+      fill: var(--rh-color);
+    }
+    // 방금 말한 사건.
+    &.current {
+      .recent-history-dot {
+        stroke: color-mix(in srgb, var(--rh-color) 35%, var(--diagram-background));
+        stroke-width: 6;
+      }
+      text.recent-history-name {
+        filter: drop-shadow(0 0 6px color-mix(in srgb, var(--rh-color) 60%, transparent));
+      }
+      text.recent-history-date {
+        fill: var(--diagram-text);
+      }
+    }
+  }
+
+  .recent-history-today {
+    path {
+      stroke: var(--diagram-yellow);
+      stroke-width: 3;
+    }
+    text {
+      font-size: 17px;
+      font-weight: 700;
+      fill: var(--diagram-yellow);
+    }
+  }
+
+  .recent-history-card {
+    --rh-color: var(--rh-openai);
+    &.rival {
+      --rh-color: var(--rh-rival);
+    }
+    &.alarm,
+    &.incident {
+      --rh-color: var(--diagram-red);
+    }
+    &.closed {
+      --rh-color: var(--diagram-muted);
+    }
+    &.stat {
+      --rh-color: var(--diagram-blue);
+    }
+    &.today {
+      --rh-color: var(--diagram-yellow);
+    }
+
+    .recent-history-card-box {
+      fill: #15161b;
+      stroke: var(--diagram-line);
+      stroke-width: 1.5;
+    }
+    .recent-history-card-stripe {
+      fill: var(--rh-color);
+    }
+    text.recent-history-card-date {
+      font-size: 19px;
+      font-weight: 600;
+      fill: var(--rh-color);
+    }
+    text.recent-history-card-title {
+      font-size: 34px;
+      font-weight: 800;
+    }
+    &.closed text.recent-history-card-title {
+      text-decoration: line-through;
+      fill: var(--diagram-muted);
+    }
+    text.recent-history-card-note {
+      font-size: 22px;
+      fill: #c9cad1;
+    }
+  }
+}

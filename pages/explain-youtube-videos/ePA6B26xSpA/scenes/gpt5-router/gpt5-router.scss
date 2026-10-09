@@ -1,0 +1,135 @@
+.gpt5-router-frame {
+  fill: color-mix(in srgb, var(--diagram-text) 2%, var(--diagram-background));
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+  stroke-dasharray: 12 10;
+
+  &.unified {
+    stroke: var(--diagram-blue);
+    stroke-dasharray: none;
+    filter: drop-shadow(0 0 14px color-mix(in srgb, var(--diagram-blue) 35%, transparent));
+  }
+}
+.gpt5-router-name {
+  font-size: 40px;
+  font-weight: 800;
+}
+.gpt5-router-card {
+  .gpt5-router-card-box {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  &.fast.active .gpt5-router-card-box {
+    stroke: var(--diagram-yellow);
+    fill: color-mix(in srgb, var(--diagram-yellow) 10%, var(--diagram-background));
+  }
+  &.deep.active .gpt5-router-card-box {
+    stroke: var(--diagram-purple);
+    fill: color-mix(in srgb, var(--diagram-purple) 12%, var(--diagram-background));
+  }
+}
+.gpt5-router-icon {
+  fill: var(--diagram-text);
+}
+.fast .gpt5-router-icon {
+  fill: var(--diagram-yellow);
+}
+.deep .gpt5-router-icon {
+  fill: var(--diagram-purple);
+}
+.gpt5-router-card-title {
+  font-size: 30px;
+  font-weight: 700;
+}
+.gpt5-router-card-note {
+  font-size: 22px;
+  fill: var(--diagram-muted) !important;
+}
+.gpt5-router-meter-track {
+  fill: var(--diagram-grid);
+}
+.gpt5-router-meter {
+  fill: var(--diagram-yellow);
+
+  .deep & {
+    fill: var(--diagram-purple);
+  }
+}
+.gpt5-router-thinking {
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--diagram-purple) !important;
+}
+.gpt5-router-wires path {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+
+  &.active {
+    stroke: var(--diagram-text);
+  }
+}
+.gpt5-router-router {
+  circle {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-blue);
+    stroke-width: 3;
+  }
+  text {
+    font-size: 24px;
+    font-weight: 800;
+  }
+  &.active circle {
+    fill: color-mix(in srgb, var(--diagram-blue) 22%, var(--diagram-background));
+  }
+}
+.gpt5-router-factor {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 19px;
+    fill: var(--diagram-muted) !important;
+  }
+  &.active {
+    rect {
+      stroke: var(--diagram-blue);
+      fill: color-mix(in srgb, var(--diagram-blue) 16%, var(--diagram-background));
+    }
+    text {
+      fill: var(--diagram-text) !important;
+    }
+  }
+}
+.gpt5-router-caption {
+  font-size: 28px;
+  font-weight: 600;
+}
+.gpt5-router-question {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-text);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 24px;
+    font-weight: 600;
+  }
+}
+.gpt5-router-dot {
+  fill: var(--diagram-text);
+  filter: drop-shadow(0 0 6px var(--diagram-text));
+
+  &.small {
+    fill: var(--diagram-blue);
+    filter: none;
+  }
+}
+.gpt5-router-crowd-label {
+  font-size: 26px;
+  font-weight: 700;
+  fill: var(--diagram-blue) !important;
+}

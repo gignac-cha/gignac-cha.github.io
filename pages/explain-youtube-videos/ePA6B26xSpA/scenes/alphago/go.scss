@@ -1,0 +1,37 @@
+.diagram .go-board {
+  .go-wood {
+    fill: #c49a5c;
+  }
+  .go-lines {
+    fill: none;
+    stroke: #4a3417;
+  }
+  .go-star {
+    fill: #4a3417;
+  }
+  .go-label {
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .go-stone {
+    &.black {
+      fill: #151515;
+      stroke: #000;
+      stroke-width: 1;
+    }
+    &.white {
+      fill: #f1efe9;
+      stroke: #8f8a7f;
+      stroke-width: 1;
+    }
+  }
+  .go-last {
+    fill: none;
+    stroke: #151515;
+    stroke-width: 2.5;
+
+    &.on-black {
+      stroke: #f1efe9;
+    }
+  }
+}

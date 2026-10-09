@@ -1,0 +1,182 @@
+.batch-normalization {
+  .batch-normalization-caption {
+    font-size: 36px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .batch-normalization-strip {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .batch-normalization-zero {
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+  }
+  .batch-normalization-layer-label {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .batch-normalization-dot {
+    fill: var(--diagram-orange);
+    opacity: .8;
+
+    &.outside {
+      fill: var(--diagram-red);
+    }
+    &.tuned {
+      fill: var(--diagram-green);
+    }
+  }
+  .batch-normalization-overflow {
+    font-size: 22px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-red);
+  }
+  .batch-normalization-tuner {
+    fill: color-mix(in srgb, var(--diagram-green) 14%, var(--diagram-background));
+    stroke: var(--diagram-green);
+    stroke-width: 3;
+  }
+  .batch-normalization-tuner-text {
+    font-size: 24px;
+    font-weight: 800;
+    text-anchor: middle;
+    fill: var(--diagram-green);
+  }
+  .batch-normalization-formula {
+    font-size: 28px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--diagram-green);
+  }
+
+  .batch-normalization-wave-frame {
+    fill: none;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .batch-normalization-wave-axis {
+    stroke: var(--diagram-grid);
+    stroke-width: 2;
+  }
+  .batch-normalization-wave {
+    fill: none;
+    stroke: var(--diagram-blue);
+    stroke-width: 3;
+    stroke-linejoin: round;
+
+    &.broken {
+      stroke: var(--diagram-red);
+    }
+    &.stable {
+      stroke: var(--diagram-green);
+    }
+  }
+  .batch-normalization-wave-label {
+    font-size: 24px;
+    fill: var(--diagram-muted);
+  }
+  .batch-normalization-volume {
+    fill: var(--diagram-blue);
+    transition: fill .25s;
+
+    &.loud {
+      fill: var(--diagram-red);
+    }
+    &.quiet {
+      fill: var(--diagram-subtle);
+    }
+    &.tuned {
+      fill: var(--diagram-green);
+    }
+  }
+  .batch-normalization-volume-line {
+    stroke: var(--diagram-green);
+    stroke-width: 2;
+    stroke-dasharray: 8 6;
+  }
+  .batch-normalization-singer {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-muted);
+    stroke-width: 3;
+  }
+  .batch-normalization-mouth {
+    fill: var(--diagram-text);
+  }
+  .batch-normalization-body {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+
+  .batch-normalization-axis {
+    fill: none;
+    stroke: var(--diagram-line);
+    stroke-width: 3;
+  }
+  .batch-normalization-axis-label {
+    font-size: 24px;
+    fill: var(--diagram-subtle);
+  }
+  .batch-normalization-target {
+    stroke: var(--diagram-yellow);
+    stroke-width: 2;
+    stroke-dasharray: 10 8;
+  }
+  .batch-normalization-target-label {
+    font-size: 24px;
+    font-weight: 600;
+    fill: var(--diagram-yellow);
+  }
+  .batch-normalization-curve {
+    fill: none;
+    stroke-width: 5;
+
+    &.plain {
+      stroke: var(--diagram-muted);
+    }
+    &.tuned {
+      stroke: var(--diagram-green);
+    }
+  }
+  .batch-normalization-curve-label {
+    font-size: 28px;
+    font-weight: 700;
+
+    &.plain {
+      fill: var(--diagram-muted);
+    }
+    &.tuned {
+      fill: var(--diagram-green);
+    }
+  }
+  .batch-normalization-reach {
+    stroke: var(--diagram-green);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+
+    &.plain {
+      stroke: var(--diagram-muted);
+    }
+  }
+  .batch-normalization-reach-label {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-green);
+
+    &.plain {
+      fill: var(--diagram-muted);
+    }
+  }
+  .batch-normalization-note {
+    font-size: 28px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+}

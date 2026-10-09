@@ -1,0 +1,127 @@
+.encoder-decoder {
+  --ed-encoder: var(--diagram-green);
+  --ed-decoder: var(--diagram-purple);
+}
+.encoder-decoder-frame {
+  fill: none;
+  stroke-width: 3;
+
+  &.encoder {
+    stroke: var(--ed-encoder);
+  }
+  &.decoder {
+    stroke: var(--ed-decoder);
+  }
+}
+.encoder-decoder-name {
+  font-size: 26px;
+  font-weight: 700;
+
+  &.encoder {
+    fill: var(--ed-encoder) !important;
+  }
+  &.decoder {
+    fill: var(--ed-decoder) !important;
+  }
+}
+.encoder-decoder-chip {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 22px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  &.output rect {
+    stroke: var(--ed-decoder);
+  }
+  &.root rect {
+    stroke: #5b9dff;
+    fill: #0f1a2b;
+  }
+}
+.encoder-decoder-pulse {
+  fill: var(--ed-encoder);
+}
+.encoder-decoder-stack {
+  rect:not(.encoder-decoder-stack-glow) {
+    stroke-width: 1.5;
+  }
+  &.encoder rect:not(.encoder-decoder-stack-glow) {
+    fill: color-mix(in srgb, var(--ed-encoder) 28%, var(--diagram-background));
+    stroke: var(--ed-encoder);
+  }
+  &.decoder rect:not(.encoder-decoder-stack-glow) {
+    fill: color-mix(in srgb, var(--ed-decoder) 28%, var(--diagram-background));
+    stroke: var(--ed-decoder);
+  }
+}
+.encoder-decoder-stack-glow {
+  fill: none;
+  stroke: var(--diagram-yellow);
+  stroke-width: 5;
+}
+.encoder-decoder-year {
+  font-size: 56px;
+  font-weight: 800;
+  fill: var(--diagram-muted) !important;
+}
+.encoder-decoder-company {
+  font-size: 26px;
+  font-weight: 600;
+  fill: var(--diagram-muted) !important;
+}
+.encoder-decoder-model-name {
+  font-size: 44px;
+  font-weight: 800;
+}
+.encoder-decoder-model.encoder .encoder-decoder-model-name {
+  fill: var(--ed-encoder) !important;
+}
+.encoder-decoder-model.decoder .encoder-decoder-model-name {
+  fill: var(--ed-decoder) !important;
+}
+.encoder-decoder-model-detail {
+  font-size: 22px;
+  fill: var(--diagram-muted) !important;
+}
+.encoder-decoder-branch {
+  fill: none;
+  stroke: #5b9dff;
+  stroke-width: 3;
+  stroke-dasharray: 1;
+}
+.encoder-decoder-road-arrow {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.encoder-decoder-road.encoder {
+  .encoder-decoder-road-arrow {
+    stroke: var(--ed-encoder);
+  }
+  text {
+    fill: var(--ed-encoder) !important;
+  }
+}
+.encoder-decoder-road.decoder {
+  .encoder-decoder-road-arrow {
+    stroke: var(--ed-decoder);
+  }
+  text {
+    fill: var(--ed-decoder) !important;
+  }
+}
+.encoder-decoder-road-label {
+  font-size: 24px;
+  font-weight: 700;
+}
+.encoder-decoder-question {
+  font-size: 36px;
+  font-weight: 800;
+  fill: var(--diagram-yellow) !important;
+}

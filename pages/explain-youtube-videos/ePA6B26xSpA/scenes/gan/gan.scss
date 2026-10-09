@@ -1,0 +1,273 @@
+.gan {
+  .gan-name-title {
+    font-size: 64px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .gan-name-subtitle {
+    font-size: 30px;
+    letter-spacing: .04em;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+
+  // 위조범과 경찰 카드
+  .gan-card-box {
+    fill: color-mix(in srgb, var(--card-color) 8%, var(--diagram-background));
+    stroke: color-mix(in srgb, var(--card-color) 45%, transparent);
+    stroke-width: 2;
+    transition: stroke .3s, fill .3s;
+  }
+  .gan-card {
+    transition: opacity .3s;
+
+    &.focus .gan-card-box {
+      fill: color-mix(in srgb, var(--card-color) 16%, var(--diagram-background));
+      stroke: var(--card-color);
+      stroke-width: 4;
+    }
+    &.dim .gan-card-box {
+      stroke: var(--diagram-line);
+    }
+  }
+  .gan-card-generator {
+    --card-color: var(--diagram-orange);
+  }
+  .gan-card-police {
+    --card-color: var(--diagram-blue);
+  }
+  .gan-card-title {
+    font-size: 42px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .gan-card-subtitle {
+    font-size: 28px;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .gan-card-meter-label {
+    font-size: 28px;
+    fill: var(--diagram-muted);
+  }
+  .gan-meter-track {
+    fill: var(--diagram-grid);
+  }
+  .gan-meter-fill {
+    fill: var(--card-color);
+  }
+
+  // 지폐와 얼굴 자리
+  .gan-slot-frame {
+    fill: none;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .gan-slot-caption {
+    font-size: 30px;
+    font-weight: 600;
+  }
+  .gan-slot-real .gan-slot-caption {
+    fill: var(--diagram-green);
+  }
+  .gan-slot-fake .gan-slot-caption {
+    fill: var(--diagram-orange);
+  }
+  .gan-bill-value {
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: .04em;
+  }
+  .gan-noise {
+    fill: var(--diagram-muted);
+  }
+  // 위조범이 학습할 때마다 새로 칠하는 출력(픽셀 칸이 보이게).
+  .gan-pixels {
+    image-rendering: pixelated;
+  }
+  .gan-counter {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 24px;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .gan-nobody {
+    font-size: 30px;
+    text-anchor: middle;
+    fill: var(--diagram-yellow);
+  }
+
+  // 판정 배지
+  .gan-badge {
+    circle {
+      fill: var(--badge-color);
+      stroke: var(--diagram-background);
+      stroke-width: 4;
+    }
+    &.pass {
+      --badge-color: var(--diagram-green);
+    }
+    &.caught {
+      --badge-color: var(--diagram-red);
+    }
+    &.unsure {
+      --badge-color: var(--diagram-yellow);
+    }
+  }
+  .gan-badge-glyph {
+    font-size: 30px;
+    font-weight: 800;
+    text-anchor: middle;
+    fill: var(--diagram-background);
+  }
+
+  .gan-arrow {
+    fill: none;
+    stroke: var(--diagram-subtle);
+    stroke-width: 3;
+    stroke-dasharray: 8 8;
+  }
+  .gan-feedback,
+  .gan-feedback-head {
+    fill: none;
+    stroke: var(--diagram-orange);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .gan-feedback-label {
+    font-size: 30px;
+    text-anchor: middle;
+    fill: var(--diagram-orange);
+  }
+
+  .gan-chip {
+    rect {
+      fill: var(--diagram-background);
+      stroke: var(--chip-color);
+      stroke-width: 2;
+    }
+    text {
+      font-size: 28px;
+      font-weight: 600;
+      text-anchor: middle;
+      fill: var(--chip-color);
+    }
+  }
+  .gan-chip-judge {
+    --chip-color: var(--diagram-blue);
+  }
+  .gan-chip-brush {
+    --chip-color: var(--diagram-orange);
+  }
+
+  // 해마다 커지고 선명해진 그림
+  .gan-thumb-frame {
+    fill: none;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .gan-thumb-pixels {
+    image-rendering: pixelated;
+  }
+  .gan-growth-label {
+    font-size: 28px;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .gan-growth-arrow {
+    fill: none;
+    stroke: var(--diagram-yellow);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .gan-growth-caption {
+    font-size: 32px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--diagram-yellow);
+  }
+
+  // 약점: 균형과 학습 곡선
+  .gan-fulcrum {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .gan-beam {
+    stroke: var(--diagram-muted);
+    stroke-width: 8;
+    stroke-linecap: round;
+  }
+  .gan-pan-string {
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .gan-pan {
+    rect {
+      fill: color-mix(in srgb, var(--pan-color) 12%, var(--diagram-background));
+      stroke: var(--pan-color);
+      stroke-width: 3;
+    }
+    text {
+      font-size: 36px;
+      font-weight: 700;
+      text-anchor: middle;
+    }
+  }
+  .gan-pan-forge {
+    --pan-color: var(--diagram-orange);
+  }
+  .gan-pan-police {
+    --pan-color: var(--diagram-blue);
+  }
+  .gan-axis {
+    fill: none;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .gan-graph-label {
+    font-size: 30px;
+    fill: var(--diagram-muted);
+  }
+  .gan-curve {
+    fill: none;
+    stroke: var(--diagram-green);
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    &.broken {
+      stroke: var(--diagram-red);
+    }
+  }
+  .gan-collapse-label {
+    font-size: 32px;
+    font-weight: 700;
+    text-anchor: end;
+    fill: var(--diagram-red);
+  }
+
+  // 약점: 모드 붕괴
+  .gan-row-label {
+    font-size: 32px;
+    font-weight: 600;
+    text-anchor: end;
+    fill: var(--diagram-muted);
+  }
+  .gan-row-actual .gan-row-label {
+    fill: var(--diagram-text);
+  }
+  .gan-cell-frame {
+    fill: none;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .gan-mode-label {
+    font-size: 34px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-red);
+  }
+}

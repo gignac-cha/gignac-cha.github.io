@@ -1,0 +1,101 @@
+.context-window-sentence {
+  font-size: 40px;
+  font-weight: 600;
+}
+.context-window-chip {
+  rect {
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 2;
+  }
+  text {
+    font-size: 40px;
+    font-weight: 600;
+  }
+  // 토큰 앞에 붙은 공백.
+  .context-window-space {
+    font-size: 30px;
+    fill: var(--diagram-muted);
+  }
+  @each $name in blue, purple, orange, green {
+    &.#{$name}.boxed rect {
+      fill: color-mix(in srgb, var(--diagram-#{$name}) 20%, var(--diagram-background));
+      stroke: color-mix(in srgb, var(--diagram-#{$name}) 70%, var(--diagram-background));
+    }
+  }
+}
+.context-window-half-glyph {
+  font-size: 40px;
+  font-weight: 600;
+}
+.context-window-bracket {
+  path {
+    fill: none;
+    stroke: var(--diagram-yellow);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 20px;
+    font-weight: 600;
+    fill: var(--diagram-yellow) !important;
+  }
+}
+.context-window-counter {
+  font-size: 34px;
+  font-weight: 800;
+}
+.context-window-note {
+  font-size: 20px;
+  fill: var(--diagram-muted) !important;
+}
+.context-window-heading {
+  font-size: 28px;
+  font-weight: 700;
+
+  &.accent {
+    fill: var(--diagram-yellow) !important;
+  }
+}
+.context-window-page-outline {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.context-window-page-fill {
+  fill: color-mix(in srgb, var(--diagram-blue) 30%, var(--diagram-background));
+}
+.context-window-page.first .context-window-page-fill {
+  fill: color-mix(in srgb, var(--diagram-blue) 60%, var(--diagram-background));
+}
+.context-window-page-line {
+  stroke: color-mix(in srgb, var(--diagram-text) 45%, transparent);
+  stroke-width: 2;
+}
+.context-window-grid {
+  stroke: var(--diagram-grid);
+  stroke-width: 2;
+}
+.context-window-axis {
+  font-size: 17px;
+  fill: var(--diagram-muted) !important;
+}
+.context-window-model {
+  font-size: 17px;
+  font-weight: 600;
+}
+.context-window-bar {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-blue) 55%, var(--diagram-background));
+  }
+  &.latest rect {
+    fill: var(--diagram-yellow);
+  }
+}
+.context-window-value {
+  font-size: 17px;
+  font-weight: 700;
+
+  .latest & {
+    fill: var(--diagram-yellow) !important;
+  }
+}

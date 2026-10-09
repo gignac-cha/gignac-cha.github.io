@@ -1,0 +1,81 @@
+.diagram {
+  --diagram-background: #0f1013;
+  --diagram-grid: #1c1d22;
+  --diagram-line: #3a3b44;
+  --diagram-text: #ededef;
+  --diagram-muted: #8b8b94;
+  --diagram-subtle: #55565e;
+  --diagram-blue: #5b9dff;
+  --diagram-orange: #ffad5b;
+  --diagram-green: #4fd18b;
+  --diagram-red: #ff6b6b;
+  --diagram-purple: #b18cff;
+  --diagram-yellow: #ffd75b;
+  background-color: var(--diagram-background);
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  text {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif;
+    fill: var(--diagram-text);
+  }
+}
+// 이름표가 바뀔 때 번지는 빛 (shared/swap-text.ts).
+.diagram text.swap-glow {
+  fill: none !important;
+  stroke: var(--diagram-yellow);
+  stroke-width: 7px;
+  stroke-linejoin: round;
+  filter: blur(5px);
+}
+.diagram-title {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  fill: var(--diagram-muted) !important;
+}
+// Three.js 판 (shared/three-diagram.ts): 캔버스는 뒤, SVG 는 앞에 겹친다.
+// 장면 영역을 꽉 채운다(비교 탭 스타일과 불러오는 순서가 바뀌어도 같도록 position 은 absolute 로).
+.three-diagram {
+  position: absolute;
+  inset: 0px;
+
+  // 글자 층은 시점 조작(캔버스 끌기)을 가로채지 않는다.
+  > svg {
+    position: absolute;
+    inset: 0px;
+    pointer-events: none;
+  }
+}
+// 캔버스는 SVG(1600×900, 가운데 맞춤)와 같은 좌표의 영역에 놓아 3D 위치와 글자 위치가 맞게 한다.
+.three-layer-canvas {
+  position: absolute;
+  cursor: grab;
+  touch-action: none;
+
+  &.grabbing {
+    cursor: grabbing;
+  }
+}
+.three-view-reset {
+  position: absolute;
+  z-index: 1;
+  padding: 5px 10px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 999px;
+  background-color: rgba(15, 16, 19, .78);
+  color: var(--diagram-muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--diagram-text);
+  }
+  &[hidden] {
+    display: none;
+  }
+}

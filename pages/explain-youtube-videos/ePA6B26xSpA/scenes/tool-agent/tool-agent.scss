@@ -1,0 +1,279 @@
+.tool-agent-heading {
+  font-size: 34px;
+  font-weight: 700;
+}
+.tool-agent-big {
+  font-size: 56px;
+  font-weight: 800;
+}
+.tool-agent-caption {
+  font-size: 26px;
+  fill: var(--diagram-muted) !important;
+}
+.tool-agent-arrow {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+// 생각 줄기
+.tool-agent-trace-ghost {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+  stroke-dasharray: 6 10;
+  stroke-linejoin: round;
+}
+.tool-agent-trace {
+  fill: none;
+  stroke: var(--diagram-purple);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tool-agent-head {
+  fill: var(--diagram-yellow);
+  filter: drop-shadow(0 0 8px var(--diagram-yellow));
+}
+.tool-agent-thought {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-purple) 22%, var(--diagram-background));
+    stroke: var(--diagram-purple);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 22px;
+    font-weight: 700;
+  }
+}
+.tool-agent-answer {
+  circle {
+    fill: color-mix(in srgb, var(--diagram-green) 22%, var(--diagram-background));
+    stroke: var(--diagram-green);
+    stroke-width: 3;
+  }
+  text {
+    font-size: 30px;
+    font-weight: 800;
+    fill: var(--diagram-green) !important;
+  }
+}
+.tool-agent-icon {
+  fill: none;
+  stroke: var(--diagram-text);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  .tool-agent-icon-cursor {
+    fill: var(--diagram-text);
+    stroke: var(--diagram-background);
+    stroke-width: 2;
+  }
+}
+.tool-agent-card {
+  > rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+    transition: none;
+  }
+  &.active > rect {
+    fill: color-mix(in srgb, var(--diagram-blue) 14%, var(--diagram-background));
+    stroke: var(--diagram-blue);
+  }
+}
+.tool-agent-card-label {
+  font-size: 26px;
+  font-weight: 700;
+}
+.tool-agent-bar {
+  fill: var(--diagram-subtle);
+
+  &.result {
+    fill: var(--diagram-green);
+  }
+}
+
+// 대답하는 기계 → 일하는 기계
+.tool-agent-bubble {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 30px;
+    font-weight: 700;
+  }
+  &.reply rect {
+    stroke: var(--diagram-green);
+  }
+}
+.tool-agent-divider {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+  stroke-dasharray: 6 10;
+}
+.tool-agent-loop-ring {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+  stroke-dasharray: 10 10;
+}
+.tool-agent-loop-step {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 28px;
+    font-weight: 700;
+    fill: var(--diagram-muted) !important;
+  }
+  &.active {
+    rect {
+      fill: color-mix(in srgb, var(--diagram-yellow) 16%, var(--diagram-background));
+      stroke: var(--diagram-yellow);
+    }
+    text {
+      fill: var(--diagram-text) !important;
+    }
+  }
+}
+
+// 브라우저와 코드 저장소 창
+.tool-agent-panel {
+  > rect {
+    fill: color-mix(in srgb, var(--diagram-text) 3%, var(--diagram-background));
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+}
+.tool-agent-panel-rule {
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.tool-agent-panel-dot {
+  fill: var(--diagram-subtle);
+}
+.tool-agent-panel-title {
+  font-size: 18px;
+  fill: var(--diagram-muted) !important;
+}
+.tool-agent-panel-heading {
+  font-size: 32px;
+  font-weight: 700;
+}
+.tool-agent-address {
+  fill: var(--diagram-grid);
+}
+.tool-agent-field {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.tool-agent-typed {
+  fill: var(--diagram-text);
+}
+.tool-agent-button {
+  rect:first-child {
+    fill: var(--diagram-blue);
+  }
+  .tool-agent-button-text {
+    fill: var(--diagram-background);
+  }
+  &.pressed rect:first-child {
+    fill: color-mix(in srgb, var(--diagram-blue) 70%, white);
+  }
+}
+.tool-agent-ripple {
+  fill: none;
+  stroke: var(--diagram-yellow);
+  stroke-width: 3;
+}
+.tool-agent-cursor {
+  fill: var(--diagram-text);
+  stroke: var(--diagram-background);
+  stroke-width: 2;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .6));
+}
+.tool-agent-code {
+  fill: var(--diagram-subtle);
+
+  &.bug {
+    fill: var(--diagram-red);
+  }
+  &.fixed {
+    fill: var(--diagram-green);
+  }
+}
+.tool-agent-gutter {
+  font-size: 26px;
+  font-weight: 800;
+  fill: var(--diagram-red) !important;
+
+  &.plus {
+    fill: var(--diagram-green) !important;
+  }
+}
+.tool-agent-status {
+  font-size: 28px;
+  font-weight: 700;
+  fill: var(--diagram-red) !important;
+
+  &.pass {
+    fill: var(--diagram-green) !important;
+  }
+  &.swap-glow {
+    fill: none !important;
+  }
+}
+.tool-agent-task {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-orange) 18%, var(--diagram-background));
+    stroke: var(--diagram-orange);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 24px;
+    font-weight: 700;
+  }
+}
+.tool-agent-patch {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-green);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 24px;
+    font-weight: 700;
+  }
+  .minus {
+    fill: var(--diagram-red);
+  }
+  .plus {
+    fill: var(--diagram-green);
+  }
+}
+
+// 하나로 모인 에이전트
+.tool-agent-agent-ring {
+  fill: color-mix(in srgb, var(--diagram-yellow) 7%, var(--diagram-background));
+  stroke: var(--diagram-yellow);
+  stroke-width: 3;
+}
+.tool-agent-tool-disc {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.tool-agent-tool-label {
+  font-size: 26px;
+  font-weight: 700;
+}

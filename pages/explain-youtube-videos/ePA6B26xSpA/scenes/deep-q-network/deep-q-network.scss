@@ -1,0 +1,227 @@
+.deep-q-network {
+  .dqn-caption {
+    font-size: 36px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .dqn-screen {
+    fill: #000;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .dqn-wall {
+    fill: #8e8e8e;
+  }
+  .dqn-score {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace !important;
+    font-size: 28px;
+    font-weight: 700;
+    fill: #8e8e8e !important;
+  }
+  .dqn-paddle,
+  .dqn-ball {
+    fill: #c84848;
+  }
+  .dqn-miss {
+    fill: var(--diagram-red);
+  }
+  .dqn-hole {
+    fill: none;
+    stroke: var(--diagram-yellow);
+    stroke-width: 3;
+    stroke-dasharray: 8 6;
+  }
+  .dqn-annotation {
+    font-size: 26px;
+    font-weight: 700;
+    fill: var(--diagram-yellow);
+    paint-order: stroke;
+    stroke: #000;
+    stroke-width: 6px;
+  }
+  .dqn-pop {
+    font-size: 26px;
+    font-weight: 800;
+    text-anchor: middle;
+    fill: var(--diagram-yellow);
+    paint-order: stroke;
+    stroke: #000;
+    stroke-width: 6px;
+  }
+
+  .dqn-card {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+
+    &.muted {
+      fill: color-mix(in srgb, var(--diagram-red) 6%, var(--diagram-background));
+    }
+  }
+  .dqn-paper-title {
+    font-size: 30px;
+    font-weight: 700;
+  }
+  .dqn-paper-meta {
+    font-size: 24px;
+    fill: var(--diagram-muted);
+  }
+  .dqn-cartridge {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+
+    &.focus {
+      stroke: var(--diagram-yellow);
+      stroke-width: 3;
+    }
+  }
+  .dqn-cartridge-text {
+    font-size: 24px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .dqn-pixels {
+    image-rendering: pixelated;
+  }
+  .dqn-thumb-frame {
+    fill: none;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .dqn-label {
+    font-size: 26px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .dqn-big-number {
+    font-size: 56px;
+    font-weight: 800;
+    text-anchor: middle;
+    font-variant-numeric: tabular-nums;
+  }
+  .dqn-rules-text {
+    font-size: 32px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-red);
+  }
+  .dqn-cross {
+    stroke: var(--diagram-red);
+    stroke-width: 3;
+    opacity: .5;
+  }
+  .dqn-stage {
+    font-size: 54px;
+    font-weight: 800;
+    text-anchor: middle;
+    fill: var(--diagram-yellow);
+  }
+  .dqn-stage-note {
+    font-size: 32px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .dqn-miss-count {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-red);
+  }
+  .dqn-footnote {
+    font-size: 20px;
+    text-anchor: middle;
+    fill: var(--diagram-subtle);
+  }
+
+  .dqn-agent {
+    fill: color-mix(in srgb, var(--diagram-blue) 14%, var(--diagram-background));
+    stroke: var(--diagram-blue);
+    stroke-width: 3;
+  }
+  .dqn-agent-text {
+    font-size: 34px;
+    font-weight: 800;
+    text-anchor: middle;
+  }
+  .dqn-arrow {
+    fill: none;
+    stroke-width: 4;
+    stroke-dasharray: 10 8;
+
+    &.action {
+      stroke: var(--diagram-blue);
+    }
+    &.observe {
+      stroke: var(--diagram-yellow);
+    }
+  }
+  .dqn-arrow-label {
+    font-size: 26px;
+    font-weight: 700;
+
+    &.action {
+      fill: var(--diagram-blue);
+    }
+    &.observe {
+      fill: var(--diagram-yellow);
+    }
+  }
+  .dqn-reward {
+    font-size: 34px;
+    font-weight: 800;
+    text-anchor: middle;
+    fill: var(--diagram-yellow);
+  }
+  .dqn-dog-rule {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .dqn-bar-track {
+    fill: var(--diagram-grid);
+  }
+  .dqn-bar {
+    fill: var(--diagram-blue);
+
+    &.best {
+      fill: var(--diagram-green);
+    }
+  }
+  .dqn-bar-label {
+    font-size: 24px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+
+  .dqn-layer {
+    fill: color-mix(in srgb, var(--diagram-purple) 16%, var(--diagram-background));
+    stroke: var(--diagram-purple);
+    stroke-width: 2;
+
+    &.input {
+      fill: none;
+      stroke: var(--diagram-muted);
+    }
+    &.output {
+      fill: color-mix(in srgb, var(--diagram-green) 16%, var(--diagram-background));
+      stroke: var(--diagram-green);
+    }
+  }
+  .dqn-layer-label {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .dqn-layer-detail {
+    font-size: 22px;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .dqn-flow {
+    fill: none;
+    stroke: var(--diagram-line);
+    stroke-width: 3;
+  }
+}

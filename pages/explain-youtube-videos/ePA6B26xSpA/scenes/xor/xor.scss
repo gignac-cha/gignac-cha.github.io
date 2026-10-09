@@ -1,0 +1,183 @@
+.xor {
+  .xor-switch-name {
+    font-size: 40px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .xor-wire {
+    fill: none;
+    stroke: var(--diagram-line);
+    stroke-width: 4;
+  }
+  .xor-switch {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-subtle);
+    stroke-width: 3;
+    transition: fill .2s, stroke .2s;
+
+    &.on {
+      fill: color-mix(in srgb, var(--diagram-blue) 30%, var(--diagram-background));
+      stroke: var(--diagram-blue);
+    }
+  }
+  .xor-knob {
+    fill: var(--diagram-text);
+  }
+  .xor-lamp {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-subtle);
+    stroke-width: 4;
+    transition: fill .2s, stroke .2s;
+
+    &.on {
+      fill: color-mix(in srgb, var(--diagram-yellow) 55%, var(--diagram-background));
+      stroke: var(--diagram-yellow);
+    }
+  }
+  .xor-lamp-glow {
+    fill: color-mix(in srgb, var(--diagram-yellow) 22%, transparent);
+    filter: blur(24px);
+    opacity: 0;
+    transition: opacity .2s;
+
+    .lit & {
+      opacity: 1;
+    }
+  }
+  .xor-lamp-state {
+    font-size: 34px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+
+    .lit & {
+      fill: var(--diagram-yellow);
+    }
+  }
+  .xor-rule {
+    font-size: 34px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .xor-edge {
+    stroke: var(--diagram-line);
+    stroke-width: 4;
+  }
+  .xor-input {
+    fill: color-mix(in srgb, var(--diagram-blue) 14%, var(--diagram-background));
+    stroke: var(--diagram-blue);
+    stroke-width: 4;
+  }
+  .xor-node-label {
+    font-size: 36px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .xor-hidden {
+    fill: var(--diagram-background);
+    stroke-width: 5;
+  }
+  .xor-hidden-1 {
+    stroke: var(--diagram-green);
+  }
+  .xor-hidden-2 {
+    stroke: var(--diagram-purple);
+  }
+  .xor-output {
+    fill: color-mix(in srgb, var(--diagram-yellow) 20%, var(--diagram-background));
+    stroke: var(--diagram-yellow);
+    stroke-width: 4;
+  }
+  .xor-layer-label {
+    font-size: 30px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+
+    &.unknown {
+      fill: var(--diagram-red);
+    }
+  }
+  .xor-hidden-frame {
+    fill: none;
+    stroke: var(--diagram-red);
+    stroke-width: 3;
+    stroke-dasharray: 10 8;
+  }
+  .xor-unknown {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-red);
+    stroke-width: 3;
+  }
+  .xor-unknown-label {
+    font-size: 32px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-red);
+  }
+  .xor-plane {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .xor-region-on {
+    fill: color-mix(in srgb, var(--diagram-yellow) 12%, transparent);
+  }
+  .xor-region-off {
+    fill: color-mix(in srgb, var(--diagram-subtle) 14%, transparent);
+  }
+  .xor-line {
+    stroke: var(--diagram-text);
+    stroke-width: 5;
+  }
+  .xor-line-1 {
+    stroke: var(--diagram-green);
+  }
+  .xor-line-2 {
+    stroke: var(--diagram-purple);
+  }
+  .xor-axis {
+    font-size: 34px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .xor-dot {
+    stroke-width: 5;
+
+    &.on {
+      fill: var(--diagram-yellow);
+      stroke: var(--diagram-yellow);
+    }
+    &.off {
+      fill: var(--diagram-background);
+      stroke: var(--diagram-muted);
+    }
+  }
+  .xor-dot-label {
+    font-size: 28px;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .xor-ring {
+    fill: none;
+    stroke: var(--diagram-red);
+    stroke-width: 5;
+  }
+  .xor-focus {
+    fill: none;
+    stroke: var(--diagram-text);
+    stroke-width: 4;
+  }
+  .xor-verdict {
+    font-size: 34px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-red);
+
+    &.solved {
+      fill: var(--diagram-green);
+    }
+  }
+}

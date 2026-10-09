@@ -1,0 +1,105 @@
+.svm-frame {
+  fill: none;
+  stroke: var(--diagram-grid);
+  stroke-width: 2;
+}
+.svm-side-blue {
+  fill: color-mix(in srgb, var(--diagram-blue) 9%, transparent);
+}
+.svm-side-orange {
+  fill: color-mix(in srgb, var(--diagram-orange) 9%, transparent);
+}
+.svm-road {
+  fill: color-mix(in srgb, var(--diagram-text) 7%, transparent);
+}
+.svm-edge {
+  stroke: var(--diagram-muted);
+  stroke-width: 2;
+  stroke-dasharray: 10 10;
+}
+.svm-boundary {
+  stroke: var(--diagram-text);
+  stroke-width: 3;
+}
+.svm-candidate {
+  stroke: var(--diagram-muted);
+  stroke-width: 2;
+}
+.svm-road-label {
+  font-size: 28px;
+  fill: var(--diagram-muted) !important;
+}
+.svm-point {
+  stroke: var(--diagram-background);
+  stroke-width: 3;
+}
+.svm-blue {
+  fill: var(--diagram-blue);
+}
+.svm-orange {
+  fill: var(--diagram-orange);
+}
+.svm-test {
+  fill: var(--diagram-subtle);
+  stroke: var(--diagram-text);
+  stroke-dasharray: 4 4;
+
+  &.svm-test-classified {
+    fill: var(--diagram-orange);
+    stroke: var(--diagram-text);
+    stroke-dasharray: none;
+  }
+}
+.svm-ring {
+  fill: none;
+  stroke: var(--diagram-yellow);
+  stroke-width: 3;
+}
+.svm-note {
+  font-size: 28px;
+  fill: var(--diagram-muted) !important;
+}
+.svm-note-strong {
+  fill: var(--diagram-yellow) !important;
+}
+.svm-caption {
+  font-size: 30px;
+  text-anchor: middle;
+  fill: var(--diagram-text) !important;
+}
+.svm-network-edge {
+  stroke: var(--diagram-line);
+  stroke-width: 1.5;
+}
+.svm-network-node {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-muted);
+  stroke-width: 3;
+}
+.svm-box {
+  rect {
+    fill: #050506;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+}
+.svm-box-mark {
+  font-size: 140px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-subtle) !important;
+}
+.svm-compare-title {
+  font-size: 40px;
+  font-weight: 700;
+  text-anchor: middle;
+
+  &.svm-chosen {
+    fill: var(--diagram-green) !important;
+  }
+}
+.svm-compare-note {
+  font-size: 28px;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}

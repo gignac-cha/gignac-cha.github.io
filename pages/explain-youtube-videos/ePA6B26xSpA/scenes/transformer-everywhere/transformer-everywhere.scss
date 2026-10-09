@@ -1,0 +1,55 @@
+.transformer-everywhere-link {
+  fill: none;
+  stroke: #5b9dff;
+  stroke-width: 3;
+  stroke-dasharray: 10 10;
+}
+.transformer-everywhere-ripple {
+  fill: none;
+  stroke: #5b9dff;
+  stroke-width: 3;
+}
+.transformer-everywhere-label {
+  font-size: 24px;
+  font-weight: 600;
+  fill: #8fb4ec !important;
+}
+.transformer-everywhere-card {
+  rect {
+    fill: #15161b;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+}
+.transformer-everywhere-card-field {
+  font-size: 32px;
+  font-weight: 800;
+}
+.transformer-everywhere-card-model {
+  font-size: 22px;
+  fill: var(--diagram-muted) !important;
+}
+.transformer-everywhere-model {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-green) 14%, var(--diagram-background));
+    stroke: var(--diagram-green);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 24px;
+    font-weight: 700;
+  }
+}
+.transformer-everywhere-chatgpt {
+  font-size: 64px;
+  font-weight: 800;
+}
+.transformer-everywhere-expansion {
+  font-size: 30px;
+  font-weight: 700;
+  fill: var(--diagram-muted) !important;
+}
+.transformer-everywhere-chatgpt.highlight,
+.transformer-everywhere-expansion.highlight {
+  fill: var(--diagram-yellow) !important;
+}

@@ -1,0 +1,137 @@
+.imagenet-cells rect {
+  fill: var(--diagram-grid);
+
+  &.labeled {
+    fill: color-mix(in srgb, var(--diagram-green) 70%, transparent);
+  }
+  &.color-0 {
+    fill: var(--diagram-blue);
+  }
+  &.color-1 {
+    fill: var(--diagram-orange);
+  }
+  &.color-2 {
+    fill: var(--diagram-green);
+  }
+  &.color-3 {
+    fill: var(--diagram-purple);
+  }
+  &.color-4 {
+    fill: var(--diagram-yellow);
+  }
+  &.color-5 {
+    fill: var(--diagram-red);
+  }
+}
+.imagenet-tile {
+  fill: #1b1c22;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+
+  &.cat {
+    stroke: var(--diagram-blue);
+    stroke-width: 6;
+  }
+  &.dog {
+    stroke: var(--diagram-orange);
+    stroke-width: 6;
+  }
+}
+.imagenet-emoji {
+  font-size: 56px;
+  text-anchor: middle;
+}
+.imagenet-emoji-large {
+  font-size: 110px;
+}
+.imagenet-tag-band {
+  fill: var(--diagram-yellow);
+}
+.imagenet-tag-text {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: #1a1405 !important;
+}
+.imagenet-title {
+  font-size: 40px;
+  font-weight: 800;
+  fill: var(--diagram-yellow) !important;
+}
+.imagenet-people {
+  fill: var(--diagram-muted);
+
+  &.crowd {
+    fill: var(--diagram-green);
+  }
+}
+.imagenet-note {
+  font-size: 30px;
+  fill: var(--diagram-muted) !important;
+}
+.imagenet-center {
+  text-anchor: middle;
+}
+.imagenet-card {
+  fill: #17181d;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.imagenet-question {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.imagenet-button {
+  fill: transparent;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+
+  &.pressed {
+    fill: var(--diagram-green);
+    stroke: var(--diagram-green);
+  }
+}
+.imagenet-button-text {
+  font-size: 28px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.imagenet-big {
+  font-size: 64px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--diagram-green) !important;
+}
+.imagenet-category-title {
+  font-size: 40px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.imagenet-chip {
+  fill: transparent;
+  stroke-width: 3;
+
+  &.color-0 {
+    stroke: var(--diagram-blue);
+  }
+  &.color-1 {
+    stroke: var(--diagram-orange);
+  }
+  &.color-2 {
+    stroke: var(--diagram-green);
+  }
+  &.color-3 {
+    stroke: var(--diagram-purple);
+  }
+  &.color-4 {
+    stroke: var(--diagram-yellow);
+  }
+  &.color-5 {
+    stroke: var(--diagram-red);
+  }
+}
+.imagenet-chip-text {
+  font-size: 28px;
+  text-anchor: middle;
+}

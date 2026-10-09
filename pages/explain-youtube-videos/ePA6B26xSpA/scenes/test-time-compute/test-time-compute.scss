@@ -1,0 +1,178 @@
+.diagram text.test-time-compute-heading {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+// 손잡이.
+.test-time-compute-knob-label {
+  font-size: 30px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.diagram text.test-time-compute-knob-subtitle {
+  font-size: 21px;
+  text-anchor: middle;
+  fill: var(--diagram-muted);
+}
+.test-time-compute-tick {
+  stroke: var(--diagram-subtle);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.test-time-compute-knob {
+  fill: #1d1e24;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+  transition: stroke .3s;
+
+  &.turning {
+    stroke: var(--diagram-blue);
+  }
+  &.fresh {
+    stroke: var(--diagram-yellow);
+  }
+}
+.test-time-compute-pointer {
+  stroke: var(--diagram-text);
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+.test-time-compute-cap {
+  fill: var(--diagram-text);
+}
+.test-time-compute-new {
+  fill: color-mix(in srgb, var(--diagram-yellow) 20%, transparent);
+  stroke: var(--diagram-yellow);
+  stroke-width: 2;
+}
+.diagram text.test-time-compute-new-text {
+  font-size: 18px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-yellow);
+}
+.test-time-compute-train-chip {
+  fill: #23252d;
+  stroke: var(--diagram-line);
+  stroke-width: 1.5;
+}
+.test-time-compute-think-chip {
+  fill: color-mix(in srgb, var(--diagram-yellow) 14%, #23252d);
+  stroke: var(--diagram-yellow);
+  stroke-width: 1.5;
+}
+.test-time-compute-train-chip-text {
+  font-size: 19px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+// 성능 눈금.
+.test-time-compute-meter-label {
+  font-size: 24px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.test-time-compute-meter {
+  fill: var(--diagram-grid);
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.test-time-compute-meter-train {
+  fill: var(--diagram-blue);
+}
+.test-time-compute-meter-think {
+  fill: var(--diagram-yellow);
+}
+.diagram text.test-time-compute-note {
+  font-size: 18px;
+  fill: var(--diagram-muted);
+}
+
+// 시험 문제와 연습장.
+.test-time-compute-exam {
+  fill: #1b1c22;
+  stroke: var(--diagram-line);
+  stroke-width: 1.5;
+}
+.diagram text.test-time-compute-exam-label {
+  font-size: 18px;
+  font-weight: 700;
+  fill: var(--diagram-muted);
+}
+.test-time-compute-exam-problem {
+  font-size: 46px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.test-time-compute-bubble {
+  fill: #23252d;
+  stroke: var(--diagram-line);
+  stroke-width: 1.5;
+}
+.diagram text.test-time-compute-bubble-label {
+  font-size: 18px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-muted);
+}
+.diagram text.test-time-compute-bubble-guess {
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-subtle);
+}
+.test-time-compute-paper {
+  fill: #f1efe8;
+}
+.test-time-compute-rule {
+  stroke: #b9cde6;
+  stroke-width: 1.5;
+}
+.diagram text.test-time-compute-paper-title {
+  font-size: 18px;
+  font-weight: 800;
+  fill: #6b6f7a;
+}
+.diagram text.test-time-compute-hand {
+  font-family: "Bradley Hand", "Noteworthy", "Chalkboard SE", "Segoe Print", cursive;
+  font-size: 25px;
+  fill: #20232b;
+}
+.diagram text.test-time-compute-solved {
+  font-weight: 700;
+  fill: #1f8a50;
+}
+
+// 연산(GPU)이 쓰이는 자리.
+.test-time-compute-chip {
+  fill: #23252d;
+  stroke: var(--diagram-blue);
+  stroke-width: 2.5;
+}
+.test-time-compute-pin {
+  stroke: var(--diagram-blue);
+  stroke-width: 3;
+}
+.test-time-compute-chip-text {
+  font-size: 17px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.test-time-compute-gpu-new {
+  .test-time-compute-chip {
+    stroke: var(--diagram-yellow);
+  }
+  .test-time-compute-pin {
+    stroke: var(--diagram-yellow);
+  }
+}
+.diagram text.test-time-compute-place {
+  font-size: 20px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-muted);
+}
+.diagram text.test-time-compute-place-new {
+  fill: var(--diagram-yellow);
+}

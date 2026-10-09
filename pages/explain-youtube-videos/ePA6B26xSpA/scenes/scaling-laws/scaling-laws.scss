@@ -1,0 +1,333 @@
+.scaling-laws-heading-title {
+  font-size: 44px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--diagram-yellow) !important;
+}
+.scaling-laws-heading-subtitle {
+  font-size: 24px;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.scaling-laws-axis {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+}
+.scaling-laws-grid {
+  stroke: var(--diagram-grid);
+  stroke-width: 2;
+}
+.scaling-laws-tick-label {
+  font-size: 22px;
+  fill: var(--diagram-muted) !important;
+}
+.scaling-laws-axis-label {
+  font-size: 24px;
+  font-weight: 600;
+  fill: var(--diagram-muted) !important;
+}
+.scaling-laws-curve {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  &.measured {
+    stroke: var(--diagram-blue);
+  }
+  &.predicted {
+    stroke: var(--diagram-yellow);
+    stroke-width: 5;
+    stroke-dasharray: 2 11;
+  }
+  &.size-0 {
+    stroke: color-mix(in srgb, var(--diagram-green) 30%, var(--diagram-subtle));
+  }
+  &.size-1 {
+    stroke: color-mix(in srgb, var(--diagram-green) 55%, var(--diagram-subtle));
+  }
+  &.size-2 {
+    stroke: color-mix(in srgb, var(--diagram-green) 80%, var(--diagram-subtle));
+  }
+  &.size-3 {
+    stroke: var(--diagram-green);
+  }
+}
+.scaling-laws-law {
+  font-size: 26px;
+  font-weight: 600;
+  font-style: italic;
+  fill: var(--diagram-blue) !important;
+}
+.scaling-laws-predict-label {
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--diagram-yellow) !important;
+}
+.scaling-laws-guide {
+  stroke: var(--diagram-yellow);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+.scaling-laws-guide-label {
+  font-size: 24px;
+  font-weight: 700;
+  fill: var(--diagram-yellow) !important;
+}
+.scaling-laws-dot {
+  stroke: var(--diagram-background);
+  stroke-width: 3;
+
+  &.size-0 {
+    fill: color-mix(in srgb, var(--diagram-green) 30%, var(--diagram-subtle));
+  }
+  &.size-1 {
+    fill: color-mix(in srgb, var(--diagram-green) 55%, var(--diagram-subtle));
+  }
+  &.size-2 {
+    fill: color-mix(in srgb, var(--diagram-green) 80%, var(--diagram-subtle));
+  }
+  &.size-3 {
+    fill: var(--diagram-green);
+  }
+}
+.scaling-laws-size-header {
+  font-size: 22px;
+  fill: var(--diagram-muted) !important;
+}
+.scaling-laws-size-label {
+  font-size: 26px;
+  font-weight: 700;
+
+  &.size-0 {
+    fill: color-mix(in srgb, var(--diagram-green) 30%, var(--diagram-subtle)) !important;
+  }
+  &.size-1 {
+    fill: color-mix(in srgb, var(--diagram-green) 55%, var(--diagram-subtle)) !important;
+  }
+  &.size-2 {
+    fill: color-mix(in srgb, var(--diagram-green) 80%, var(--diagram-subtle)) !important;
+  }
+  &.size-3 {
+    fill: var(--diagram-green) !important;
+  }
+}
+.scaling-laws-note {
+  font-size: 28px;
+  font-weight: 700;
+  fill: var(--diagram-green) !important;
+}
+.scaling-laws-source {
+  font-size: 20px;
+  fill: var(--diagram-subtle) !important;
+}
+.scaling-laws-soil {
+  fill: color-mix(in srgb, #8a5a32 45%, var(--diagram-background));
+  stroke: #8a5a32;
+  stroke-width: 2;
+}
+.scaling-laws-crop {
+  fill: none;
+  stroke: var(--diagram-green);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.scaling-laws-farm-label {
+  font-size: 26px;
+  font-weight: 600;
+}
+.scaling-laws-farm-double {
+  path {
+    fill: none;
+    stroke: var(--diagram-yellow);
+    stroke-width: 3;
+  }
+  text {
+    font-size: 34px;
+    font-weight: 800;
+    fill: var(--diagram-yellow) !important;
+  }
+}
+.scaling-laws-cloud {
+  fill: #2a2c35;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.scaling-laws-drop {
+  fill: var(--diagram-blue);
+}
+.scaling-laws-bag {
+  fill: color-mix(in srgb, var(--diagram-orange) 30%, var(--diagram-background));
+  stroke: var(--diagram-orange);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+.scaling-laws-bag-tie {
+  stroke: var(--diagram-orange);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.scaling-laws-table-title {
+  font-size: 30px;
+  font-weight: 700;
+}
+.scaling-laws-table-frame {
+  fill: #141519;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.scaling-laws-table-head {
+  font-size: 22px;
+  font-weight: 600;
+  fill: var(--diagram-muted) !important;
+}
+.scaling-laws-table-rule {
+  stroke: var(--diagram-grid);
+  stroke-width: 2;
+}
+.scaling-laws-table-cell {
+  font-size: 30px;
+  font-weight: 600;
+}
+.scaling-laws-table-value {
+  font-size: 32px;
+  font-weight: 800;
+  fill: var(--diagram-green) !important;
+}
+.scaling-laws-table-note {
+  font-size: 20px;
+  fill: var(--diagram-muted) !important;
+}
+.scaling-laws-shift-prefix {
+  font-size: 34px;
+  fill: var(--diagram-muted) !important;
+}
+.scaling-laws-shift-word {
+  font-size: 52px;
+  font-weight: 800;
+  fill: var(--diagram-red) !important;
+
+  &.engineering {
+    fill: var(--diagram-green) !important;
+  }
+  &.swap-glow {
+    fill: none !important;
+  }
+}
+.scaling-laws-cursor {
+  line {
+    stroke: var(--diagram-yellow);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+  }
+  circle {
+    fill: var(--diagram-yellow);
+    stroke: var(--diagram-background);
+    stroke-width: 3;
+  }
+}
+.scaling-laws-readout {
+  rect {
+    fill: #141519;
+    stroke: var(--diagram-yellow);
+    stroke-width: 2;
+  }
+}
+.scaling-laws-readout-in {
+  font-size: 28px;
+  font-weight: 600;
+  fill: var(--diagram-muted) !important;
+}
+.scaling-laws-readout-out {
+  font-size: 34px;
+  font-weight: 800;
+  fill: var(--diagram-yellow) !important;
+}
+.scaling-laws-band {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-blue) 7%, transparent);
+  }
+}
+.scaling-laws-band-label {
+  font-size: 22px;
+  fill: var(--diagram-blue) !important;
+}
+.scaling-laws-marker {
+  circle {
+    stroke: var(--diagram-background);
+    stroke-width: 3;
+  }
+  .scaling-laws-marker-ring {
+    fill: none;
+    stroke-width: 3;
+    opacity: .5;
+  }
+  &.gpt2 circle {
+    fill: var(--diagram-blue);
+  }
+  &.gpt2 .scaling-laws-marker-ring {
+    stroke: var(--diagram-blue);
+  }
+  &.gpt3 circle {
+    fill: var(--diagram-green);
+  }
+  &.gpt3 .scaling-laws-marker-ring {
+    stroke: var(--diagram-green);
+  }
+  &.pulse .scaling-laws-marker-ring {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px var(--diagram-green));
+  }
+}
+.scaling-laws-marker-name {
+  font-size: 30px;
+  font-weight: 800;
+
+  &.big {
+    font-size: 40px;
+    fill: var(--diagram-green) !important;
+  }
+}
+.scaling-laws-marker-date {
+  font-size: 22px;
+  fill: var(--diagram-muted) !important;
+}
+.scaling-laws-marker-count {
+  font-size: 26px;
+  fill: var(--diagram-muted) !important;
+
+  &.big {
+    font-size: 52px;
+    font-weight: 800;
+    fill: var(--diagram-yellow) !important;
+  }
+}
+.scaling-laws-ratio {
+  path {
+    fill: none;
+    stroke: var(--diagram-yellow);
+    stroke-width: 3;
+    stroke-dasharray: 1;
+  }
+}
+.scaling-laws-ratio-text {
+  font-size: 40px;
+  font-weight: 800;
+  fill: var(--diagram-yellow) !important;
+}
+.scaling-laws-computer {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-green) 35%, var(--diagram-background));
+    stroke: var(--diagram-green);
+    stroke-width: 1;
+  }
+}
+.scaling-laws-computer-label {
+  font-size: 26px;
+  font-weight: 600;
+}
+.scaling-laws-computer-subtitle {
+  font-size: 22px;
+  fill: var(--diagram-muted) !important;
+}

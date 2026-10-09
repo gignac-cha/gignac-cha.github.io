@@ -1,0 +1,109 @@
+.chatgpt-pieces-heading {
+  font-size: 34px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.chatgpt-pieces-lab {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-grid) 40%, var(--diagram-background));
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+    stroke-dasharray: 10 8;
+  }
+}
+.chatgpt-pieces-lab-label {
+  font-size: 24px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.chatgpt-pieces-block {
+  --tone: var(--diagram-blue);
+
+  &.green {
+    --tone: var(--diagram-green);
+  }
+  &.orange {
+    --tone: var(--diagram-orange);
+  }
+  &.purple {
+    --tone: var(--diagram-purple);
+  }
+  rect {
+    fill: color-mix(in srgb, var(--tone) 20%, var(--diagram-background));
+    stroke: var(--tone);
+    stroke-width: 3;
+  }
+}
+.chatgpt-pieces-block-name {
+  font-size: 32px;
+  font-weight: 800;
+}
+.chatgpt-pieces-block-year {
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: end;
+  fill: var(--diagram-muted) !important;
+}
+.chatgpt-pieces-link {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+  stroke-dasharray: 10 6;
+}
+.chatgpt-pieces-chat {
+  fill: #212121;
+  stroke: #3a3a3a;
+  stroke-width: 2;
+}
+.chatgpt-pieces-chat-title {
+  font-size: 40px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.chatgpt-pieces-chat-subtitle {
+  font-size: 22px;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.chatgpt-pieces-input {
+  rect {
+    fill: #303030;
+    stroke: #444;
+    stroke-width: 1.5;
+  }
+  &.lit rect {
+    stroke: var(--diagram-text);
+    stroke-width: 2.5;
+  }
+}
+.chatgpt-pieces-placeholder {
+  font-size: 24px;
+  fill: #9a9a9a !important;
+}
+.chatgpt-pieces-send {
+  fill: var(--diagram-text);
+}
+.chatgpt-pieces-send-arrow {
+  fill: none;
+  stroke: #212121;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.chatgpt-pieces-bubble {
+  fill: #303030;
+}
+.chatgpt-pieces-bubble-text {
+  font-size: 22px;
+  text-anchor: middle;
+}
+.chatgpt-pieces-anyone {
+  font-size: 30px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--diagram-yellow) !important;
+}
+.chatgpt-pieces-person {
+  fill: var(--diagram-blue);
+}

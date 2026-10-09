@@ -1,0 +1,118 @@
+.bert-search-box {
+  rect {
+    fill: #17181d;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .bert-search-icon {
+    fill: none;
+    stroke: var(--diagram-muted);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+}
+.bert-search-query {
+  font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace !important;
+  font-size: 40px;
+  white-space: pre;
+}
+.bert-search-mark {
+  fill: color-mix(in srgb, var(--diagram-yellow) 22%, transparent);
+  stroke: var(--diagram-yellow);
+  stroke-width: 2;
+}
+.bert-search-links {
+  path {
+    fill: none;
+    stroke: var(--diagram-yellow);
+    stroke-width: 3;
+    stroke-dasharray: 1;
+    stroke-linecap: round;
+  }
+}
+.bert-search-link-label {
+  font-size: 24px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--diagram-yellow) !important;
+}
+.bert-search-result {
+  rect {
+    fill: #15161a;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  &.after rect {
+    stroke: var(--diagram-green);
+    fill: color-mix(in srgb, var(--diagram-green) 9%, var(--diagram-background));
+  }
+}
+.bert-search-result-heading {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  fill: var(--diagram-muted) !important;
+
+  .after & {
+    fill: var(--diagram-green) !important;
+  }
+}
+.bert-search-result-body {
+  font-size: 34px;
+  font-weight: 700;
+}
+.bert-search-result-note {
+  font-size: 22px;
+  fill: var(--diagram-muted) !important;
+}
+.bert-search-cross {
+  fill: none;
+  stroke: var(--diagram-red);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.bert-search-check {
+  fill: none;
+  stroke: var(--diagram-green);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.bert-search-quote {
+  font-size: 40px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.bert-search-source {
+  font-size: 22px;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.bert-search-share-icon {
+  rect {
+    fill: #17181d;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  circle, line {
+    fill: none;
+    stroke: var(--diagram-subtle);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  &.lit {
+    rect {
+      fill: color-mix(in srgb, var(--diagram-yellow) 22%, var(--diagram-background));
+      stroke: var(--diagram-yellow);
+    }
+    circle, line {
+      stroke: var(--diagram-yellow);
+    }
+  }
+}
+.bert-search-share-label {
+  font-size: 26px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--diagram-yellow) !important;
+}

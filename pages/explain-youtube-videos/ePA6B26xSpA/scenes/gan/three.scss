@@ -1,0 +1,20 @@
+// GAN Three.js 판. 공통 글자 모양은 gan.scss 의 .gan 규칙을 그대로 쓴다.
+.gan-three {
+  // 카드 글자는 입체 카드 앞면에 겹치므로 상자 없이 글자와 계기판만.
+  .gan-three-card .gan-card-title {
+    transition: fill .3s;
+  }
+  .gan-three-card.focus .gan-card-title {
+    fill: var(--card-color);
+  }
+  .gan-three-pulse {
+    fill: #ffd59b;
+    filter: drop-shadow(0 0 10px var(--diagram-orange));
+  }
+  .gan-three-stage {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 26px;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+}

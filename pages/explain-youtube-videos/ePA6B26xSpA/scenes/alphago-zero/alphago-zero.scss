@@ -1,0 +1,97 @@
+.alphago-zero {
+  .zero-card {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+
+    &.rules {
+      stroke: var(--diagram-green);
+    }
+  }
+  .none .zero-card {
+    stroke: var(--diagram-red);
+  }
+  .zero-card-title {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .zero-card-number {
+    font-size: 72px;
+    font-weight: 900;
+    text-anchor: middle;
+
+    &.rules {
+      font-size: 52px;
+      fill: var(--diagram-green);
+    }
+  }
+  .none .zero-card-number {
+    fill: var(--diagram-red);
+  }
+  .zero-card-note {
+    font-size: 22px;
+    text-anchor: middle;
+    fill: var(--diagram-subtle);
+  }
+  .zero-board-label {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .zero-link {
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+
+    &.lit {
+      stroke: var(--diagram-green);
+    }
+  }
+  .zero-track {
+    stroke: var(--diagram-grid);
+    stroke-width: 10;
+    stroke-linecap: round;
+  }
+  .zero-progress {
+    stroke: var(--diagram-green);
+    stroke-width: 10;
+    stroke-linecap: round;
+  }
+  .zero-tick {
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .zero-tick-label {
+    font-size: 22px;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .zero-head {
+    fill: var(--diagram-green);
+    filter: drop-shadow(0 0 8px var(--diagram-green));
+  }
+  .zero-caught {
+    font-size: 24px;
+    font-weight: 700;
+    text-anchor: start;
+    fill: var(--diagram-green);
+  }
+  .zero-cell {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 1;
+
+    &.won {
+      fill: var(--diagram-green);
+      stroke: none;
+    }
+  }
+  .zero-tally {
+    font-size: 48px;
+    font-weight: 900;
+    text-anchor: middle;
+    fill: var(--diagram-green);
+  }
+}

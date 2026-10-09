@@ -1,0 +1,109 @@
+.depth {
+  .depth-tower-name {
+    font-size: 34px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .depth-tower-layers {
+    font-size: 28px;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .depth-homage {
+    transition: fill .3s;
+
+    &.on {
+      fill: var(--diagram-yellow);
+    }
+  }
+
+  .depth-row-level {
+    font-size: 28px;
+    fill: var(--diagram-muted);
+  }
+  .depth-row-name {
+    font-size: 36px;
+    font-weight: 700;
+  }
+  .depth-tile {
+    fill: #16171b;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .depth-bracket {
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .depth-abstract {
+    path {
+      fill: none;
+      stroke: var(--diagram-yellow);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    text {
+      font-size: 30px;
+      font-weight: 600;
+      text-anchor: middle;
+      fill: var(--diagram-yellow);
+    }
+  }
+
+  .depth-ghosts {
+    path {
+      fill: none;
+      stroke: var(--diagram-muted);
+      stroke-width: 2;
+      stroke-dasharray: 8 8;
+    }
+  }
+  .depth-ghost-label {
+    font-size: 30px;
+    fill: var(--diagram-muted);
+  }
+
+  .depth-kernel rect {
+    fill: var(--diagram-yellow);
+  }
+  .depth-winner {
+    rect {
+      fill: var(--diagram-background);
+      stroke: var(--diagram-yellow);
+      stroke-width: 2;
+    }
+    text {
+      font-size: 28px;
+      font-weight: 600;
+      text-anchor: middle;
+      fill: var(--diagram-yellow);
+    }
+  }
+  .depth-belief {
+    path {
+      fill: none;
+      stroke: var(--diagram-yellow);
+      stroke-width: 4;
+      stroke-dasharray: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  }
+  .depth-belief-label {
+    font-size: 36px;
+    font-weight: 700;
+    fill: var(--diagram-yellow);
+  }
+}
+
+// Three.js 판(three.ts)에서 겹쳐 쓰는 글자.
+.depth-three {
+  .depth-abstract-label {
+    font-size: 30px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--diagram-yellow);
+  }
+}

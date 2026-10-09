@@ -1,0 +1,405 @@
+.residual-network {
+  .resnet-caption {
+    font-size: 36px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .resnet-layer {
+    &.shallow {
+      fill: var(--diagram-blue);
+    }
+    &.deep {
+      fill: var(--diagram-orange);
+    }
+    &.alex {
+      fill: var(--diagram-muted);
+    }
+  }
+  .resnet-stack-label {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+
+    &.shallow {
+      fill: var(--diagram-blue);
+    }
+    &.deep {
+      fill: var(--diagram-orange);
+    }
+    &.alex {
+      fill: var(--diagram-muted);
+    }
+  }
+  .resnet-chart-title {
+    font-size: 32px;
+    font-weight: 700;
+
+    &.small {
+      font-size: 28px;
+      fill: var(--diagram-muted);
+    }
+  }
+  .resnet-chart-subtitle {
+    font-size: 24px;
+    fill: var(--diagram-muted);
+  }
+  .resnet-axis {
+    fill: none;
+    stroke: var(--diagram-line);
+    stroke-width: 3;
+  }
+  .resnet-axis-label {
+    font-size: 22px;
+    fill: var(--diagram-subtle);
+  }
+  .resnet-curve {
+    fill: none;
+    stroke-width: 5;
+    stroke-linejoin: round;
+
+    &.shallow {
+      stroke: var(--diagram-blue);
+    }
+    &.deep {
+      stroke: var(--diagram-orange);
+    }
+  }
+  .resnet-curve-label {
+    font-size: 24px;
+    font-weight: 700;
+
+    &.shallow {
+      fill: var(--diagram-blue);
+    }
+    &.deep {
+      fill: var(--diagram-orange);
+    }
+  }
+  .highlight .resnet-axis {
+    stroke: var(--diagram-red);
+  }
+  .resnet-verdict {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-red);
+  }
+  .resnet-tag {
+    fill: color-mix(in srgb, var(--diagram-red) 12%, var(--diagram-background));
+    stroke: var(--diagram-red);
+    stroke-width: 2;
+  }
+  .resnet-tag-text {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-red);
+  }
+
+  // 굵기는 장면이 줄 길이에 맞춰 바꾼다(작아져도 선이 같은 굵기로 보이게).
+  .resnet-person {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-muted);
+    vector-effect: non-scaling-stroke;
+  }
+  .resnet-line-bracket {
+    fill: none;
+    stroke: var(--diagram-subtle);
+    stroke-width: 2;
+  }
+  .resnet-line-count {
+    font-size: 24px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .resnet-travel-text {
+    font-size: 24px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--diagram-yellow);
+
+    &.garbled {
+      fill: var(--diagram-red);
+    }
+  }
+  .resnet-bubble {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+
+    &.broken {
+      stroke: var(--diagram-red);
+    }
+  }
+  .resnet-bubble-text {
+    font-size: 28px;
+    font-weight: 600;
+    text-anchor: middle;
+
+    &.broken {
+      fill: var(--diagram-red);
+    }
+  }
+  .resnet-runner {
+    fill: var(--diagram-yellow);
+    filter: drop-shadow(0 0 10px var(--diagram-yellow));
+  }
+  .resnet-back-runner {
+    fill: var(--diagram-red);
+    filter: drop-shadow(0 0 10px var(--diagram-red));
+  }
+  .resnet-back-note {
+    font-size: 28px;
+    text-anchor: middle;
+    fill: var(--diagram-red);
+  }
+
+  .resnet-box {
+    stroke-width: 3;
+
+    &.io {
+      fill: var(--diagram-grid);
+      stroke: var(--diagram-muted);
+    }
+    &.layer {
+      fill: color-mix(in srgb, var(--diagram-purple) 14%, var(--diagram-background));
+      stroke: var(--diagram-purple);
+    }
+  }
+  .resnet-box-text {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .resnet-flow {
+    fill: none;
+    stroke: var(--diagram-line);
+    stroke-width: 4;
+  }
+  .resnet-plus {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-green);
+    stroke-width: 3;
+  }
+  .resnet-plus-text {
+    font-size: 40px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-green);
+  }
+  .resnet-skip {
+    fill: none;
+    stroke: var(--diagram-green);
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+  .resnet-skip-label {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-green);
+  }
+  .resnet-residual-label {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-purple);
+  }
+  .resnet-strike-text {
+    font-size: 26px;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .resnet-strike-line {
+    stroke: var(--diagram-red);
+    stroke-width: 4;
+  }
+  .resnet-chip {
+    stroke-width: 2;
+
+    &.io {
+      fill: var(--diagram-grid);
+      stroke: var(--diagram-line);
+    }
+    &.residual {
+      fill: color-mix(in srgb, var(--diagram-purple) 14%, var(--diagram-background));
+      stroke: var(--diagram-purple);
+    }
+  }
+  .resnet-chip-text {
+    font-size: 24px;
+    font-weight: 600;
+    text-anchor: middle;
+    font-variant-numeric: tabular-nums;
+  }
+  .resnet-operator {
+    font-size: 44px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .resnet-name {
+    font-size: 48px;
+    font-weight: 800;
+    text-anchor: middle;
+    fill: var(--diagram-green);
+  }
+  .resnet-pulse {
+    fill: var(--diagram-purple);
+    filter: drop-shadow(0 0 10px var(--diagram-purple));
+
+    &.skip {
+      fill: var(--diagram-green);
+      filter: drop-shadow(0 0 10px var(--diagram-green));
+    }
+    &.stairs {
+      fill: var(--diagram-purple);
+    }
+  }
+
+  .resnet-floor {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .resnet-stairs {
+    fill: color-mix(in srgb, var(--diagram-purple) 22%, var(--diagram-background));
+    stroke: var(--diagram-purple);
+    stroke-width: 3;
+    stroke-linejoin: round;
+
+    &.idle {
+      fill: none;
+      stroke: var(--diagram-subtle);
+      stroke-dasharray: 6 6;
+    }
+  }
+  .resnet-idle-text {
+    font-size: 22px;
+    font-weight: 700;
+    text-anchor: end;
+    fill: var(--diagram-muted);
+  }
+  .resnet-shaft {
+    fill: color-mix(in srgb, var(--diagram-green) 10%, var(--diagram-background));
+    stroke: var(--diagram-green);
+    stroke-width: 3;
+  }
+  .resnet-car {
+    fill: var(--diagram-green);
+
+    &.moving {
+      filter: drop-shadow(0 0 14px var(--diagram-green));
+    }
+  }
+  .resnet-building-label {
+    font-size: 24px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--diagram-purple);
+
+    &.skip {
+      fill: var(--diagram-green);
+    }
+  }
+  .resnet-meter-title {
+    font-size: 28px;
+    font-weight: 700;
+    fill: var(--diagram-muted);
+  }
+  .resnet-meter-label {
+    font-size: 26px;
+  }
+  .resnet-meter-track {
+    fill: var(--diagram-grid);
+  }
+  .resnet-meter {
+    &.stairs {
+      fill: var(--diagram-purple);
+    }
+    &.skip {
+      fill: var(--diagram-green);
+    }
+  }
+  .resnet-noloss {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-green);
+  }
+
+  .resnet-baseline {
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .resnet-cifar-bar {
+    fill: var(--diagram-green);
+  }
+  .resnet-bar-label {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .resnet-bar-note {
+    font-size: 20px;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .resnet-bar-value {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+    font-variant-numeric: tabular-nums;
+
+    &.resnet {
+      fill: var(--diagram-green);
+    }
+    &.human {
+      fill: var(--diagram-yellow);
+    }
+    &.past {
+      fill: var(--diagram-muted);
+    }
+  }
+  .resnet-better {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-green);
+  }
+  .resnet-ratio {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .resnet-error-bar {
+    &.past {
+      fill: var(--diagram-subtle);
+    }
+    &.human {
+      fill: var(--diagram-yellow);
+    }
+    &.resnet {
+      fill: var(--diagram-orange);
+      transition: fill .3s;
+
+      &.winner {
+        fill: var(--diagram-green);
+      }
+    }
+  }
+  .resnet-human-line {
+    stroke: var(--diagram-yellow);
+    stroke-width: 2;
+    stroke-dasharray: 8 6;
+  }
+}
+// 막대 값 글자가 사람 기준선과 겹쳐도 읽히게 배경색 테두리를 두른다.
+.residual-network .resnet-bar-value {
+  paint-order: stroke;
+  stroke: var(--diagram-background);
+  stroke-width: 8px;
+  stroke-linejoin: round;
+}

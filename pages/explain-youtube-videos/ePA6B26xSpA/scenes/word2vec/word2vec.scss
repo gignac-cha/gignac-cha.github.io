@@ -1,0 +1,196 @@
+.word2vec-caption {
+  font-size: 28px;
+  font-weight: 600;
+  fill: var(--diagram-muted) !important;
+}
+.word2vec-pixel {
+  &.word2vec-pixel-empty {
+    fill: #191b21;
+  }
+  &.word2vec-pixel-r {
+    fill: #e0524f;
+  }
+  &.word2vec-pixel-g {
+    fill: var(--diagram-green);
+  }
+  &.word2vec-pixel-s {
+    fill: #8a5a3a;
+  }
+}
+.word2vec-number {
+  font-size: 28px;
+  font-weight: 600;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+  fill: var(--diagram-subtle) !important;
+
+  &.on-color {
+    fill: #0f1013 !important;
+  }
+}
+.word2vec-big-word {
+  font-size: 104px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.word2vec-codes {
+  font-size: 36px;
+  font-weight: 600;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+  fill: var(--diagram-blue) !important;
+}
+.word2vec-no-link {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+  stroke-dasharray: 10 10;
+}
+.word2vec-cross {
+  circle {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-red);
+    stroke-width: 3;
+  }
+  path {
+    stroke: var(--diagram-red);
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+}
+
+.word2vec-unknown {
+  line {
+    stroke: var(--diagram-line);
+    stroke-width: 3;
+    stroke-dasharray: 10 10;
+  }
+  circle {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-subtle);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-muted) !important;
+  }
+}
+
+.word2vec-grid line {
+  stroke: var(--diagram-grid);
+  stroke-width: 2;
+}
+
+.word2vec-chip {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+}
+.word2vec-chip-label {
+  font-size: 34px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.word2vec-chip-id {
+  font-size: 28px;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+  fill: var(--diagram-subtle) !important;
+}
+.word2vec-dot {
+  fill: var(--diagram-muted);
+}
+.word2vec-label {
+  font-size: 30px;
+  fill: var(--diagram-muted) !important;
+  // 뒤로 지나가는 선이 글자를 가르지 않도록 배경색 테두리를 두른다.
+  paint-order: stroke;
+  stroke: var(--diagram-background);
+  stroke-width: 10px;
+  stroke-linejoin: round;
+}
+.word2vec-point {
+  &.focus {
+    .word2vec-dot {
+      fill: var(--diagram-blue);
+    }
+    .word2vec-label {
+      font-weight: 700;
+      fill: var(--diagram-blue) !important;
+    }
+  }
+  &.reference {
+    .word2vec-dot {
+      fill: var(--diagram-orange);
+    }
+    .word2vec-label {
+      font-weight: 700;
+      fill: var(--diagram-orange) !important;
+    }
+  }
+  &.hit {
+    .word2vec-dot {
+      fill: var(--diagram-green);
+    }
+    .word2vec-label {
+      font-size: 34px;
+      font-weight: 700;
+      fill: var(--diagram-green) !important;
+    }
+  }
+}
+
+.word2vec-friend {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-subtle);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+  }
+  text {
+    font-size: 28px;
+    text-anchor: middle;
+    fill: var(--diagram-muted) !important;
+  }
+}
+.word2vec-friend-lines line {
+  stroke: var(--diagram-yellow);
+  stroke-width: 2;
+  stroke-opacity: .6;
+}
+
+.word2vec-arrow {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  &.reference {
+    stroke: var(--diagram-orange);
+  }
+  &.result {
+    stroke: var(--diagram-blue);
+  }
+}
+.word2vec-parallel {
+  fill: none;
+  stroke: var(--diagram-subtle);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+.word2vec-target {
+  fill: none;
+  stroke: var(--diagram-green);
+  stroke-width: 3;
+  stroke-dasharray: 6 5;
+}
+.word2vec-formula {
+  font-size: 34px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-text) !important;
+}

@@ -1,0 +1,123 @@
+.alphago-moves {
+  .moves-fifth {
+    fill: color-mix(in srgb, var(--diagram-yellow) 55%, transparent);
+  }
+  .moves-fifth-label {
+    font-size: 22px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-yellow);
+  }
+  .moves-ring {
+    fill: none;
+    stroke: var(--diagram-blue);
+    stroke-width: 4;
+
+    &.lee {
+      stroke: var(--diagram-red);
+    }
+    &.glow {
+      stroke: var(--diagram-yellow);
+      filter: drop-shadow(0 0 10px var(--diagram-yellow));
+    }
+  }
+  .moves-question {
+    font-size: 40px;
+    font-weight: 900;
+    text-anchor: middle;
+    fill: var(--diagram-red);
+    paint-order: stroke;
+    stroke: #000;
+    stroke-width: 6px;
+  }
+  .moves-label {
+    font-size: 24px;
+    font-weight: 800;
+    fill: #fff;
+    paint-order: stroke;
+    stroke: #000;
+    stroke-width: 6px;
+  }
+  .moves-divine {
+    font-size: 30px;
+    font-weight: 900;
+    text-anchor: middle;
+    fill: var(--diagram-yellow);
+    paint-order: stroke;
+    stroke: #000;
+    stroke-width: 7px;
+  }
+  .moves-result {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-red);
+  }
+  .moves-information {
+    font-size: 32px;
+    font-weight: 700;
+  }
+  .moves-players {
+    font-size: 24px;
+    fill: var(--diagram-muted);
+  }
+  .moves-chance-title {
+    font-size: 26px;
+    font-weight: 600;
+    fill: var(--diagram-muted);
+  }
+  .moves-grid {
+    image-rendering: pixelated;
+  }
+  .moves-grid-frame {
+    fill: none;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .moves-chance {
+    font-size: 52px;
+    font-weight: 800;
+    fill: var(--diagram-yellow);
+  }
+  .moves-chance-note {
+    font-size: 22px;
+    fill: var(--diagram-muted);
+  }
+  .moves-chip {
+    stroke-width: 3;
+
+    &.alphago {
+      fill: color-mix(in srgb, var(--diagram-blue) 12%, var(--diagram-background));
+      stroke: var(--diagram-blue);
+    }
+    &.lee {
+      fill: color-mix(in srgb, var(--diagram-red) 14%, var(--diagram-background));
+      stroke: var(--diagram-red);
+    }
+    &.remember {
+      stroke: var(--diagram-yellow);
+      stroke-width: 5;
+      filter: drop-shadow(0 0 10px var(--diagram-yellow));
+    }
+  }
+  .moves-chip-round {
+    font-size: 22px;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .moves-chip-winner {
+    font-size: 24px;
+    font-weight: 800;
+    text-anchor: middle;
+  }
+  .moves-score {
+    font-size: 56px;
+    font-weight: 800;
+    text-anchor: middle;
+  }
+  .moves-spot {
+    fill: none;
+    stroke: var(--diagram-yellow);
+    stroke-width: 3;
+  }
+}

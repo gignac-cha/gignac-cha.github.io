@@ -1,0 +1,209 @@
+.stable-diffusion-heading {
+  font-size: 56px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.stable-diffusion-title {
+  font-size: 34px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.stable-diffusion-caption {
+  font-size: 26px;
+  fill: var(--diagram-muted) !important;
+}
+.stable-diffusion-arrow {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.stable-diffusion-file {
+  path {
+    fill: color-mix(in srgb, var(--diagram-purple) 16%, var(--diagram-background));
+    stroke: var(--diagram-purple);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .stable-diffusion-file-fold {
+    fill: none;
+  }
+}
+.stable-diffusion-file-title {
+  font-size: 34px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.stable-diffusion-file-subtitle {
+  font-size: 24px;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.stable-diffusion-bar-track {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.stable-diffusion-bar {
+  fill: var(--diagram-purple);
+}
+.stable-diffusion-laptop {
+  rect,
+  path {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 3;
+  }
+}
+.stable-diffusion-chip {
+  fill: color-mix(in srgb, var(--diagram-purple) 30%, var(--diagram-background)) !important;
+  stroke: var(--diagram-purple) !important;
+}
+.stable-diffusion-chip-text {
+  font-size: 20px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.stable-diffusion-edit {
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-green) !important;
+}
+.stable-diffusion-frame {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.stable-diffusion-funnel {
+  fill: color-mix(in srgb, var(--diagram-blue) 10%, transparent);
+  stroke: var(--diagram-blue);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+}
+.stable-diffusion-funnel-text {
+  font-size: 24px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-blue) !important;
+}
+.stable-diffusion g.faded {
+  opacity: .35;
+  transition: opacity .4s;
+}
+.stable-diffusion-loop {
+  path {
+    fill: none;
+    stroke: var(--diagram-purple);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+.stable-diffusion-loop-text {
+  font-size: 26px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--diagram-purple) !important;
+}
+.stable-diffusion-loop-dot {
+  fill: var(--diagram-yellow);
+}
+.stable-diffusion-label {
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.stable-diffusion-number {
+  font-size: 28px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+
+  &.accent {
+    fill: var(--diagram-yellow) !important;
+  }
+}
+.stable-diffusion-ratio {
+  font-size: 40px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--diagram-yellow) !important;
+}
+.stable-diffusion-datacenter {
+  rect {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .stable-diffusion-led {
+    fill: var(--diagram-green);
+  }
+  &.off .stable-diffusion-led {
+    fill: var(--diagram-subtle);
+  }
+}
+.stable-diffusion-cross path {
+  fill: none;
+  stroke: var(--diagram-red);
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+.stable-diffusion-gpu {
+  > rect:first-child {
+    fill: #23252d;
+    stroke: var(--diagram-green);
+    stroke-width: 3;
+  }
+}
+.stable-diffusion-fan {
+  fill: #15161b;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+}
+.stable-diffusion-fan-hub {
+  fill: var(--diagram-line);
+}
+.stable-diffusion-blades {
+  stroke: var(--diagram-muted);
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+.stable-diffusion-pcie {
+  fill: var(--diagram-yellow);
+  opacity: .8;
+}
+.stable-diffusion-person {
+  fill: var(--diagram-blue);
+}
+.stable-diffusion-spoke {
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+  stroke-dasharray: 4 6;
+}
+.stable-diffusion-variant {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-green) 18%, var(--diagram-background));
+    stroke: var(--diagram-green);
+    stroke-width: 2.5;
+  }
+  text {
+    font-size: 26px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+}
+.stable-diffusion-lead-caption {
+  font-size: 32px;
+}
+.stable-diffusion-lead {
+  font-size: 96px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--diagram-orange) !important;
+
+  &.diffusion {
+    fill: var(--diagram-purple) !important;
+  }
+}

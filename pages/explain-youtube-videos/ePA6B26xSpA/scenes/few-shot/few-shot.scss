@@ -1,0 +1,175 @@
+.few-shot-card {
+  fill: #141519;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.few-shot-paper-title {
+  font-size: 40px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.few-shot-paper-meta {
+  font-size: 24px;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.few-shot-define {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-yellow) !important;
+}
+.few-shot-mode {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  fill: var(--diagram-blue) !important;
+
+  &.zero {
+    fill: var(--diagram-purple) !important;
+  }
+}
+.few-shot-instruction {
+  font-size: 36px;
+  font-weight: 600;
+  fill: var(--diagram-purple) !important;
+}
+.few-shot-pair {
+  .few-shot-word, .few-shot-answer {
+    font-size: 38px;
+    font-weight: 600;
+  }
+  .few-shot-arrow {
+    font-size: 36px;
+    fill: var(--diagram-muted) !important;
+  }
+  .few-shot-answer {
+    fill: var(--diagram-blue) !important;
+  }
+  &.answered .few-shot-answer, &.extra .few-shot-answer {
+    fill: var(--diagram-green) !important;
+    font-weight: 800;
+  }
+  &.extra {
+    .few-shot-word, .few-shot-answer, .few-shot-arrow {
+      font-size: 32px;
+    }
+  }
+}
+.few-shot-sheet {
+  fill: color-mix(in srgb, var(--diagram-yellow) 7%, transparent);
+  stroke: var(--diagram-yellow);
+  stroke-width: 2;
+  stroke-dasharray: 8 6;
+}
+.few-shot-sample-tag {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-yellow) 20%, var(--diagram-background));
+    stroke: var(--diagram-yellow);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 22px;
+    font-weight: 800;
+    text-anchor: middle;
+    fill: var(--diagram-yellow) !important;
+  }
+}
+.few-shot-cursor {
+  fill: var(--diagram-text);
+}
+.few-shot-model {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-green) 10%, var(--diagram-background));
+    stroke: var(--diagram-green);
+    stroke-width: 3;
+  }
+}
+.few-shot-model-name {
+  font-size: 40px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.few-shot-model-note {
+  font-size: 22px;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.few-shot-flow {
+  fill: none;
+  stroke: var(--diagram-blue);
+  stroke-width: 4;
+  stroke-dasharray: 1;
+  stroke-linecap: round;
+
+  &.answer {
+    stroke: var(--diagram-green);
+  }
+}
+.few-shot-lock {
+  circle {
+    fill: #1d1e24;
+    stroke: var(--diagram-yellow);
+    stroke-width: 3;
+  }
+  rect {
+    fill: var(--diagram-yellow);
+  }
+  path {
+    fill: none;
+    stroke: var(--diagram-yellow);
+    stroke-width: 3;
+  }
+}
+.few-shot-frozen {
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-yellow) !important;
+}
+.few-shot-compare-title {
+  font-size: 34px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.few-shot-task {
+  font-size: 24px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.few-shot-tuned {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-orange) 18%, var(--diagram-background));
+    stroke: var(--diagram-orange);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 22px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-orange) !important;
+  }
+}
+.few-shot-compare-note {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-orange) !important;
+
+  &.good {
+    fill: var(--diagram-green) !important;
+  }
+}
+.few-shot-ask {
+  rect {
+    fill: #1d1e24;
+    stroke: var(--diagram-blue);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 24px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+}

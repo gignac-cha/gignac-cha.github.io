@@ -1,0 +1,127 @@
+.deep-belief-net-naive-floor {
+  fill: color-mix(in srgb, var(--diagram-muted) 22%, transparent);
+  stroke: var(--diagram-muted);
+  stroke-width: 2;
+
+  &.broken {
+    fill: color-mix(in srgb, var(--diagram-red) 18%, transparent);
+    stroke: var(--diagram-red);
+  }
+}
+.deep-belief-net-caption {
+  font-size: 30px;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.deep-belief-net-slab {
+  fill: transparent;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+  stroke-dasharray: 10 10;
+
+  &.input {
+    fill: color-mix(in srgb, var(--diagram-text) 5%, transparent);
+    stroke-dasharray: none;
+  }
+  &.building {
+    fill: color-mix(in srgb, var(--diagram-blue) 8%, transparent);
+    stroke: var(--diagram-blue);
+    stroke-dasharray: none;
+  }
+  &.solid {
+    fill: color-mix(in srgb, var(--diagram-blue) 22%, transparent);
+    stroke: var(--diagram-blue);
+    stroke-width: 3;
+    stroke-dasharray: none;
+  }
+  &.trained {
+    fill: color-mix(in srgb, var(--diagram-green) 22%, transparent);
+    stroke: var(--diagram-green);
+    stroke-width: 3;
+    stroke-dasharray: none;
+  }
+}
+.deep-belief-net-layer-name {
+  font-size: 28px;
+  font-weight: 600;
+  text-anchor: end;
+  fill: var(--diagram-muted) !important;
+}
+.deep-belief-net-node {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-muted);
+  stroke-width: 3;
+
+  &.building {
+    stroke: var(--diagram-blue);
+  }
+  &.solid {
+    fill: var(--diagram-blue);
+    stroke: var(--diagram-blue);
+  }
+  &.trained {
+    fill: var(--diagram-green);
+    stroke: var(--diagram-green);
+  }
+}
+.deep-belief-net-link {
+  stroke: var(--diagram-line);
+  stroke-width: 1.5;
+
+  &.hot {
+    stroke: var(--diagram-orange);
+    stroke-width: 2.5;
+  }
+  &.trained {
+    stroke: color-mix(in srgb, var(--diagram-green) 45%, transparent);
+  }
+}
+.deep-belief-net-particle {
+  fill: var(--diagram-yellow);
+}
+.deep-belief-net-pulse {
+  fill: var(--diagram-orange);
+  filter: drop-shadow(0 0 12px var(--diagram-orange));
+}
+.deep-belief-net-tag-body {
+  fill: color-mix(in srgb, var(--diagram-yellow) 18%, transparent);
+  stroke: var(--diagram-yellow);
+  stroke-width: 3;
+}
+.deep-belief-net-tag-hole {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-yellow);
+  stroke-width: 2;
+}
+.deep-belief-net-tag-text {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-yellow) !important;
+}
+.deep-belief-net-strike {
+  stroke: var(--diagram-red);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.deep-belief-net-trained {
+  font-size: 40px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-green) !important;
+}
+.deep-belief-net-depth {
+  fill: none;
+  stroke: var(--diagram-muted);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.deep-belief-net-deep-title {
+  font-size: 72px;
+  font-weight: 800;
+}
+.deep-belief-net-deep-subtitle {
+  font-size: 34px;
+  fill: var(--diagram-muted) !important;
+}

@@ -1,0 +1,154 @@
+.reasoning-model-panel {
+  fill: #15161b;
+  stroke: var(--diagram-line);
+  stroke-width: 1.5;
+}
+.reasoning-model-name {
+  font-size: 26px;
+  font-weight: 800;
+}
+.diagram text.reasoning-model-date {
+  font-size: 20px;
+  text-anchor: end;
+  fill: var(--diagram-muted);
+}
+.reasoning-model-bubble {
+  fill: #2a2b33;
+}
+.diagram text.reasoning-model-mono {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 15px;
+  white-space: pre;
+}
+.reasoning-model-badge {
+  fill: color-mix(in srgb, var(--diagram-red) 16%, transparent);
+  stroke: color-mix(in srgb, var(--diagram-red) 70%, transparent);
+  stroke-width: 1.5;
+}
+.diagram text.reasoning-model-badge-text {
+  font-size: 17px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-red);
+}
+.diagram text.reasoning-model-answer {
+  font-size: 17px;
+  fill: #c9c9cf;
+}
+.diagram text.reasoning-model-fail {
+  font-size: 23px;
+  font-weight: 700;
+  fill: var(--diagram-red);
+}
+.diagram text.reasoning-model-success {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--diagram-green);
+}
+
+// 생각 중 표시: 생각하는 동안 글자가 숨 쉬듯 깜박인다(scene.ts 에서 재생 시간으로).
+.diagram text.reasoning-model-status {
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--diagram-muted);
+
+  &.active {
+    fill: var(--diagram-text);
+  }
+  &.glow {
+    fill: var(--diagram-yellow);
+  }
+}
+.diagram text.reasoning-model-long {
+  font-size: 19px;
+  text-anchor: end;
+  fill: var(--diagram-muted);
+}
+
+// 속으로 쓴 풀이 과정.
+.reasoning-model-cot {
+  fill: #121318;
+  stroke: var(--diagram-line);
+  stroke-width: 1.5;
+}
+.diagram text.reasoning-model-cot-text {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 13.5px;
+  fill: #8f96a6;
+  white-space: pre;
+}
+.diagram text.reasoning-model-count {
+  font-size: 18px;
+  font-weight: 700;
+  text-anchor: end;
+  fill: var(--diagram-yellow);
+}
+.reasoning-model-attempts {
+  fill: #121318;
+  stroke: var(--diagram-yellow);
+  stroke-width: 2;
+}
+.reasoning-model-attempt-title {
+  font-size: 21px;
+  font-weight: 700;
+}
+.diagram text.reasoning-model-attempt-work {
+  font-size: 18px;
+  fill: #b8d7ff;
+}
+.reasoning-model-mark {
+  font-size: 34px;
+  font-weight: 800;
+  text-anchor: middle;
+
+  &.no {
+    fill: var(--diagram-red) !important;
+  }
+  &.ok {
+    fill: var(--diagram-green) !important;
+  }
+}
+.reasoning-model-back {
+  fill: none;
+  stroke: var(--diagram-orange);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 3 7;
+}
+.diagram text.reasoning-model-back-text {
+  font-size: 17px;
+  font-weight: 700;
+  text-anchor: end;
+  fill: var(--diagram-orange);
+}
+
+// 성적.
+.reasoning-model-score-heading {
+  font-size: 24px;
+  font-weight: 700;
+}
+.diagram text.reasoning-model-score-label {
+  font-size: 21px;
+  font-weight: 600;
+  text-anchor: end;
+  fill: var(--diagram-muted);
+}
+.reasoning-model-score-track {
+  fill: var(--diagram-grid);
+}
+.reasoning-model-score-old {
+  fill: var(--diagram-subtle);
+}
+.reasoning-model-score-new {
+  fill: var(--diagram-blue);
+}
+.reasoning-model-score-value {
+  font-size: 22px;
+  font-weight: 800;
+}
+.diagram text.reasoning-model-source {
+  font-size: 16px;
+  text-anchor: end;
+  fill: var(--diagram-subtle);
+}

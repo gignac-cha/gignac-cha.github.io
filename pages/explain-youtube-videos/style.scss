@@ -1,0 +1,16 @@
+html, body {
+  margin: 0px;
+  padding: 0px;
+  background-color: #333;
+  color: white;
+}
+#videos {
+  max-width: 960px;
+  margin: 0px auto;
+  padding: 16px 32px;
+  line-height: 2;
+
+  a {
+    color: white;
+  }
+}

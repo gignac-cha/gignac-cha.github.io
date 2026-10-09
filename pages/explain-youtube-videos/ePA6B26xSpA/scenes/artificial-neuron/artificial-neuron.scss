@@ -1,0 +1,142 @@
+.artificial-neuron {
+  .artificial-neuron-header {
+    font-size: 30px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .artificial-neuron-edge {
+    stroke: var(--diagram-line);
+    stroke-width: 4;
+    transition: stroke .3s;
+
+    &.on {
+      stroke: color-mix(in srgb, var(--diagram-blue) 70%, var(--diagram-line));
+    }
+  }
+  .artificial-neuron-input {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-subtle);
+    stroke-width: 4;
+    transition: fill .3s, stroke .3s;
+
+    &.on {
+      fill: color-mix(in srgb, var(--diagram-blue) 22%, var(--diagram-background));
+      stroke: var(--diagram-blue);
+    }
+  }
+  .artificial-neuron-input-label {
+    font-size: 40px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .artificial-neuron-pulse {
+    fill: var(--diagram-blue);
+    filter: drop-shadow(0 0 10px var(--diagram-blue));
+  }
+  .artificial-neuron-pulse-out {
+    fill: var(--diagram-yellow);
+    filter: drop-shadow(0 0 12px var(--diagram-yellow));
+  }
+  .artificial-neuron-weight {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-muted);
+    stroke-width: 3;
+
+    &.empty {
+      stroke-dasharray: 8 6;
+    }
+    &.locked {
+      stroke: var(--diagram-subtle);
+    }
+  }
+  .artificial-neuron-weight-label {
+    font-size: 32px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .artificial-neuron-body {
+    fill: color-mix(in srgb, var(--diagram-purple) 8%, var(--diagram-background));
+    stroke: var(--diagram-purple);
+    stroke-width: 4;
+  }
+  .artificial-neuron-meter-label {
+    font-size: 28px;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+  }
+  .artificial-neuron-meter {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .artificial-neuron-meter-fill {
+    fill: var(--diagram-blue);
+  }
+  .artificial-neuron-threshold {
+    stroke: var(--diagram-muted);
+    stroke-width: 4;
+    stroke-dasharray: 10 6;
+    transition: stroke .2s;
+
+    &.crossed {
+      stroke: var(--diagram-yellow);
+    }
+  }
+  .artificial-neuron-threshold-label {
+    font-size: 28px;
+    fill: var(--diagram-muted);
+  }
+  .artificial-neuron-body-label {
+    font-size: 34px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .artificial-neuron-output {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-subtle);
+    stroke-width: 4;
+    transition: fill .2s, stroke .2s;
+
+    &.on {
+      fill: color-mix(in srgb, var(--diagram-yellow) 30%, var(--diagram-background));
+      stroke: var(--diagram-yellow);
+      filter: drop-shadow(0 0 18px color-mix(in srgb, var(--diagram-yellow) 60%, transparent));
+    }
+  }
+  .artificial-neuron-output-value {
+    font-size: 46px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .artificial-neuron-output-caption {
+    font-size: 32px;
+    font-weight: 600;
+    text-anchor: middle;
+    fill: var(--diagram-muted);
+
+    &.on {
+      fill: var(--diagram-yellow);
+    }
+  }
+  .artificial-neuron-formula {
+    font-size: 34px;
+    font-weight: 500;
+    text-anchor: middle;
+    fill: var(--diagram-text);
+  }
+  .artificial-neuron-cursor {
+    fill: var(--diagram-text);
+    stroke: var(--diagram-background);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .artificial-neuron-lock {
+    fill: var(--diagram-subtle);
+  }
+  .artificial-neuron-lock-shackle {
+    fill: none;
+    stroke: var(--diagram-subtle);
+    stroke-width: 6;
+  }
+}

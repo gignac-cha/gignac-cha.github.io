@@ -1,0 +1,109 @@
+.rnn-axis {
+  fill: none;
+  stroke: var(--diagram-subtle);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.rnn-chip {
+  fill: color-mix(in srgb, var(--diagram-text) 6%, transparent);
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.rnn-chip-text {
+  font-size: 32px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.rnn-caption {
+  font-size: 32px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.rnn-note {
+  font-size: 28px;
+  fill: var(--diagram-muted) !important;
+}
+.rnn-center {
+  text-anchor: middle;
+}
+.rnn-end {
+  text-anchor: end;
+}
+.rnn-warn {
+  fill: var(--diagram-red) !important;
+}
+.rnn-sequence {
+  fill: none;
+  stroke: var(--diagram-blue);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.rnn-pass {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  &.rnn-passed {
+    stroke: var(--diagram-muted);
+  }
+}
+.rnn-cell {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+
+  &.rnn-active {
+    fill: color-mix(in srgb, var(--diagram-yellow) 14%, var(--diagram-background));
+    stroke: var(--diagram-yellow);
+  }
+}
+.rnn-feed {
+  stroke: var(--diagram-yellow);
+  stroke-width: 3;
+  stroke-dasharray: 6 6;
+}
+.rnn-word {
+  fill: var(--diagram-background);
+  stroke-width: 2;
+  stroke-opacity: .25;
+
+  &.rnn-read {
+    stroke-opacity: 1;
+  }
+  &.rnn-current {
+    fill: color-mix(in srgb, var(--diagram-yellow) 12%, var(--diagram-background));
+    stroke-width: 4;
+  }
+}
+.rnn-word-text {
+  font-size: 28px;
+  text-anchor: middle;
+
+  &.rnn-faded {
+    fill: var(--diagram-subtle) !important;
+  }
+}
+.rnn-forget {
+  font-size: 44px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-red) !important;
+}
+.rnn-memo-frame {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-text);
+  stroke-width: 2;
+}
+.rnn-gradient {
+  stroke: var(--diagram-red);
+  stroke-linecap: round;
+}
+.rnn-pointer {
+  fill: none;
+  stroke: var(--diagram-red);
+  stroke-width: 2;
+}

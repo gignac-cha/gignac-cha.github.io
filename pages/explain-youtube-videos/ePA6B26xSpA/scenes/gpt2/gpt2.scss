@@ -1,0 +1,188 @@
+.gpt2-knob {
+  circle {
+    fill: #1b1c22;
+    stroke: var(--diagram-blue);
+    stroke-width: 2.5;
+  }
+  line {
+    stroke: var(--diagram-text);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  &.picked circle {
+    fill: color-mix(in srgb, var(--diagram-yellow) 30%, var(--diagram-background));
+    stroke: var(--diagram-yellow);
+  }
+  &.big {
+    circle {
+      fill: #1b1c22;
+      stroke: var(--diagram-yellow);
+      stroke-width: 5;
+    }
+    line {
+      stroke: var(--diagram-yellow);
+      stroke-width: 8;
+    }
+  }
+}
+.gpt2-legend-text {
+  font-size: 24px;
+  fill: var(--diagram-muted) !important;
+}
+.gpt2-name {
+  font-size: 34px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.gpt2-count {
+  font-size: 26px;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+
+  &.big {
+    font-size: 48px;
+    font-weight: 800;
+    fill: var(--diagram-yellow) !important;
+  }
+}
+.gpt2-ratio {
+  path {
+    fill: none;
+    stroke: var(--diagram-yellow);
+    stroke-width: 3;
+  }
+  .gpt2-ratio-head {
+    fill: var(--diagram-yellow);
+    stroke: none;
+  }
+}
+.gpt2-ratio-text {
+  font-size: 32px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: var(--diagram-yellow) !important;
+}
+.gpt2-books rect {
+  fill: color-mix(in srgb, var(--diagram-orange) 40%, var(--diagram-background));
+  stroke: var(--diagram-orange);
+  stroke-width: 2;
+}
+.gpt2-web {
+  rect {
+    fill: #17181d;
+    stroke: var(--diagram-blue);
+    stroke-width: 2;
+  }
+  line {
+    stroke: var(--diagram-blue);
+    stroke-width: 2;
+  }
+}
+.gpt2-data {
+  font-size: 26px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.gpt2-card {
+  fill: #141519;
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.gpt2-pointer {
+  fill: none;
+  stroke: var(--diagram-yellow);
+  stroke-width: 2;
+  stroke-dasharray: 6 8;
+}
+.gpt2-cell {
+  fill: color-mix(in srgb, var(--diagram-blue) 22%, var(--diagram-background));
+  stroke: var(--diagram-blue);
+  stroke-width: 3;
+}
+.gpt2-wire {
+  stroke: var(--diagram-yellow);
+  stroke-linecap: round;
+  opacity: .8;
+}
+.gpt2-caption {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.gpt2-note {
+  font-size: 24px;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.gpt2-target {
+  fill: none;
+  stroke: var(--diagram-subtle);
+  stroke-width: 3;
+  stroke-dasharray: 6 6;
+}
+.gpt2-steps {
+  fill: none;
+  stroke: var(--diagram-green);
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+.gpt2-story-meta {
+  font-size: 22px;
+  letter-spacing: .03em;
+  fill: var(--diagram-muted) !important;
+}
+.gpt2-tag {
+  rect {
+    fill: #1d1e24;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 21px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-muted) !important;
+  }
+  &.human.glow rect {
+    stroke: var(--diagram-yellow);
+    filter: drop-shadow(0 0 10px var(--diagram-yellow));
+  }
+  &.human.glow text {
+    fill: var(--diagram-yellow) !important;
+  }
+  &.machine rect {
+    stroke: color-mix(in srgb, var(--diagram-green) 60%, var(--diagram-line));
+  }
+}
+.gpt2-stamp {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-red) 18%, var(--diagram-background));
+    stroke: var(--diagram-red);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 21px;
+    font-weight: 800;
+    text-anchor: middle;
+    fill: var(--diagram-red) !important;
+  }
+}
+.gpt2-prompt {
+  font-size: 28px;
+  font-weight: 600;
+
+  .mark {
+    transition: fill .3s;
+  }
+  .mark.on {
+    fill: var(--diagram-yellow);
+  }
+}
+.gpt2-continuation {
+  font-size: 27px;
+  fill: color-mix(in srgb, var(--diagram-text) 88%, var(--diagram-green)) !important;
+}
+.gpt2-gloss {
+  font-size: 21px;
+  fill: var(--diagram-muted) !important;
+}

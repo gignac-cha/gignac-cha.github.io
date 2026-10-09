@@ -1,0 +1,110 @@
+.deep-blue-edge {
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+
+  &.on {
+    stroke: var(--diagram-yellow);
+    stroke-width: 5;
+  }
+  &.dim {
+    stroke: var(--diagram-grid);
+  }
+}
+.deep-blue-node {
+  fill: var(--diagram-muted);
+  stroke: var(--diagram-background);
+  stroke-width: 2;
+
+  &.good {
+    fill: var(--diagram-green);
+  }
+  &.bad {
+    fill: var(--diagram-red);
+  }
+  &.even {
+    fill: var(--diagram-subtle);
+  }
+  &.dim {
+    opacity: .35;
+  }
+  &.on {
+    fill: var(--diagram-yellow);
+  }
+}
+.deep-blue-best {
+  font-size: 28px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--diagram-yellow) !important;
+}
+.deep-blue-chess {
+  .light {
+    fill: #d9d4c7;
+  }
+  .dark {
+    fill: #6b7f5a;
+  }
+}
+.deep-blue-go {
+  .deep-blue-go-board {
+    fill: #c9a466;
+  }
+  line {
+    stroke: #3b2f1c;
+    stroke-width: .8;
+  }
+  .black {
+    fill: #111;
+  }
+  .white {
+    fill: #f2f2f2;
+  }
+}
+.deep-blue-machine {
+  font-size: 30px;
+  font-weight: 600;
+  fill: var(--diagram-muted) !important;
+}
+.deep-blue-fan line {
+  stroke: var(--diagram-red);
+  stroke-width: 1.5;
+}
+.deep-blue-small {
+  font-size: 30px;
+  fill: var(--diagram-muted) !important;
+}
+.deep-blue-big {
+  font-size: 60px;
+  font-weight: 700;
+}
+.deep-blue-warning {
+  fill: var(--diagram-red) !important;
+}
+.deep-blue-center {
+  text-anchor: middle;
+}
+.deep-blue-card {
+  fill: color-mix(in srgb, var(--diagram-text) 4%, transparent);
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.deep-blue-card-title {
+  font-size: 32px;
+  font-weight: 700;
+}
+.deep-blue-rule {
+  font-size: 30px;
+  fill: var(--diagram-muted) !important;
+}
+.deep-blue-cat {
+  font-size: 150px;
+  text-anchor: middle;
+}
+.deep-blue-fail {
+  fill: var(--diagram-red);
+}
+.deep-blue-fail-mark {
+  stroke: var(--diagram-background);
+  stroke-width: 5;
+  stroke-linecap: round;
+}

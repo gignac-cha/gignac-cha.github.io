@@ -1,0 +1,87 @@
+.transformer-translation-heading {
+  font-size: 34px;
+  font-weight: 800;
+}
+.transformer-translation-note {
+  font-size: 22px;
+  fill: var(--diagram-muted) !important;
+}
+.transformer-translation-group-label {
+  font-size: 28px;
+  font-weight: 700;
+}
+.transformer-translation-row-label {
+  font-size: 24px;
+  font-weight: 600;
+  fill: var(--diagram-muted) !important;
+
+  &.transformer {
+    fill: var(--diagram-yellow) !important;
+  }
+}
+.transformer-translation-bar {
+  &.previous {
+    fill: var(--diagram-subtle);
+  }
+  &.transformer {
+    fill: var(--diagram-yellow);
+  }
+}
+.transformer-translation-value {
+  font-size: 26px;
+  font-weight: 700;
+  fill: var(--diagram-muted) !important;
+
+  &.transformer {
+    fill: var(--diagram-yellow) !important;
+  }
+}
+.transformer-translation-badge {
+  rect {
+    fill: var(--diagram-yellow);
+  }
+  text {
+    font-size: 22px;
+    font-weight: 800;
+    text-anchor: middle;
+    fill: var(--diagram-background) !important;
+  }
+}
+.transformer-translation-gpu {
+  > rect:first-child {
+    fill: #17181d;
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  .transformer-translation-gpu-fin {
+    fill: var(--diagram-subtle);
+  }
+  &.on {
+    > rect:first-child {
+      stroke: var(--diagram-green);
+    }
+    .transformer-translation-gpu-fin {
+      fill: var(--diagram-green);
+    }
+  }
+}
+.transformer-translation-track {
+  fill: #1c1d22;
+}
+.transformer-translation-fill {
+  fill: var(--diagram-green);
+}
+.transformer-translation-tick {
+  font-size: 22px;
+  fill: var(--diagram-muted) !important;
+
+  &.end {
+    font-weight: 800;
+    fill: var(--diagram-green) !important;
+  }
+}
+.transformer-translation-summary-text {
+  font-size: 36px;
+  font-weight: 800;
+  fill: var(--diagram-yellow) !important;
+}

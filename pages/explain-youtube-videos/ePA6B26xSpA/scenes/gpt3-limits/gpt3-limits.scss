@@ -1,0 +1,82 @@
+.gpt3-limits-panel {
+  fill: color-mix(in srgb, var(--diagram-grid) 55%, var(--diagram-background));
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+}
+.gpt3-limits-panel-label {
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--diagram-muted) !important;
+}
+.gpt3-limits-prompt {
+  font-size: 30px;
+  font-weight: 700;
+}
+.gpt3-limits-placeholder {
+  font-size: 28px;
+  font-style: italic;
+  fill: var(--diagram-subtle) !important;
+}
+// 이어 쓴 글: 놀이터(Playground) 화면처럼 초록 바탕.
+.gpt3-limits-generated-background {
+  fill: color-mix(in srgb, var(--diagram-green) 22%, transparent);
+}
+.gpt3-limits-generated {
+  font-size: 30px;
+  font-weight: 600;
+  fill: #d8f5e4 !important;
+}
+.gpt3-limits-next-box {
+  fill: none;
+  stroke: var(--diagram-yellow);
+  stroke-width: 3;
+}
+.gpt3-limits-skeleton {
+  fill: color-mix(in srgb, var(--diagram-green) 18%, transparent);
+}
+.gpt3-limits-cursor {
+  fill: var(--diagram-text);
+}
+.gpt3-limits-source {
+  font-size: 22px;
+  text-anchor: middle;
+  fill: var(--diagram-subtle) !important;
+}
+.gpt3-limits-card {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-line);
+  stroke-width: 2;
+
+  &.machine {
+    fill: color-mix(in srgb, var(--diagram-green) 12%, var(--diagram-background));
+    stroke: var(--diagram-green);
+  }
+}
+.gpt3-limits-card-label {
+  font-size: 22px;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.gpt3-limits-card-text {
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.gpt3-limits-strike {
+  stroke: var(--diagram-red);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.gpt3-limits-badge {
+  rect {
+    fill: color-mix(in srgb, var(--diagram-red) 14%, var(--diagram-background));
+    stroke: var(--diagram-red);
+    stroke-width: 2.5;
+  }
+  text {
+    font-size: 28px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--diagram-red) !important;
+  }
+}

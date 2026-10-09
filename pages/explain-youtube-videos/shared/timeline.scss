@@ -1,0 +1,125 @@
+#timeline {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  height: var(--timeline-height);
+  padding: 0px 18px;
+}
+.timeline-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  // 오른쪽 위 자리 바꾸기 버튼과 겹치지 않게.
+  padding-right: 64px;
+  font-size: 13px;
+}
+.timeline-clock {
+  flex: none;
+  font-family: var(--monospace);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.timeline-separator {
+  margin: 0px 6px;
+  color: var(--subtle);
+}
+.timeline-total {
+  color: var(--muted);
+}
+.timeline-scene {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.timeline-track {
+  position: relative;
+  height: 30px;
+  cursor: pointer;
+  touch-action: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+}
+// 막대는 canvas 에 그린다(shared/timeline.ts). 현재 위치와 마우스 주변이 렌즈처럼 부푼다.
+.timeline-canvas {
+  position: absolute;
+  inset: 0px;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+// 현재 위치. 둘레의 막대가 부풀어 있어 점이 바를 가려도 근처 장면 구간이 보인다.
+.timeline-head {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0px 0px -7px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0px 0px 0px 3px rgba(0, 0, 0, .35);
+  pointer-events: none;
+}
+.timeline-hover,
+.timeline-tooltip {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s;
+
+  .timeline-track:hover & {
+    opacity: 1;
+  }
+}
+.timeline-hover {
+  top: 0px;
+  bottom: 0px;
+  width: 1px;
+  background-color: var(--muted);
+}
+.timeline-tooltip {
+  bottom: calc(100% + 8px);
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--panel-raised);
+  font-family: var(--monospace);
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+// 재생 바 자리 바꾸기 버튼 (shared/timeline-dock.ts, 공통 스타일은 shared/dock.scss).
+.timeline-panel {
+  position: relative;
+}
+.timeline-dock {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+}
+.timeline-panel.floating {
+  position: fixed;
+  z-index: 60;
+  box-shadow: 0px 18px 48px rgba(0, 0, 0, .55), 0px 0px 0px 1px rgba(255, 255, 255, .06);
+  cursor: grab;
+
+  .timeline-track {
+    cursor: pointer;
+  }
+}
+
+// 아직 장면 작업을 하지 않은 구간(막대의 빗금은 canvas 에 그린다).
+.timeline-scene.unexplored {
+  font-weight: 500;
+  color: var(--subtle);
+}

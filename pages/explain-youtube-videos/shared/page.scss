@@ -1,0 +1,529 @@
+:root {
+  --background: #0b0b0c;
+  --panel: #151517;
+  --panel-raised: #1d1d20;
+  --border: #27272b;
+  --text: #ededef;
+  --muted: #a0a0a8;
+  --subtle: #6c6c74;
+  --accent: #5b9dff;
+  --radius: 12px;
+  --header-height: 64px;
+  --timeline-height: 72px;
+  --monospace: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+html, body {
+  margin: 0px;
+  padding: 0px;
+  background-color: var(--background);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+// 끄는 동안에는 iframe 이 포인터를 가로채지 않게 한다.
+body.dragging {
+  cursor: grabbing;
+  user-select: none;
+
+  iframe {
+    pointer-events: none;
+  }
+}
+
+.page-header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: var(--header-height);
+  padding: 0px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.page-back {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: var(--muted);
+  transition: background-color .15s, color .15s, transform .1s;
+
+  &:hover {
+    background-color: var(--panel-raised);
+    color: var(--text);
+  }
+  &:active {
+    transform: scale(.92);
+  }
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+.page-title {
+  flex: 1;
+  min-width: 0;
+
+  h1 {
+    margin: 0px;
+    overflow: hidden;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  p {
+    margin: 2px 0px 0px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  a {
+    color: var(--accent);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+.page-action {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: var(--panel);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color .15s, border-color .15s, transform .1s;
+
+  &:hover {
+    background-color: var(--panel-raised);
+  }
+  &:active {
+    transform: scale(.97);
+  }
+  &[aria-pressed="true"] {
+    border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+    color: var(--accent);
+  }
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.panel {
+  overflow: hidden;
+  background-color: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.panel-label {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 37px;
+  margin: 0px;
+  padding: 0px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  color: var(--muted);
+}
+
+// 데스크탑: 화면 높이에 맞춘 앱 형태. 영상 | 장면 | 인덱스, 재생 바는 위나 아래 슬롯에 붙는다.
+@media (min-width: 961px) {
+  body {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+  }
+  // 칸 이름으로 배치한다. 인덱스는 오른쪽(기본)·왼쪽에 붙거나 떠 있고, 영상을 띄우면 영상 칸이 0 이 된다.
+  .page-layout {
+    --video-width: 30%;
+    --video-column: var(--video-width);
+    --split-column: 16px;
+    --index-column: 352px;
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: var(--video-column) var(--split-column) minmax(0px, 1fr) var(--index-column);
+    grid-template-rows: minmax(0px, 1fr);
+    grid-template-areas: 'video split stage index';
+    padding: 16px 24px;
+  }
+  body.index-left .page-layout {
+    grid-template-columns: var(--index-column) var(--video-column) var(--split-column) minmax(0px, 1fr);
+    grid-template-areas: 'index video split stage';
+  }
+  // 자동 숨김이면 목록 칸을 비우고 장면이 그 자리까지 쓴다.
+  body.index-autohide .page-layout {
+    grid-template-columns: var(--video-column) var(--split-column) minmax(0px, 1fr);
+    grid-template-areas: 'video split stage';
+  }
+  body.pip .page-layout {
+    --video-column: 0px;
+    --split-column: 0px;
+  }
+  .page-video-column {
+    grid-area: video;
+  }
+  .page-splitter {
+    grid-area: split;
+  }
+  .page-stage {
+    grid-area: stage;
+  }
+  .page-sidebar {
+    grid-area: index;
+    margin-left: 16px;
+
+    body.index-left & {
+      margin: 0px 16px 0px 0px;
+    }
+  }
+  .page-video-column,
+  .page-stage,
+  .page-sidebar {
+    min-height: 0;
+  }
+}
+.page-video-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.page-video {
+  flex: none;
+}
+// 영상 아래의 안내: 원본 영상 정보와 이 페이지를 만든 목적. 남는 높이 안에서 스크롤한다.
+.page-about {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.page-about-body {
+  min-height: 0;
+  padding: 4px 16px 16px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+
+  ul {
+    margin: 12px 0px 0px;
+    padding-left: 18px;
+  }
+  li + li {
+    margin-top: 6px;
+  }
+  a {
+    color: var(--accent);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+.page-about-source {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 8px 0px 0px;
+
+  dt {
+    color: var(--subtle);
+  }
+  dd {
+    margin: 0px;
+    color: var(--text);
+  }
+}
+body.pip .page-about {
+  display: none;
+}
+.page-sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+// 영상과 장면 사이의 경계: 끌어서 비율을 바꾼다.
+.page-splitter {
+  position: relative;
+  cursor: col-resize;
+  touch-action: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 50%;
+    width: 2px;
+    margin-left: -1px;
+    border-radius: 1px;
+    background-color: transparent;
+    transition: background-color .15s;
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 40px;
+    margin: -20px 0px 0px -2px;
+    border-radius: 2px;
+    background-color: var(--border);
+    transition: background-color .15s;
+  }
+  &:hover::before,
+  &:focus-visible::before,
+  .dragging &::before {
+    background-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  }
+  &:hover::after,
+  .dragging &::after {
+    background-color: var(--accent);
+  }
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+#video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0px;
+}
+
+// 장면 영역: 영역 안에서 16:9 를 최대로 키워 가운데 둔다. 장면은 비율을 유지하므로 깨지지 않는다.
+.page-stage {
+  display: flex;
+  flex-direction: column;
+  transition: opacity .6s;
+}
+.page-stage-area {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  container-type: size;
+}
+.page-stage-area #scenes {
+  width: min(100cqw, calc(100cqh * 16 / 9));
+  aspect-ratio: 16 / 9;
+}
+#scenes {
+  position: relative;
+  overflow: hidden;
+  container-type: inline-size;
+  background-image: radial-gradient(var(--border) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+// 장면이 없는 구간에서는 장면 패널 전체가 서서히 사라진다.
+.page-stage:has(#scenes.empty) {
+  opacity: 0;
+}
+// 아직 장면 작업을 하지 않은 구간은 사라지지 않고 미탐색이라고 알린다. 전부 끝나면 쓰이지 않는다.
+.page-stage:has(#scenes.unexplored) {
+  opacity: 1;
+}
+#scenes.unexplored::after {
+  content: '준비 중인 구간\A ' attr(data-explored) ' 이후 장면은 아직 만들고 있어요';
+  position: absolute;
+  inset: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--muted);
+  text-align: center;
+  white-space: pre;
+  background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .025) 0px 14px, transparent 14px 28px);
+}
+
+// 재생 바 자리: 위 또는 아래에 붙는다.
+.page-timeline-slot {
+  flex: none;
+  padding: 0px 24px;
+
+  &:empty {
+    display: none;
+  }
+  &.top {
+    padding-top: 16px;
+  }
+  &.bottom {
+    padding-bottom: 16px;
+  }
+}
+
+// 영상 띄우기(PiP): iframe 을 옮기면 플레이어가 새로 로드되므로, 자리는 그대로 두고 CSS 로만 띄운다.
+body.pip {
+  .page-splitter {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .page-video {
+    position: fixed;
+    z-index: 50;
+    box-shadow: 0px 18px 48px rgba(0, 0, 0, .55), 0px 0px 0px 1px rgba(255, 255, 255, .06);
+
+    .panel-label {
+      cursor: grab;
+    }
+  }
+}
+.pip-resize {
+  display: none;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 20px;
+  height: 20px;
+  cursor: nesw-resize;
+  touch-action: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    width: 9px;
+    height: 9px;
+    border-bottom: 2px solid var(--muted);
+    border-left: 2px solid var(--muted);
+  }
+  body.pip & {
+    display: block;
+  }
+}
+
+// 좁은 화면: 한 줄로 쌓는다.
+@media (max-width: 960px) {
+  .page-header {
+    padding: 0px 16px;
+  }
+  .page-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+  .page-splitter {
+    display: none;
+  }
+  .page-stage-area {
+    flex: none;
+    aspect-ratio: 16 / 9;
+  }
+  // 장면이 많아 목록이 길어지므로, 목록 안에서 스크롤하고 재생 바가 멀리 밀려나지 않게 한다.
+  .page-sidebar {
+    max-height: 60dvh;
+  }
+  // 안내는 영상과 장면 사이를 막지 않게 맨 아래로 보낸다.
+  .page-video-column {
+    display: contents;
+  }
+  .page-about {
+    order: 1;
+  }
+  .page-timeline-slot {
+    padding: 0px 16px;
+  }
+}
+
+// 자동 숨김 장면 목록 (shared/index-dock.ts): 가장자리로 접혀 탭만 남고, 탭에 마우스를 올리면 미끄러져 나온다.
+body.index-autohide .page-sidebar {
+  position: fixed;
+  right: 24px;
+  z-index: 55;
+  width: 336px;
+  margin: 0px;
+  box-shadow: 0px 18px 48px rgba(0, 0, 0, .55), 0px 0px 0px 1px rgba(255, 255, 255, .06);
+  transform: translateX(calc(100% + 32px));
+  transition: transform .25s cubic-bezier(.2, .8, .2, 1);
+
+  &.revealed {
+    transform: none;
+  }
+}
+body.index-autohide.index-left .page-sidebar {
+  right: auto;
+  left: 24px;
+  transform: translateX(calc(-100% - 32px));
+
+  &.revealed {
+    transform: none;
+  }
+}
+.index-handle {
+  display: none;
+}
+body.index-autohide .index-handle {
+  position: fixed;
+  right: 0px;
+  z-index: 54;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 7px;
+  border: 1px solid var(--border);
+  border-right: 0px;
+  border-radius: 10px 0px 0px 10px;
+  background-color: var(--panel);
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: opacity .2s, background-color .15s, color .15s;
+
+  &:hover {
+    background-color: var(--panel-raised);
+    color: var(--text);
+  }
+  &.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+  span {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    writing-mode: vertical-rl;
+  }
+}
+body.index-autohide.index-left .index-handle {
+  right: auto;
+  left: 0px;
+  border-right: 1px solid var(--border);
+  border-left: 0px;
+  border-radius: 0px 10px 10px 0px;
+}

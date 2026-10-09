@@ -1,0 +1,106 @@
+.attention-row-label {
+  font-size: 28px;
+  font-weight: 600;
+  fill: var(--diagram-muted) !important;
+}
+.attention-chip {
+  rect {
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
+    stroke-width: 2;
+  }
+  text {
+    font-size: 32px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  &.source.focus rect {
+    stroke: var(--diagram-yellow);
+    fill: color-mix(in srgb, var(--diagram-yellow) 16%, var(--diagram-background));
+  }
+  &.slot {
+    rect {
+      stroke-dasharray: 8 8;
+      stroke: var(--diagram-subtle);
+    }
+    text {
+      fill: var(--diagram-subtle) !important;
+    }
+    &.current rect {
+      stroke: var(--diagram-yellow);
+    }
+  }
+  &.output rect {
+    stroke: var(--diagram-green);
+    fill: color-mix(in srgb, var(--diagram-green) 16%, var(--diagram-background));
+  }
+}
+.attention-summary {
+  line {
+    stroke: var(--diagram-line);
+    stroke-width: 3;
+  }
+}
+.attention-summary-ring {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-subtle);
+  stroke-width: 3;
+}
+.attention-summary-label {
+  font-size: 28px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--diagram-muted) !important;
+}
+.attention-link {
+  stroke: var(--diagram-yellow);
+  stroke-linecap: round;
+}
+.attention-pointer {
+  fill: var(--diagram-yellow);
+}
+.attention-matrix-label {
+  font-size: 30px;
+  font-weight: 600;
+  fill: var(--diagram-muted) !important;
+}
+.attention-cell {
+  fill: var(--diagram-yellow);
+}
+.attention-axis {
+  fill: none;
+  stroke: var(--diagram-line);
+  stroke-width: 3;
+}
+.attention-axis-label {
+  font-size: 28px;
+  fill: var(--diagram-muted) !important;
+}
+.attention-curve {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+
+  &.summary {
+    stroke: var(--diagram-red);
+  }
+  &.attention {
+    stroke: var(--diagram-green);
+  }
+  &.highlight {
+    stroke-width: 8;
+    filter: drop-shadow(0 0 10px var(--diagram-green));
+  }
+}
+.attention-legend {
+  font-size: 30px;
+  font-weight: 700;
+
+  &.summary {
+    fill: var(--diagram-red) !important;
+  }
+  &.attention {
+    fill: var(--diagram-green) !important;
+  }
+}
