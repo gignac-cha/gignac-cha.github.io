@@ -213,6 +213,54 @@ body.dragging {
 .page-video {
   flex: none;
 }
+// 영상 아래의 안내: 원본 영상 정보와 이 페이지를 만든 목적. 남는 높이 안에서 스크롤한다.
+.page-about {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.page-about-body {
+  min-height: 0;
+  padding: 4px 16px 16px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+
+  ul {
+    margin: 12px 0px 0px;
+    padding-left: 18px;
+  }
+  li + li {
+    margin-top: 6px;
+  }
+  a {
+    color: var(--accent);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+.page-about-source {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 8px 0px 0px;
+
+  dt {
+    color: var(--subtle);
+  }
+  dd {
+    margin: 0px;
+    color: var(--text);
+  }
+}
+body.pip .page-about {
+  display: none;
+}
 .page-sidebar {
   display: flex;
   flex-direction: column;
@@ -394,6 +442,13 @@ body.pip {
   // 장면이 많아 목록이 길어지므로, 목록 안에서 스크롤하고 재생 바가 멀리 밀려나지 않게 한다.
   .page-sidebar {
     max-height: 60dvh;
+  }
+  // 안내는 영상과 장면 사이를 막지 않게 맨 아래로 보낸다.
+  .page-video-column {
+    display: contents;
+  }
+  .page-about {
+    order: 1;
   }
   .page-timeline-slot {
     padding: 0px 16px;
