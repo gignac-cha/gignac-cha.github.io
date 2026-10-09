@@ -49,6 +49,7 @@ import { createLstmScene } from './scenes/lstm/scene';
 import { createNextWordScene } from './scenes/next-word/scene';
 import { createPerceptronScene } from './scenes/perceptron/scene';
 import { createReasoningModelScene } from './scenes/reasoning-model/scene';
+import { createRecentHistoryScene, createRecentHistoryTodayScene } from './scenes/recent-history/scene';
 import { createResidualNetworkScene } from './scenes/residual-network/scene';
 import { createInstructGptScene, createRlhfScene } from './scenes/rlhf/scene';
 import { createRnnScene } from './scenes/rnn/scene';
@@ -123,7 +124,9 @@ const scenes: Scene[] = [
   createTestTimeComputeScene(),
   createToolAgentScene(),
   createGpt5RouterScene(),
+  createRecentHistoryScene(),
   createContextWindowScene(),
+  createRecentHistoryTodayScene(),
   createLimitsScene(),
 ];
 

@@ -1,0 +1,181 @@
+.recent-history {
+  // 사건 색: 오픈AI 초록, 경쟁사 주황, 경보·사건 빨강, 접은 것 회색, 숫자 파랑, 오늘 노랑.
+  --rh-openai: var(--d-green);
+  --rh-rival: var(--d-orange);
+
+  .rh-legend {
+    text {
+      font-size: 17px;
+      fill: var(--d-muted);
+    }
+  }
+  .rh-swatch {
+    &.openai {
+      fill: var(--rh-openai);
+    }
+    &.rival {
+      fill: var(--rh-rival);
+    }
+  }
+
+  .rh-band {
+    fill: color-mix(in srgb, var(--d-yellow) 6%, transparent);
+  }
+  text.rh-band-label {
+    font-size: 20px;
+    font-weight: 700;
+    fill: var(--d-yellow);
+    &.glow {
+      filter: drop-shadow(0 0 8px color-mix(in srgb, var(--d-yellow) 70%, transparent));
+    }
+  }
+
+  .rh-axis {
+    stroke: var(--d-line);
+    stroke-width: 3;
+  }
+  .rh-tick {
+    path {
+      stroke: var(--d-line);
+      stroke-width: 2;
+    }
+    text {
+      font-size: 14px;
+      fill: var(--d-subtle);
+    }
+    &.year text {
+      font-size: 16px;
+      font-weight: 700;
+      fill: var(--d-muted);
+    }
+  }
+
+  .rh-monthly {
+    path {
+      fill: none;
+      stroke: var(--d-muted);
+      stroke-width: 2;
+    }
+    text {
+      font-size: 17px;
+      font-weight: 600;
+      fill: var(--d-muted);
+    }
+  }
+
+  .rh-event {
+    --rh-color: var(--rh-openai);
+    &.rival {
+      --rh-color: var(--rh-rival);
+    }
+    &.alarm,
+    &.incident {
+      --rh-color: var(--d-red);
+    }
+    &.closed {
+      --rh-color: var(--d-muted);
+    }
+
+    .rh-stem {
+      fill: none;
+      stroke: color-mix(in srgb, var(--rh-color) 45%, transparent);
+      stroke-width: 1.5;
+    }
+    .rh-dot {
+      fill: var(--rh-color);
+      stroke: var(--d-background);
+      stroke-width: 3;
+    }
+    .rh-span {
+      fill: color-mix(in srgb, var(--rh-color) 55%, transparent);
+    }
+    // 이름표 둘레를 배경색으로 둘러 뒤로 지나가는 줄기를 가린다.
+    text.rh-date,
+    text.rh-name {
+      paint-order: stroke;
+      stroke: var(--d-background);
+      stroke-width: 7px;
+      stroke-linejoin: round;
+    }
+    text.rh-date {
+      font-size: 15px;
+      fill: var(--d-muted);
+    }
+    text.rh-name {
+      font-size: 20px;
+      font-weight: 700;
+      fill: var(--rh-color);
+    }
+    // 방금 말한 사건.
+    &.current {
+      .rh-dot {
+        stroke: color-mix(in srgb, var(--rh-color) 35%, var(--d-background));
+        stroke-width: 6;
+      }
+      text.rh-name {
+        filter: drop-shadow(0 0 6px color-mix(in srgb, var(--rh-color) 60%, transparent));
+      }
+      text.rh-date {
+        fill: var(--d-text);
+      }
+    }
+  }
+
+  .rh-today {
+    path {
+      stroke: var(--d-yellow);
+      stroke-width: 3;
+    }
+    text {
+      font-size: 17px;
+      font-weight: 700;
+      fill: var(--d-yellow);
+    }
+  }
+
+  .rh-card {
+    --rh-color: var(--rh-openai);
+    &.rival {
+      --rh-color: var(--rh-rival);
+    }
+    &.alarm,
+    &.incident {
+      --rh-color: var(--d-red);
+    }
+    &.closed {
+      --rh-color: var(--d-muted);
+    }
+    &.stat {
+      --rh-color: var(--d-blue);
+    }
+    &.today {
+      --rh-color: var(--d-yellow);
+    }
+
+    .rh-card-box {
+      fill: #15161b;
+      stroke: var(--d-line);
+      stroke-width: 1.5;
+    }
+    .rh-card-stripe {
+      fill: var(--rh-color);
+    }
+    text.rh-card-date {
+      font-size: 19px;
+      font-weight: 600;
+      fill: var(--rh-color);
+    }
+    text.rh-card-title {
+      font-size: 34px;
+      font-weight: 800;
+    }
+    &.closed text.rh-card-title {
+      text-decoration: line-through;
+      fill: var(--d-muted);
+    }
+    text.rh-card-note {
+      font-size: 22px;
+      fill: #c9cad1;
+    }
+  }
+}
