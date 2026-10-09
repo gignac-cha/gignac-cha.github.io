@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { appear, clamp, ease, HEIGHT, lerp, progress, setAttributes, svg, text, WIDTH } from '../../../shared/diagram.ts';
 import { createThreeDiagram } from '../../../shared/three-diagram.ts';
 import type { SceneLayer } from '../../../shared/three-scene.ts';
-import { createWord2VecSvg, triangle } from './scene.ts';
+import { createWord2VecSVG, triangle } from './scene.ts';
 import { end, king, map, seoul } from './timing.ts';
 
 // Three.js 판: 지도가 나오기 전(사진은 숫자 · 단어는 기호 · 번호표)은 SVG 판을 그대로 보여 주고,
@@ -82,7 +82,7 @@ const format = (n: number) => `${n < 0 ? '−' : ''}${Math.abs(n).toFixed(1)}`;
 
 export const createWord2VecThree = (): SceneLayer => {
   // 지도가 나오기 전은 SVG 판 그대로. 3D 층은 그 위에 겹쳐 두고 "단어를 좌표로"부터 보인다.
-  const base = createWord2VecSvg();
+  const base = createWord2VecSVG();
   const { element, root, scene, camera, render, project, look } = createThreeDiagram('word2vec-three', '단어 좌표(Word2Vec)');
   base.element.append(element);
 

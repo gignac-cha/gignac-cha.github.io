@@ -21,7 +21,7 @@ const at = {
 const gpt2 = Math.log10(1.5e9);
 const gpt3 = Math.log10(1.75e11);
 
-export const createGpt3ScaleScene = (): Scene => {
+export const createGPT3ScaleScene = (): Scene => {
   const { element, root } = createDiagram('sl', 'GPT-3의 규모');
   const chart = createLogChart(root, {
     box: { left: 250, top: 210, width: 1000, height: 440 },

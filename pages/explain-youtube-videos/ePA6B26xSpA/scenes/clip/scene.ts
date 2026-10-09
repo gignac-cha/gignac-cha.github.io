@@ -82,7 +82,7 @@ const wordChip = (parent: Element, word: string) => {
   return group;
 };
 
-export const createClipScene = (): Scene => {
+export const createCLIPScene = (): Scene => {
   const { element, root } = createDiagram('clip', '그림과 글의 지도(CLIP)');
   const defs = svg('defs', {}, root);
   const filter = svg('filter', { id: 'clip-diffusion-blur', x: '-20%', y: '-20%', width: '140%', height: '140%' }, defs);

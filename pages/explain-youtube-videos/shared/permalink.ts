@@ -37,8 +37,8 @@ export const seekFromHash = (player: YT.Player) => {
 };
 
 // 보던 위치를 기억해 새로고침해도 그 화면 그대로 연다. #t= 링크로 열면 링크가 우선한다.
-export const rememberPosition = (player: YT.Player, videoId: string) => {
-  const key = `position:${videoId}`;
+export const rememberPosition = (player: YT.Player, videoID: string) => {
+  const key = `position:${videoID}`;
   const { time } = load(key, { time: 0 });
   if (hashTime() === undefined && time > 0) {
     seekPaused(player, time);

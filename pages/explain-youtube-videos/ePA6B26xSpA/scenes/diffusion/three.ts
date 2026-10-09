@@ -4,7 +4,7 @@ import { createThreeLayer } from '../../../shared/three-diagram.ts';
 import type { SceneLayer } from '../../../shared/three-scene.ts';
 import { DEPTH, diffusedAt, inkClock, inkPosition3d, PARTICLES, surface, tank } from './ink.ts';
 import { gaussian } from './noise.ts';
-import { createDiffusionSvg } from './scene.ts';
+import { createDiffusionSVG } from './scene.ts';
 import { at, start } from './timing.ts';
 
 // Three.js 판: 잉크 수조만 정사영 입체로 그린다. 사진·잡음 사슬과 글자는 SVG 판 그대로다.
@@ -68,7 +68,7 @@ const fragmentShader = /* glsl */ `
 `;
 
 export const createDiffusionThree = (): SceneLayer => {
-  const base = createDiffusionSvg({ ink3d: true });
+  const base = createDiffusionSVG({ ink3d: true });
   const { renderer, scene, camera, render, look } = createThreeLayer(base.element, { region, orthographic: {}, placement: 'front' });
   const canvas = renderer.domElement;
   const resetButton = base.element.querySelector<HTMLElement>('.three-view-reset');

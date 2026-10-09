@@ -83,7 +83,7 @@ const exam = { left: 160, pitch: 12.9, y: 724, height: 46 };
 const personX = (index: number) => exam.left + index * exam.pitch;
 const markerX = (people: number) => personX(people) - (exam.pitch - 9) / 2;
 
-export const createGpt4MultimodalScene = (): Scene => {
+export const createGPT4MultimodalScene = (): Scene => {
   const { element, root } = createDiagram('gpt4-multimodal', 'GPT-4 멀티모달');
 
   // 시연: 스케치 → GPT-4 → 코드 → 웹사이트.

@@ -63,7 +63,7 @@ const valve = (parent: Element, x: number, y: number, className: string) => {
 const place = (element: Element, x: number, y: number, opacity: number) =>
   setAttributes(element, { transform: `translate(${x.toFixed(1)} ${y.toFixed(1)})`, opacity: opacity.toFixed(3) });
 
-export const createLstmScene = (): Scene => {
+export const createLSTMScene = (): Scene => {
   const { element, root } = createDiagram('lstm', '장단기 기억(LSTM)');
   const defs = svg('defs', {}, root);
   const clip = svg('clipPath', { id: 'lstm-belt-clip' }, defs);

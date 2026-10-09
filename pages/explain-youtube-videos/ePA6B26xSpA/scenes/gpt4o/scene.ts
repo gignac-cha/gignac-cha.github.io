@@ -84,7 +84,7 @@ const speaker = (parent: Element, x: number, y: number) => {
   return { group, waves };
 };
 
-export const createGpt4oScene = (): Scene => {
+export const createGPT4oScene = (): Scene => {
   const { element, root } = createDiagram('gpt4o', 'GPT-4o 옴니 모델');
 
   // 이름: "o" 는 omni.

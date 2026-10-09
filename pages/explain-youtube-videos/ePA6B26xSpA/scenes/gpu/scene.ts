@@ -63,7 +63,7 @@ const person = (parent: Element, x: number, y: number, size: number) => {
   svg('path', { d: `M${x - size * .3} ${y + size * .42} Q${x} ${y - size * .18} ${x + size * .3} ${y + size * .42} Z` }, parent);
 };
 
-export const createGpuScene = (): Scene => {
+export const createGPUScene = (): Scene => {
   const { element, root } = createDiagram('gpu', 'GPU 병렬 연산');
 
   // A. 게임 화면: 수많은 점의 색을 동시에.

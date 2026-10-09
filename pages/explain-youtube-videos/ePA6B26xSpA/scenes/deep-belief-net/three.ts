@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { appear, lerp, progress, setAttributes } from '../../../shared/diagram.ts';
 import { createThreeLayer } from '../../../shared/three-diagram.ts';
 import type { SceneLayer } from '../../../shared/three-scene.ts';
-import { createDeepBeliefNetSvg } from './scene.ts';
+import { createDeepBeliefNetSVG } from './scene.ts';
 import { at, start } from './timing.ts';
 
 // Three.js 판: 오른쪽 신경망은 SVG 판 그대로 두고,
@@ -129,7 +129,7 @@ const brickTexture = () => {
 const region = { x: 0, y: 150, width: 720, height: 690 };
 
 export const createDeepBeliefNetThree = (): SceneLayer => {
-  const base = createDeepBeliefNetSvg({ naiveTower: false });
+  const base = createDeepBeliefNetSVG({ naiveTower: false });
   const { renderer, scene, camera, render, project, look } = createThreeLayer(base.element, { region, orthographic: {}, placement: 'front' });
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;

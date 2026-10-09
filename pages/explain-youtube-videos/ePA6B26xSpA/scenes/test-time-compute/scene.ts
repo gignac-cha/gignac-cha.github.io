@@ -127,8 +127,8 @@ export const createTestTimeComputeScene = (): Scene => {
 
   // 연산이 쓰이는 자리: 학습할 때 + 대답할 때.
   const placeY = 776;
-  const trainGpu = gpu(root, knobs[0].x, placeY);
-  const answerGpu = gpu(root, knobs[0].x, placeY);
+  const trainGPU = gpu(root, knobs[0].x, placeY);
+  const answerGPU = gpu(root, knobs[0].x, placeY);
   const placeLabels = knobs.map(({ x }, i) => text(root, x, placeY + 70, i === 0 ? '원래 자리' : '새 자리', { class: i === 0 ? 'ttc-place' : 'ttc-place ttc-place-new', opacity: 0 }));
 
   const update = (time: number) => {
@@ -170,9 +170,9 @@ export const createTestTimeComputeScene = (): Scene => {
     setAttributes(solved, { opacity: appear(time, at.notebook + 1.25, .25).toFixed(3) });
 
     // 연산(GPU)이 대답할 때 자리로도 간다.
-    setAttributes(trainGpu, { opacity: appear(time, at.compute, .3).toFixed(3) });
+    setAttributes(trainGPU, { opacity: appear(time, at.compute, .3).toFixed(3) });
     const move = appear(time, at.place, .7);
-    setAttributes(answerGpu, {
+    setAttributes(answerGPU, {
       opacity: appear(time, at.place, .2).toFixed(3),
       transform: `translate(${lerp(knobs[0].x, knobs[1].x, move).toFixed(1)} ${placeY})`,
       class: time >= at.more ? 'ttc-gpu-new' : '',

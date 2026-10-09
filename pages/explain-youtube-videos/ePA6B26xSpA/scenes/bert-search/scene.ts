@@ -45,7 +45,7 @@ const resultCard = (parent: SVGElement, x: number, kind: 'before' | 'after', hea
   return group;
 };
 
-export const createBertSearchScene = (): Scene => {
+export const createBERTSearchScene = (): Scene => {
   const { element, root } = createDiagram('bs', '검색어를 읽는 버트(BERT)');
 
   // 검색창

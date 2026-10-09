@@ -4,7 +4,7 @@ import type { Scene } from '../../../shared/scenes.ts';
 import { createSwapText } from '../../../shared/swap-text.ts';
 import { backflip, createHopper, motions } from './hopper.ts';
 
-export { createInstructGptScene } from './instruct-gpt.ts';
+export { createInstructGPTScene } from './instruct-gpt.ts';
 
 // 50:19 "오픈AI는 이 간극을 메우고 싶었어요" ~ 51:04 "간식 대신 사람의 점수가 쓰인 겁니다".
 const start = 3019.6;
@@ -77,7 +77,7 @@ export const person = (parent: Element, x: number, y: number, size: number, clas
   return group;
 };
 
-export const createRlhfScene = (): Scene => {
+export const createRLHFScene = (): Scene => {
   const { element, root } = createDiagram('rlhf', '사람 피드백 강화 학습(RLHF)');
 
   // ── 네 단계 ──

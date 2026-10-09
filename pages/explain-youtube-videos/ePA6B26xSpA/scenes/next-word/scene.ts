@@ -214,7 +214,7 @@ const createTextbook = (root: SVGElement) => {
   };
 };
 
-const createGpt = (root: SVGElement) => {
+const createGPT = (root: SVGElement) => {
   const group = svg('g', {}, root);
   text(group, 800, 300, 'GPT-1', { class: 'nw-gpt', 'text-anchor': 'middle' });
   text(group, 800, 356, '2018년 6월 · 오픈AI', { class: 'nw-gpt-sub', 'text-anchor': 'middle' });
@@ -289,7 +289,7 @@ const createStages = (root: SVGElement) => {
 
 export const createNextWordScene = (): Scene => {
   const { element, root } = createDiagram('nw', '다음 단어 맞히기(GPT-1)');
-  const renders = [createTask(root), createBooks(root), createTextbook(root), createGpt(root), createStages(root)];
+  const renders = [createTask(root), createBooks(root), createTextbook(root), createGPT(root), createStages(root)];
   return {
     element,
     update: (time: number) => renders.forEach((render) => render(time)),

@@ -76,7 +76,7 @@ const createPoint = (parent: SVGElement, name: string, id?: string): Point => {
 };
 
 // SVG 판. Three.js 판도 지도가 나오기 전(사진·기호·번호표)은 이 그림을 그대로 쓴다.
-export const createWord2VecSvg = (): Scene => {
+export const createWord2VecSVG = (): Scene => {
   const { element, root } = createDiagram('w2v', '단어 좌표(Word2Vec)');
 
   const grid = svg('g', { class: 'w2v-grid' }, root);
@@ -263,4 +263,4 @@ export const createWord2VecSvg = (): Scene => {
 
 // Three.js 판으로 보여 준다(shared/three-scene.ts). three.js 를 불러오기 전에는 SVG 판을 보여 준다.
 export const createWord2VecScene = (): Scene =>
-  withThree(createWord2VecSvg(), () => import('./three.ts').then(({ createWord2VecThree }) => createWord2VecThree));
+  withThree(createWord2VecSVG(), () => import('./three.ts').then(({ createWord2VecThree }) => createWord2VecThree));

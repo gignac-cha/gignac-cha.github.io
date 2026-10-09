@@ -3,7 +3,7 @@ import { appear, between, clamp, createDiagram, ease, lerp, progress, setAttribu
 import type { Scene } from '../../../shared/scenes.ts';
 import { createSwapText } from '../../../shared/swap-text.ts';
 import { withThree } from '../../../shared/three-scene.ts';
-import earthUrl from './earth.png';
+import earthURL from './earth.png';
 import { diffusedAt, inkClock, inkParticles, inkPosition, surface, tank, unit } from './ink.ts';
 import { gaussian, paintStep } from './noise.ts';
 import { at, end, start } from './timing.ts';
@@ -64,7 +64,7 @@ const CHIPS = 7;
 let instances = 0;
 
 // ink3d: true 면 수조와 잉크를 그리지 않는다(Three.js 판이 그 자리에 입체 수조를 얹는다). 글자와 되감기 표시는 그대로 둔다.
-export const createDiffusionSvg = ({ ink3d = false } = {}): Scene => {
+export const createDiffusionSVG = ({ ink3d = false } = {}): Scene => {
   const { element, root } = createDiagram('diffusion', '확산 모델');
   instances += 1;
   const id = (name: string) => `diffusion-${name}-${instances}`;
@@ -214,7 +214,7 @@ export const createDiffusionSvg = ({ ink3d = false } = {}): Scene => {
   let photo: Float32Array | undefined;
   let lastTime = start;
   const image = new Image();
-  image.src = earthUrl;
+  image.src = earthURL;
   image.decode().then(() => {
     const canvas = document.createElement('canvas');
     canvas.width = SIZE;
@@ -393,4 +393,4 @@ export const createDiffusionSvg = ({ ink3d = false } = {}): Scene => {
 };
 
 export const createDiffusionScene = (): Scene =>
-  withThree(createDiffusionSvg(), () => import('./three.ts').then(({ createDiffusionThree }) => createDiffusionThree));
+  withThree(createDiffusionSVG(), () => import('./three.ts').then(({ createDiffusionThree }) => createDiffusionThree));

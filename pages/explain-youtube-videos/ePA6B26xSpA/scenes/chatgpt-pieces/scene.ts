@@ -39,7 +39,7 @@ const person = (parent: Element, x: number, y: number, size: number) => {
   return group;
 };
 
-export const createChatGptPiecesScene = (): Scene => {
+export const createChatGPTPiecesScene = (): Scene => {
   const { element, root } = createDiagram('chatgpt-pieces', 'ChatGPT를 이룬 조각들');
 
   const heading = text(root, 800, 150, '새 기술이 아니라, 몇 년간 쌓인 조각들', { class: 'cp-heading' });

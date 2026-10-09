@@ -91,7 +91,7 @@ const variants = [
   { label: '작게', path: sevenPath, transform: 'translate(52 110) scale(.5)' },
 ];
 
-export const createCnnScene = (): Scene => {
+export const createCNNScene = (): Scene => {
   const { element, root } = createDiagram('cnn', '합성곱 신경망(CNN)');
 
   // 1단계

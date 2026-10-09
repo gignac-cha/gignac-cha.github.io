@@ -35,7 +35,7 @@ const curvePath = (from: number, to: number) => {
   return `M${points.join('L')}`;
 };
 
-export const createGanWeakness = (timeline: GanWeaknessTimeline) => {
+export const createGANWeakness = (timeline: GanWeaknessTimeline) => {
   const { element, root } = createDiagram('gan', 'GAN의 약점');
 
   // 1. 위조범과 경찰의 균형

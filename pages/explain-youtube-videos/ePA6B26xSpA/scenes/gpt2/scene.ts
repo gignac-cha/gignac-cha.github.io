@@ -79,7 +79,7 @@ const stepPath = (steps: number) => {
   return parts.join(' ');
 };
 
-export const createGpt2Scene = (): Scene => {
+export const createGPT2Scene = (): Scene => {
   const { element, root } = createDiagram('g2', '매개변수와 GPT-2');
 
   const models = svg('g', {}, root);

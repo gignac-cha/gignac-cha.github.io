@@ -67,7 +67,7 @@ const side = (angle: number, offset: number, x: number, y: number) =>
 
 const polygon = (points: Array<{ x: number; y: number }>) => points.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
 
-const createXor = () => {
+const createXOR = () => {
   const { element, root } = createDiagram('xor', 'XOR 문제');
 
   // 왼쪽 1: 스위치 두 개와 전등.
@@ -255,8 +255,8 @@ const createXor = () => {
   return { element, update };
 };
 
-export const createXorScene = (): Scene => ({
-  ...createXor(),
+export const createXORScene = (): Scene => ({
+  ...createXOR(),
   title: 'XOR 문제',
   start,
   end,

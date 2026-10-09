@@ -18,7 +18,7 @@ const setText = (element: Element, content: string) => {
 };
 
 // protein3d: Three.js 판이 단백질과 약을 입체로 그릴 때는 SVG 의 구슬·끈·약을 숨긴다(글자와 나머지는 그대로).
-export const createAlphaFoldSvg = ({ protein3d = false } = {}): Scene => {
+export const createAlphaFoldSVG = ({ protein3d = false } = {}): Scene => {
   const { element, root } = createDiagram('alphafold', '단백질 구조 예측(알파폴드)');
   const defs = svg('defs', {}, root);
   const blur = svg('filter', { id: 'af-glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, defs);
@@ -241,4 +241,4 @@ export const createAlphaFoldSvg = ({ protein3d = false } = {}): Scene => {
 };
 
 export const createAlphaFoldScene = (): Scene =>
-  withThree(createAlphaFoldSvg(), () => import('./three.ts').then(({ createAlphaFoldThree }) => createAlphaFoldThree));
+  withThree(createAlphaFoldSVG(), () => import('./three.ts').then(({ createAlphaFoldThree }) => createAlphaFoldThree));

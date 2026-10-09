@@ -173,7 +173,7 @@ const gpuCaptionAt = (time: number) => {
   return '';
 };
 
-const createGpu = (root: SVGElement) => {
+const createGPU = (root: SVGElement) => {
   const group = svg('g', { class: 'sa-gpu' }, root);
   const defs = svg('defs', {}, group);
   const pattern = (id: string, className: string) => {
@@ -304,7 +304,7 @@ export const createSelfAttentionScene = (): Scene => {
   const readerY = 440;
 
   const caption = createSwapText(root, 580, 560, { class: 'sa-caption', 'text-anchor': 'middle' });
-  const renderGpu = createGpu(root);
+  const renderGPU = createGPU(root);
   const renderBank = createBank(root);
 
   const update = (time: number) => {
@@ -385,7 +385,7 @@ export const createSelfAttentionScene = (): Scene => {
     });
 
     caption.update(time, captionAt);
-    renderGpu(time);
+    renderGPU(time);
     renderBank(time);
   };
 

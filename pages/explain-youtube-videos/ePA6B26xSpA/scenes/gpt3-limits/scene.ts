@@ -37,7 +37,7 @@ const measure = (value: string) => [...value].reduce((sum, char) => sum + (/[가
 const panel = { x: 110, y: 196, width: 960, height: 560 };
 const lineY = (i: number) => panel.y + 84 + i * 62;
 
-export const createGpt3LimitsScene = (): Scene => {
+export const createGPT3LimitsScene = (): Scene => {
   const { element, root } = createDiagram('gpt3-limits', 'GPT-3의 한계');
 
   // 글 이어 쓰기 창.

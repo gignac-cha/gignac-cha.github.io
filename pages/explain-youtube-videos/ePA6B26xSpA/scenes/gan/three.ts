@@ -172,7 +172,7 @@ const createPanel = (canvas: HTMLCanvasElement, width: number, height: number, p
   return group;
 };
 
-export const createGanThree = (): SceneLayer => {
+export const createGANThree = (): SceneLayer => {
   // 시야각은 공통 기본값(35°)과 같다.
   const { element, root, scene, camera, render, project, look } = createThreeDiagram('gan gan-three', '생성적 적대 신경망(GAN)');
 

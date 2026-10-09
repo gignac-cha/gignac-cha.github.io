@@ -17,12 +17,12 @@ import { createArtificialNeuronScene } from './scenes/artificial-neuron/scene.ts
 import { createAttentionScene } from './scenes/attention/scene.ts';
 import { createBackpropagationScene } from './scenes/backpropagation/scene.ts';
 import { createBatchNormalizationScene } from './scenes/batch-normalization/scene.ts';
-import { createBertScene } from './scenes/bert/scene.ts';
-import { createBertSearchScene } from './scenes/bert-search/scene.ts';
+import { createBERTScene } from './scenes/bert/scene.ts';
+import { createBERTSearchScene } from './scenes/bert-search/scene.ts';
 import { createChatGPTScene } from './scenes/chatgpt/scene.ts';
-import { createChatGptPiecesScene } from './scenes/chatgpt-pieces/scene.ts';
-import { createClipScene } from './scenes/clip/scene.ts';
-import { createCnnScene } from './scenes/cnn/scene.ts';
+import { createChatGPTPiecesScene } from './scenes/chatgpt-pieces/scene.ts';
+import { createCLIPScene } from './scenes/clip/scene.ts';
+import { createCNNScene } from './scenes/cnn/scene.ts';
 import { createContextWindowScene } from './scenes/context-window/scene.ts';
 import { createDeepBeliefNetScene } from './scenes/deep-belief-net/scene.ts';
 import { createDeepBlueScene } from './scenes/deep-blue/scene.ts';
@@ -33,63 +33,63 @@ import { createEmergenceScene } from './scenes/emergence/scene.ts';
 import { createEncoderDecoderScene } from './scenes/encoder-decoder/scene.ts';
 import { createFewShotScene } from './scenes/few-shot/scene.ts';
 import {
-  createGanScene,
-  createGanWeaknessScene,
+  createGANScene,
+  createGANWeaknessScene,
 } from './scenes/gan/scene.ts';
-import { createGpt2Scene } from './scenes/gpt2/scene.ts';
-import { createGpt3LimitsScene } from './scenes/gpt3-limits/scene.ts';
-import { createGpt4MultimodalScene } from './scenes/gpt4-multimodal/scene.ts';
-import { createGpt4oScene } from './scenes/gpt4o/scene.ts';
-import { createGpt5RouterScene } from './scenes/gpt5-router/scene.ts';
-import { createGpuScene } from './scenes/gpu/scene.ts';
+import { createGPT2Scene } from './scenes/gpt2/scene.ts';
+import { createGPT3LimitsScene } from './scenes/gpt3-limits/scene.ts';
+import { createGPT4MultimodalScene } from './scenes/gpt4-multimodal/scene.ts';
+import { createGPT4oScene } from './scenes/gpt4o/scene.ts';
+import { createGPT5RouterScene } from './scenes/gpt5-router/scene.ts';
+import { createGPUScene } from './scenes/gpu/scene.ts';
 import { createImageNetErrorRateScene } from './scenes/imagenet-error-rate/scene.ts';
 import { createImageNetLabelingScene } from './scenes/imagenet-labeling/scene.ts';
 import { createLimitsScene } from './scenes/limits/scene.ts';
-import { createLstmScene } from './scenes/lstm/scene.ts';
+import { createLSTMScene } from './scenes/lstm/scene.ts';
 import { createNextWordScene } from './scenes/next-word/scene.ts';
 import { createPerceptronScene } from './scenes/perceptron/scene.ts';
 import { createReasoningModelScene } from './scenes/reasoning-model/scene.ts';
 import { createRecentHistoryScene, createRecentHistoryTodayScene } from './scenes/recent-history/scene.ts';
 import { createResidualNetworkScene } from './scenes/residual-network/scene.ts';
-import { createInstructGptScene, createRlhfScene } from './scenes/rlhf/scene.ts';
-import { createRnnScene } from './scenes/rnn/scene.ts';
-import { createGpt3ScaleScene, createScalingLawsScene } from './scenes/scaling-laws/scene.ts';
+import { createInstructGPTScene, createRLHFScene } from './scenes/rlhf/scene.ts';
+import { createRNNScene } from './scenes/rnn/scene.ts';
+import { createGPT3ScaleScene, createScalingLawsScene } from './scenes/scaling-laws/scene.ts';
 import { createSelfAttentionScene } from './scenes/self-attention/scene.ts';
 import { createSeq2SeqScene } from './scenes/seq2seq/scene.ts';
 import { createSkipConnectionsScene } from './scenes/skip-connections/scene.ts';
 import { createStableDiffusionScene } from './scenes/stable-diffusion/scene.ts';
-import { createSvmScene } from './scenes/svm/scene.ts';
+import { createSVMScene } from './scenes/svm/scene.ts';
 import { createTestTimeComputeScene } from './scenes/test-time-compute/scene.ts';
 import { createToolAgentScene } from './scenes/tool-agent/scene.ts';
 import { createTransformerEverywhereScene } from './scenes/transformer-everywhere/scene.ts';
 import { createTransformerTranslationScene } from './scenes/transformer-translation/scene.ts';
 import { createVanishingGradientScene } from './scenes/vanishing-gradient/scene.ts';
 import { createWord2VecScene } from './scenes/word2vec/scene.ts';
-import { createXorScene } from './scenes/xor/scene.ts';
+import { createXORScene } from './scenes/xor/scene.ts';
 
 // 영상 순서대로 나열한다. 각 장면의 시간 구간과 세부 단계는 장면 폴더의 scene.ts에 있다.
 const scenes: Scene[] = [
   createChatGPTScene(),
   createArtificialNeuronScene(),
   createPerceptronScene(),
-  createXorScene(),
+  createXORScene(),
   createBackpropagationScene(),
   createVanishingGradientScene(),
-  createSvmScene(),
-  createCnnScene(),
-  createRnnScene(),
-  createLstmScene(),
+  createSVMScene(),
+  createCNNScene(),
+  createRNNScene(),
+  createLSTMScene(),
   createDeepBlueScene(),
   createDeepBeliefNetScene(),
-  createGpuScene(),
+  createGPUScene(),
   createImageNetLabelingScene(),
   createImageNetErrorRateScene(),
   createAlexNetTricksScene(),
   createWord2VecScene(),
   createSeq2SeqScene(),
   createAttentionScene(),
-  createGanScene(),
-  createGanWeaknessScene(),
+  createGANScene(),
+  createGANWeaknessScene(),
   createDepthScene(),
   createResidualNetworkScene(),
   createBatchNormalizationScene(),
@@ -103,27 +103,27 @@ const scenes: Scene[] = [
   createTransformerEverywhereScene(),
   createEncoderDecoderScene(),
   createNextWordScene(),
-  createBertScene(),
-  createBertSearchScene(),
-  createGpt2Scene(),
+  createBERTScene(),
+  createBERTSearchScene(),
+  createGPT2Scene(),
   createScalingLawsScene(),
-  createGpt3ScaleScene(),
+  createGPT3ScaleScene(),
   createFewShotScene(),
   createEmergenceScene(),
   createAlphaFoldScene(),
   createDiffusionScene(),
-  createClipScene(),
+  createCLIPScene(),
   createStableDiffusionScene(),
-  createGpt3LimitsScene(),
-  createRlhfScene(),
-  createInstructGptScene(),
-  createChatGptPiecesScene(),
-  createGpt4MultimodalScene(),
-  createGpt4oScene(),
+  createGPT3LimitsScene(),
+  createRLHFScene(),
+  createInstructGPTScene(),
+  createChatGPTPiecesScene(),
+  createGPT4MultimodalScene(),
+  createGPT4oScene(),
   createReasoningModelScene(),
   createTestTimeComputeScene(),
   createToolAgentScene(),
-  createGpt5RouterScene(),
+  createGPT5RouterScene(),
   createRecentHistoryScene(),
   createContextWindowScene(),
   createRecentHistoryTodayScene(),

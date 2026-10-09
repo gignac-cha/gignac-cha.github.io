@@ -4,10 +4,10 @@ declare global {
   }
 }
 
-export const loadPlayer = (elementId: string): Promise<YT.Player> =>
+export const loadPlayer = (elementID: string): Promise<YT.Player> =>
   new Promise((resolve) => {
     window.onYouTubeIframeAPIReady = () => {
-      const player = new YT.Player(elementId, {
+      const player = new YT.Player(elementID, {
         events: { onReady: () => resolve(player) },
       });
     };

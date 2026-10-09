@@ -49,7 +49,7 @@ const random = (seed: number) => {
 
 const lightning = 'M6 -26 L-14 4 L-1 4 L-6 26 L14 -6 L1 -6 Z';
 
-export const createGpt5RouterScene = (): Scene => {
+export const createGPT5RouterScene = (): Scene => {
   const { element, root } = createDiagram('gpt5-router', 'GPT-5 라우터');
 
   // 하나의 시스템(GPT-5): 처음엔 점선, "하나로 묶은"에서 실선으로 닫힌다.

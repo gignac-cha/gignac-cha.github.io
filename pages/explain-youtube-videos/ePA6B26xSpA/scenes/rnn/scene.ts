@@ -35,7 +35,7 @@ const xOf = (index: number) => firstX + index * stepX;
 // read 개 단어를 읽었을 때 각 단어가 메모에 남은 몫. 오래될수록 decay 배로 줄어든다.
 const weights = (read: number) => words.map((_, index) => (index < read ? decay ** Math.max(read - index - 1, 0) : 0));
 
-export const createRnnScene = (): Scene => {
+export const createRNNScene = (): Scene => {
   const { element, root } = createDiagram('rnn', '순환 신경망(RNN)');
 
   // 1단계

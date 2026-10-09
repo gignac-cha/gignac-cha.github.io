@@ -246,7 +246,7 @@ const createResults = (root: SVGElement) => {
   };
 };
 
-export const createBertScene = (): Scene => {
+export const createBERTScene = (): Scene => {
   const { element, root } = createDiagram('bt', '빈칸 맞히기(BERT)');
   const renders = [createCard(root), createMasked(root), createCompare(root), createResults(root)];
   return {

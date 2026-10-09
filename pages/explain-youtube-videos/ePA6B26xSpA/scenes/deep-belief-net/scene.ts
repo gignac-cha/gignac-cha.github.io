@@ -22,7 +22,7 @@ const random = (seed: number) => {
 const nodeX = (layer: number, i: number) => centerX + (i - (layers[layer].count - 1) / 2) * spacing;
 
 // naiveTower: false 면 왼쪽 탑을 그리지 않는다(Three.js 판이 그 자리에 3D 탑을 얹는다). 글자는 그대로 둔다.
-export const createDeepBeliefNetSvg = ({ naiveTower = true } = {}): Scene => {
+export const createDeepBeliefNetSVG = ({ naiveTower = true } = {}): Scene => {
   const { element, root } = createDiagram('deep-belief-net', '심층 신뢰망');
 
   // 왼쪽: 한꺼번에 올린 10층은 무너진다.
@@ -158,4 +158,4 @@ export const createDeepBeliefNetSvg = ({ naiveTower = true } = {}): Scene => {
 
 // Three.js 판으로 보여 준다(shared/three-scene.ts). three.js 를 불러오기 전에는 SVG 판을 보여 준다.
 export const createDeepBeliefNetScene = (): Scene =>
-  withThree(createDeepBeliefNetSvg(), () => import('./three.ts').then(({ createDeepBeliefNetThree }) => createDeepBeliefNetThree));
+  withThree(createDeepBeliefNetSVG(), () => import('./three.ts').then(({ createDeepBeliefNetThree }) => createDeepBeliefNetThree));

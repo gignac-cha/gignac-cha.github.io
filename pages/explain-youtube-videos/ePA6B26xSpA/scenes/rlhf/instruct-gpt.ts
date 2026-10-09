@@ -25,7 +25,7 @@ const smallSide = bigSide * Math.sqrt(params.small / params.big);
 const smallBox = { x: 420 - smallSide / 2, y: baseline - smallSide, size: smallSide };
 const bigBox = { x: 870, y: baseline - bigSide, size: bigSide };
 
-export const createInstructGptScene = (): Scene => {
+export const createInstructGPTScene = (): Scene => {
   const { element, root } = createDiagram('rlhf', '인스트럭트GPT(InstructGPT)');
 
   text(root, 800, 150, 'InstructGPT · 2022년 1월', { class: 'rlhf-heading' });

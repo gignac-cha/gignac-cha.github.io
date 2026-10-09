@@ -35,7 +35,7 @@ const toScreen = ([u, v]: [number, number]) => {
   return [800 + u * Math.cos(radians) - v * Math.sin(radians), 470 + u * Math.sin(radians) + v * Math.cos(radians)];
 };
 
-export const createSvmScene = (): Scene => {
+export const createSVMScene = (): Scene => {
   const { element, root } = createDiagram('svm', '서포트 벡터 머신(SVM)');
   const defs = svg('defs', {}, root);
   const clip = svg('clipPath', { id: 'svm-clip' }, defs);
