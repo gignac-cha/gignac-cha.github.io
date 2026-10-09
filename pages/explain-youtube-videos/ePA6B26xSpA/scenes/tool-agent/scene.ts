@@ -32,14 +32,14 @@ const at = {
   agent: 3442,
 };
 
-const f = (n: number) => n.toFixed(1);
+const toOneDecimal = (n: number) => n.toFixed(1);
 
 const arrow = (parent: SVGElement, x1: number, y1: number, x2: number, y2: number, className = 'tool-agent-arrow') => {
   const angle = Math.atan2(y2 - y1, x2 - x1);
   const head = 13;
   const left = [x2 - head * Math.cos(angle - .5), y2 - head * Math.sin(angle - .5)];
   const right = [x2 - head * Math.cos(angle + .5), y2 - head * Math.sin(angle + .5)];
-  return svg('path', { class: className, d: `M${f(x1)} ${f(y1)} L${f(x2)} ${f(y2)} M${f(left[0])} ${f(left[1])} L${f(x2)} ${f(y2)} L${f(right[0])} ${f(right[1])}` }, parent);
+  return svg('path', { class: className, d: `M${toOneDecimal(x1)} ${toOneDecimal(y1)} L${toOneDecimal(x2)} ${toOneDecimal(y2)} M${toOneDecimal(left[0])} ${toOneDecimal(left[1])} L${toOneDecimal(x2)} ${toOneDecimal(y2)} L${toOneDecimal(right[0])} ${toOneDecimal(right[1])}` }, parent);
 };
 
 // 도구 아이콘: (0, 0) 가운데, 약 56px.
@@ -141,10 +141,10 @@ const createTrace = (root: SVGElement) => {
     setAttributes(ghost, { opacity: (.5 * appear(time, at.o3)).toFixed(3) });
 
     const { index, point } = headAt(time);
-    const drawn = [...waypoints.slice(0, index + 1), point].map(({ x, y }) => `${f(x)},${f(y)}`).join(' ');
+    const drawn = [...waypoints.slice(0, index + 1), point].map(({ x, y }) => `${toOneDecimal(x)},${toOneDecimal(y)}`).join(' ');
     setAttributes(trace, { points: time > waypoints[0].time ? drawn : '' });
     const moving = time > waypoints[0].time && time < at.answer + .2;
-    setAttributes(head, { cx: f(point.x), cy: f(point.y), opacity: moving ? 1 : 0 });
+    setAttributes(head, { cx: toOneDecimal(point.x), cy: toOneDecimal(point.y), opacity: moving ? 1 : 0 });
 
     for (const { node, time: shown } of thoughts) {
       setAttributes(node, { opacity: appear(time, shown, .3).toFixed(3) });
@@ -152,7 +152,7 @@ const createTrace = (root: SVGElement) => {
     for (const [view, from, leave] of [[search, at.search, 3427.3], [tool, at.tool, 3428.12]] as const) {
       setAttributes(view.node, { opacity: (.35 + .65 * appear(time, from - .25, .3)).toFixed(3) });
       view.node.classList.toggle('active', time >= from && time < leave + .15);
-      view.bars.forEach(({ bar, width }, i) => setAttributes(bar, { width: f(width * ease(progress(time, from + .05 + i * .08, .22))) }));
+      view.bars.forEach(({ bar, width }, i) => setAttributes(bar, { width: toOneDecimal(width * ease(progress(time, from + .05 + i * .08, .22))) }));
     }
     setAttributes(answer, { opacity: appear(time, at.answer, .3).toFixed(3) });
   };
@@ -185,7 +185,7 @@ const createShift = (root: SVGElement) => {
   svg('circle', { class: 'tool-agent-loop-ring', r: radius }, loop);
   const steps = ['계획', '행동', '확인'].map((name, i) => {
     const angle = -Math.PI / 2 + (i * Math.PI * 2) / 3;
-    const node = svg('g', { class: 'tool-agent-loop-step', transform: `translate(${f(Math.cos(angle) * radius)} ${f(Math.sin(angle) * radius)})` }, loop);
+    const node = svg('g', { class: 'tool-agent-loop-step', transform: `translate(${toOneDecimal(Math.cos(angle) * radius)} ${toOneDecimal(Math.sin(angle) * radius)})` }, loop);
     svg('rect', { x: -66, y: -30, width: 132, height: 60, rx: 30 }, node);
     text(node, 0, 11, name, { 'text-anchor': 'middle' });
     return { node, angle };
@@ -199,19 +199,19 @@ const createShift = (root: SVGElement) => {
 
     // 대답하는 기계는 왼쪽 절반으로 비켜서고 살짝 물러난다.
     const split = ease(progress(time, at.working - .1, .7));
-    setAttributes(answering, { transform: `translate(${f(-400 * split)} 0)`, opacity: lerp(1, .8, split).toFixed(3) });
+    setAttributes(answering, { transform: `translate(${toOneDecimal(-400 * split)} 0)`, opacity: lerp(1, .8, split).toFixed(3) });
     setAttributes(divider, { opacity: (.6 * split).toFixed(3) });
 
     setAttributes(once, { opacity: appear(time, at.answering + .2, .4).toFixed(3) });
-    setAttributes(question, { transform: `translate(${f((1 - appear(time, at.answering + .2, .4)) * -30)} 0)` });
+    setAttributes(question, { transform: `translate(${toOneDecimal((1 - appear(time, at.answering + .2, .4)) * -30)} 0)` });
     setAttributes(reply, { opacity: appear(time, at.answering + .6, .3).toFixed(3) });
 
     const looping = appear(time, at.working + .1, .5);
-    setAttributes(working, { transform: `translate(${f((1 - looping) * 40)} 0)` });
-    setAttributes(loop, { opacity: looping.toFixed(3), transform: `translate(1200 ${f(560 + (1 - looping) * 30)})` });
+    setAttributes(working, { transform: `translate(${toOneDecimal((1 - looping) * 40)} 0)` });
+    setAttributes(loop, { opacity: looping.toFixed(3), transform: `translate(1200 ${toOneDecimal(560 + (1 - looping) * 30)})` });
     // 고리를 도는 점: 한 바퀴 2.4초. 지나는 단계가 밝아진다.
     const angle = -Math.PI / 2 + Math.max(0, time - at.working - .3) * ((Math.PI * 2) / 2.4);
-    setAttributes(runner, { cx: f(Math.cos(angle) * radius), cy: f(Math.sin(angle) * radius) });
+    setAttributes(runner, { cx: toOneDecimal(Math.cos(angle) * radius), cy: toOneDecimal(Math.sin(angle) * radius) });
     for (const step of steps) {
       const gap = Math.abs(Math.atan2(Math.sin(angle - step.angle), Math.cos(angle - step.angle)));
       step.node.classList.toggle('active', time > at.working + .3 && gap < .45);
@@ -282,12 +282,12 @@ const createWork = (root: SVGElement) => {
   const task = svg('g', { class: 'tool-agent-task' }, code);
   svg('rect', { x: -150, y: -30, width: 300, height: 60, rx: 14 }, task);
   text(task, 0, 10, '할 일: 테스트 고치기', { 'text-anchor': 'middle' });
-  const diff = svg('g', { class: 'tool-agent-diff' }, code);
-  svg('rect', { x: -110, y: -26, width: 220, height: 52, rx: 26 }, diff);
-  const diffText = text(diff, 0, 9, '', { 'text-anchor': 'middle' });
-  svg('tspan', { class: 'minus' }, diffText).textContent = '−1 ';
-  svg('tspan', { class: 'plus' }, diffText).textContent = '+1 ';
-  svg('tspan', {}, diffText).textContent = '돌려줌';
+  const patch = svg('g', { class: 'tool-agent-patch' }, code);
+  svg('rect', { x: -110, y: -26, width: 220, height: 52, rx: 26 }, patch);
+  const patchText = text(patch, 0, 9, '', { 'text-anchor': 'middle' });
+  svg('tspan', { class: 'minus' }, patchText).textContent = '−1 ';
+  svg('tspan', { class: 'plus' }, patchText).textContent = '+1 ';
+  svg('tspan', {}, patchText).textContent = '돌려줌';
   const codeCaption = svg('g', {}, group);
   text(codeCaption, 1170, 690, '코드를 맡기면 고쳐서 돌려준다', { class: 'tool-agent-panel-heading', 'text-anchor': 'middle' });
   const codex = text(codeCaption, 1170, 734, 'Codex', { class: 'tool-agent-caption', 'text-anchor': 'middle' });
@@ -296,24 +296,24 @@ const createWork = (root: SVGElement) => {
     setAttributes(group, { opacity: (1 - appear(time, at.merge, .6)).toFixed(3) });
 
     const browserShown = appear(time, at.browser, .5);
-    setAttributes(browser, { opacity: browserShown.toFixed(3), transform: `translate(0 ${f((1 - browserShown) * 24)})` });
+    setAttributes(browser, { opacity: browserShown.toFixed(3), transform: `translate(0 ${toOneDecimal((1 - browserShown) * 24)})` });
     setAttributes(browserCaption, { opacity: appear(time, at.browser + .3, .4).toFixed(3) });
     const point = cursorAt(time);
-    setAttributes(cursor, { transform: `translate(${f(point.x)} ${f(point.y)})`, opacity: appear(time, at.browse - .2, .3).toFixed(3) });
-    fields.forEach((typed, i) => setAttributes(typed, { width: f(ease(progress(time, path[1 + i * 2].time, .45)) * (i ? 220 : 300)) }));
+    setAttributes(cursor, { transform: `translate(${toOneDecimal(point.x)} ${toOneDecimal(point.y)})`, opacity: appear(time, at.browse - .2, .3).toFixed(3) });
+    fields.forEach((typed, i) => setAttributes(typed, { width: toOneDecimal(ease(progress(time, path[1 + i * 2].time, .45)) * (i ? 220 : 300)) }));
     const pressed = progress(time, click, .5);
     button.classList.toggle('pressed', time >= click && time < click + .25);
-    setAttributes(ripple, { cx: 250, cy: 530, r: f(pressed * 60), opacity: (pressed > 0 && pressed < 1 ? 1 - pressed : 0).toFixed(3) });
+    setAttributes(ripple, { cx: 250, cy: 530, r: toOneDecimal(pressed * 60), opacity: (pressed > 0 && pressed < 1 ? 1 - pressed : 0).toFixed(3) });
 
     const codeShown = appear(time, at.code, .5);
-    setAttributes(code, { opacity: codeShown.toFixed(3), transform: `translate(0 ${f((1 - codeShown) * 24)})` });
+    setAttributes(code, { opacity: codeShown.toFixed(3), transform: `translate(0 ${toOneDecimal((1 - codeShown) * 24)})` });
     setAttributes(codeCaption, { opacity: appear(time, at.code + .2, .4).toFixed(3) });
     setAttributes(codex, { opacity: appear(time, at.codex, .4).toFixed(3) });
 
     // 할 일 카드가 오른쪽 밖에서 날아와 저장소에 들어간다.
     const handing = ease(progress(time, at.handOff - .3, .6));
     setAttributes(task, {
-      transform: `translate(${f(lerp(1720, 1170, handing))} ${f(lerp(150, 300, handing))}) scale(${f(lerp(1, .8, ease(progress(time, at.handOff + .3, .3))))})`,
+      transform: `translate(${toOneDecimal(lerp(1720, 1170, handing))} ${toOneDecimal(lerp(150, 300, handing))}) scale(${toOneDecimal(lerp(1, .8, ease(progress(time, at.handOff + .3, .3))))})`,
       opacity: (appear(time, at.handOff - .3, .2) * (1 - appear(time, at.bug, .3))).toFixed(3),
     });
     // 틀린 줄이 빨갛게 드러났다가, 고친 줄(초록)로 바뀐다.
@@ -330,8 +330,8 @@ const createWork = (root: SVGElement) => {
     status.update(time, (t) => (t < at.bug ? '' : t < at.fix + .1 ? '✗ 테스트 실패' : '✓ 테스트 통과'));
     status.toggleClass('pass', time >= at.fix + .1);
     const giving = ease(progress(time, at.giveBack, .6));
-    setAttributes(diff, {
-      transform: `translate(${f(lerp(1250, 1340, giving))} 588)`,
+    setAttributes(patch, {
+      transform: `translate(${toOneDecimal(lerp(1250, 1340, giving))} 588)`,
       opacity: appear(time, at.giveBack, .3).toFixed(3),
     });
   };
@@ -363,10 +363,10 @@ const createMerge = (root: SVGElement) => {
       const row = { x: lerp(tool.from.x, tool.row, gather), y: lerp(tool.from.y, 430, gather) };
       const x = lerp(row.x, 800 + tool.slot.x, combine);
       const y = lerp(row.y, 430 + tool.slot.y, combine);
-      setAttributes(tool.node, { transform: `translate(${f(x)} ${f(y)}) scale(${f(lerp(1, .62, combine))})` });
+      setAttributes(tool.node, { transform: `translate(${toOneDecimal(x)} ${toOneDecimal(y)}) scale(${toOneDecimal(lerp(1, .62, combine))})` });
       setAttributes(tool.label, { opacity: (appear(time, at.merge + .5, .4) * (1 - combine)).toFixed(3) });
     }
-    setAttributes(ring, { r: f(combine * 140), opacity: combine.toFixed(3) });
+    setAttributes(ring, { r: toOneDecimal(combine * 140), opacity: combine.toFixed(3) });
     setAttributes(name, { opacity: appear(time, at.agent, .4).toFixed(3) });
     setAttributes(caption, { opacity: appear(time, at.agent + .4, .4).toFixed(3) });
   };

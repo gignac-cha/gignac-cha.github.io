@@ -8,7 +8,7 @@ export interface ViewControls {
   reset: () => void;
 }
 
-const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+const clamp = (value: number, minimum: number, maximum: number) => Math.min(Math.max(value, minimum), maximum);
 
 export const createViewControls = (surface: HTMLElement, camera: THREE.PerspectiveCamera | THREE.OrthographicCamera, onChange: (changed: boolean) => void): ViewControls => {
   const view = { yaw: 0, pitch: 0, zoom: 1, panX: 0, panY: 0 };

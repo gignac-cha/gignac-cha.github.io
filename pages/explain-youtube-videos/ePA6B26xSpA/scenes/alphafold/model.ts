@@ -38,8 +38,8 @@ export const count = sequence.length;
 const hslToRgb = (h: number, s: number, l: number): Rgb => {
   const k = (n: number) => (n + h / 30) % 12;
   const a = s * Math.min(l, 1 - l);
-  const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
-  return [f(0) * 255, f(8) * 255, f(4) * 255];
+  const channel = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
+  return [channel(0) * 255, channel(8) * 255, channel(4) * 255];
 };
 // 무지개색(N 끝 파랑 → C 끝 빨강). 서열 글자와 구슬이 같은 색이라 접혀도 순서를 따라갈 수 있다.
 export const rainbow = (i: number) => `hsl(${(240 - (240 * i) / (count - 1)).toFixed(0)}, 72%, 62%)`;

@@ -49,8 +49,8 @@ export const createLogChart = (parent: Element, { box, x, y, xTicks, yTicks, xLa
   text(group, left + width / 2, top + height + 76, xLabel, { class: 'scaling-laws-axis-label', 'text-anchor': 'middle' });
   text(group, left - 4, top - 26, yLabel, { class: 'scaling-laws-axis-label' });
 
-  // f(지수) = 오차. draw(p)는 from에서 to 쪽으로 p만큼 그린다(점선도 그대로 이어진다).
-  const curve = (f: (exponent: number) => number, from: number, to: number, className: string) => {
+  // lossAt(지수) = 오차. draw(p)는 from에서 to 쪽으로 p만큼 그린다(점선도 그대로 이어진다).
+  const curve = (lossAt: (exponent: number) => number, from: number, to: number, className: string) => {
     const element = svg('path', { class: `scaling-laws-curve ${className}` }, group);
     let drawn = -1;
     const draw = (p: number) => {
@@ -62,7 +62,7 @@ export const createLogChart = (parent: Element, { box, x, y, xTicks, yTicks, xLa
       const count = Math.max(Math.ceil(amount * 60), 1);
       const points = Array.from({ length: count + 1 }, (_, i) => {
         const exponent = from + (to - from) * amount * (i / count);
-        return `${i ? 'L' : 'M'}${toX(exponent).toFixed(1)} ${toY(f(exponent)).toFixed(1)}`;
+        return `${i ? 'L' : 'M'}${toX(exponent).toFixed(1)} ${toY(lossAt(exponent)).toFixed(1)}`;
       });
       setAttributes(element, { d: amount > 0 ? points.join(' ') : '' });
     };

@@ -22,7 +22,7 @@ const at = {
 // 라우터가 보는 것: OpenAI 의 GPT-5 발표에 나온 네 가지 (대화 종류, 복잡도, 도구 필요, 명시적인 요청 예: "think hard about this").
 const factors = ['대화 종류', '복잡도', '도구 필요', '"깊게 생각해 줘"'];
 
-const f = (n: number) => n.toFixed(1);
+const toOneDecimal = (n: number) => n.toFixed(1);
 
 type Point = { x: number; y: number };
 const bezier = (p: Point[], t: number): Point => {
@@ -121,8 +121,8 @@ export const createGPT5RouterScene = (): Scene => {
       frame.classList.toggle('unified', unified);
       setAttributes(frame, { opacity: appear(time, at.gpt5, .5).toFixed(3) });
       setAttributes(name, { opacity: appear(time, at.gpt5, .5).toFixed(3) });
-      setAttributes(fast.node, { opacity: appear(time, at.fast, .4).toFixed(3), transform: `translate(${f((1 - appear(time, at.fast, .4)) * 30)} 0)` });
-      setAttributes(deep.node, { opacity: appear(time, at.deep, .4).toFixed(3), transform: `translate(${f((1 - appear(time, at.deep, .4)) * 30)} 0)` });
+      setAttributes(fast.node, { opacity: appear(time, at.fast, .4).toFixed(3), transform: `translate(${toOneDecimal((1 - appear(time, at.fast, .4)) * 30)} 0)` });
+      setAttributes(deep.node, { opacity: appear(time, at.deep, .4).toFixed(3), transform: `translate(${toOneDecimal((1 - appear(time, at.deep, .4)) * 30)} 0)` });
       setAttributes(hub, { opacity: appear(time, at.unify, .4).toFixed(3) });
       setAttributes(wires, { opacity: appear(time, at.unify + .2, .4).toFixed(3) });
       factorViews.forEach((node, i) => setAttributes(node, { opacity: appear(time, at.look + .3 + i * .15, .3).toFixed(3) }));
@@ -148,7 +148,7 @@ export const createGPT5RouterScene = (): Scene => {
         } else if (toModel > 0 && toModel < 1) {
           point = bezier(view.path, ease(toModel));
         }
-        setAttributes(view.dot, point ? { cx: f(point.x), cy: f(point.y), opacity: 1 } : { opacity: 0 });
+        setAttributes(view.dot, point ? { cx: toOneDecimal(point.x), cy: toOneDecimal(point.y), opacity: 1 } : { opacity: 0 });
         if (view.path === toFast && toModel > 0) {
           fastBusy ||= time < view.routed + 1;
         }
@@ -159,8 +159,8 @@ export const createGPT5RouterScene = (): Scene => {
       // 빠른 모델은 곧바로, 생각하는 모델은 오래 생각한 뒤 답한다.
       const fastAnswer = questions[0].routed + .5;
       const deepAnswer = questions[1].routed + .5;
-      setAttributes(fast.meter, { width: f(fast.width * .1 * ease(progress(time, fastAnswer, .25))) });
-      setAttributes(deep.meter, { width: f(deep.width * ease(progress(time, deepAnswer, end - deepAnswer - .6))) });
+      setAttributes(fast.meter, { width: toOneDecimal(fast.width * .1 * ease(progress(time, fastAnswer, .25))) });
+      setAttributes(deep.meter, { width: toOneDecimal(deep.width * ease(progress(time, deepAnswer, end - deepAnswer - .6))) });
       const thinking = time >= deepAnswer;
       const label = !thinking ? '' : time < end - .6 ? `생각 중${'.'.repeat(1 + (Math.floor((time - deepAnswer) * 3) % 3))}` : '답';
       if (deepLabel.textContent !== label) {
@@ -182,7 +182,7 @@ export const createGPT5RouterScene = (): Scene => {
         }
         const entry = [{ x: 40, y }, { x: 420, y }, { x: 560, y: router.y }, { x: router.x - router.r, y: router.y }];
         const point = age < .85 ? bezier(entry, age / .85) : bezier(goesDeep ? toDeep : toFast, (age - .85) / .85);
-        setAttributes(dot, { cx: f(point.x), cy: f(point.y), opacity: f(Math.min(1, age / .15, (1.7 - age) / .15) * .9) });
+        setAttributes(dot, { cx: toOneDecimal(point.x), cy: toOneDecimal(point.y), opacity: toOneDecimal(Math.min(1, age / .15, (1.7 - age) / .15) * .9) });
       }
     },
   };

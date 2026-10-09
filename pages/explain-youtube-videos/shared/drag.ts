@@ -33,4 +33,4 @@ export const onDrag = (handle: HTMLElement, { start, move, end }: DragHandlers) 
   });
 };
 
-export const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), Math.max(min, max));
+export const clamp = (value: number, minimum: number, maximum: number) => Math.min(Math.max(value, minimum), Math.max(minimum, maximum));

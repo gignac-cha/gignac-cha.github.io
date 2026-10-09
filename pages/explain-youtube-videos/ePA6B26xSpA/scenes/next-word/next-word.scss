@@ -120,7 +120,7 @@
   stroke-dasharray: 1;
 }
 // 문서 아이콘.
-.next-word-doc {
+.next-word-document {
   > rect:first-child {
     stroke-width: 2;
     fill: #17181d;
@@ -131,7 +131,7 @@
   &.kind-3 > rect:first-child { stroke: var(--diagram-purple); }
   &.kind-4 > rect:first-child { stroke: var(--diagram-muted); }
 }
-.next-word-doc-line {
+.next-word-document-line {
   fill: var(--diagram-subtle);
 }
 .next-word-textbook {
@@ -157,7 +157,7 @@
   font-size: 96px;
   font-weight: 800;
 }
-.next-word-gpt-sub {
+.next-word-gpt-subtitle {
   font-size: 26px;
   fill: var(--diagram-muted) !important;
 }

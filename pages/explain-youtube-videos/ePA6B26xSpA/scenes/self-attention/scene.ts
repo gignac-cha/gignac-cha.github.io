@@ -282,7 +282,7 @@ export const createSelfAttentionScene = (): Scene => {
   });
 
   const bars = svg('g', { class: 'self-attention-bars' }, root);
-  const barRects = centers.map((x) => svg('rect', { class: 'self-attention-bar', x: x - 22, width: 44, rx: 6 }, bars));
+  const barRectangles = centers.map((x) => svg('rect', { class: 'self-attention-bar', x: x - 22, width: 44, rx: 6 }, bars));
   const barBase = 470;
 
   const chips = words.map((word, i) => chip(root, centers[i], rowY, word, widths[i]));
@@ -378,10 +378,10 @@ export const createSelfAttentionScene = (): Scene => {
     const focus = Math.max(scoreFocus, 0);
     const blend = ease(progress(time, at.scores + focus * scoreStep, .25));
     const before = Math.max(focus - 1, 0);
-    barRects.forEach((rect, j) => {
+    barRectangles.forEach((barRectangle, j) => {
       const value = lerp(weights[before][j], weights[focus][j], focus === 0 ? 1 : blend);
       const height = 4 + value * 110;
-      setAttributes(rect, { y: (barBase - height).toFixed(1), height: height.toFixed(1) });
+      setAttributes(barRectangle, { y: (barBase - height).toFixed(1), height: height.toFixed(1) });
     });
 
     caption.update(time, captionAt);

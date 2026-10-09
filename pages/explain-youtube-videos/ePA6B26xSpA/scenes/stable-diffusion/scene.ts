@@ -78,10 +78,10 @@ const latentSize = latentSide * latent.cell;
 const arrow = (parent: Element, x1: number, y1: number, x2: number, y2: number) => {
   const angle = Math.atan2(y2 - y1, x2 - x1);
   const head = 14;
-  const f = (n: number) => n.toFixed(1);
+  const toOneDecimal = (n: number) => n.toFixed(1);
   const left = [x2 - head * Math.cos(angle - .5), y2 - head * Math.sin(angle - .5)];
   const right = [x2 - head * Math.cos(angle + .5), y2 - head * Math.sin(angle + .5)];
-  return svg('path', { class: 'stable-diffusion-arrow', d: `M${f(x1)} ${f(y1)} L${f(x2)} ${f(y2)} M${f(left[0])} ${f(left[1])} L${f(x2)} ${f(y2)} L${f(right[0])} ${f(right[1])}` }, parent);
+  return svg('path', { class: 'stable-diffusion-arrow', d: `M${toOneDecimal(x1)} ${toOneDecimal(y1)} L${toOneDecimal(x2)} ${toOneDecimal(y2)} M${toOneDecimal(left[0])} ${toOneDecimal(left[1])} L${toOneDecimal(x2)} ${toOneDecimal(y2)} L${toOneDecimal(right[0])} ${toOneDecimal(right[1])}` }, parent);
 };
 
 const person = (parent: Element, x: number, y: number, size: number) => {
@@ -96,7 +96,7 @@ const fileCard = (parent: Element, x: number, y: number) => {
   svg('path', { d: 'M-70 -90 H40 L70 -60 V90 H-70 Z' }, group);
   svg('path', { d: 'M40 -90 V-60 H70', class: 'stable-diffusion-file-fold' }, group);
   text(group, 0, -10, '모델', { class: 'stable-diffusion-file-title' });
-  text(group, 0, 26, '가중치 전체', { class: 'stable-diffusion-file-sub' });
+  text(group, 0, 26, '가중치 전체', { class: 'stable-diffusion-file-subtitle' });
   return group;
 };
 
@@ -117,7 +117,7 @@ export const createStableDiffusionScene = (): Scene => {
   const laptop = svg('g', { class: 'stable-diffusion-laptop', transform: 'translate(1080 500)' }, download);
   svg('rect', { x: -120, y: -100, width: 240, height: 150, rx: 12 }, laptop);
   svg('path', { d: 'M-150 60 H150 L130 80 H-130 Z' }, laptop);
-  text(laptop, 0, -10, '내 컴퓨터', { class: 'stable-diffusion-file-sub' });
+  text(laptop, 0, -10, '내 컴퓨터', { class: 'stable-diffusion-file-subtitle' });
   const copy = svg('g', {}, laptop);
   svg('rect', { x: -48, y: 8, width: 96, height: 30, rx: 8, class: 'stable-diffusion-chip' }, copy);
   text(copy, 0, 30, '모델', { class: 'stable-diffusion-chip-text' });
@@ -151,7 +151,7 @@ export const createStableDiffusionScene = (): Scene => {
     const cells = Array.from({ length: latentSide * latentSide }, (_, k) => {
       const x = k % latentSide;
       const y = Math.floor(k / latentSide);
-      return { rect: svg('rect', { x: latent.x + x * latent.cell, y: latent.y + y * latent.cell, width: latent.cell + .4, height: latent.cell + .4 }, layer), color: latentColor(x, y, channel), k };
+      return { square: svg('rect', { x: latent.x + x * latent.cell, y: latent.y + y * latent.cell, width: latent.cell + .4, height: latent.cell + .4 }, layer), color: latentColor(x, y, channel), k };
     });
     svg('rect', { x: latent.x, y: latent.y, width: latentSize, height: latentSize, class: 'stable-diffusion-frame' }, layer);
     return { channel, cells };
@@ -267,10 +267,10 @@ export const createStableDiffusionScene = (): Scene => {
     const step = Math.floor(denoise * steps);
     const noiseAmount = time < at.diffuse ? 0 : denoising(noising, step, steps);
     for (const { channel, cells } of layers) {
-      for (const { rect, color, k } of cells) {
+      for (const { square, color, k } of cells) {
         const n = 30 + random(k * 3.3 + channel * 11 + step * 7.1) * 200;
         const c: [number, number, number] = [lerp(color[0], n, noiseAmount), lerp(color[1], n * .95, noiseAmount), lerp(color[2], n * 1.05, noiseAmount)];
-        setAttributes(rect, { fill: rgb(c) });
+        setAttributes(square, { fill: rgb(c) });
       }
     }
     setAttributes(loop, { opacity: appear(time, at.diffuse, .3).toFixed(3) });

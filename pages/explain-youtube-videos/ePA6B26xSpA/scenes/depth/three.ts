@@ -230,8 +230,8 @@ export const createDepthThree = (): SceneLayer => {
   const towerLabel = (name: string, layers: string) => {
     const group = svg('g', { opacity: 0 }, overlay);
     const title = text(group, 0, 0, name, { class: 'depth-tower-name' });
-    const sub = text(group, 0, 40, layers, { class: 'depth-tower-layers' });
-    return { group, title, sub };
+    const subtitle = text(group, 0, 40, layers, { class: 'depth-tower-layers' });
+    return { group, title, subtitle };
   };
   const alexnetLabel = towerLabel('알렉스넷', '8층');
   const vggLabel = towerLabel('VGG', '16~19층');

@@ -103,12 +103,12 @@ export const createEncoderDecoderScene = (): Scene => {
     svg('path', { class: 'encoder-decoder-branch', d: `M800 676 C800 600 ${x + (x < 800 ? 260 : -260)} 640 ${x + (x < 800 ? 100 : -100)} 540`, pathLength: 1 }, tree));
   const rootChip = chip(tree, 800, 700, '트랜스포머 2017', 'root');
   const roads = [
-    { x: apart.encoderX, label: '읽고 이해하기', dir: -1 },
-    { x: apart.decoderX, label: '이어서 써 내기', dir: 1 },
-  ].map(({ x, label, dir }) => {
-    const group = svg('g', { class: `encoder-decoder-road ${dir < 0 ? 'encoder' : 'decoder'}` }, root);
-    svg('path', { class: 'encoder-decoder-road-arrow', d: `M${x + dir * 130} 330 L${x + dir * 210} 250 M${x + dir * 210 - dir * 18} 248 L${x + dir * 210} 250 L${x + dir * 208} 268` }, group);
-    text(group, x + dir * 200, 300, label, { class: 'encoder-decoder-road-label', 'text-anchor': dir < 0 ? 'end' : 'start' });
+    { x: apart.encoderX, label: '읽고 이해하기', direction: -1 },
+    { x: apart.decoderX, label: '이어서 써 내기', direction: 1 },
+  ].map(({ x, label, direction }) => {
+    const group = svg('g', { class: `encoder-decoder-road ${direction < 0 ? 'encoder' : 'decoder'}` }, root);
+    svg('path', { class: 'encoder-decoder-road-arrow', d: `M${x + direction * 130} 330 L${x + direction * 210} 250 M${x + direction * 210 - direction * 18} 248 L${x + direction * 210} 250 L${x + direction * 208} 268` }, group);
+    text(group, x + direction * 200, 300, label, { class: 'encoder-decoder-road-label', 'text-anchor': direction < 0 ? 'end' : 'start' });
     return group;
   });
   const question = text(root, 800, 760, '이 뼈대에 무엇을, 어떻게 가르칠까?', { class: 'encoder-decoder-question', 'text-anchor': 'middle' });

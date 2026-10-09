@@ -39,17 +39,17 @@ const panels = [
   {
     key: 'size', at: at.size, left: 150, x: [5, 11] as [number, number], measured: 9,
     ticks: [[5, '10만'], [7, '1,000만'], [9, '10억']] as [number, string][],
-    label: '모델 크기 (매개변수)', law: ['L ∝ N', '−0.076'], f: (e: number) => lossOfParameters(10 ** e),
+    label: '모델 크기 (매개변수)', law: ['L ∝ N', '−0.076'], loss: (e: number) => lossOfParameters(10 ** e),
   },
   {
     key: 'data', at: at.data, left: 640, x: [7, 12] as [number, number], measured: 10.3,
     ticks: [[7, '1,000만'], [9, '10억'], [11, '1,000억']] as [number, string][],
-    label: '데이터양 (토큰)', law: ['L ∝ D', '−0.095'], f: (e: number) => lossOfData(10 ** e),
+    label: '데이터양 (토큰)', law: ['L ∝ D', '−0.095'], loss: (e: number) => lossOfData(10 ** e),
   },
   {
     key: 'compute', at: at.compute, left: 1130, x: [-9, 3] as [number, number], measured: 1,
     ticks: [[-8, '10⁻⁸'], [-4, '10⁻⁴'], [0, '1']] as [number, string][],
-    label: '연산량 (PF-일)', law: ['L ∝ C', '−0.050'], f: (e: number) => lossOfCompute(10 ** e),
+    label: '연산량 (PF-일)', law: ['L ∝ C', '−0.050'], loss: (e: number) => lossOfCompute(10 ** e),
   },
 ];
 
@@ -75,18 +75,18 @@ export const createScalingLawsScene = (): Scene => {
   const trio = svg('g', {}, root);
   const heading = svg('g', { class: 'scaling-laws-heading' }, trio);
   text(heading, 800, 172, '스케일링 법칙', { class: 'scaling-laws-heading-title' });
-  text(heading, 800, 212, '세 가지를 늘리면 오차가 정해진 비율로 줄어든다', { class: 'scaling-laws-heading-sub' });
+  text(heading, 800, 212, '세 가지를 늘리면 오차가 정해진 비율로 줄어든다', { class: 'scaling-laws-heading-subtitle' });
   const charts = panels.map((panel) => {
     const panelGroup = svg('g', {}, trio);
     const chart = createLogChart(panelGroup, {
       box: { left: panel.left, top: 280, width: 360, height: 300 },
       x: panel.x, y: [1.4, 8], xTicks: panel.ticks, yTicks: [2, 4, 8], xLabel: panel.label, yLabel: '오차',
     });
-    const solid = chart.curve(panel.f, panel.x[0], panel.measured, 'measured');
-    const dashed = chart.curve(panel.f, panel.measured, panel.x[1], 'predicted');
+    const solid = chart.curve(panel.loss, panel.x[0], panel.measured, 'measured');
+    const dashed = chart.curve(panel.loss, panel.measured, panel.x[1], 'predicted');
     const law = formula(panelGroup, panel.left + 360, 300, panel.law);
     const middle = (panel.measured + panel.x[1]) / 2;
-    const predictLabel = text(panelGroup, chart.toX(middle) + 4, chart.toY(panel.f(middle)) - 26, '예측', { class: 'scaling-laws-predict-label', 'text-anchor': 'middle' });
+    const predictLabel = text(panelGroup, chart.toX(middle) + 4, chart.toY(panel.loss(middle)) - 26, '예측', { class: 'scaling-laws-predict-label', 'text-anchor': 'middle' });
     return { panel, panelGroup, solid, dashed, law, predictLabel };
   });
 

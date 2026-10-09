@@ -4,7 +4,7 @@ import { appear, between, clamp, ease, lerp, progress, setAttributes, svg, text 
 import { createThreeDiagram } from '../../../shared/three-diagram.ts';
 import type { SceneLayer } from '../../../shared/three-scene.ts';
 import { FACE_HEIGHT, FACE_WIDTH, faceCanvas, faces, random } from './face.ts';
-import { ganTimeline as T } from './timeline.ts';
+import { ganTimeline } from './timeline.ts';
 import { GRID_HEIGHT, GRID_WIDTH, snapshots, trainingFrames, trainingStep } from './training.ts';
 
 // Three.js 판. SVG 판(gan.ts)과 같은 시점에 같은 이야기를 하되,
@@ -29,7 +29,7 @@ const levels = (time: number) => {
   let watch = .22;
   let forgeTarget = forge;
   let watchTarget = watch;
-  for (const [at, who] of T.rounds) {
+  for (const [at, who] of ganTimeline.rounds) {
     const t = ease(progress(time, at, .4));
     if (who === 'forge') {
       const from = forgeTarget;
@@ -305,7 +305,7 @@ export const createGANThree = (): SceneLayer => {
     const at = new THREE.Vector3(left + width / 2, baseline + height / 2, 0);
     left += width + gap;
     scene.add(group);
-    return { group, at, appearAt: k === 0 ? T.early : T.yearly + (k - 1) * .7 };
+    return { group, at, appearAt: k === 0 ? ganTimeline.early : ganTimeline.yearly + (k - 1) * .7 };
   });
   const rowRight = left - gap;
   const growthTarget = new THREE.Vector3(0, -.2, 0);
@@ -393,8 +393,8 @@ export const createGANThree = (): SceneLayer => {
 
   const update = (time: number) => {
     // 카메라: 천천히 흔들려 입체감을 주고, 얼굴을 학습할 때는 가짜 자리로 다가갔다가, 성장 단계에서 액자 줄 가운데로.
-    const focus = ease(progress(time, T.faces + .4, 2.2)) * (1 - ease(progress(time, T.early - .3, 1.2)));
-    const growth = ease(progress(time, T.early - .3, 1.2));
+    const focus = ease(progress(time, ganTimeline.faces + .4, 2.2)) * (1 - ease(progress(time, ganTimeline.early - .3, 1.2)));
+    const growth = ease(progress(time, ganTimeline.early - .3, 1.2));
     const target = new THREE.Vector3()
       .lerp(new THREE.Vector3(fakeAt.x * .3, fakeAt.y * .35, 0), focus)
       .lerp(growthTarget, growth);
@@ -405,29 +405,29 @@ export const createGANThree = (): SceneLayer => {
     look(target);
     camera.updateMatrixWorld();
 
-    const machineIn = (1 - appear(time, T.early - .3, .6)) * appear(time, T.cards, .6);
-    const nameIn = appear(time, T.name, .6) * (1 - appear(time, T.cards - .3, .5));
+    const machineIn = (1 - appear(time, ganTimeline.early - .3, .6)) * appear(time, ganTimeline.cards, .6);
+    const nameIn = appear(time, ganTimeline.name, .6) * (1 - appear(time, ganTimeline.cards - .3, .5));
     setAttributes(name, { opacity: nameIn.toFixed(3) });
     setAttributes(machineOverlay, { opacity: machineIn.toFixed(3) });
-    setOpacity(floor, appear(time, T.cards, 1) * .9);
+    setOpacity(floor, appear(time, ganTimeline.cards, 1) * .9);
 
     // 카드
-    const generatorIn = appear(time, T.cards + .6, .5) * machineIn;
-    const policeIn = appear(time, T.cards + 1.8, .5) * machineIn;
+    const generatorIn = appear(time, ganTimeline.cards + .6, .5) * machineIn;
+    const policeIn = appear(time, ganTimeline.cards + 1.8, .5) * machineIn;
     setOpacity(generator.group, generatorIn);
     setOpacity(police.group, policeIn);
-    const generatorFocus = between(time, T.generator, T.police) || time >= T.brush;
-    const policeFocus = between(time, T.police, T.verdict) || between(time, T.judge, T.brush);
+    const generatorFocus = between(time, ganTimeline.generator, ganTimeline.police) || time >= ganTimeline.brush;
+    const policeFocus = between(time, ganTimeline.police, ganTimeline.verdict) || between(time, ganTimeline.judge, ganTimeline.brush);
     // 경찰이 실력을 올리는 순간에는 테두리가 반짝인다.
-    const scan = Math.max(0, ...T.rounds.filter(([, who]) => who === 'police').map(([at]) => (between(time, at, at + .5) ? Math.sin(((time - at) / .5) * Math.PI) : 0)));
+    const scan = Math.max(0, ...ganTimeline.rounds.filter(([, who]) => who === 'police').map(([at]) => (between(time, at, at + .5) ? Math.sin(((time - at) / .5) * Math.PI) : 0)));
     generator.edges.material.opacity = generatorIn * (generatorFocus ? 1 : .45);
-    police.edges.material.opacity = policeIn * (time >= T.brush ? .25 : policeFocus ? 1 : .45 + .55 * scan);
+    police.edges.material.opacity = policeIn * (time >= ganTimeline.brush ? .25 : policeFocus ? 1 : .45 + .55 * scan);
     generator.group.rotation.y = .18 + Math.sin(time * .4) * .03;
     police.group.rotation.y = -.18 + Math.sin(time * .4 + 1) * .03;
     generatorLabel.group.classList.toggle('focus', generatorFocus);
     policeLabel.group.classList.toggle('focus', policeFocus);
     setAttributes(generatorLabel.group, { opacity: generatorIn.toFixed(3) });
-    setAttributes(policeLabel.group, { opacity: (policeIn * (time >= T.brush ? .45 : 1)).toFixed(3) });
+    setAttributes(policeLabel.group, { opacity: (policeIn * (time >= ganTimeline.brush ? .45 : 1)).toFixed(3) });
     anchor(generatorLabel.group, generatorAt.clone().setZ(.2));
     anchor(policeLabel.group, policeAt.clone().setZ(.2));
     const { forge, watch } = levels(time);
@@ -435,12 +435,12 @@ export const createGANThree = (): SceneLayer => {
     setAttributes(policeLabel.meter, { width: (186 * watch).toFixed(1) });
 
     // 지폐 → 얼굴 자리
-    const morph = ease(progress(time, T.faces, .8));
+    const morph = ease(progress(time, ganTimeline.faces, .8));
     const width = lerp(3, 1.7, morph);
     const height = lerp(1.5, slotFaceHeight, morph);
     const quality = clamp((forge - .1) / .84);
-    const fakeIn = appear(time, T.firstFake, .6);
-    const realIn = appear(time, T.real, .6);
+    const fakeIn = appear(time, ganTimeline.firstFake, .6);
+    const realIn = appear(time, ganTimeline.real, .6);
     fakeSlot.position.set(fakeAt.x - (1 - fakeIn) * 2.6, fakeAt.y, 0);
     for (const [slot, seed] of [[realSlot, 0], [fakeSlot, 2]] as const) {
       slot.rotation.set(Math.sin(time * .5 + seed) * .05, Math.sin(time * .37 + seed) * .14, 0);
@@ -455,8 +455,8 @@ export const createGANThree = (): SceneLayer => {
     setOpacity(fakeFrame, fakeIn * morph * machineIn);
 
     // 화살표
-    segment(toFake, world(420, 545), new THREE.Vector3(fakeSlot.position.x - width / 2 - .14, fakeAt.y, 0), appear(time, T.firstFake - .5, .5));
-    const toPolice = appear(time, T.real + 1.2, .5);
+    segment(toFake, world(420, 545), new THREE.Vector3(fakeSlot.position.x - width / 2 - .14, fakeAt.y, 0), appear(time, ganTimeline.firstFake - .5, .5));
+    const toPolice = appear(time, ganTimeline.real + 1.2, .5);
     segment(realToPolice, new THREE.Vector3(realAt.x + width / 2 + .14, realAt.y, 0), world(1178, 400), toPolice);
     segment(fakeToPolice, new THREE.Vector3(fakeAt.x + width / 2 + .14, fakeAt.y, 0), world(1178, 470), toPolice);
 
@@ -469,15 +469,15 @@ export const createGANThree = (): SceneLayer => {
     for (const [label] of [[realLabel], [fakeLabel]] as const) {
       setAttributes(label.badge, { transform: `translate(${(width * unit).toFixed(1)} 18)` });
     }
-    const verdictIn = appear(time, T.verdict, .3) * (1 - morph);
-    const unsure = time >= T.indistinguishable;
+    const verdictIn = appear(time, ganTimeline.verdict, .3) * (1 - morph);
+    const unsure = time >= ganTimeline.indistinguishable;
     setBadge(realLabel.badge, realLabel.glyph, unsure ? 'unsure' : 'pass');
     setBadge(fakeLabel.badge, fakeLabel.glyph, unsure ? 'unsure' : forge > watch ? 'pass' : 'caught');
     setAttributes(realLabel.badge, { opacity: verdictIn.toFixed(3), transform: `translate(${(width * unit).toFixed(1)} 18)` });
     setAttributes(fakeLabel.badge, { opacity: verdictIn.toFixed(3), transform: `translate(${(width * unit).toFixed(1)} 18)` });
 
     // 되먹임 관: 그려지고, 위조범이 수법을 고치기 직전마다 빛이 관을 따라 돌아간다.
-    const drawn = ease(progress(time, T.feedback, 1.3));
+    const drawn = ease(progress(time, ganTimeline.feedback, 1.3));
     const screen = curveSamples.map((point) => project(point));
     let length = 0;
     for (let i = 1; i < screen.length; i++) {
@@ -494,10 +494,10 @@ export const createGANThree = (): SceneLayer => {
     const before = screen[screen.length - 4];
     const angle = Math.atan2(tip.y - before.y, tip.x - before.x);
     const wing = (side: number) => `${(tip.x - Math.cos(angle + side) * 18).toFixed(1)} ${(tip.y - Math.sin(angle + side) * 18).toFixed(1)}`;
-    setAttributes(feedbackHead, { d: `M${wing(.5)} L${tip.x.toFixed(1)} ${tip.y.toFixed(1)} L${wing(-.5)}`, opacity: progress(time, T.feedback + 1.1, .3).toFixed(3) });
+    setAttributes(feedbackHead, { d: `M${wing(.5)} L${tip.x.toFixed(1)} ${tip.y.toFixed(1)} L${wing(-.5)}`, opacity: progress(time, ganTimeline.feedback + 1.1, .3).toFixed(3) });
     // 위조범이 수법을 고치기 직전마다 빛이 관을 따라 경찰에서 위조범으로 돌아간다.
     let traveling = -1;
-    for (const [at, who] of T.rounds) {
+    for (const [at, who] of ganTimeline.rounds) {
       if (who === 'forge' && between(time, at - .6, at)) {
         traveling = ease((time - (at - .6)) / .6);
       }
@@ -506,14 +506,14 @@ export const createGANThree = (): SceneLayer => {
     setAttributes(pulse, { cx: spot.x.toFixed(1), cy: spot.y.toFixed(1), opacity: traveling >= 0 ? 1 : 0 });
     // 관이 감싸는 안쪽, 바닥 곡선 바로 위.
     anchor(feedbackLabel, curve.getPoint(.5), { x: 0, y: -26 });
-    setAttributes(feedbackLabel, { opacity: appear(time, T.feedback + .6, .6).toFixed(3) });
+    setAttributes(feedbackLabel, { opacity: appear(time, ganTimeline.feedback + .6, .6).toFixed(3) });
 
     // 심판에서 붓으로
     // 칩은 화면 가장자리에서 잘리지 않도록 가운데 쪽으로 조금 당겨 둔다.
     anchor(judgeChip, policeAt.clone().add(new THREE.Vector3(0, 1.55, .2)), { x: -70, y: 0 });
     anchor(brushChip, generatorAt.clone().add(new THREE.Vector3(0, 1.55, .2)), { x: 70, y: 0 });
-    setAttributes(judgeChip, { opacity: appear(time, T.judge, .5).toFixed(3) });
-    setAttributes(brushChip, { opacity: appear(time, T.brush, .5).toFixed(3) });
+    setAttributes(judgeChip, { opacity: appear(time, ganTimeline.judge, .5).toFixed(3) });
+    setAttributes(brushChip, { opacity: appear(time, ganTimeline.brush, .5).toFixed(3) });
 
     // 위조범의 출력: 학습할 때마다 같은 타일을 새 값으로 칠하고, 다 배우면 선명한 얼굴이 드러난다.
     const outputIn = fakeIn * morph * machineIn;
@@ -522,18 +522,18 @@ export const createGANThree = (): SceneLayer => {
     if (tiles.visible) {
       paintTiles(frames[step.from], frames[step.to], step.blend);
     }
-    setOpacity(generatedFace, outputIn * appear(time, T.formed, 1.2));
+    setOpacity(generatedFace, outputIn * appear(time, ganTimeline.formed, 1.2));
     const count = `학습 ${snapshots[step.to]}회`;
     if (counter.textContent !== count) {
       counter.textContent = count;
     }
-    const nobodyIn = appear(time, T.nobody, .5);
+    const nobodyIn = appear(time, ganTimeline.nobody, .5);
     anchor(counter, new THREE.Vector3(fakeSlot.position.x, fakeAt.y - slotFaceHeight / 2, 0), { x: 0, y: 40 });
     // 같은 자리에 "세상에 없는 얼굴"이 들어오므로, 횟수는 그보다 먼저 빠진다(두 글자가 겹쳐 보이지 않게).
-    setAttributes(counter, { opacity: (appear(time, T.faces + .6, .5) * (1 - appear(time, T.nobody - .3, .3))).toFixed(3) });
+    setAttributes(counter, { opacity: (appear(time, ganTimeline.faces + .6, .5) * (1 - appear(time, ganTimeline.nobody - .3, .3))).toFixed(3) });
 
     // 세상에 없는 얼굴: 뒤에서 빛이 번진다.
-    const shine = nobodyIn * (.45 + .55 * Math.max(0, Math.sin(((time - T.nobody) / 1.6) * Math.PI)) * (time < T.nobody + 1.6 ? 1 : 0)) * (1 - growth);
+    const shine = nobodyIn * (.45 + .55 * Math.max(0, Math.sin(((time - ganTimeline.nobody) / 1.6) * Math.PI)) * (time < ganTimeline.nobody + 1.6 ? 1 : 0)) * (1 - growth);
     setOpacity(glow, shine);
     anchor(nobody, new THREE.Vector3(fakeAt.x, fakeAt.y - slotFaceHeight / 2 - .1, 0), { x: 0, y: 46 });
     setAttributes(nobody, { opacity: (nobodyIn * (1 - growth)).toFixed(3) });
@@ -549,8 +549,8 @@ export const createGANThree = (): SceneLayer => {
       setAttributes(stageTags[k], { opacity: shown.toFixed(3) });
     });
     anchor(firstLabel, new THREE.Vector3(panels[0].at.x, baseline - .08, 0), { x: 0, y: 84 });
-    setAttributes(firstLabel, { opacity: (appear(time, T.early + 1.2, .5) * (1 - appear(time, T.yearly, .4))).toFixed(3) });
-    const yearlyIn = appear(time, T.yearly + .6, .6);
+    setAttributes(firstLabel, { opacity: (appear(time, ganTimeline.early + 1.2, .5) * (1 - appear(time, ganTimeline.yearly, .4))).toFixed(3) });
+    const yearlyIn = appear(time, ganTimeline.yearly + .6, .6);
     const from = project(new THREE.Vector3(rowLeft, baseline - .75, 0));
     const to = project(new THREE.Vector3(rowRight, baseline - .75, 0));
     setAttributes(growthArrow, {

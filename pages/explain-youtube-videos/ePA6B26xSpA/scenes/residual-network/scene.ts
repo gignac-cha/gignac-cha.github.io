@@ -183,7 +183,7 @@ const cifar = [
   { label: '56층', value: 6.97 },
   { label: '110층', value: 6.43 },
 ];
-const cifarChart = { left: 520, baseline: 720, top: 260, max: 10, pitch: 220, width: 140 };
+const cifarChart = { left: 520, baseline: 720, top: 260, maximum: 10, pitch: 220, width: 140 };
 
 // ── 6. 152층과 이미지넷 오류율 ───────────────────────────────────────────────
 // 다섯 번 안에 못 맞힌 비율. 2012년 26%대는 앞 장면(이미지넷 대회 오류율)의 2등 팀,
@@ -193,8 +193,8 @@ const errorBars = [
   { key: 'human', label: '사람', note: '직접 풀어 잰 값', value: 5.1, display: '5.1%', at: at.human },
   { key: 'resnet', label: 'ResNet', note: '2015년', value: 3.57, display: '3.57%', at: at.error },
 ] as const;
-const errorChart = { left: 860, baseline: 760, top: 320, max: 30, pitch: 210, width: 130 };
-const errorY = (value: number) => errorChart.baseline - (value / errorChart.max) * (errorChart.baseline - errorChart.top);
+const errorChart = { left: 860, baseline: 760, top: 320, maximum: 30, pitch: 210, width: 130 };
+const errorY = (value: number) => errorChart.baseline - (value / errorChart.maximum) * (errorChart.baseline - errorChart.top);
 const tallStack = { bottom: 790, height: 520, alexX: 170, resX: 420, width: 150 };
 
 const createResidualNetwork = () => {
@@ -256,7 +256,7 @@ const createResidualNetwork = () => {
   svg('rect', { class: 'resnet-bubble', x: 120, y: 240, width: 340, height: 64, rx: 20 }, firstBubble);
   text(firstBubble, 290, 282, message, { class: 'resnet-bubble-text' });
   const lastBubble = svg('g', { opacity: 0 }, whisper);
-  const lastRect = svg('rect', { class: 'resnet-bubble', x: 1140, y: 240, width: 340, height: 64, rx: 20 }, lastBubble);
+  const lastRectangle = svg('rect', { class: 'resnet-bubble', x: 1140, y: 240, width: 340, height: 64, rx: 20 }, lastBubble);
   const lastText = text(lastBubble, 1310, 282, '', { class: 'resnet-bubble-text' });
   const runner = svg('circle', { class: 'resnet-runner', r: 0 }, whisper);
   const backRunner = svg('circle', { class: 'resnet-back-runner', r: 0 }, whisper);
@@ -457,7 +457,7 @@ const createResidualNetwork = () => {
     }
     const arrivedNow = time >= at.garbled ? arrived100 : time >= at.ten + 1.6 ? arrived10 : '';
     setText(lastText, arrivedNow);
-    lastRect.classList.toggle('broken', time >= at.garbled);
+    lastRectangle.classList.toggle('broken', time >= at.garbled);
     lastText.classList.toggle('broken', time >= at.garbled);
     setAttributes(lastBubble, { opacity: (arrivedNow ? (time >= at.hundred && time < at.garbled ? .25 : 1) : 0).toFixed(3) });
     // 거꾸로: 끝에서 처음으로, 갈수록 흐려진다.
@@ -549,7 +549,7 @@ const createResidualNetwork = () => {
     setAttributes(cifarGroup, { opacity: visible(time, phases.cifar).toFixed(3) });
     cifarBars.forEach(({ item, bar, value }, i) => {
       const grown = ease(progress(time, at.experiment + .6 + i * .5, .6));
-      const height = (item.value / cifarChart.max) * (cifarChart.baseline - cifarChart.top) * grown;
+      const height = (item.value / cifarChart.maximum) * (cifarChart.baseline - cifarChart.top) * grown;
       setAttributes(bar, { y: (cifarChart.baseline - height).toFixed(1), height: height.toFixed(1) });
       setAttributes(value, { y: (cifarChart.baseline - height - 16).toFixed(1), opacity: appear(time, at.experiment + 1 + i * .5, .3).toFixed(3) });
     });
@@ -566,7 +566,7 @@ const createResidualNetwork = () => {
     setAttributes(narrowNote, { opacity: appear(time, at.narrow, .4).toFixed(3) });
     errorItems.forEach(({ item, group, bar, note, value }) => {
       const grown = ease(progress(time, item.at, .7));
-      const height = (item.value / errorChart.max) * (errorChart.baseline - errorChart.top) * grown;
+      const height = (item.value / errorChart.maximum) * (errorChart.baseline - errorChart.top) * grown;
       setAttributes(group, { opacity: appear(time, item.at - .1, .3).toFixed(3) });
       setAttributes(bar, { y: (errorChart.baseline - height).toFixed(1), height: height.toFixed(1) });
       setAttributes(value, { y: (errorChart.baseline - height - 16).toFixed(1) });

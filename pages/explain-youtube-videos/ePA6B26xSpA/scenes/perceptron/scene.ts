@@ -209,11 +209,11 @@ const createPerceptron = () => {
       const b = screen(ny * far, -nx * far);
       const pa = screen(-ny * far + nx * far, nx * far + ny * far);
       const pb = screen(ny * far + nx * far, -nx * far + ny * far);
-      const na = screen(-ny * far - nx * far, nx * far - ny * far);
-      const nb = screen(ny * far - nx * far, -nx * far - ny * far);
+      const negativeA = screen(-ny * far - nx * far, nx * far - ny * far);
+      const negativeB = screen(ny * far - nx * far, -nx * far - ny * far);
       setAttributes(line, { x1: a.x.toFixed(1), y1: a.y.toFixed(1), x2: b.x.toFixed(1), y2: b.y.toFixed(1) });
       setAttributes(positive, { points: [a, b, pb, pa].map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ') });
-      setAttributes(negative, { points: [a, b, nb, na].map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ') });
+      setAttributes(negative, { points: [a, b, negativeB, negativeA].map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ') });
     }
 
     // 틀린 예제에는 빨간 고리.

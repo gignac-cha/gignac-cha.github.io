@@ -84,8 +84,8 @@ export const createGPUScene = (): Scene => {
   const cpu = svg('g', { class: 'gpu-cpu' }, root);
   text(cpu, 340, 140, 'CPU', { class: 'gpu-heading' });
   const cpuSub = [
-    text(cpu, 340, 186, '복잡한 일을 하나씩', { class: 'gpu-sub' }),
-    text(cpu, 340, 186, '뛰어난 교수 한 명', { class: 'gpu-sub' }),
+    text(cpu, 340, 186, '복잡한 일을 하나씩', { class: 'gpu-subtitle' }),
+    text(cpu, 340, 186, '뛰어난 교수 한 명', { class: 'gpu-subtitle' }),
   ];
   const tasks = Array.from({ length: 6 }, (_, i) => svg('rect', { x: 166 + i * 60, y: 240, width: 48, height: 48, rx: 10, class: 'gpu-task' }, cpu));
   const core = svg('rect', { x: 200, y: 330, width: 280, height: 280, rx: 28, class: 'gpu-core' }, cpu);
@@ -102,11 +102,11 @@ export const createGPUScene = (): Scene => {
     }
   });
   netLayers.forEach((ys, layer) => ys.forEach((y) => svg('circle', { cx: netX[layer], cy: y, r: 18, class: 'gpu-net-node' }, network)));
-  text(network, 275, 330, '×', { class: 'gpu-op' });
-  text(network, 445, 300, '×', { class: 'gpu-op' });
-  text(network, 360, 345, '+', { class: 'gpu-op' });
-  text(network, 360, 600, '곱셈 × 덧셈 +', { class: 'gpu-sub' });
-  text(network, 360, 650, '어마어마하게 반복', { class: 'gpu-sub' });
+  text(network, 275, 330, '×', { class: 'gpu-operator' });
+  text(network, 445, 300, '×', { class: 'gpu-operator' });
+  text(network, 360, 345, '+', { class: 'gpu-operator' });
+  text(network, 360, 600, '곱셈 × 덧셈 +', { class: 'gpu-subtitle' });
+  text(network, 360, 650, '어마어마하게 반복', { class: 'gpu-subtitle' });
 
   // GPU 칩: 단순한 계산을 하는 수천 개의 작은 코어.
   const gpu = svg('g', { class: 'gpu-chip' }, root);
@@ -115,9 +115,9 @@ export const createGPUScene = (): Scene => {
   const frame = svg('rect', { x: chip.x - 20, y: chip.y - 20, width: chipWidth + 32, height: chipHeight + 32, rx: 20, class: 'gpu-frame' }, gpu);
   text(gpu, chip.x - 20, 140, 'GPU', { class: 'gpu-heading gpu-left' });
   const gpuSub = [
-    text(gpu, chip.x + 116, 140, '단순한 계산 수천 개 동시에', { class: 'gpu-sub gpu-left' }),
-    text(gpu, chip.x + 116, 140, '초등학생 수천 명', { class: 'gpu-sub gpu-left' }),
-    text(gpu, chip.x + 116, 140, '게임용 칩 → AI 엔진', { class: 'gpu-sub gpu-left gpu-engine' }),
+    text(gpu, chip.x + 116, 140, '단순한 계산 수천 개 동시에', { class: 'gpu-subtitle gpu-left' }),
+    text(gpu, chip.x + 116, 140, '초등학생 수천 명', { class: 'gpu-subtitle gpu-left' }),
+    text(gpu, chip.x + 116, 140, '게임용 칩 → AI 엔진', { class: 'gpu-subtitle gpu-left gpu-engine' }),
   ];
   const cells = svg('g', { class: 'gpu-cells' }, gpu);
   const people = svg('g', { class: 'gpu-person' }, gpu);
@@ -147,7 +147,7 @@ export const createGPUScene = (): Scene => {
   svg('path', { d: 'M772 366 L790 380 L772 394', class: 'gpu-arrow' }, cuda);
   svg('rect', { x: 600, y: 350, width: 150, height: 60, rx: 14, class: 'gpu-cuda-box' }, cuda);
   text(cuda, 675, 391, 'CUDA', { class: 'gpu-cuda-text' });
-  text(cuda, 675, 460, '다루기 쉽게', { class: 'gpu-sub' });
+  text(cuda, 675, 460, '다루기 쉽게', { class: 'gpu-subtitle' });
 
   // E. 같은 학습, 기존 vs GPU.
   const race = svg('g', { class: 'gpu-race' }, root);
@@ -171,7 +171,7 @@ export const createGPUScene = (): Scene => {
     setAttributes(monitor, { opacity: (gameIn * (1 - gameOut)).toFixed(3) });
     if (gameOut < 1) {
       const frameIndex = Math.floor(Math.max(time - at.game, 0) * (time >= at.smooth ? 12 : 0)) / 12;
-      pixels.forEach((rect, i) => setAttributes(rect, { fill: shade(i % columns, Math.floor(i / columns), frameIndex) }));
+      pixels.forEach((pixel, i) => setAttributes(pixel, { fill: shade(i % columns, Math.floor(i / columns), frameIndex) }));
     }
     const pulse = time >= at.everyPixel && time < at.compare ? Math.max(0, Math.sin((time - at.everyPixel) * Math.PI * 2.4)) : 0;
     setAttributes(flash, { opacity: (pulse * .55).toFixed(3) });

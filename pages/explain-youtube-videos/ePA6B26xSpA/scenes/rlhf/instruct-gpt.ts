@@ -18,10 +18,10 @@ const at = {
 
 // InstructGPT 논문(2022): 매개변수 13억 개짜리 InstructGPT 의 답을 1,750억 개짜리 GPT-3 보다 사람들이 더 좋아했다.
 // 네모의 넓이를 매개변수 수에 비례하게 그린다(1,750억 ÷ 13억 ≈ 135배).
-const params = { small: 1.3, big: 175 };
+const parameters = { small: 1.3, big: 175 };
 const baseline = 770;
 const bigSide = 520;
-const smallSide = bigSide * Math.sqrt(params.small / params.big);
+const smallSide = bigSide * Math.sqrt(parameters.small / parameters.big);
 const smallBox = { x: 420 - smallSide / 2, y: baseline - smallSide, size: smallSide };
 const bigBox = { x: 870, y: baseline - bigSide, size: bigSide };
 
@@ -32,13 +32,13 @@ export const createInstructGPTScene = (): Scene => {
   svg('line', { x1: 200, y1: baseline, x2: 1460, y2: baseline, class: 'rlhf-axis' }, root);
 
   const small = svg('g', {}, root);
-  const smallRect = svg('rect', { x: smallBox.x, y: smallBox.y, width: smallBox.size, height: smallBox.size, rx: 4, class: 'instruct-gpt-box small' }, small);
+  const smallRectangle = svg('rect', { x: smallBox.x, y: smallBox.y, width: smallBox.size, height: smallBox.size, rx: 4, class: 'instruct-gpt-box small' }, small);
   text(small, 420, smallBox.y - 64, 'InstructGPT', { class: 'instruct-gpt-name' });
   text(small, 420, smallBox.y - 26, '매개변수 13억 개', { class: 'instruct-gpt-params' });
   const pulse = svg('rect', { class: 'instruct-gpt-pulse' }, small);
 
   const big = svg('g', {}, root);
-  const bigRect = svg('rect', { x: bigBox.x, width: bigBox.size, rx: 6, class: 'instruct-gpt-box big' }, big);
+  const bigRectangle = svg('rect', { x: bigBox.x, width: bigBox.size, rx: 6, class: 'instruct-gpt-box big' }, big);
   const bigLabel = svg('g', {}, big);
   text(bigLabel, bigBox.x + bigBox.size / 2, baseline - bigSide / 2 - 6, 'GPT-3', { class: 'instruct-gpt-name large' });
   text(bigLabel, bigBox.x + bigBox.size / 2, baseline - bigSide / 2 + 40, '매개변수 1,750억 개', { class: 'instruct-gpt-params' });
@@ -60,7 +60,7 @@ export const createInstructGPTScene = (): Scene => {
     setAttributes(small, { opacity: smallIn.toFixed(3) });
     // GPT-3 는 바닥에서 위로 자라 올라와 크기 차이를 보여 준다.
     const grow = ease(progress(time, at.contest, 1));
-    setAttributes(bigRect, { y: (baseline - bigSide * grow).toFixed(1), height: (bigSide * grow).toFixed(1) });
+    setAttributes(bigRectangle, { y: (baseline - bigSide * grow).toFixed(1), height: (bigSide * grow).toFixed(1) });
     setAttributes(big, { opacity: (appear(time, at.contest, .3) * lerp(1, .45, appear(time, at.beat, .5))).toFixed(3) });
     setAttributes(bigLabel, { opacity: appear(time, at.contest + .8, .4).toFixed(3) });
     setAttributes(note, { opacity: appear(time, at.contest + 1, .4).toFixed(3) });
@@ -76,7 +76,7 @@ export const createInstructGPTScene = (): Scene => {
       height: grown.toFixed(1),
       opacity: ping > 0 && ping < 1 ? (1 - ping).toFixed(3) : 0,
     });
-    smallRect.classList.toggle('winner', time >= at.liked);
+    smallRectangle.classList.toggle('winner', time >= at.liked);
     const won = appear(time, at.liked, .4);
     setAttributes(verdict, { opacity: won.toFixed(3), transform: `translate(0 ${lerp(16, 0, won).toFixed(1)})` });
     setAttributes(ratio, { opacity: appear(time, at.times, .4).toFixed(3) });

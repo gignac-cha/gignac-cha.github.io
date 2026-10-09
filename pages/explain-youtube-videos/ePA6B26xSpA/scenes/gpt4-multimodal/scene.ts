@@ -106,7 +106,7 @@ export const createGPT4MultimodalScene = (): Scene => {
   });
   const sketchCaption = svg('g', { opacity: 0 }, demo);
   text(sketchCaption, 259, 556, '손으로 그린 웹사이트 스케치', { class: 'gpt4-multimodal-caption' });
-  text(sketchCaption, 259, 586, 'GPT-4 발표 라이브 시연 · 2023.3.14', { class: 'gpt4-multimodal-caption-sub' });
+  text(sketchCaption, 259, 586, 'GPT-4 발표 라이브 시연 · 2023.3.14', { class: 'gpt4-multimodal-caption-subtitle' });
   const photoArrow = svg('path', { d: 'M420 300 C 460 300, 476 312, 512 312', class: 'gpt4-multimodal-arrow', opacity: 0 }, demo);
 
   const promptGroup = svg('g', { opacity: 0 }, demo);

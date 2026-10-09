@@ -66,8 +66,8 @@ const judge = { x: 850, y: 668 };
 const arrow = (parent: Element, d: string) => svg('path', { class: 'rlhf-arrow', d }, parent);
 const head = (x: number, y: number, angle: number) => {
   const size = 14;
-  const f = (n: number) => n.toFixed(1);
-  return `M${f(x - size * Math.cos(angle - .5))} ${f(y - size * Math.sin(angle - .5))} L${f(x)} ${f(y)} L${f(x - size * Math.cos(angle + .5))} ${f(y - size * Math.sin(angle + .5))}`;
+  const toOneDecimal = (n: number) => n.toFixed(1);
+  return `M${toOneDecimal(x - size * Math.cos(angle - .5))} ${toOneDecimal(y - size * Math.sin(angle - .5))} L${toOneDecimal(x)} ${toOneDecimal(y)} L${toOneDecimal(x - size * Math.cos(angle + .5))} ${toOneDecimal(y - size * Math.sin(angle + .5))}`;
 };
 
 export const person = (parent: Element, x: number, y: number, size: number, className = 'rlhf-person') => {

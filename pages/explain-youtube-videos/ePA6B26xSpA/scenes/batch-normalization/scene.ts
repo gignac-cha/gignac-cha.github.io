@@ -80,16 +80,16 @@ const weights = Array.from({ length: layerCount }, () =>
 );
 const multiply = (values: number[], matrix: number[][]) => matrix.map((row) => row.reduce((sum, weight, i) => sum + weight * values[i], 0));
 const statistics = (rows: number[][]) =>
-  Array.from({ length: features }, (_, f) => {
-    const column = rows.map((row) => row[f]);
+  Array.from({ length: features }, (_, featureIndex) => {
+    const column = rows.map((row) => row[featureIndex]);
     const mean = column.reduce((a, b) => a + b, 0) / column.length;
-    const std = Math.sqrt(column.reduce((a, b) => a + (b - mean) ** 2, 0) / column.length);
-    return { mean, std };
+    const standardDeviation = Math.sqrt(column.reduce((a, b) => a + (b - mean) ** 2, 0) / column.length);
+    return { mean, standardDeviation };
   });
 // 배치 정규화: 특징마다 묶음의 평균을 빼고 표준편차로 나눈다.
 const normalize = (rows: number[][]) => {
   const stats = statistics(rows);
-  return rows.map((row) => row.map((value, f) => (value - stats[f].mean) / stats[f].std));
+  return rows.map((row) => row.map((value, featureIndex) => (value - stats[featureIndex].mean) / stats[featureIndex].standardDeviation));
 };
 // 0번은 입력(이미 고른 크기), 1~3번은 층을 지난 값.
 const raw: number[][][] = [input];
@@ -104,31 +104,31 @@ const normalized: number[][][] = [input];
     normalized.push(tuned);
   }
 }
-const rawStd = raw.map((rows) => statistics(rows).map(({ std }) => std));
+const rawStandardDeviation = raw.map((rows) => statistics(rows).map(({ standardDeviation }) => standardDeviation));
 const stripCount = layerCount + 1;
 
 // ── 1. 층마다 숫자 분포 ─────────────────────────────────────────────────────
 const strips = { top: 230, bottom: 760, width: 150 };
 const stripX = (layer: number) => lerp(300, 1300, layer / (stripCount - 1));
-const stripMid = (strips.top + strips.bottom) / 2;
+const stripMiddle = (strips.top + strips.bottom) / 2;
 // 화면 높이의 절반을 값 ±4 로 잡는다(정규화하면 거의 다 이 안에 든다). 벗어나면 가장자리에 붙인다.
-const valueY = (value: number) => stripMid - (value / 4) * ((strips.bottom - strips.top) / 2);
+const valueY = (value: number) => stripMiddle - (value / 4) * ((strips.bottom - strips.top) / 2);
 const clampY = (y: number) => Math.min(Math.max(y, strips.top), strips.bottom);
 
 // ── 2. 합창단: 셋째 층의 특징 12개 = 가수 12명, 음량 = 묶음 안에서의 표준편차 ─────────────
 const choirLayer = 3;
-const choirStd = rawStd[choirLayer];
-const choirMax = Math.max(...choirStd);
+const choirStandardDeviation = rawStandardDeviation[choirLayer];
+const choirMaximum = Math.max(...choirStandardDeviation);
 const singerX = (i: number) => lerp(250, 1350, i / (features - 1));
 const singerY = 720;
 const volumeBottom = 660;
 const volumeHeight = 250;
-const loudest = choirStd.map((std, i) => ({ std, i })).sort((a, b) => b.std - a.std);
+const loudest = choirStandardDeviation.map((standardDeviation, i) => ({ standardDeviation, i })).sort((a, b) => b.standardDeviation - a.standardDeviation);
 const loudSet = new Set(loudest.slice(0, 3).map(({ i }) => i));
 const quietSet = new Set(loudest.slice(-3).map(({ i }) => i));
 // 가수마다 음 하나(도·미·솔·도). 파형은 모두의 소리를 더한 것.
 const pitches = [1, 1.25, 1.5, 2];
-const wave = { left: 250, right: 1350, mid: 300, half: 70 };
+const wave = { left: 250, right: 1350, middle: 300, half: 70 };
 
 // ── 3. 학습 곡선 (Ioffe & Szegedy 2015: 같은 정확도까지 학습 단계 14분의 1) ──────────────
 const chart = { left: 300, right: 1300, top: 250, bottom: 700 };
@@ -146,10 +146,10 @@ const createBatchNormalization = () => {
     const group = svg('g', { opacity: 0 }, layersGroup);
     const x = stripX(layer);
     svg('rect', { class: 'batch-normalization-strip', x: x - strips.width / 2, y: strips.top, width: strips.width, height: strips.bottom - strips.top, rx: 16 }, group);
-    svg('line', { class: 'batch-normalization-zero', x1: x - strips.width / 2, x2: x + strips.width / 2, y1: stripMid, y2: stripMid }, group);
+    svg('line', { class: 'batch-normalization-zero', x1: x - strips.width / 2, x2: x + strips.width / 2, y1: stripMiddle, y2: stripMiddle }, group);
     text(group, x, strips.bottom + 44, layer === 0 ? '입력' : `${layer}층`, { class: 'batch-normalization-layer-label' });
     const dots = raw[layer].flatMap((row, b) =>
-      row.map((_, f) => svg('circle', { class: 'batch-normalization-dot', cx: x - strips.width / 2 + 14 + ((b * features + f) % 61) * ((strips.width - 28) / 60), cy: stripMid, r: 3.2 }, group)),
+      row.map((_, featureIndex) => svg('circle', { class: 'batch-normalization-dot', cx: x - strips.width / 2 + 14 + ((b * features + featureIndex) % 61) * ((strips.width - 28) / 60), cy: stripMiddle, r: 3.2 }, group)),
     );
     const overflow = text(group, x, strips.top - 14, '', { class: 'batch-normalization-overflow' });
     return { group, x, dots, overflow };
@@ -158,18 +158,18 @@ const createBatchNormalization = () => {
   const tuners = Array.from({ length: layerCount }, (_, index) => {
     const group = svg('g', { opacity: 0 }, layersGroup);
     const x = stripX(index + 1) + strips.width / 2 + 6;
-    svg('rect', { class: 'batch-normalization-tuner', x, y: stripMid - 34, width: 62, height: 68, rx: 12 }, group);
-    text(group, x + 31, stripMid + 9, 'BN', { class: 'batch-normalization-tuner-text' });
+    svg('rect', { class: 'batch-normalization-tuner', x, y: stripMiddle - 34, width: 62, height: 68, rx: 12 }, group);
+    text(group, x + 31, stripMiddle + 9, 'BN', { class: 'batch-normalization-tuner-text' });
     return group;
   });
   const formula = text(layersGroup, 800, 850, '특징마다 (값 − 묶음 평균) ÷ 묶음 표준편차', { class: 'batch-normalization-formula', opacity: 0 });
 
   // 2. 합창단
   const choir = svg('g', { opacity: 0 }, root);
-  svg('line', { class: 'batch-normalization-wave-axis', x1: wave.left, x2: wave.right, y1: wave.mid, y2: wave.mid }, choir);
-  svg('rect', { class: 'batch-normalization-wave-frame', x: wave.left, y: wave.mid - wave.half - 20, width: wave.right - wave.left, height: (wave.half + 20) * 2, rx: 14 }, choir);
+  svg('line', { class: 'batch-normalization-wave-axis', x1: wave.left, x2: wave.right, y1: wave.middle, y2: wave.middle }, choir);
+  svg('rect', { class: 'batch-normalization-wave-frame', x: wave.left, y: wave.middle - wave.half - 20, width: wave.right - wave.left, height: (wave.half + 20) * 2, rx: 14 }, choir);
   const wavePath = svg('path', { class: 'batch-normalization-wave' }, choir);
-  const waveLabel = text(choir, wave.left, wave.mid - wave.half - 34, '모두의 소리를 더한 화음', { class: 'batch-normalization-wave-label' });
+  const waveLabel = text(choir, wave.left, wave.middle - wave.half - 34, '모두의 소리를 더한 화음', { class: 'batch-normalization-wave-label' });
   const singers = Array.from({ length: features }, (_, i) => {
     const group = svg('g', {}, choir);
     const x = singerX(i);
@@ -219,12 +219,12 @@ const createBatchNormalization = () => {
       const tune = layer === 0 ? 0 : ease(progress(time, at.equal + (layer - 1) * .3, .7));
       let outside = 0;
       raw[layer].forEach((row, b) =>
-        row.forEach((value, f) => {
-          const y = lerp(valueY(value), valueY(normalized[layer][b][f]), tune);
+        row.forEach((value, featureIndex) => {
+          const y = lerp(valueY(value), valueY(normalized[layer][b][featureIndex]), tune);
           if (y < strips.top || y > strips.bottom) {
             outside++;
           }
-          const dot = dots[b * features + f];
+          const dot = dots[b * features + featureIndex];
           setAttributes(dot, { cy: clampY(y).toFixed(1) });
           dot.classList.toggle('outside', y < strips.top || y > strips.bottom);
           dot.classList.toggle('tuned', layer > 0 && tune > .5);
@@ -241,7 +241,7 @@ const createBatchNormalization = () => {
     // 2. 합창단: 가수마다 음량이 제각각이다가 "음량을 맞춰 주면"에서 고르게 된다.
     setAttributes(choir, { opacity: visible(time, phases.choir).toFixed(3) });
     const tune = ease(progress(time, at.tune, .9));
-    const volumes = choirStd.map((std) => lerp(std / choirMax, .55, tune));
+    const volumes = choirStandardDeviation.map((standardDeviation) => lerp(standardDeviation / choirMaximum, .55, tune));
     singers.forEach(({ group, bar, mouth }, i) => {
       setAttributes(group, { opacity: appear(time, at.choir + i * .04, .3).toFixed(3) });
       const height = volumes[i] * volumeHeight;
@@ -269,7 +269,7 @@ const createBatchNormalization = () => {
       const wobble = 1 + (1 - tune) * .7 * Math.sin(time * 4.3 + u * 11);
       const scaled = (y / total) * wave.half * lerp(5.2, 2.4, tune) * wobble;
       const clipped = Math.max(-wave.half - 20, Math.min(wave.half + 20, scaled));
-      points.push(`${lerp(wave.left, wave.right, u).toFixed(1)},${(wave.mid - clipped).toFixed(1)}`);
+      points.push(`${lerp(wave.left, wave.right, u).toFixed(1)},${(wave.middle - clipped).toFixed(1)}`);
     }
     setAttributes(wavePath, { d: `M${points.join('L')}` });
     const broken = time >= at.collapse && time < at.tune + .6;

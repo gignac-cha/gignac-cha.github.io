@@ -103,7 +103,7 @@ export const createReasoningModelScene = (): Scene => {
   const status = text(root, right + 28, panel.y + 198, '', { class: 'reasoning-model-status', opacity: 0 });
   const longNote = text(root, right + panel.width - 28, panel.y + 198, '어려운 문제는 몇십 초까지', { class: 'reasoning-model-long', opacity: 0 });
   const clip = svg('clipPath', { id: 'reasoning-model-cot-clip' }, root);
-  const clipRect = svg('rect', { x: cot.x, y: cot.y, width: cot.width, height: 0, rx: 12 }, clip);
+  const clipRectangle = svg('rect', { x: cot.x, y: cot.y, width: cot.width, height: 0, rx: 12 }, clip);
   const cotGroup = svg('g', { 'clip-path': 'url(#reasoning-model-cot-clip)' }, root);
   svg('rect', { x: cot.x, y: cot.y, width: cot.width, height: cot.height, rx: 12, class: 'reasoning-model-cot' }, cotGroup);
   const cotLines = Array.from({ length: visible }, () => text(cotGroup, cot.x + 18, 0, '', { class: 'reasoning-model-cot-text' }));
@@ -181,7 +181,7 @@ export const createReasoningModelScene = (): Scene => {
 
     // 속으로 써 내려간 풀이: 상자가 열리고 줄이 흘러 올라간다.
     const opened = appear(time, at.open, .5);
-    setAttributes(clipRect, { height: (cot.height * opened).toFixed(1) });
+    setAttributes(clipRectangle, { height: (cot.height * opened).toFixed(1) });
     const scroll = ease(progress(time, at.open + .2, at.wrong - at.open - .2)) * scrollTo;
     const first = Math.floor(scroll);
     const offset = (scroll - first) * cot.line;

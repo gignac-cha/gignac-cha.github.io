@@ -33,7 +33,7 @@ const models = [
   { name: 'GPT-6 아스트라', year: '2026', value: 1100000, label: '100만+' },
 ];
 
-const f = (n: number) => n.toFixed(1);
+const toOneDecimal = (n: number) => n.toFixed(1);
 
 // 글자 폭 어림값(40px 글꼴): 한글 40, 숫자 24, 마침표 12, 공백 표시 20.
 const glyph = (c: string) => (/[0-9]/.test(c) ? 24 : c === '.' ? 12 : c === ' ' ? 20 : 40);
@@ -70,8 +70,8 @@ const packed = (() => {
 
 const palette = ['blue', 'purple', 'orange', 'green'];
 
-const chart = { left: 880, baseline: 790, top: 590, min: 3, max: 6.3, pitch: 104, bar: 64 };
-const barHeight = (value: number) => ((Math.log10(value) - chart.min) / (chart.max - chart.min)) * (chart.baseline - chart.top);
+const chart = { left: 880, baseline: 790, top: 590, minimum: 3, maximum: 6.3, pitch: 104, bar: 64 };
+const barHeight = (value: number) => ((Math.log10(value) - chart.minimum) / (chart.maximum - chart.minimum)) * (chart.baseline - chart.top);
 
 export const createContextWindowScene = (): Scene => {
   const { element, root } = createDiagram('context-window', '100만 토큰 컨텍스트 창');
@@ -123,17 +123,17 @@ export const createContextWindowScene = (): Scene => {
   text(growth, 1190, 560, '한 번에 읽는 토큰 수', { class: 'context-window-heading', 'text-anchor': 'middle' });
   [1e3, 1e4, 1e5, 1e6].forEach((value) => {
     const y = chart.baseline - barHeight(value);
-    svg('path', { class: 'context-window-grid', d: `M${chart.left - 10} ${f(y)} L${chart.left + chart.pitch * models.length} ${f(y)}` }, growth);
+    svg('path', { class: 'context-window-grid', d: `M${chart.left - 10} ${toOneDecimal(y)} L${chart.left + chart.pitch * models.length} ${toOneDecimal(y)}` }, growth);
     text(growth, chart.left - 18, y + 6, value === 1e6 ? '100만' : value === 1e5 ? '10만' : value === 1e4 ? '1만' : '1천', { class: 'context-window-axis', 'text-anchor': 'end' });
   });
   const bars = models.map((model, i) => {
     const x = chart.left + chart.pitch * i + chart.pitch / 2;
     const node = svg('g', { class: `context-window-bar${i === models.length - 1 ? ' latest' : ''}` }, growth);
-    const rect = svg('rect', { x: x - chart.bar / 2, width: chart.bar, rx: 6 }, node);
+    const barRectangle = svg('rect', { x: x - chart.bar / 2, width: chart.bar, rx: 6 }, node);
     const value = text(node, x, 0, model.label, { class: 'context-window-value', 'text-anchor': 'middle' });
     text(growth, x, chart.baseline + 30, model.name, { class: 'context-window-model', 'text-anchor': 'middle' });
     text(growth, x, chart.baseline + 56, model.year, { class: 'context-window-axis', 'text-anchor': 'middle' });
-    return { node, rect, value, height: barHeight(model.value), at: at.chart + .2 + i * .32 };
+    return { node, barRectangle, value, height: barHeight(model.value), at: at.chart + .2 + i * .32 };
   });
 
   return {
@@ -153,7 +153,7 @@ export const createContextWindowScene = (): Scene => {
         const target = spaced[k];
         const x = lerp(packed[index], target.x, splitting);
         const y = lerp(246, target.y, splitting);
-        setAttributes(node, { transform: `translate(${f(x)} ${f(y)})`, opacity: appear(time, at.split, .2).toFixed(3) });
+        setAttributes(node, { transform: `translate(${toOneDecimal(x)} ${toOneDecimal(y)})`, opacity: appear(time, at.split, .2).toFixed(3) });
         node.classList.toggle('boxed', time >= at.split + .1);
       });
       setAttributes(split, { opacity: appear(time, at.split + .4, .3).toFixed(3) });
@@ -175,8 +175,8 @@ export const createContextWindowScene = (): Scene => {
       setAttributes(growth, { opacity: appear(time, at.chart, .4).toFixed(3) });
       for (const bar of bars) {
         const height = bar.height * ease(progress(time, bar.at, .5));
-        setAttributes(bar.rect, { y: f(chart.baseline - height), height: f(height) });
-        setAttributes(bar.value, { y: f(chart.baseline - height - 12), opacity: appear(time, bar.at + .3, .3).toFixed(3) });
+        setAttributes(bar.barRectangle, { y: toOneDecimal(chart.baseline - height), height: toOneDecimal(height) });
+        setAttributes(bar.value, { y: toOneDecimal(chart.baseline - height - 12), opacity: appear(time, bar.at + .3, .3).toFixed(3) });
       }
     },
   };

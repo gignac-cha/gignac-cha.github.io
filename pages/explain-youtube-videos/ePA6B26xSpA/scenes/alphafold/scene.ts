@@ -128,15 +128,15 @@ export const createAlphaFoldSVG = ({ protein3d = false } = {}): Scene => {
 
     // 단백질(구슬과 끈). 모양을 모를 땐 흐리게, 알파폴드가 예측하면 확신도 색으로 칠한다.
     if (!protein3d && state.shown > 0) {
-      const screen = residues(time).map(({ position, fold }) => ({ ...project(position), z: position[2], f: fold }));
+      const screen = residues(time).map(({ position, fold }) => ({ ...project(position), z: position[2], fold }));
       const colors = residueColors(time);
-      const cues = screen.map(({ z, f }) => lerp(1, .4 + .6 * clamp((z + 22) / 44), f));
+      const cues = screen.map(({ z, fold }) => lerp(1, .4 + .6 * clamp((z + 22) / 44), fold));
       const dim = lerp(1, .4, state.unknown);
-      screen.forEach(({ x, y, f }, i) => {
+      screen.forEach(({ x, y, fold }, i) => {
         setAttributes(beads[i], {
           cx: x.toFixed(1),
           cy: y.toFixed(1),
-          r: ((lerp(8, 3.6, f) * scale) / SCALE).toFixed(2),
+          r: ((lerp(8, 3.6, fold) * scale) / SCALE).toFixed(2),
           fill: rgb(colors[i]),
           opacity: (cues[i] * dim).toFixed(3),
         });
@@ -148,7 +148,7 @@ export const createAlphaFoldSVG = ({ protein3d = false } = {}): Scene => {
             x2: n.x.toFixed(1),
             y2: n.y.toFixed(1),
             stroke: rgb(mixRgb(colors[i], colors[i + 1], .5)),
-            'stroke-width': ((lerp(2.5, 7.5, f) * scale) / SCALE).toFixed(2),
+            'stroke-width': ((lerp(2.5, 7.5, fold) * scale) / SCALE).toFixed(2),
             opacity: (((cues[i] + cues[i + 1]) / 2) * dim).toFixed(3),
           });
         }

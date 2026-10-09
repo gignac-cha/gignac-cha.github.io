@@ -1,6 +1,6 @@
 import { clamp, lerp, progress } from '../../../shared/diagram.ts';
 import { faceCanvas, faces, random } from './face.ts';
-import { ganTimeline as T } from './timeline.ts';
+import { ganTimeline } from './timeline.ts';
 
 // "잡음에서 얼굴로": 위조범(생성자)은 학습할 때마다 같은 크기의 그림을 통째로 새로 칠한다.
 // 점이 날아와 모이는 게 아니라, 같은 픽셀 칸의 값이 바뀌어 얼룩덜룩한 잡음 → 큰 덩어리 → 눈·코·입 → 얼굴이 된다.
@@ -16,7 +16,7 @@ const last = snapshots.length - 1;
 const REPAINT = .2;
 
 // "얼룩덜룩한 점들이"(gather)부터 "마침내"(formed) 직전까지 고르게 다시 칠한다.
-const snapshotAt = (k: number) => T.gather + (k / last) * (T.formed - .4 - T.gather);
+const snapshotAt = (k: number) => ganTimeline.gather + (k / last) * (ganTimeline.formed - .4 - ganTimeline.gather);
 
 // time 에 보이는 출력: 이전 출력 from 에서 새 출력 to 로 blend 만큼 바뀌었다.
 export const trainingStep = (time: number) => {
@@ -29,18 +29,18 @@ export const trainingStep = (time: number) => {
   return { from: Math.max(to - 1, 0), to, blend: to === 0 ? 1 : progress(time, snapshotAt(to), REPAINT) };
 };
 
-// cols×rows 격자의 난수를 부드럽게 이어 GRID 크기로 편다(얼룩).
-const blotches = (next: () => number, cols: number, rows: number) => {
-  const values = Array.from({ length: cols * rows }, next);
+// columns×rows 격자의 난수를 부드럽게 이어 GRID 크기로 편다(얼룩).
+const blotches = (next: () => number, columns: number, rows: number) => {
+  const values = Array.from({ length: columns * rows }, next);
   const smooth = (t: number) => t * t * (3 - 2 * t);
   return (x: number, y: number) => {
-    const u = (x / (GRID_WIDTH - 1)) * (cols - 1);
+    const u = (x / (GRID_WIDTH - 1)) * (columns - 1);
     const v = (y / (GRID_HEIGHT - 1)) * (rows - 1);
-    const i = Math.min(Math.floor(u), cols - 2);
+    const i = Math.min(Math.floor(u), columns - 2);
     const j = Math.min(Math.floor(v), rows - 2);
     const fu = smooth(u - i);
     const fv = smooth(v - j);
-    const at = (a: number, b: number) => values[b * cols + a];
+    const at = (a: number, b: number) => values[b * columns + a];
     return lerp(lerp(at(i, j), at(i + 1, j), fu), lerp(at(i, j + 1), at(i + 1, j + 1), fu), fv);
   };
 };

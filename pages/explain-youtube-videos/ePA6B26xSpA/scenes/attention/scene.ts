@@ -51,10 +51,10 @@ const createChart = (parent: SVGElement) => {
   svg('path', { class: 'attention-axis', d: `M${box.left} ${box.top - 20} V${box.bottom} H${box.right + 10}` }, group);
   text(group, box.left, box.top - 40, '번역 품질', { class: 'attention-axis-label' });
   text(group, box.right + 10, box.bottom + 46, '문장 길이 →', { class: 'attention-axis-label', 'text-anchor': 'end' });
-  const curve = (f: (x: number) => number) => {
+  const curve = (valueAt: (x: number) => number) => {
     const points = Array.from({ length: 41 }, (_, i) => {
       const x = i / 40;
-      return `${i ? 'L' : 'M'}${(box.left + x * (box.right - box.left)).toFixed(1)} ${(box.bottom - f(x) * (box.bottom - box.top)).toFixed(1)}`;
+      return `${i ? 'L' : 'M'}${(box.left + x * (box.right - box.left)).toFixed(1)} ${(box.bottom - valueAt(x) * (box.bottom - box.top)).toFixed(1)}`;
     });
     return points.join(' ');
   };

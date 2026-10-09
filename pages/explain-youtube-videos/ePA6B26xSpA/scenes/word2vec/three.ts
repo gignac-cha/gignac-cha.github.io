@@ -23,7 +23,7 @@ const colors: Record<Cluster, number> = {
 };
 
 const add = (a: Vec, b: Vec): Vec => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
-const sub = (a: Vec, b: Vec): Vec => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+const subtract = (a: Vec, b: Vec): Vec => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 const mix = (a: Vec, b: Vec, t: number): Vec => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
 
 // 관계가 같은 방향이 되도록 여왕 = 왕 + (여자 − 남자), 도쿄 = 서울 + (일본 − 한국) 으로 둔다.
@@ -48,11 +48,11 @@ const words: Record<string, { at: Vec; cluster: Cluster }> = {
   남자: { at: man, cluster: 'people' },
   여자: { at: woman, cluster: 'people' },
   왕: { at: kingAt, cluster: 'people' },
-  여왕: { at: add(kingAt, sub(woman, man)), cluster: 'people' },
+  여왕: { at: add(kingAt, subtract(woman, man)), cluster: 'people' },
   한국: { at: korea, cluster: 'place' },
   일본: { at: japan, cluster: 'place' },
   서울: { at: seoulAt, cluster: 'place' },
-  도쿄: { at: add(seoulAt, sub(japan, korea)), cluster: 'place' },
+  도쿄: { at: add(seoulAt, subtract(japan, korea)), cluster: 'place' },
 };
 const fillOrder = ['포도', '바나나', '우유', '버스', '자전거', '남자', '여자', '왕', '여왕', '한국', '일본', '서울', '도쿄'];
 

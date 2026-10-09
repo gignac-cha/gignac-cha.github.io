@@ -44,8 +44,8 @@ const inputs = { x: 170, voice: 318, camera: 502 };
 const output = { x: 1440, y: band.y };
 
 // 응답 시간 막대: 0~6초.
-const latency = { left: 470, right: 1400, max: 6, rows: [672, 748] };
-const seconds = (value: number) => latency.left + (value / latency.max) * (latency.right - latency.left);
+const latency = { left: 470, right: 1400, maximum: 6, rows: [672, 748] };
+const seconds = (value: number) => latency.left + (value / latency.maximum) * (latency.right - latency.left);
 
 // 수평 접선의 곡선 위 한 점.
 const curve = (x1: number, y1: number, x2: number, y2: number, t: number) => {
@@ -118,12 +118,12 @@ export const createGPT4oScene = (): Scene => {
     const group = svg('g', { opacity: 0 }, root);
     const box = svg('rect', { y: band.y - band.height / 2, height: band.height, rx: 22, class: 'omni-box' }, group);
     const titleView = text(group, 0, band.y - 6, title, { class: 'omni-box-title' });
-    const subView = text(group, 0, band.y + 32, sub, { class: 'omni-box-sub' });
+    const subView = text(group, 0, band.y + 32, sub, { class: 'omni-box-subtitle' });
     return { group, box, titleView, subView };
   });
   const mergedLabel = svg('g', { opacity: 0 }, root);
   text(mergedLabel, merged.x + merged.width / 2, band.y + 4, 'GPT-4o', { class: 'omni-box-title omni-box-merged' });
-  text(mergedLabel, merged.x + merged.width / 2, band.y + 44, '음성 · 영상 · 글을 한 번에', { class: 'omni-box-sub' });
+  text(mergedLabel, merged.x + merged.width / 2, band.y + 44, '음성 · 영상 · 글을 한 번에', { class: 'omni-box-subtitle' });
   const textChips = [0, 1].map((i) => {
     const group = svg('g', { opacity: 0 }, root);
     const x = (stages[i].x + stageWidth + stages[i + 1].x) / 2;
@@ -139,7 +139,7 @@ export const createGPT4oScene = (): Scene => {
 
   // 응답 시간.
   const latencyGroup = svg('g', { opacity: 0 }, root);
-  for (let s = 0; s <= latency.max; s++) {
+  for (let s = 0; s <= latency.maximum; s++) {
     svg('line', { x1: seconds(s), y1: latency.rows[0] - 34, x2: seconds(s), y2: latency.rows[1] + 30, class: s === 0 ? 'omni-axis' : 'omni-grid' }, latencyGroup);
     text(latencyGroup, seconds(s), latency.rows[1] + 60, `${s}초`, { class: 'omni-tick' });
   }
@@ -168,7 +168,7 @@ export const createGPT4oScene = (): Scene => {
     // 상자가 모양을 바꾸는 동안 글자가 겹치지 않게, 세 상자의 글자는 나뉜 뒤 절반에서만, 합친 글자는 합쳐진 뒤 절반에서만 보인다.
     const splitLabel = clamp(split * 2 - 1);
     const mergedText = clamp(1 - split * 2);
-    const boxRects = stages.map(({ x, at: lit }, i) => {
+    const boxRectangles = stages.map(({ x, at: lit }, i) => {
       const left = lerp(merged.x, x, split);
       const width = lerp(merged.width, stageWidth, split);
       const { group, box, titleView, subView } = boxes[i];
@@ -187,8 +187,8 @@ export const createGPT4oScene = (): Scene => {
     bandLabel.toggleClass('lit', time >= at.one);
 
     // 입력과 출력 노드.
-    const left = boxRects[0].left;
-    const right = boxRects[2].right;
+    const left = boxRectangles[0].left;
+    const right = boxRectangles[2].right;
     setAttributes(voiceNode, { opacity: appear(time, at.voice, .4).toFixed(3) });
     setAttributes(voiceLabel, { opacity: appear(time, at.voice, .4).toFixed(3) });
     setAttributes(cameraNode, { opacity: (appear(time, at.camera, .4) * lerp(1, .3, split)).toFixed(3) });
@@ -200,7 +200,7 @@ export const createGPT4oScene = (): Scene => {
     setAttributes(cameraEdge, { d: curvePath(inputs.x + 50, inputs.camera, left - 6, band.y + 30), opacity: (appear(time, at.camera, .4) * lerp(1, .25, split)).toFixed(3) });
     setAttributes(outputEdge, { d: curvePath(right + 6, band.y, output.x - 50, output.y), opacity: appear(time, at.reply, .4).toFixed(3) });
     linkEdges.forEach((edge, i) => {
-      setAttributes(edge, { d: `M${boxRects[i].right + 4} ${band.y} H${boxRects[i + 1].left - 4}`, opacity: (split * appear(time, stages[i + 1].at, .3)).toFixed(3) });
+      setAttributes(edge, { d: `M${boxRectangles[i].right + 4} ${band.y} H${boxRectangles[i + 1].left - 4}`, opacity: (split * appear(time, stages[i + 1].at, .3)).toFixed(3) });
     });
 
     // 말하는 동안 소리 막대가 움직이고, 대답할 때 스피커가 울린다.
@@ -221,8 +221,8 @@ export const createGPT4oScene = (): Scene => {
     const lanes = [
       { from: { x: inputs.x + 50, y: inputs.voice }, to: { x: left - 6, y: band.y - 30 }, on: between(time, at.voice, at.before) || between(time, at.listen, at.merge) || fastFlow },
       { from: { x: inputs.x + 50, y: inputs.camera }, to: { x: left - 6, y: band.y + 30 }, on: between(time, at.camera, at.before) || fastFlow },
-      { from: { x: boxRects[0].right + 4, y: band.y }, to: { x: boxRects[1].left - 4, y: band.y }, on: split > .5 && between(time, at.think, at.merge) },
-      { from: { x: boxRects[1].right + 4, y: band.y }, to: { x: boxRects[2].left - 4, y: band.y }, on: split > .5 && between(time, at.speak, at.merge) },
+      { from: { x: boxRectangles[0].right + 4, y: band.y }, to: { x: boxRectangles[1].left - 4, y: band.y }, on: split > .5 && between(time, at.think, at.merge) },
+      { from: { x: boxRectangles[1].right + 4, y: band.y }, to: { x: boxRectangles[2].left - 4, y: band.y }, on: split > .5 && between(time, at.speak, at.merge) },
       { from: { x: right + 6, y: band.y }, to: { x: output.x - 50, y: output.y }, on: between(time, at.reply, at.before) || between(time, at.speak + .3, at.merge) || fastFlow },
     ];
     dotViews.forEach((dot, index) => {

@@ -73,8 +73,8 @@ export const createDeepBeliefNetSVG = ({ naiveTower = true } = {}): Scene => {
   const deep = svg('g', { class: 'deep-belief-net-deep' }, root);
   svg('path', { d: 'M1555 800 V250 M1531 278 L1555 250 L1579 278', class: 'deep-belief-net-depth' }, deep);
   text(deep, 140, 470, '딥러닝', { class: 'deep-belief-net-deep-title' });
-  text(deep, 140, 530, '층이 깊은', { class: 'deep-belief-net-deep-sub' });
-  text(deep, 140, 574, '신경망의 학습', { class: 'deep-belief-net-deep-sub' });
+  text(deep, 140, 530, '층이 깊은', { class: 'deep-belief-net-deep-subtitle' });
+  text(deep, 140, 574, '신경망의 학습', { class: 'deep-belief-net-deep-subtitle' });
 
   const update = (time: number) => {
     // 왼쪽 탑: 한 번에 나타났다가 기울며 무너진다.

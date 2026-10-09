@@ -59,10 +59,10 @@ const stepTime = .6;
 const shown = (time: number, [from, to]: number[]) => appear(time, from, .4) * (1 - appear(time, to, .4));
 
 const docIcon = (parent: SVGElement, x: number, y: number, kind: number, size = 1) => {
-  const group = svg('g', { class: `next-word-doc kind-${kind % 5}`, transform: `translate(${x} ${y}) scale(${size})` }, parent);
+  const group = svg('g', { class: `next-word-document kind-${kind % 5}`, transform: `translate(${x} ${y}) scale(${size})` }, parent);
   svg('rect', { x: -26, y: -34, width: 52, height: 68, rx: 6 }, group);
   for (let i = 0; i < 4; i++) {
-    svg('rect', { class: 'next-word-doc-line', x: -16, y: -20 + i * 13, width: i === 3 ? 18 : 32, height: 4, rx: 2 }, group);
+    svg('rect', { class: 'next-word-document-line', x: -16, y: -20 + i * 13, width: i === 3 ? 18 : 32, height: 4, rx: 2 }, group);
   }
   return group;
 };
@@ -148,7 +148,7 @@ const createBooks = (root: SVGElement) => {
   svg('rect', { class: 'next-word-labels-card', x: 1200, y: 640, width: 300, height: 190, rx: 14 }, sheet);
   text(sheet, 1230, 690, '사람이 붙인 정답표', { class: 'next-word-labels-title' });
   for (let i = 0; i < 3; i++) {
-    svg('rect', { class: 'next-word-doc-line', x: 1230, y: 714 + i * 30, width: 160 - i * 30, height: 10, rx: 5 }, sheet);
+    svg('rect', { class: 'next-word-document-line', x: 1230, y: 714 + i * 30, width: 160 - i * 30, height: 10, rx: 5 }, sheet);
     svg('rect', { class: 'next-word-labels-tag', x: 1410, y: 708 + i * 30, width: 60, height: 22, rx: 6 }, sheet);
   }
   const cross = svg('path', { class: 'next-word-cross', d: 'M1196 636 L1504 834 M1504 636 L1196 834', pathLength: 1 }, sheet);
@@ -217,8 +217,8 @@ const createTextbook = (root: SVGElement) => {
 const createGPT = (root: SVGElement) => {
   const group = svg('g', {}, root);
   text(group, 800, 300, 'GPT-1', { class: 'next-word-gpt', 'text-anchor': 'middle' });
-  text(group, 800, 356, '2018년 6월 · 오픈AI', { class: 'next-word-gpt-sub', 'text-anchor': 'middle' });
-  text(group, 800, 400, '트랜스포머 디코더 12층 · 매개변수 1억 1,700만 개', { class: 'next-word-gpt-sub', 'text-anchor': 'middle' });
+  text(group, 800, 356, '2018년 6월 · 오픈AI', { class: 'next-word-gpt-subtitle', 'text-anchor': 'middle' });
+  text(group, 800, 400, '트랜스포머 디코더 12층 · 매개변수 1억 1,700만 개', { class: 'next-word-gpt-subtitle', 'text-anchor': 'middle' });
   // 이름 풀이: 말하는 순서(미리 학습한 → 생성형 → 트랜스포머)대로 글자가 켜진다.
   const letters = [
     { letter: 'G', english: 'Generative', korean: '생성형', x: 520, at: at.generative },
@@ -276,7 +276,7 @@ const createStages = (root: SVGElement) => {
     setAttributes(group, { opacity: shown(time, parts.stages).toFixed(3) });
     setAttributes(first, { opacity: appear(time, at.two - .2, .4).toFixed(3) });
     const pile = ease(progress(time, at.broad, 1.6)) * piles.length;
-    piles.forEach((doc, i) => setAttributes(doc, { opacity: clamp(pile - i).toFixed(3) }));
+    piles.forEach((paperStack, i) => setAttributes(paperStack, { opacity: clamp(pile - i).toFixed(3) }));
     setAttributes(arrow, { opacity: appear(time, at.then, .3).toFixed(3) });
     setAttributes(second, { opacity: appear(time, at.then, .4).toFixed(3) });
     tasks.forEach((chip, i) => setAttributes(chip, { opacity: appear(time, at.tasks + i * .2, .3).toFixed(3) }));

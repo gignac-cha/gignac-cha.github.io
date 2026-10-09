@@ -59,10 +59,10 @@ export const createGPT3LimitsScene = (): Scene => {
       const width = measure(word);
       const group = svg('g', {}, row);
       // 바탕은 다음 단어까지 이어지게(띄어쓰기 포함) 그려 한 줄이 이어진 띠처럼 보인다.
-      const bg = svg('rect', { x: x - 6, y: lineY(i + 1) - 32, width: width + (w < words.length - 1 ? 14 : 12), height: 44, class: 'gpt3-limits-generated-bg' }, group);
+      const background = svg('rect', { x: x - 6, y: lineY(i + 1) - 32, width: width + (w < words.length - 1 ? 14 : 12), height: 44, class: 'gpt3-limits-generated-background' }, group);
       const label = text(group, x, lineY(i + 1), word, { class: 'gpt3-limits-generated' });
       const box = svg('rect', { x: x - 7, y: lineY(i + 1) - 35, width: width + 14, height: 50, rx: 8, class: 'gpt3-limits-next-box' }, group);
-      const node = { group, bg, label, box, right: x + width, last: w === words.length - 1 };
+      const node = { group, background, label, box, right: x + width, last: w === words.length - 1 };
       x += width + 14;
       return node;
     });
@@ -112,7 +112,7 @@ export const createGPT3LimitsScene = (): Scene => {
       for (const node of nodes) {
         const width = node.label.getComputedTextLength();
         setAttributes(node.label, { x: x.toFixed(1) });
-        setAttributes(node.bg, { x: (x - 6).toFixed(1), width: (width + (node.last ? 12 : 14)).toFixed(1) });
+        setAttributes(node.background, { x: (x - 6).toFixed(1), width: (width + (node.last ? 12 : 14)).toFixed(1) });
         setAttributes(node.box, { x: (x - 7).toFixed(1), width: (width + 14).toFixed(1) });
         node.right = x + width;
         x += width + 14;

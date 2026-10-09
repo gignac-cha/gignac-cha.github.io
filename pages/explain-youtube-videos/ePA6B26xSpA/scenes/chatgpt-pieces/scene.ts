@@ -62,7 +62,7 @@ export const createChatGPTPiecesScene = (): Scene => {
   const link = svg('path', { class: 'chatgpt-pieces-link', d: `M${block.x + block.width + 60} 520 C820 520 820 460 ${chat.x - 14} 460` }, chatWindow);
   svg('rect', { x: chat.x, y: chat.y, width: chat.width, height: chat.height, rx: 26, class: 'chatgpt-pieces-chat' }, chatWindow);
   text(chatWindow, chat.x + chat.width / 2, chat.y + 60, 'ChatGPT', { class: 'chatgpt-pieces-chat-title' });
-  text(chatWindow, chat.x + chat.width / 2, chat.y + 96, '2022년 11월 30일 · 무료', { class: 'chatgpt-pieces-chat-sub' });
+  text(chatWindow, chat.x + chat.width / 2, chat.y + 96, '2022년 11월 30일 · 무료', { class: 'chatgpt-pieces-chat-subtitle' });
   const input = svg('g', {}, chatWindow);
   svg('rect', { x: chat.x + 36, y: chat.y + chat.height - 108, width: chat.width - 72, height: 68, rx: 34, class: 'chatgpt-pieces-input' }, input);
   text(input, chat.x + 70, chat.y + chat.height - 64, '무엇이든 물어보세요', { class: 'chatgpt-pieces-placeholder' });

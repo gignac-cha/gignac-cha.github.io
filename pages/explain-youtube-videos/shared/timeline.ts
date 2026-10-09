@@ -54,8 +54,8 @@ export const renderTimeline = (playback: Playback, container: HTMLElement, scene
   const isUnexplored = (time: number) => exploredUntil !== undefined && time >= exploredUntil;
   const ratio = (time: number) => (duration > 0 ? Math.min(Math.max(time / duration, 0), 1) : 0);
   const timeAt = (event: PointerEvent) => {
-    const rect = track.getBoundingClientRect();
-    return Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1) * duration;
+    const bounds = track.getBoundingClientRect();
+    return Math.min(Math.max((event.clientX - bounds.left) / bounds.width, 0), 1) * duration;
   };
 
   const layout = () => {

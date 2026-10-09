@@ -13,12 +13,12 @@ import { at, start } from './timing.ts';
 // 수조가 놓일 자리(1600×900 SVG 좌표). 떨어지는 방울과 비스듬히 본 수조가 들어갈 만큼.
 const region = { x: 300, y: 110, width: 1000, height: 700 };
 // SVG 좌표(픽셀) → 3D(1 = 100px). 수조 바닥 가운데가 원점이고 y 는 위쪽.
-const S = 100;
-const worldX = (x: number) => (x - 800) / S;
-const worldY = (y: number) => (tank.bottom - y) / S;
-const W = (tank.right - tank.left) / S;
-const H = (tank.bottom - tank.top) / S;
-const D = DEPTH / S;
+const PIXELS_PER_UNIT = 100;
+const worldX = (x: number) => (x - 800) / PIXELS_PER_UNIT;
+const worldY = (y: number) => (tank.bottom - y) / PIXELS_PER_UNIT;
+const TANK_WIDTH = (tank.right - tank.left) / PIXELS_PER_UNIT;
+const TANK_HEIGHT = (tank.bottom - tank.top) / PIXELS_PER_UNIT;
+const TANK_DEPTH = DEPTH / PIXELS_PER_UNIT;
 const waterTop = worldY(surface);
 const INK = 0x7a63ff;
 // 입자 하나를 작은 점 셋으로 나눠 그려 잉크 덩어리가 부드럽게 보이게 한다.
@@ -29,7 +29,7 @@ const dropGeometry = () => {
   const points: THREE.Vector2[] = [];
   for (let k = 0; k <= 12; k++) {
     const a = -Math.PI / 2 + (Math.PI / 2) * (k / 12);
-    points.push(new THREE.Vector2((15 * Math.cos(a)) / S, -(6 - 15 * Math.sin(a)) / S));
+    points.push(new THREE.Vector2((15 * Math.cos(a)) / PIXELS_PER_UNIT, -(6 - 15 * Math.sin(a)) / PIXELS_PER_UNIT));
   }
   const bezier = [[15, 6], [15, -4], [9, -12], [0, -26]];
   for (let k = 1; k <= 16; k++) {
@@ -38,7 +38,7 @@ const dropGeometry = () => {
     const weights = [u * u * u, 3 * u * u * t, 3 * u * t * t, t * t * t];
     const x = weights.reduce((sum, w, i) => sum + w * bezier[i][0], 0);
     const y = weights.reduce((sum, w, i) => sum + w * bezier[i][1], 0);
-    points.push(new THREE.Vector2(Math.max(x, 0) / S, -y / S));
+    points.push(new THREE.Vector2(Math.max(x, 0) / PIXELS_PER_UNIT, -y / PIXELS_PER_UNIT));
   }
   return new THREE.LatheGeometry(points, 32);
 };
@@ -79,7 +79,7 @@ export const createDiffusionThree = (): SceneLayer => {
   scene.add(sun);
 
   // 물: 안쪽 면(뒤·바닥)은 조금 진하게, 앞면은 아주 옅게. 잉크는 그 사이에 그려 물속에 있는 것처럼 보인다.
-  const waterGeometry = new THREE.BoxGeometry(W, waterTop, D).translate(0, waterTop / 2, 0);
+  const waterGeometry = new THREE.BoxGeometry(TANK_WIDTH, waterTop, TANK_DEPTH).translate(0, waterTop / 2, 0);
   const waterBack = new THREE.Mesh(waterGeometry, new THREE.MeshBasicMaterial({ color: 0x5b9dff, transparent: true, opacity: .1, side: THREE.BackSide, depthWrite: false }));
   waterBack.renderOrder = 1;
   const waterFront = new THREE.Mesh(waterGeometry, new THREE.MeshBasicMaterial({ color: 0x5b9dff, transparent: true, opacity: .04, depthWrite: false }));
@@ -89,7 +89,7 @@ export const createDiffusionThree = (): SceneLayer => {
   const haze = new THREE.Mesh(waterGeometry, hazeMaterial);
   haze.renderOrder = 4;
   const waterSurface = new THREE.Mesh(
-    new THREE.PlaneGeometry(W, D).rotateX(-Math.PI / 2).translate(0, waterTop, 0),
+    new THREE.PlaneGeometry(TANK_WIDTH, TANK_DEPTH).rotateX(-Math.PI / 2).translate(0, waterTop, 0),
     new THREE.MeshBasicMaterial({ color: 0x9db4ff, transparent: true, opacity: .07, side: THREE.DoubleSide, depthWrite: false }),
   );
   waterSurface.renderOrder = 5;
@@ -97,22 +97,22 @@ export const createDiffusionThree = (): SceneLayer => {
   // 유리 수조: 윗면이 열린 옅은 유리 판과 SVG 판의 유리 선과 같은 색의 모서리.
   const glass = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .025, side: THREE.DoubleSide, depthWrite: false });
   const open = new THREE.MeshBasicMaterial({ visible: false });
-  const panes = new THREE.Mesh(new THREE.BoxGeometry(W, H, D).translate(0, H / 2, 0), [glass, glass, open, glass, glass, glass]);
+  const panes = new THREE.Mesh(new THREE.BoxGeometry(TANK_WIDTH, TANK_HEIGHT, TANK_DEPTH).translate(0, TANK_HEIGHT / 2, 0), [glass, glass, open, glass, glass, glass]);
   panes.renderOrder = 2;
   const edgeMaterial = new THREE.MeshBasicMaterial({ color: 0x8b8b94 });
   const edges = new THREE.Group();
   const t = .04;
-  for (const y of [0, H]) {
-    for (const z of [-D / 2, D / 2]) {
-      edges.add(new THREE.Mesh(new THREE.BoxGeometry(W + t, t, t).translate(0, y, z), edgeMaterial));
+  for (const y of [0, TANK_HEIGHT]) {
+    for (const z of [-TANK_DEPTH / 2, TANK_DEPTH / 2]) {
+      edges.add(new THREE.Mesh(new THREE.BoxGeometry(TANK_WIDTH + t, t, t).translate(0, y, z), edgeMaterial));
     }
-    for (const x of [-W / 2, W / 2]) {
-      edges.add(new THREE.Mesh(new THREE.BoxGeometry(t, t, D + t).translate(x, y, 0), edgeMaterial));
+    for (const x of [-TANK_WIDTH / 2, TANK_WIDTH / 2]) {
+      edges.add(new THREE.Mesh(new THREE.BoxGeometry(t, t, TANK_DEPTH + t).translate(x, y, 0), edgeMaterial));
     }
   }
-  for (const x of [-W / 2, W / 2]) {
-    for (const z of [-D / 2, D / 2]) {
-      edges.add(new THREE.Mesh(new THREE.BoxGeometry(t, H, t).translate(x, H / 2, z), edgeMaterial));
+  for (const x of [-TANK_WIDTH / 2, TANK_WIDTH / 2]) {
+    for (const z of [-TANK_DEPTH / 2, TANK_DEPTH / 2]) {
+      edges.add(new THREE.Mesh(new THREE.BoxGeometry(t, TANK_HEIGHT, t).translate(x, TANK_HEIGHT / 2, z), edgeMaterial));
     }
   }
 
@@ -158,7 +158,7 @@ export const createDiffusionThree = (): SceneLayer => {
 
   // 정사영 카메라: 수조를 앞쪽 위에서 비스듬히(3/4) 보고, 아주 천천히 좌우로 흔들린다. 3D 1 = SVG 100px 이 되는 거리.
   const target = new THREE.Vector3(0, 2.2, 0);
-  const distance = region.height / 2 / S / Math.tan(THREE.MathUtils.degToRad(17.5));
+  const distance = region.height / 2 / PIXELS_PER_UNIT / Math.tan(THREE.MathUtils.degToRad(17.5));
 
   const update = (time: number) => {
     base.update?.(time);
@@ -206,11 +206,11 @@ export const createDiffusionThree = (): SceneLayer => {
           const offset = s === 0 ? 0 : spread;
           positions[i * 3] = worldX(clamp(x + jitter[i * 3] * offset, tank.left + margin, tank.right - margin));
           positions[i * 3 + 1] = worldY(clamp(y + jitter[i * 3 + 1] * offset, surface + 4, tank.bottom - margin));
-          positions[i * 3 + 2] = clamp(z + jitter[i * 3 + 2] * offset, -DEPTH / 2 + margin, DEPTH / 2 - margin) / S;
+          positions[i * 3 + 2] = clamp(z + jitter[i * 3 + 2] * offset, -DEPTH / 2 + margin, DEPTH / 2 - margin) / PIXELS_PER_UNIT;
         }
       }
       positionAttribute.needsUpdate = true;
-      uniforms.uSize.value = (2 * (radius + 1.1 * blur)) / S;
+      uniforms.uSize.value = (2 * (radius + 1.1 * blur)) / PIXELS_PER_UNIT;
       uniforms.uSoft.value = Math.sqrt(amount);
       uniforms.uOpacity.value = lerp(.24, .085, Math.sqrt(amount)) * (1 - regathered);
     }
@@ -220,8 +220,8 @@ export const createDiffusionThree = (): SceneLayer => {
     (gatheredDrop.material as THREE.MeshStandardMaterial).opacity = regathered;
 
     const wave = progress(e, 0, 1.1);
-    const rippleRadius = (12 + 150 * ease(wave)) / S;
-    ripple.scale.set(rippleRadius, 1, Math.min(rippleRadius, D / 2 - .05));
+    const rippleRadius = (12 + 150 * ease(wave)) / PIXELS_PER_UNIT;
+    ripple.scale.set(rippleRadius, 1, Math.min(rippleRadius, TANK_DEPTH / 2 - .05));
     rippleMaterial.opacity = landed && wave < 1 ? .8 * (1 - wave) * (1 - regathered) : 0;
 
     render();

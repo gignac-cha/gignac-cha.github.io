@@ -30,10 +30,10 @@ const bars = [
   { team: '1등 팀', note: 'AlexNet', value: 15.3, label: '15.3%', at: at.first },
 ];
 
-const chart = { left: 790, right: 1430, baseline: 740, top: 200, max: 30 };
+const chart = { left: 790, right: 1430, baseline: 740, top: 200, maximum: 30 };
 const barWidth = 150;
 const barX = (index: number) => chart.left + 130 + index * 210;
-const valueY = (value: number) => chart.baseline - (value / chart.max) * (chart.baseline - chart.top);
+const valueY = (value: number) => chart.baseline - (value / chart.maximum) * (chart.baseline - chart.top);
 
 const waffle = { x: 150, y: 300, pitch: 44, size: 38 };
 const guesses = ['여우', '강아지', '호랑이', '고양이', '토끼'];
@@ -177,7 +177,7 @@ export const createImageNetErrorRateScene = (): Scene => {
     setAttributes(plot, { opacity: sampleIn.toFixed(3) });
     barViews.forEach(({ bar, value, name, sub, x }, index) => {
       const grow = appear(time, bars[index].at, .8);
-      const height = (bars[index].value / chart.max) * (chart.baseline - chart.top) * grow;
+      const height = (bars[index].value / chart.maximum) * (chart.baseline - chart.top) * grow;
       const left = x - barWidth / 2;
       const top = chart.baseline - height;
       const radius = Math.min(4, height);

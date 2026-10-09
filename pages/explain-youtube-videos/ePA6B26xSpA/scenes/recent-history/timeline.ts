@@ -8,7 +8,7 @@ const openaiRows = [340, 286, 232, 178];
 const rivalRows = [462, 522];
 const today = events.find(({ id }) => id === 'today')!;
 
-const f = (n: number) => n.toFixed(1);
+const toOneDecimal = (n: number) => n.toFixed(1);
 
 const rowY = (event: TimelineEvent, row: number) => (event.lane === 'openai' ? openaiRows[row] : rivalRows[row]);
 
@@ -101,23 +101,23 @@ export const createTimeline = (root: SVGElement, view: (time: number) => View, z
 
     // 2026 띠.
     const bandX = Math.max(x(month(2026, 1, 1)), 60);
-    setAttributes(band, { x: f(bandX), width: f(Math.max(1540 - bandX, 0)), opacity: (appear(time, yearAt, .6) * .9).toFixed(3) });
-    setAttributes(bandLabel, { x: f(bandX + 14), opacity: (appear(time, yearAt, .5) * lerp(1, .55, appear(time, yearAt + 3, .8))).toFixed(3) });
+    setAttributes(band, { x: toOneDecimal(bandX), width: toOneDecimal(Math.max(1540 - bandX, 0)), opacity: (appear(time, yearAt, .6) * .9).toFixed(3) });
+    setAttributes(bandLabel, { x: toOneDecimal(bandX + 14), opacity: (appear(time, yearAt, .5) * lerp(1, .55, appear(time, yearAt + 3, .8))).toFixed(3) });
     bandLabel.classList.toggle('glow', time >= yearAt && time < yearAt + 2);
 
     setAttributes(line, { d: `M${axis.left} ${axis.y} L${axis.right} ${axis.y}` });
     for (const tick of ticks) {
       const tx = x(tick.at);
       const visible = tx > 70 && tx < 1530;
-      setAttributes(tick.mark, { d: `M${f(tx)} ${axis.y} L${f(tx)} ${axis.y + (tick.monthOfYear === 1 ? 14 : 8)}`, opacity: tx >= axis.left && tx <= axis.right ? 1 : 0 });
-      setAttributes(tick.label, { x: f(tx), opacity: visible ? 1 : 0 });
+      setAttributes(tick.mark, { d: `M${toOneDecimal(tx)} ${axis.y} L${toOneDecimal(tx)} ${axis.y + (tick.monthOfYear === 1 ? 14 : 8)}`, opacity: tx >= axis.left && tx <= axis.right ? 1 : 0 });
+      setAttributes(tick.label, { x: toOneDecimal(tx), opacity: visible ? 1 : 0 });
     }
 
     // 매달 새 모델(확대 보기에서는 화면 밖).
     const m0 = x(monthlySpan[0]);
     const m1 = x(monthlySpan[1]);
-    setAttributes(monthlyPath, { d: `M${f(m0)} 168 L${f(m0)} 160 L${f(m1)} 160 L${f(m1)} 168` });
-    setAttributes(monthlyLabel, { x: f((m0 + m1) / 2) });
+    setAttributes(monthlyPath, { d: `M${toOneDecimal(m0)} 168 L${toOneDecimal(m0)} 160 L${toOneDecimal(m1)} 160 L${toOneDecimal(m1)} 168` });
+    setAttributes(monthlyLabel, { x: toOneDecimal((m0 + m1) / 2) });
     setAttributes(monthly, { opacity: (appear(time, monthlyAt, .4) * (1 - z) * lerp(1, .5, landscape)).toFixed(3) });
 
     for (const { event, parts, stem, mark, label, date, name } of views) {
@@ -131,9 +131,9 @@ export const createTimeline = (root: SVGElement, view: (time: number) => View, z
 
       const ex = x(event.date);
       if (event.span) {
-        setAttributes(mark, { x: f(x(event.span[0])), width: f(Math.max(x(event.span[1]) - x(event.span[0]), 4)) });
+        setAttributes(mark, { x: toOneDecimal(x(event.span[0])), width: toOneDecimal(Math.max(x(event.span[1]) - x(event.span[0]), 4)) });
       } else {
-        setAttributes(mark, { cx: f(ex), r: isCurrent ? 10 : 7 });
+        setAttributes(mark, { cx: toOneDecimal(ex), r: isCurrent ? 10 : 7 });
       }
       if (!label || !name) {
         setAttributes(stem, { d: '' });
@@ -143,24 +143,24 @@ export const createTimeline = (root: SVGElement, view: (time: number) => View, z
       // 나타날 때 축 쪽에서 살짝 밀려 나온다.
       const slide = (1 - shownAmount) * (event.lane === 'openai' ? 14 : -14);
       if (event.lane === 'openai') {
-        setAttributes(name, { x: f(ex), y: f(y + slide) });
+        setAttributes(name, { x: toOneDecimal(ex), y: toOneDecimal(y + slide) });
         if (date) {
-          setAttributes(date, { x: f(ex), y: f(y - 24 + slide) });
+          setAttributes(date, { x: toOneDecimal(ex), y: toOneDecimal(y - 24 + slide) });
         }
-        setAttributes(stem, { d: `M${f(ex)} ${axis.y - 8} L${f(ex)} ${f(y + 10 + slide)}` });
+        setAttributes(stem, { d: `M${toOneDecimal(ex)} ${axis.y - 8} L${toOneDecimal(ex)} ${toOneDecimal(y + 10 + slide)}` });
       } else {
         if (date) {
-          setAttributes(date, { x: f(ex), y: f(y + slide) });
+          setAttributes(date, { x: toOneDecimal(ex), y: toOneDecimal(y + slide) });
         }
-        setAttributes(name, { x: f(ex), y: f(y + 26 + slide) });
-        setAttributes(stem, { d: `M${f(ex)} ${axis.y + 8} L${f(ex)} ${f(y - 18 + slide)}` });
+        setAttributes(name, { x: toOneDecimal(ex), y: toOneDecimal(y + 26 + slide) });
+        setAttributes(stem, { d: `M${toOneDecimal(ex)} ${axis.y + 8} L${toOneDecimal(ex)} ${toOneDecimal(y - 18 + slide)}` });
       }
     }
 
     // 오늘(9월 29일이 "바로 어제").
     const tx = x(today.date);
-    setAttributes(todayLine, { d: `M${f(tx)} ${axis.y - 26} L${f(tx)} ${axis.y + 8}` });
-    setAttributes(todayLabel, { x: f(tx + 10) });
+    setAttributes(todayLine, { d: `M${toOneDecimal(tx)} ${axis.y - 26} L${toOneDecimal(tx)} ${axis.y + 8}` });
+    setAttributes(todayLabel, { x: toOneDecimal(tx + 10) });
     setAttributes(todayMark, { opacity: appear(time, today.at, .4).toFixed(3) });
 
     // 카드.

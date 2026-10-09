@@ -33,14 +33,14 @@ const toY = (v: number) => box.top + box.height - v * box.height;
 // 글자 하나를 맞힐 확률(서서히)과 답 전체를 맞힐 확률(그 10제곱).
 const partial = (u: number) => .3 + .69 * u;
 const exact = (u: number) => partial(u) ** 10;
-const curvePath = (f: (u: number) => number, until: number) => {
+const curvePath = (valueAt: (u: number) => number, until: number) => {
   if (until <= 0) {
     return '';
   }
   const count = Math.max(Math.ceil(until * 80), 1);
   return Array.from({ length: count + 1 }, (_, i) => {
     const u = (until * i) / count;
-    return `${i ? 'L' : 'M'}${toX(u).toFixed(1)} ${toY(f(u)).toFixed(1)}`;
+    return `${i ? 'L' : 'M'}${toX(u).toFixed(1)} ${toY(valueAt(u)).toFixed(1)}`;
   }).join(' ');
 };
 
@@ -71,7 +71,7 @@ export const createEmergenceScene = (): Scene => {
   // 두 곡선 사이(초록 선 아래, 주황 선 위)에 두고 솟는 지점을 가리킨다.
   svg('path', { d: `M${toX(.67)} ${toY(.3)} C${toX(.75)} ${toY(.3)}, ${toX(.8)} ${toY(.3)}, ${toX(.845)} ${toY(.3)}`, class: 'emergence-pointer' }, emergence);
   text(emergence, toX(.655), toY(.3) + 4, '창발', { class: 'emergence-emergence-text', 'text-anchor': 'end' });
-  text(emergence, toX(.655), toY(.3) + 36, 'emergence', { class: 'emergence-emergence-sub', 'text-anchor': 'end' });
+  text(emergence, toX(.655), toY(.3) + 36, 'emergence', { class: 'emergence-emergence-subtitle', 'text-anchor': 'end' });
 
   // 물이 0°C에서 한순간에 얼음이 된다.
   const water = svg('g', { class: 'emergence-water' }, root);
@@ -99,7 +99,7 @@ export const createEmergenceScene = (): Scene => {
   const scoring = svg('g', { class: 'emergence-scoring' }, root);
   text(scoring, 1230, 250, '재는 방식의 차이', { class: 'emergence-scoring-title' });
   text(scoring, 990, 316, '123 + 456 = ?', { class: 'emergence-problem' });
-  text(scoring, 990, 370, '정답 579 · 모델의 답', { class: 'emergence-problem-sub' });
+  text(scoring, 990, 370, '정답 579 · 모델의 답', { class: 'emergence-problem-subtitle' });
   const digits = ['5', '7', '8'].map((digit, i) => text(scoring, 1300 + i * 32, 370, digit, { class: `emergence-digit ${i < 2 ? 'right' : 'wrong'}` }));
   const cardExact = svg('g', { class: 'emergence-card exact' }, scoring);
   svg('rect', { x: 970, y: 410, width: 520, height: 104, rx: 16 }, cardExact);

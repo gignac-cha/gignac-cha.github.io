@@ -53,11 +53,11 @@ export const createImageNetLabelingScene = (): Scene => {
   const cells = Array.from({ length: mosaic.columns * mosaic.rows }, (_, i) => {
     const column = i % mosaic.columns;
     const row = Math.floor(i / mosaic.columns);
-    const rect = svg('rect', { x: mosaic.x + column * mosaic.pitch, y: mosaic.y + row * mosaic.pitch, width: mosaic.pitch - 4, height: mosaic.pitch - 4, rx: 4 }, cellGroup);
+    const tile = svg('rect', { x: mosaic.x + column * mosaic.pitch, y: mosaic.y + row * mosaic.pitch, width: mosaic.pitch - 4, height: mosaic.pitch - 4, rx: 4 }, cellGroup);
     // 대학원생 몇 명은 벽 바로 옆 몇 칸을 겨우 채운다. 나머지는 전 세계 사람들이 한꺼번에.
     const nearWall = !wallCell(column, row) && row < wall.rows + 1 && column < wall.columns + 2;
     const labeledAt = nearWall ? at.students + .5 + studentOrder++ * .45 : at.crowd + .2 + random(i * 3 + 7) * 11.2;
-    return { rect, labeledAt, hidden: wallCell(column, row), category: Math.floor(random(i * 5 + 2) * 6) };
+    return { tile, labeledAt, hidden: wallCell(column, row), category: Math.floor(random(i * 5 + 2) * 6) };
   });
 
   // 처음에는 크게 보이는 사진 벽.
@@ -133,9 +133,9 @@ export const createImageNetLabelingScene = (): Scene => {
 
     const mosaicIn = appear(time, at.scale + .2, 1);
     const colored = time >= at.categories;
-    cells.forEach(({ rect, labeledAt, hidden, category }) => {
+    cells.forEach(({ tile, labeledAt, hidden, category }) => {
       const labeled = time >= labeledAt;
-      setAttributes(rect, {
+      setAttributes(tile, {
         opacity: hidden ? 0 : mosaicIn.toFixed(3),
         class: labeled ? (colored ? `labeled color-${category}` : 'labeled') : '',
       });

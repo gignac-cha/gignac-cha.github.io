@@ -37,7 +37,7 @@ export const createDiagram = (className: string, title: string) => {
   return { element, root };
 };
 
-export const clamp = (value: number, min = 0, max = 1) => Math.min(Math.max(value, min), max);
+export const clamp = (value: number, minimum = 0, maximum = 1) => Math.min(Math.max(value, minimum), maximum);
 
 // time이 start부터 duration 동안 0에서 1로 변하는 값.
 export const progress = (time: number, start: number, duration: number) => clamp((time - start) / duration);

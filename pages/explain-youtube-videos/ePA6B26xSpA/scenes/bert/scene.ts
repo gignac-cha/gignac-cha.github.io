@@ -58,13 +58,13 @@ const shown = (time: number, [from, to]: number[]) => appear(time, from, .4) * (
 const createCard = (root: SVGElement) => {
   const group = svg('g', {}, root);
   text(group, 800, 380, 'BERT', { class: 'bert-name', 'text-anchor': 'middle' });
-  text(group, 800, 440, '구글 · 2018년 10월', { class: 'bert-sub', 'text-anchor': 'middle' });
+  text(group, 800, 440, '구글 · 2018년 10월', { class: 'bert-subtitle', 'text-anchor': 'middle' });
   const acronym = text(group, 800, 540, '', { class: 'bert-acronym', 'text-anchor': 'middle' });
   ['Bidirectional', ' Encoder', ' Representations from', ' Transformers'].forEach((part, i) => {
     const span = svg('tspan', { class: i === 0 ? 'key' : '' }, acronym);
     span.textContent = part;
   });
-  text(group, 800, 590, '트랜스포머의 읽는 쪽(인코더)을 키운 모델', { class: 'bert-sub', 'text-anchor': 'middle' });
+  text(group, 800, 590, '트랜스포머의 읽는 쪽(인코더)을 키운 모델', { class: 'bert-subtitle', 'text-anchor': 'middle' });
   const rest = group.lastElementChild as SVGTextElement;
   return (time: number) => {
     setAttributes(group, { opacity: shown(time, parts.card).toFixed(3) });

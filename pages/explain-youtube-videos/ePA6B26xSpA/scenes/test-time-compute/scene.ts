@@ -32,11 +32,11 @@ const at = {
 };
 
 const knobs = [
-  { x: 300, label: '학습할 때', sub: '학습에 쓰는 연산', at: at.first },
-  { x: 690, label: '대답할 때', sub: '대답에 쓰는 연산', at: at.second },
+  { x: 300, label: '학습할 때', subtitle: '학습에 쓰는 연산', at: at.first },
+  { x: 690, label: '대답할 때', subtitle: '대답에 쓰는 연산', at: at.second },
 ];
 const knob = { y: 400, radius: 98 };
-const angle = { min: -130, max: 130 };
+const angle = { minimum: -130, maximum: 130 };
 const meter = { x: 900, top: 250, height: 380, width: 46 };
 const trainChips = ['더 큰 모델', '더 많은 데이터', '더 많은 연산'];
 
@@ -69,11 +69,11 @@ export const createTestTimeComputeScene = (): Scene => {
   const heading = createSwapText(root, 90, 170, { class: 'test-time-compute-heading' });
 
   // 손잡이 둘.
-  const knobViews = knobs.map(({ x, label, sub }) => {
+  const knobViews = knobs.map(({ x, label, subtitle }) => {
     const group = svg('g', { opacity: 0 }, root);
     text(group, x, knob.y - knob.radius - 42, label, { class: 'test-time-compute-knob-label' });
     for (let i = 0; i <= 10; i++) {
-      const degrees = lerp(angle.min, angle.max, i / 10);
+      const degrees = lerp(angle.minimum, angle.maximum, i / 10);
       const from = polar(x, knob.y, knob.radius + 12, degrees);
       const to = polar(x, knob.y, knob.radius + (i % 5 === 0 ? 30 : 22), degrees);
       svg('line', { x1: from.x.toFixed(1), y1: from.y.toFixed(1), x2: to.x.toFixed(1), y2: to.y.toFixed(1), class: 'test-time-compute-tick' }, group);
@@ -81,7 +81,7 @@ export const createTestTimeComputeScene = (): Scene => {
     const ring = svg('circle', { cx: x, cy: knob.y, r: knob.radius, class: 'test-time-compute-knob' }, group);
     const pointer = svg('line', { x1: x, y1: knob.y, class: 'test-time-compute-pointer' }, group);
     svg('circle', { cx: x, cy: knob.y, r: 16, class: 'test-time-compute-cap' }, group);
-    text(group, x, knob.y + knob.radius + 58, sub, { class: 'test-time-compute-knob-sub' });
+    text(group, x, knob.y + knob.radius + 58, subtitle, { class: 'test-time-compute-knob-subtitle' });
     return { group, ring, pointer };
   });
   const newTag = svg('g', { opacity: 0 }, root);
@@ -140,7 +140,7 @@ export const createTestTimeComputeScene = (): Scene => {
     knobViews.forEach(({ group, ring, pointer }, i) => {
       setAttributes(group, { opacity: appear(time, knobs[i].at, .5).toFixed(3) });
       const turn = i === 0 ? trainTurn : thinkTurn;
-      const tip = polar(knobs[i].x, knob.y, knob.radius - 18, lerp(angle.min + 20, angle.max - 30, turn));
+      const tip = polar(knobs[i].x, knob.y, knob.radius - 18, lerp(angle.minimum + 20, angle.maximum - 30, turn));
       setAttributes(pointer, { x2: tip.x.toFixed(1), y2: tip.y.toFixed(1) });
       const turning = i === 0 ? between(time, at.train, at.trainDone) : between(time, at.turn, at.smarter + .3);
       ring.classList.toggle('turning', turning);

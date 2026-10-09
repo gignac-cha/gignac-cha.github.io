@@ -120,7 +120,7 @@ const createAlphaGoMoves = () => {
   const resignLabel = text(boardGroup, board.x + board.size / 2, board.y + board.size + 64, '', { class: 'moves-result' });
 
   // 오른쪽: 대국 정보
-  const info = createSwapText(root, 820, 250, { class: 'moves-info' });
+  const information = createSwapText(root, 820, 250, { class: 'moves-information' });
   const players = text(root, 820, 296, '흑 알파고 · 백 이세돌', { class: 'moves-players', opacity: 0 });
 
   // 오른쪽: 1/10,000
@@ -138,10 +138,10 @@ const createAlphaGoMoves = () => {
   const chips = results.map((winner, i) => {
     const group = svg('g', { opacity: 0 }, tally);
     const x = 820 + i * 136;
-    const rect = svg('rect', { class: `moves-chip ${winner === '이세돌' ? 'lee' : 'alphago'}`, x, y: 420, width: 120, height: 150, rx: 16 }, group);
+    const chip = svg('rect', { class: `moves-chip ${winner === '이세돌' ? 'lee' : 'alphago'}`, x, y: 420, width: 120, height: 150, rx: 16 }, group);
     text(group, x + 60, 470, `${i + 1}국`, { class: 'moves-chip-round' });
     text(group, x + 60, 530, winner, { class: 'moves-chip-winner' });
-    return { group, rect, i };
+    return { group, chip, i };
   });
   const score = createSwapText(tally, 1150, 680, { class: 'moves-score' });
   text(tally, 1150, 730, '알파고 : 이세돌', { class: 'moves-chance-note' });
@@ -185,7 +185,7 @@ const createAlphaGoMoves = () => {
     }
 
     // 대국 정보
-    info.update(time, (t) => (t >= at.game4 - .2 ? '제4국 · 2016년 3월 13일' : '제2국 · 2016년 3월 10일'));
+    information.update(time, (t) => (t >= at.game4 - .2 ? '제4국 · 2016년 3월 13일' : '제2국 · 2016년 3월 10일'));
     setAttributes(players, { opacity: appear(time, start + .3, .4).toFixed(3) });
 
     // 1/10,000
@@ -195,10 +195,10 @@ const createAlphaGoMoves = () => {
 
     // 다섯 판 결과
     setAttributes(tally, { opacity: appear(time, at.threeZero - .3, .4).toFixed(3) });
-    chips.forEach(({ group, rect, i }) => {
+    chips.forEach(({ group, chip, i }) => {
       const shownAt = i < 3 ? at.threeZero + i * .2 : i === 3 ? at.resign : at.final;
       setAttributes(group, { opacity: appear(time, shownAt, .3).toFixed(3) });
-      rect.classList.toggle('remember', i === 3 && time >= at.remember);
+      chip.classList.toggle('remember', i === 3 && time >= at.remember);
     });
     score.update(time, (t) => (t >= at.final ? '4 : 1' : t >= at.resign ? '3 : 1' : t >= at.threeZero ? '3 : 0' : ''));
   };

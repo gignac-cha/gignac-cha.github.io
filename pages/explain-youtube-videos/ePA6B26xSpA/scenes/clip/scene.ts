@@ -61,10 +61,10 @@ const canvas = { x: 1100, y: 206, size: 420, grid: 20 };
 const arrow = (parent: Element, x1: number, y1: number, x2: number, y2: number) => {
   const angle = Math.atan2(y2 - y1, x2 - x1);
   const head = 14;
-  const f = (n: number) => n.toFixed(1);
+  const toOneDecimal = (n: number) => n.toFixed(1);
   const left = [x2 - head * Math.cos(angle - .5), y2 - head * Math.sin(angle - .5)];
   const right = [x2 - head * Math.cos(angle + .5), y2 - head * Math.sin(angle + .5)];
-  return svg('path', { class: 'clip-arrow', d: `M${f(x1)} ${f(y1)} L${f(x2)} ${f(y2)} M${f(left[0])} ${f(left[1])} L${f(x2)} ${f(y2)} L${f(right[0])} ${f(right[1])}` }, parent);
+  return svg('path', { class: 'clip-arrow', d: `M${toOneDecimal(x1)} ${toOneDecimal(y1)} L${toOneDecimal(x2)} ${toOneDecimal(y2)} M${toOneDecimal(left[0])} ${toOneDecimal(left[1])} L${toOneDecimal(x2)} ${toOneDecimal(y2)} L${toOneDecimal(right[0])} ${toOneDecimal(right[1])}` }, parent);
 };
 
 const photoTile = (parent: Element, emoji: string, size: number) => {

@@ -24,7 +24,7 @@
   font-weight: 800;
   text-anchor: middle;
 }
-.gpu-sub {
+.gpu-subtitle {
   font-size: 30px;
   text-anchor: middle;
   fill: var(--diagram-muted) !important;
@@ -94,7 +94,7 @@
   stroke: var(--diagram-blue);
   stroke-width: 3;
 }
-.gpu-op {
+.gpu-operator {
   font-size: 34px;
   font-weight: 700;
   text-anchor: middle;
@@ -114,7 +114,7 @@
   stroke-linejoin: round;
 }
 // CUDA 를 지나가는 곱셈·덧셈 기호가 설명 글자 사이로 비치지 않게 바탕색 테두리를 두른다.
-.diagram .gpu-cuda text.gpu-sub {
+.diagram .gpu-cuda text.gpu-subtitle {
   paint-order: stroke;
   stroke: var(--diagram-background);
   stroke-width: 14px;

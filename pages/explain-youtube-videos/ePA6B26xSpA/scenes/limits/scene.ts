@@ -35,7 +35,7 @@ const at = {
   unknown: 3745.6,
 };
 
-const f = (n: number) => n.toFixed(1);
+const toOneDecimal = (n: number) => n.toFixed(1);
 
 const random = (seed: number) => {
   const value = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
@@ -76,7 +76,7 @@ const createHallucination = (parent: SVGElement) => {
     setAttributes(question, { opacity: appear(time, at.lie + .2, .3).toFixed(3) });
     setAttributes(reply, { opacity: appear(time, at.lie + .8, .4).toFixed(3) });
     const thump = ease(progress(time, at.stamp, .25));
-    setAttributes(stamp, { transform: `translate(660 300) rotate(-8) scale(${f(lerp(1.5, 1, thump))})`, opacity: thump.toFixed(3) });
+    setAttributes(stamp, { transform: `translate(660 300) rotate(-8) scale(${toOneDecimal(lerp(1.5, 1, thump))})`, opacity: thump.toFixed(3) });
     reply.classList.toggle('false', time >= at.stamp);
   };
 };
@@ -92,9 +92,9 @@ const createPower = (parent: SVGElement) => {
     { year: '2030년', value: 945, label: '약 945 TWh', y: 248, className: 'projected' },
   ].map((bar) => {
     text(node, 44, bar.y + 36, bar.year, { class: 'limits-label strong' });
-    const rect = svg('rect', { class: `limits-power ${bar.className}`, x: 170, y: bar.y, width: 0, height: 52, rx: 8 }, node);
+    const powerBar = svg('rect', { class: `limits-power ${bar.className}`, x: 170, y: bar.y, width: 0, height: 52, rx: 8 }, node);
     const amount = text(node, 0, bar.y + 36, bar.label, { class: 'limits-value' });
-    return { ...bar, rect, amount };
+    return { ...bar, powerBar, amount };
   });
   // "칩도": 칩이 줄지어 늘어난다.
   const chips = Array.from({ length: 14 }, (_, i) => {
@@ -107,8 +107,8 @@ const createPower = (parent: SVGElement) => {
   return (time: number) => {
     bars.forEach((bar, i) => {
       const width = bar.value * scale * ease(progress(time, at.electricity + i * .35, .6));
-      setAttributes(bar.rect, { width: f(width) });
-      setAttributes(bar.amount, { x: f(170 + width + 16), opacity: appear(time, at.electricity + i * .35 + .4, .3).toFixed(3) });
+      setAttributes(bar.powerBar, { width: toOneDecimal(width) });
+      setAttributes(bar.amount, { x: toOneDecimal(170 + width + 16), opacity: appear(time, at.electricity + i * .35 + .4, .3).toFixed(3) });
     });
     chips.forEach((chip, i) => setAttributes(chip, { opacity: appear(time, at.chips + i * .06, .2).toFixed(3) }));
   };
@@ -125,7 +125,7 @@ const createData = (parent: SVGElement) => {
   svg('rect', { class: 'limits-window', x: x(2026), y: plot.top, width: x(2032) - x(2026), height: plot.bottom - plot.top }, node);
   text(node, (x(2026) + x(2032)) / 2, plot.bottom - 14, '2026~2032년 소진 전망', { class: 'limits-window-label', 'text-anchor': 'middle' });
   svg('rect', { class: 'limits-stock-band', x: plot.left, y: y(1e15), width: plot.right - plot.left, height: y(1e14) - y(1e15) }, node);
-  svg('path', { class: 'limits-stock', d: `M${plot.left} ${f(y(3e14))} L${plot.right} ${f(y(3e14))}` }, node);
+  svg('path', { class: 'limits-stock', d: `M${plot.left} ${toOneDecimal(y(3e14))} L${plot.right} ${toOneDecimal(y(3e14))}` }, node);
   text(node, plot.left + 8, y(3e14) - 12, '공개된 사람의 글 ≈ 300조 토큰', { class: 'limits-label strong' });
   [2020, 2024, 2028, 2032].forEach((year) => text(node, x(year), plot.bottom + 28, String(year), { class: 'limits-axis', 'text-anchor': 'middle' }));
   svg('path', { class: 'limits-axis-line', d: `M${plot.left} ${plot.bottom} L${plot.right} ${plot.bottom}` }, node);
@@ -138,7 +138,7 @@ const createData = (parent: SVGElement) => {
   const lineAt = (year: number) => 10 ** (meanY + slope * (year - meanX));
   const hitYear = meanX + (Math.log10(3e14) - meanY) / slope;
   const trend = svg('path', { class: 'limits-trend' }, node);
-  const hit = svg('circle', { class: 'limits-hit', cx: f(x(hitYear)), cy: f(y(3e14)), r: 0 }, node);
+  const hit = svg('circle', { class: 'limits-hit', cx: toOneDecimal(x(hitYear)), cy: toOneDecimal(y(3e14)), r: 0 }, node);
   const points = [
     { year: 2020, tokens: 3e11, label: 'GPT-3 · 3,000억' },
     { year: 2022, tokens: 1.4e12, label: 'Chinchilla · 1.4조' },
@@ -156,9 +156,9 @@ const createData = (parent: SVGElement) => {
     }
     const draw = ease(progress(time, at.runOut - .3, .8));
     const end = lerp(2020, hitYear, draw);
-    setAttributes(trend, { d: draw > 0 ? `M${f(x(2020))} ${f(y(lineAt(2020)))} L${f(x(end))} ${f(y(lineAt(end)))}` : '' });
+    setAttributes(trend, { d: draw > 0 ? `M${toOneDecimal(x(2020))} ${toOneDecimal(y(lineAt(2020)))} L${toOneDecimal(x(end))} ${toOneDecimal(y(lineAt(end)))}` : '' });
     const flash = progress(time, at.runOut + .5, .6);
-    setAttributes(hit, { r: f(flash * 34), opacity: (flash > 0 && flash < 1 ? 1 - flash : 0).toFixed(3) });
+    setAttributes(hit, { r: toOneDecimal(flash * 34), opacity: (flash > 0 && flash < 1 ? 1 - flash : 0).toFixed(3) });
   };
 };
 
@@ -186,7 +186,7 @@ const createWorld = (parent: SVGElement) => {
   svg('circle', { class: 'limits-loop', r: 118 }, loop);
   const steps = ['보기', '해 보기', '겪기'].map((name, i) => {
     const angle = -Math.PI / 2 + (i * Math.PI * 2) / 3;
-    const step = svg('g', { class: 'limits-step', transform: `translate(${f(Math.cos(angle) * 118)} ${f(Math.sin(angle) * 118)})` }, loop);
+    const step = svg('g', { class: 'limits-step', transform: `translate(${toOneDecimal(Math.cos(angle) * 118)} ${toOneDecimal(Math.sin(angle) * 118)})` }, loop);
     svg('rect', { x: -58, y: -26, width: 116, height: 52, rx: 26 }, step);
     text(step, 0, 9, name, { 'text-anchor': 'middle' });
     return { step, angle, at: at.world + .3 + i * .4 };
@@ -201,7 +201,7 @@ const createWorld = (parent: SVGElement) => {
     setAttributes(words, { opacity: (appear(time, at.nextWord, .4) * (1 - .55 * appear(time, at.world, .5))).toFixed(3) });
     setAttributes(goal, { opacity: (appear(time, at.nextWord + .6, .4) * (1 - .55 * appear(time, at.world, .5))).toFixed(3) });
     const rise = ease(progress(time, at.nextWord + .8, 1.6));
-    setAttributes(reach, { d: `M254 296 L254 ${f(296 - rise * 70)}`, opacity: (rise > 0 ? 1 - .55 * appear(time, at.world, .5) : 0).toFixed(3) });
+    setAttributes(reach, { d: `M254 296 L254 ${toOneDecimal(296 - rise * 70)}`, opacity: (rise > 0 ? 1 - .55 * appear(time, at.world, .5) : 0).toFixed(3) });
     setAttributes(cross, { opacity: (appear(time, at.cannot, .25) * (1 - .55 * appear(time, at.world, .5))).toFixed(3) });
 
     setAttributes(loop, { opacity: appear(time, at.world, .5).toFixed(3) });
@@ -210,8 +210,8 @@ const createWorld = (parent: SVGElement) => {
     }
     const spin = Math.max(0, time - at.world - .3);
     const angle = -Math.PI / 2 + spin * ((Math.PI * 2) / 2.2);
-    setAttributes(runner, { cx: f(Math.cos(angle) * 118), cy: f(Math.sin(angle) * 118), opacity: appear(time, at.world + .4, .3).toFixed(3) });
-    setAttributes(ball, { cx: f(Math.sin(spin * 2.2) * 34), cy: 10 });
+    setAttributes(runner, { cx: toOneDecimal(Math.cos(angle) * 118), cy: toOneDecimal(Math.sin(angle) * 118), opacity: appear(time, at.world + .4, .3).toFixed(3) });
+    setAttributes(ball, { cx: toOneDecimal(Math.sin(spin * 2.2) * 34), cy: 10 });
   };
 };
 
@@ -234,15 +234,15 @@ const createTrust = (parent: SVGElement) => {
     // "맡길수록": 길이가 두 배씩 네 번 늘어난다.
     const level = [0, 1, 2, 3].reduce((sum, k) => sum + ease(progress(time, at.delegate + k * .35, .3)), 0);
     const width = unit * 2 ** level;
-    setAttributes(task, { width: f(width) });
+    setAttributes(task, { width: toOneDecimal(width) });
     const label = time < at.delegate ? '' : `×${2 ** Math.round(level)}`;
     if (doubling.textContent !== label) {
       doubling.textContent = label;
     }
-    setAttributes(doubling, { x: f(44 + width + 16) });
+    setAttributes(doubling, { x: toOneDecimal(44 + width + 16) });
     setAttributes(check, { opacity: appear(time, at.believe, .4).toFixed(3) });
     const pulse = time >= at.believe ? 1 + .12 * Math.sin((time - at.believe) * 6) : 1;
-    setAttributes(mark, { transform: `translate(880 380) scale(${f(pulse)}) translate(-880 -380)` });
+    setAttributes(mark, { transform: `translate(880 380) scale(${toOneDecimal(pulse)}) translate(-880 -380)` });
   };
 };
 
@@ -268,7 +268,7 @@ export const createLimitsScene = (): Scene => {
   text(winter, 800, 380, '세 번째 겨울?', { class: 'limits-winter-title', 'text-anchor': 'middle' });
   const unknown = text(winter, 800, 456, '정답은 아무도 모른다', { class: 'limits-winter-note', 'text-anchor': 'middle' });
   const flakes = Array.from({ length: 80 }, (_, i) => ({
-    node: svg('circle', { class: 'limits-snow', r: f(2 + random(i * 5 + 1) * 3.5) }, root),
+    node: svg('circle', { class: 'limits-snow', r: toOneDecimal(2 + random(i * 5 + 1) * 3.5) }, root),
     x: random(i * 5 + 2) * 1600,
     y: random(i * 5 + 3) * 960,
     speed: 40 + random(i * 5 + 4) * 60,
@@ -297,7 +297,7 @@ export const createLimitsScene = (): Scene => {
         const scale = lerp(lerp(.96, 1, shown), strip.scale, away);
         const x = lerp(spotlight.x, slotX(i), away);
         const y = lerp(spotlight.y, strip.y, away);
-        setAttributes(holder, { transform: `translate(${f(x)} ${f(y)}) scale(${scale.toFixed(4)})`, opacity: (shown * (1 - .5 * cold)).toFixed(3) });
+        setAttributes(holder, { transform: `translate(${toOneDecimal(x)} ${toOneDecimal(y)}) scale(${scale.toFixed(4)})`, opacity: (shown * (1 - .5 * cold)).toFixed(3) });
         setAttributes(captions[i], { opacity: (appear(time, leave + .5, .3) * (1 - .4 * cold)).toFixed(3) });
         if (shown > 0) {
           render(time);
@@ -309,8 +309,8 @@ export const createLimitsScene = (): Scene => {
         const elapsed = time - at.winter;
         const y = ((flake.y + elapsed * flake.speed) % 960) - 30;
         setAttributes(flake.node, {
-          cx: f(flake.x + Math.sin(elapsed * 1.3 + flake.sway) * 14),
-          cy: f(y),
+          cx: toOneDecimal(flake.x + Math.sin(elapsed * 1.3 + flake.sway) * 14),
+          cy: toOneDecimal(y),
           opacity: (cold * .8).toFixed(3),
         });
       }

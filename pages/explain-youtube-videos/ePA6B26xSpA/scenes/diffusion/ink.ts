@@ -53,8 +53,8 @@ type InkParticle = (typeof inkParticles)[number];
 const walkAt = (path: Array<[number, number]>, amount: number) => {
   const position = clamp(amount) * WALK;
   const k = Math.min(Math.floor(position), WALK - 1);
-  const f = position - k;
-  return [lerp(path[k][0], path[k + 1][0], f), lerp(path[k][1], path[k + 1][1], f)];
+  const fraction = position - k;
+  return [lerp(path[k][0], path[k + 1][0], fraction), lerp(path[k][1], path[k + 1][1], fraction)];
 };
 const settle = (e: number, tau: number) => 1 - Math.exp(-e / tau);
 // 번진 정도(0 = 갓 떨어진 진한 잉크, 1 = 물 전체에 고르게). 처음 1초는 거의 번지지 않는다.
