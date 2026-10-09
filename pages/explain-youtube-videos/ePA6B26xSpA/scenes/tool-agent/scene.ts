@@ -34,7 +34,7 @@ const at = {
 
 const f = (n: number) => n.toFixed(1);
 
-const arrow = (parent: SVGElement, x1: number, y1: number, x2: number, y2: number, className = 'ta-arrow') => {
+const arrow = (parent: SVGElement, x1: number, y1: number, x2: number, y2: number, className = 'tool-agent-arrow') => {
   const angle = Math.atan2(y2 - y1, x2 - x1);
   const head = 13;
   const left = [x2 - head * Math.cos(angle - .5), y2 - head * Math.sin(angle - .5)];
@@ -45,20 +45,20 @@ const arrow = (parent: SVGElement, x1: number, y1: number, x2: number, y2: numbe
 // 도구 아이콘: (0, 0) 가운데, 약 56px.
 const icons = {
   search: (parent: SVGElement) => {
-    const group = svg('g', { class: 'ta-icon' }, parent);
+    const group = svg('g', { class: 'tool-agent-icon' }, parent);
     svg('circle', { cx: -6, cy: -6, r: 15 }, group);
     svg('path', { d: 'M5 5 L19 19' }, group);
     return group;
   },
   browser: (parent: SVGElement) => {
-    const group = svg('g', { class: 'ta-icon' }, parent);
+    const group = svg('g', { class: 'tool-agent-icon' }, parent);
     svg('rect', { x: -26, y: -20, width: 52, height: 40, rx: 6 }, group);
     svg('path', { d: 'M-26 -9 L26 -9' }, group);
-    svg('path', { class: 'ta-icon-cursor', d: 'M-2 -2 L-2 16 L3 11 L7 19 L10 17 L6 9 L12 9 Z' }, group);
+    svg('path', { class: 'tool-agent-icon-cursor', d: 'M-2 -2 L-2 16 L3 11 L7 19 L10 17 L6 9 L12 9 Z' }, group);
     return group;
   },
   terminal: (parent: SVGElement) => {
-    const group = svg('g', { class: 'ta-icon' }, parent);
+    const group = svg('g', { class: 'tool-agent-icon' }, parent);
     svg('rect', { x: -26, y: -20, width: 52, height: 40, rx: 6 }, group);
     svg('path', { d: 'M-15 -7 L-6 1 L-15 9 M-2 10 L12 10' }, group);
     return group;
@@ -98,22 +98,22 @@ const headAt = (time: number) => {
 const createTrace = (root: SVGElement) => {
   // 화면 가운데에 오도록 조금 내린다.
   const group = svg('g', { transform: 'translate(0 50)' }, root);
-  const heading = text(group, 800, 200, 'o3 · 생각하는 도중에 검색하고, 도구를 직접 쓴다', { class: 'ta-heading', 'text-anchor': 'middle' });
+  const heading = text(group, 800, 200, 'o3 · 생각하는 도중에 검색하고, 도구를 직접 쓴다', { class: 'tool-agent-heading', 'text-anchor': 'middle' });
   const points = waypoints.map(({ x, y }) => `${x},${y}`).join(' ');
-  const ghost = svg('polyline', { class: 'ta-trace-ghost', points }, group);
+  const ghost = svg('polyline', { class: 'tool-agent-trace-ghost', points }, group);
   // 줄기는 '생각' 칸 뒤로 지나간다.
-  const trace = svg('polyline', { class: 'ta-trace' }, group);
+  const trace = svg('polyline', { class: 'tool-agent-trace' }, group);
 
   const card = (x: number, label: string, icon: (parent: SVGElement) => SVGElement, rows: number[]) => {
-    const node = svg('g', { class: 'ta-card' }, group);
+    const node = svg('g', { class: 'tool-agent-card' }, group);
     svg('rect', { x: x - 120, y: 530, width: 240, height: 150, rx: 18 }, node);
     const mark = icon(node);
     setAttributes(mark, { transform: `translate(${x - 78} 572) scale(.75)` });
-    text(node, x - 44, 581, label, { class: 'ta-card-label' });
+    text(node, x - 44, 581, label, { class: 'tool-agent-card-label' });
     // 결과 줄. 코드 실행의 마지막 줄은 실행 결과(초록).
     const bars = rows.map((width, i) => ({
       width,
-      bar: svg('rect', { class: i === rows.length - 1 && label === '코드 실행' ? 'ta-bar result' : 'ta-bar', x: x - 96, y: 610 + i * 22, height: 10, rx: 5, width: 0 }, node),
+      bar: svg('rect', { class: i === rows.length - 1 && label === '코드 실행' ? 'tool-agent-bar result' : 'tool-agent-bar', x: x - 96, y: 610 + i * 22, height: 10, rx: 5, width: 0 }, node),
     }));
     return { node, bars };
   };
@@ -125,13 +125,13 @@ const createTrace = (root: SVGElement) => {
     { x: 780, time: 3427.55 },
     { x: 1250, time: 3428.4 },
   ].map(({ x, time }) => {
-    const node = svg('g', { class: 'ta-thought' }, group);
+    const node = svg('g', { class: 'tool-agent-thought' }, group);
     svg('rect', { x: x - 52, y: 340, width: 104, height: 40, rx: 20 }, node);
     text(node, x, 368, '생각', { 'text-anchor': 'middle' });
     return { node, time };
   });
-  const head = svg('circle', { class: 'ta-head', r: 11 }, group);
-  const answer = svg('g', { class: 'ta-answer' }, group);
+  const head = svg('circle', { class: 'tool-agent-head', r: 11 }, group);
+  const answer = svg('g', { class: 'tool-agent-answer' }, group);
   svg('circle', { cx: 1400, cy: 360, r: 34 }, answer);
   text(answer, 1400, 371, '답', { 'text-anchor': 'middle' });
 
@@ -164,10 +164,10 @@ const createShift = (root: SVGElement) => {
   const group = svg('g', {}, root);
 
   const answering = svg('g', {}, group);
-  const answeringLabel = createSwapText(answering, 800, 290, { class: 'ta-big', 'text-anchor': 'middle' });
+  const answeringLabel = createSwapText(answering, 800, 290, { class: 'tool-agent-big', 'text-anchor': 'middle' });
   const once = svg('g', {}, answering);
   const bubble = (x: number, content: string, className: string) => {
-    const node = svg('g', { class: `ta-bubble ${className}` }, once);
+    const node = svg('g', { class: `tool-agent-bubble ${className}` }, once);
     svg('rect', { x: x - 110, y: 490, width: 220, height: 84, rx: 26 }, node);
     text(node, x, 543, content, { 'text-anchor': 'middle' });
     return node;
@@ -176,21 +176,21 @@ const createShift = (root: SVGElement) => {
   arrow(once, 745, 532, 852, 532);
   const reply = bubble(980, '답', 'reply');
 
-  const divider = svg('path', { class: 'ta-divider', d: 'M800 250 L800 720' }, group);
+  const divider = svg('path', { class: 'tool-agent-divider', d: 'M800 250 L800 720' }, group);
 
   const working = svg('g', {}, group);
-  const workingLabel = createSwapText(working, 1200, 290, { class: 'ta-big', 'text-anchor': 'middle' });
+  const workingLabel = createSwapText(working, 1200, 290, { class: 'tool-agent-big', 'text-anchor': 'middle' });
   const loop = svg('g', { transform: 'translate(1200 560)' }, working);
   const radius = 150;
-  svg('circle', { class: 'ta-loop-ring', r: radius }, loop);
+  svg('circle', { class: 'tool-agent-loop-ring', r: radius }, loop);
   const steps = ['계획', '행동', '확인'].map((name, i) => {
     const angle = -Math.PI / 2 + (i * Math.PI * 2) / 3;
-    const node = svg('g', { class: 'ta-loop-step', transform: `translate(${f(Math.cos(angle) * radius)} ${f(Math.sin(angle) * radius)})` }, loop);
+    const node = svg('g', { class: 'tool-agent-loop-step', transform: `translate(${f(Math.cos(angle) * radius)} ${f(Math.sin(angle) * radius)})` }, loop);
     svg('rect', { x: -66, y: -30, width: 132, height: 60, rx: 30 }, node);
     text(node, 0, 11, name, { 'text-anchor': 'middle' });
     return { node, angle };
   });
-  const runner = svg('circle', { class: 'ta-head', r: 10 }, loop);
+  const runner = svg('circle', { class: 'tool-agent-head', r: 10 }, loop);
 
   return (time: number) => {
     setAttributes(group, { opacity: (appear(time, at.shift + .3, .5) * (1 - appear(time, at.browser - .3, .3))).toFixed(3) });
@@ -221,11 +221,11 @@ const createShift = (root: SVGElement) => {
 
 // 3) 일하는 기계의 두 모습: 화면을 보고 직접 클릭·입력하는 브라우저 에이전트와, 코드를 맡으면 고쳐서 돌려주는 Codex.
 const panel = (parent: SVGElement, x: number, title: string) => {
-  const node = svg('g', { class: 'ta-panel' }, parent);
+  const node = svg('g', { class: 'tool-agent-panel' }, parent);
   svg('rect', { x, y: 180, width: 620, height: 450, rx: 20 }, node);
-  svg('path', { class: 'ta-panel-rule', d: `M${x} 226 L${x + 620} 226` }, node);
-  [0, 1, 2].forEach((i) => svg('circle', { class: 'ta-panel-dot', cx: x + 26 + i * 20, cy: 203, r: 6 }, node));
-  text(node, x + 310, 210, title, { class: 'ta-panel-title', 'text-anchor': 'middle' });
+  svg('path', { class: 'tool-agent-panel-rule', d: `M${x} 226 L${x + 620} 226` }, node);
+  [0, 1, 2].forEach((i) => svg('circle', { class: 'tool-agent-panel-dot', cx: x + 26 + i * 20, cy: 203, r: 6 }, node));
+  text(node, x + 310, 210, title, { class: 'tool-agent-panel-title', 'text-anchor': 'middle' });
   return node;
 };
 
@@ -235,20 +235,20 @@ const createWork = (root: SVGElement) => {
   // 왼쪽: 브라우저. 커서가 칸을 눌러 글자를 넣고 버튼을 누른다.
   const browser = svg('g', {}, group);
   panel(browser, 120, '브라우저');
-  svg('rect', { class: 'ta-address', x: 150, y: 246, width: 560, height: 36, rx: 18 }, browser);
-  svg('rect', { class: 'ta-bar', x: 172, y: 259, width: 220, height: 10, rx: 5 }, browser);
+  svg('rect', { class: 'tool-agent-address', x: 150, y: 246, width: 560, height: 36, rx: 18 }, browser);
+  svg('rect', { class: 'tool-agent-bar', x: 172, y: 259, width: 220, height: 10, rx: 5 }, browser);
   const fields = [340, 420].map((y) => {
-    svg('rect', { class: 'ta-field', x: 180, y, width: 500, height: 52, rx: 10 }, browser);
-    return svg('rect', { class: 'ta-typed', x: 200, y: y + 21, height: 10, rx: 5, width: 0 }, browser);
+    svg('rect', { class: 'tool-agent-field', x: 180, y, width: 500, height: 52, rx: 10 }, browser);
+    return svg('rect', { class: 'tool-agent-typed', x: 200, y: y + 21, height: 10, rx: 5, width: 0 }, browser);
   });
-  const button = svg('g', { class: 'ta-button' }, browser);
+  const button = svg('g', { class: 'tool-agent-button' }, browser);
   svg('rect', { x: 180, y: 508, width: 170, height: 56, rx: 12 }, button);
-  svg('rect', { class: 'ta-button-text', x: 215, y: 531, width: 100, height: 10, rx: 5 }, button);
-  const ripple = svg('circle', { class: 'ta-ripple', r: 0 }, browser);
-  const cursor = svg('path', { class: 'ta-cursor', d: 'M0 0 L0 30 L8 22 L14 35 L19 33 L13 20 L24 20 Z' }, browser);
+  svg('rect', { class: 'tool-agent-button-text', x: 215, y: 531, width: 100, height: 10, rx: 5 }, button);
+  const ripple = svg('circle', { class: 'tool-agent-ripple', r: 0 }, browser);
+  const cursor = svg('path', { class: 'tool-agent-cursor', d: 'M0 0 L0 30 L8 22 L14 35 L19 33 L13 20 L24 20 Z' }, browser);
   const browserCaption = svg('g', {}, group);
-  text(browserCaption, 430, 690, '브라우저를 직접 조작', { class: 'ta-panel-heading', 'text-anchor': 'middle' });
-  text(browserCaption, 430, 734, '화면을 보고 → 클릭하고 입력한다', { class: 'ta-caption', 'text-anchor': 'middle' });
+  text(browserCaption, 430, 690, '브라우저를 직접 조작', { class: 'tool-agent-panel-heading', 'text-anchor': 'middle' });
+  text(browserCaption, 430, 734, '화면을 보고 → 클릭하고 입력한다', { class: 'tool-agent-caption', 'text-anchor': 'middle' });
 
   // 커서가 거쳐 가는 자리와 시각.
   const path = [
@@ -274,23 +274,23 @@ const createWork = (root: SVGElement) => {
   const code = svg('g', {}, group);
   panel(code, 860, '코드 저장소');
   const widths = [300, 420, 360, 250, 380, 330, 440, 280];
-  const lines = widths.map((width, i) => svg('rect', { class: 'ta-code', x: 920 + (i % 3 === 1 ? 30 : 0), y: 256 + i * 32, width, height: 12, rx: 6 }, code));
+  const lines = widths.map((width, i) => svg('rect', { class: 'tool-agent-code', x: 920 + (i % 3 === 1 ? 30 : 0), y: 256 + i * 32, width, height: 12, rx: 6 }, code));
   const bugLine = 4;
-  const gutter = text(code, 896, 268 + bugLine * 32, '', { class: 'ta-gutter', 'text-anchor': 'middle' });
-  const fixed = svg('rect', { class: 'ta-code fixed', x: 920, y: 256 + bugLine * 32, width: 380, height: 12, rx: 6 }, code);
-  const status = createSwapText(code, 1040, 598, { class: 'ta-status', 'text-anchor': 'middle' });
-  const task = svg('g', { class: 'ta-task' }, code);
+  const gutter = text(code, 896, 268 + bugLine * 32, '', { class: 'tool-agent-gutter', 'text-anchor': 'middle' });
+  const fixed = svg('rect', { class: 'tool-agent-code fixed', x: 920, y: 256 + bugLine * 32, width: 380, height: 12, rx: 6 }, code);
+  const status = createSwapText(code, 1040, 598, { class: 'tool-agent-status', 'text-anchor': 'middle' });
+  const task = svg('g', { class: 'tool-agent-task' }, code);
   svg('rect', { x: -150, y: -30, width: 300, height: 60, rx: 14 }, task);
   text(task, 0, 10, '할 일: 테스트 고치기', { 'text-anchor': 'middle' });
-  const diff = svg('g', { class: 'ta-diff' }, code);
+  const diff = svg('g', { class: 'tool-agent-diff' }, code);
   svg('rect', { x: -110, y: -26, width: 220, height: 52, rx: 26 }, diff);
   const diffText = text(diff, 0, 9, '', { 'text-anchor': 'middle' });
   svg('tspan', { class: 'minus' }, diffText).textContent = '−1 ';
   svg('tspan', { class: 'plus' }, diffText).textContent = '+1 ';
   svg('tspan', {}, diffText).textContent = '돌려줌';
   const codeCaption = svg('g', {}, group);
-  text(codeCaption, 1170, 690, '코드를 맡기면 고쳐서 돌려준다', { class: 'ta-panel-heading', 'text-anchor': 'middle' });
-  const codex = text(codeCaption, 1170, 734, 'Codex', { class: 'ta-caption', 'text-anchor': 'middle' });
+  text(codeCaption, 1170, 690, '코드를 맡기면 고쳐서 돌려준다', { class: 'tool-agent-panel-heading', 'text-anchor': 'middle' });
+  const codex = text(codeCaption, 1170, 734, 'Codex', { class: 'tool-agent-caption', 'text-anchor': 'middle' });
 
   return (time: number) => {
     setAttributes(group, { opacity: (1 - appear(time, at.merge, .6)).toFixed(3) });
@@ -340,20 +340,20 @@ const createWork = (root: SVGElement) => {
 // 4) 검색, 브라우저, 터미널이 한 에이전트 안으로 모인다.
 const createMerge = (root: SVGElement) => {
   const group = svg('g', {}, root);
-  const ring = svg('circle', { class: 'ta-agent-ring', cx: 800, cy: 430, r: 0 }, group);
+  const ring = svg('circle', { class: 'tool-agent-agent-ring', cx: 800, cy: 430, r: 0 }, group);
   const tools = [
     { name: '검색', icon: icons.search, from: { x: 800, y: 120 }, row: 480, slot: { x: -62, y: 30 } },
     { name: '브라우저 조작', icon: icons.browser, from: { x: 430, y: 410 }, row: 800, slot: { x: 0, y: -60 } },
     { name: '터미널', icon: icons.terminal, from: { x: 1170, y: 410 }, row: 1120, slot: { x: 62, y: 30 } },
   ].map((tool) => {
-    const node = svg('g', { class: 'ta-tool' }, group);
-    svg('circle', { class: 'ta-tool-disc', r: 52 }, node);
+    const node = svg('g', { class: 'tool-agent-tool' }, group);
+    svg('circle', { class: 'tool-agent-tool-disc', r: 52 }, node);
     tool.icon(node);
-    const label = text(node, 0, 100, tool.name, { class: 'ta-tool-label', 'text-anchor': 'middle' });
+    const label = text(node, 0, 100, tool.name, { class: 'tool-agent-tool-label', 'text-anchor': 'middle' });
     return { ...tool, node, label };
   });
-  const name = text(group, 800, 640, 'ChatGPT 에이전트', { class: 'ta-big', 'text-anchor': 'middle' });
-  const caption = text(group, 800, 692, '검색 · 브라우저 · 터미널을 하나로', { class: 'ta-caption', 'text-anchor': 'middle' });
+  const name = text(group, 800, 640, 'ChatGPT 에이전트', { class: 'tool-agent-big', 'text-anchor': 'middle' });
+  const caption = text(group, 800, 692, '검색 · 브라우저 · 터미널을 하나로', { class: 'tool-agent-caption', 'text-anchor': 'middle' });
 
   return (time: number) => {
     setAttributes(group, { opacity: appear(time, at.merge, .4).toFixed(3) });

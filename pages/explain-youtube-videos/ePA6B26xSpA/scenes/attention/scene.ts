@@ -23,7 +23,7 @@ const targetY = 640;
 const uniform = [1 / 3, 1 / 3, 1 / 3];
 
 const chip = (parent: SVGElement, x: number, y: number, label: string, className: string) => {
-  const group = svg('g', { class: `att-chip ${className}`, transform: `translate(${x} ${y})` }, parent);
+  const group = svg('g', { class: `attention-chip ${className}`, transform: `translate(${x} ${y})` }, parent);
   const width = Math.max(120, label.length * 20 + 60);
   svg('rect', { x: -width / 2, y: -32, width, height: 64, rx: 32 }, group);
   text(group, 0, 11, label);
@@ -46,11 +46,11 @@ const weightsAt = (time: number) => {
 };
 
 const createChart = (parent: SVGElement) => {
-  const group = svg('g', { class: 'att-chart' }, parent);
+  const group = svg('g', { class: 'attention-chart' }, parent);
   const box = { left: 1090, right: 1500, top: 300, bottom: 640 };
-  svg('path', { class: 'att-axis', d: `M${box.left} ${box.top - 20} V${box.bottom} H${box.right + 10}` }, group);
-  text(group, box.left, box.top - 40, '번역 품질', { class: 'att-axis-label' });
-  text(group, box.right + 10, box.bottom + 46, '문장 길이 →', { class: 'att-axis-label', 'text-anchor': 'end' });
+  svg('path', { class: 'attention-axis', d: `M${box.left} ${box.top - 20} V${box.bottom} H${box.right + 10}` }, group);
+  text(group, box.left, box.top - 40, '번역 품질', { class: 'attention-axis-label' });
+  text(group, box.right + 10, box.bottom + 46, '문장 길이 →', { class: 'attention-axis-label', 'text-anchor': 'end' });
   const curve = (f: (x: number) => number) => {
     const points = Array.from({ length: 41 }, (_, i) => {
       const x = i / 40;
@@ -59,10 +59,10 @@ const createChart = (parent: SVGElement) => {
     return points.join(' ');
   };
   // 요약만 보는 방식은 문장이 길어질수록 무너지고, 어텐션은 길어져도 거의 그대로다.
-  const summary = svg('path', { class: 'att-curve summary', d: curve((x) => .78 - .55 / (1 + Math.exp(-(x - .55) * 9))), pathLength: 1 }, group);
-  const attention = svg('path', { class: 'att-curve attention', d: curve((x) => .86 - .06 * x), pathLength: 1 }, group);
-  const summaryLabel = text(group, box.right - 4, 604, '요약만', { class: 'att-legend summary', 'text-anchor': 'end' });
-  const attentionLabel = text(group, box.right - 4, 334, '어텐션', { class: 'att-legend attention', 'text-anchor': 'end' });
+  const summary = svg('path', { class: 'attention-curve summary', d: curve((x) => .78 - .55 / (1 + Math.exp(-(x - .55) * 9))), pathLength: 1 }, group);
+  const attention = svg('path', { class: 'attention-curve attention', d: curve((x) => .86 - .06 * x), pathLength: 1 }, group);
+  const summaryLabel = text(group, box.right - 4, 604, '요약만', { class: 'attention-legend summary', 'text-anchor': 'end' });
+  const attentionLabel = text(group, box.right - 4, 334, '어텐션', { class: 'attention-legend attention', 'text-anchor': 'end' });
   return (time: number) => {
     setAttributes(group, { opacity: appear(time, chart.show, .5).toFixed(3) });
     setAttributes(summary, { 'stroke-dashoffset': (1 - ease(progress(time, chart.summary, .9))).toFixed(3) });
@@ -74,15 +74,15 @@ const createChart = (parent: SVGElement) => {
 };
 
 const createMatrix = (parent: SVGElement) => {
-  const group = svg('g', { class: 'att-matrix' }, parent);
+  const group = svg('g', { class: 'attention-matrix' }, parent);
   const origin = { x: 1210, y: 330 };
   const size = 96;
-  sources.forEach((word, j) => text(group, origin.x + j * size + size / 2, origin.y - 22, word, { class: 'att-matrix-label', 'text-anchor': 'middle' }));
+  sources.forEach((word, j) => text(group, origin.x + j * size + size / 2, origin.y - 22, word, { class: 'attention-matrix-label', 'text-anchor': 'middle' }));
   const rows = targets.map((target, i) => {
     const row = svg('g', {}, group);
-    text(row, origin.x - 20, origin.y + i * size + size / 2 + 10, target.word, { class: 'att-matrix-label', 'text-anchor': 'end' });
+    text(row, origin.x - 20, origin.y + i * size + size / 2 + 10, target.word, { class: 'attention-matrix-label', 'text-anchor': 'end' });
     target.weights.forEach((weight, j) => {
-      svg('rect', { class: 'att-cell', x: origin.x + j * size + 3, y: origin.y + i * size + 3, width: size - 6, height: size - 6, rx: 10, 'fill-opacity': (.08 + weight * .92).toFixed(2) }, row);
+      svg('rect', { class: 'attention-cell', x: origin.x + j * size + 3, y: origin.y + i * size + 3, width: size - 6, height: size - 6, rx: 10, 'fill-opacity': (.08 + weight * .92).toFixed(2) }, row);
     });
     return row;
   });
@@ -93,22 +93,22 @@ const createMatrix = (parent: SVGElement) => {
 };
 
 export const createAttentionScene = (): Scene => {
-  const { element, root } = createDiagram('att', '어텐션');
-  text(root, 90, sourceY + 10, '원문', { class: 'att-row-label' });
-  text(root, 90, targetY + 10, '번역', { class: 'att-row-label' });
+  const { element, root } = createDiagram('attention', '어텐션');
+  text(root, 90, sourceY + 10, '원문', { class: 'attention-row-label' });
+  text(root, 90, targetY + 10, '번역', { class: 'attention-row-label' });
 
   // 예전 방식: 원문 전체가 요약 하나로 모였다가 번역으로 나간다.
-  const summary = svg('g', { class: 'att-summary' }, root);
+  const summary = svg('g', { class: 'attention-summary' }, root);
   for (const x of columnX) {
     svg('line', { x1: x, y1: sourceY + 32, x2: 480, y2: 450 }, summary);
   }
   svg('line', { x1: 480, y1: 450, x2: 480, y2: targetY - 32 }, summary);
-  svg('circle', { class: 'att-summary-ring', cx: 480, cy: 450, r: 46 }, summary);
-  text(summary, 480, 460, '요약', { class: 'att-summary-label' });
+  svg('circle', { class: 'attention-summary-ring', cx: 480, cy: 450, r: 46 }, summary);
+  text(summary, 480, 460, '요약', { class: 'attention-summary-label' });
 
   // 어텐션: 지금 옮길 단어 자리에서 원문의 모든 단어로 선을 잇고, 관련 있는 쪽을 굵게.
-  const links = columnX.map(() => svg('line', { class: 'att-link' }, root));
-  const pointer = svg('path', { class: 'att-pointer', d: 'M0 0 L-14 -22 L14 -22 Z' }, root);
+  const links = columnX.map(() => svg('line', { class: 'attention-link' }, root));
+  const pointer = svg('path', { class: 'attention-pointer', d: 'M0 0 L-14 -22 L14 -22 Z' }, root);
 
   const sourceChips = sources.map((word, j) => chip(root, columnX[j], sourceY, word, 'source'));
   const slots = targets.map((target, i) => ({

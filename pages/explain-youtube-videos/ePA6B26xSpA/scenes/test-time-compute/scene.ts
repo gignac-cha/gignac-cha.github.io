@@ -52,13 +52,13 @@ const gpu = (parent: Element, x: number, y: number) => {
   const group = svg('g', {}, parent);
   const body = svg('g', {}, group);
   for (let i = -2; i <= 2; i++) {
-    svg('line', { x1: i * 12, y1: -38, x2: i * 12, y2: -28, class: 'ttc-pin' }, body);
-    svg('line', { x1: i * 12, y1: 28, x2: i * 12, y2: 38, class: 'ttc-pin' }, body);
-    svg('line', { x1: -38, y1: i * 12, x2: -28, y2: i * 12, class: 'ttc-pin' }, body);
-    svg('line', { x1: 28, y1: i * 12, x2: 38, y2: i * 12, class: 'ttc-pin' }, body);
+    svg('line', { x1: i * 12, y1: -38, x2: i * 12, y2: -28, class: 'test-time-compute-pin' }, body);
+    svg('line', { x1: i * 12, y1: 28, x2: i * 12, y2: 38, class: 'test-time-compute-pin' }, body);
+    svg('line', { x1: -38, y1: i * 12, x2: -28, y2: i * 12, class: 'test-time-compute-pin' }, body);
+    svg('line', { x1: 28, y1: i * 12, x2: 38, y2: i * 12, class: 'test-time-compute-pin' }, body);
   }
-  svg('rect', { x: -30, y: -30, width: 60, height: 60, rx: 8, class: 'ttc-chip' }, body);
-  text(body, 0, 7, 'GPU', { class: 'ttc-chip-text' });
+  svg('rect', { x: -30, y: -30, width: 60, height: 60, rx: 8, class: 'test-time-compute-chip' }, body);
+  text(body, 0, 7, 'GPU', { class: 'test-time-compute-chip-text' });
   setAttributes(group, { transform: `translate(${x} ${y})` });
   return group;
 };
@@ -66,70 +66,70 @@ const gpu = (parent: Element, x: number, y: number) => {
 export const createTestTimeComputeScene = (): Scene => {
   const { element, root } = createDiagram('test-time-compute', '대답할 때 쓰는 연산');
 
-  const heading = createSwapText(root, 90, 170, { class: 'ttc-heading' });
+  const heading = createSwapText(root, 90, 170, { class: 'test-time-compute-heading' });
 
   // 손잡이 둘.
   const knobViews = knobs.map(({ x, label, sub }) => {
     const group = svg('g', { opacity: 0 }, root);
-    text(group, x, knob.y - knob.radius - 42, label, { class: 'ttc-knob-label' });
+    text(group, x, knob.y - knob.radius - 42, label, { class: 'test-time-compute-knob-label' });
     for (let i = 0; i <= 10; i++) {
       const degrees = lerp(angle.min, angle.max, i / 10);
       const from = polar(x, knob.y, knob.radius + 12, degrees);
       const to = polar(x, knob.y, knob.radius + (i % 5 === 0 ? 30 : 22), degrees);
-      svg('line', { x1: from.x.toFixed(1), y1: from.y.toFixed(1), x2: to.x.toFixed(1), y2: to.y.toFixed(1), class: 'ttc-tick' }, group);
+      svg('line', { x1: from.x.toFixed(1), y1: from.y.toFixed(1), x2: to.x.toFixed(1), y2: to.y.toFixed(1), class: 'test-time-compute-tick' }, group);
     }
-    const ring = svg('circle', { cx: x, cy: knob.y, r: knob.radius, class: 'ttc-knob' }, group);
-    const pointer = svg('line', { x1: x, y1: knob.y, class: 'ttc-pointer' }, group);
-    svg('circle', { cx: x, cy: knob.y, r: 16, class: 'ttc-cap' }, group);
-    text(group, x, knob.y + knob.radius + 58, sub, { class: 'ttc-knob-sub' });
+    const ring = svg('circle', { cx: x, cy: knob.y, r: knob.radius, class: 'test-time-compute-knob' }, group);
+    const pointer = svg('line', { x1: x, y1: knob.y, class: 'test-time-compute-pointer' }, group);
+    svg('circle', { cx: x, cy: knob.y, r: 16, class: 'test-time-compute-cap' }, group);
+    text(group, x, knob.y + knob.radius + 58, sub, { class: 'test-time-compute-knob-sub' });
     return { group, ring, pointer };
   });
   const newTag = svg('g', { opacity: 0 }, root);
-  svg('rect', { x: knobs[1].x + 62, y: knob.y - knob.radius - 118, width: 110, height: 34, rx: 17, class: 'ttc-new' }, newTag);
-  text(newTag, knobs[1].x + 117, knob.y - knob.radius - 95, '새 손잡이', { class: 'ttc-new-text' });
+  svg('rect', { x: knobs[1].x + 62, y: knob.y - knob.radius - 118, width: 110, height: 34, rx: 17, class: 'test-time-compute-new' }, newTag);
+  text(newTag, knobs[1].x + 117, knob.y - knob.radius - 95, '새 손잡이', { class: 'test-time-compute-new-text' });
 
   const chipViews = trainChips.map((label, i) => {
     const group = svg('g', { opacity: 0 }, root);
     const y = knob.y + knob.radius + 84 + i * 46;
-    svg('rect', { x: knobs[0].x - 95, y, width: 190, height: 38, rx: 19, class: 'ttc-train-chip' }, group);
-    text(group, knobs[0].x, y + 26, label, { class: 'ttc-train-chip-text' });
+    svg('rect', { x: knobs[0].x - 95, y, width: 190, height: 38, rx: 19, class: 'test-time-compute-train-chip' }, group);
+    text(group, knobs[0].x, y + 26, label, { class: 'test-time-compute-train-chip-text' });
     return group;
   });
   const thinkChip = svg('g', { opacity: 0 }, root);
-  svg('rect', { x: knobs[1].x - 95, y: knob.y + knob.radius + 84, width: 190, height: 38, rx: 19, class: 'ttc-think-chip' }, thinkChip);
-  text(thinkChip, knobs[1].x, knob.y + knob.radius + 110, '더 오래 생각하기', { class: 'ttc-train-chip-text' });
+  svg('rect', { x: knobs[1].x - 95, y: knob.y + knob.radius + 84, width: 190, height: 38, rx: 19, class: 'test-time-compute-think-chip' }, thinkChip);
+  text(thinkChip, knobs[1].x, knob.y + knob.radius + 110, '더 오래 생각하기', { class: 'test-time-compute-train-chip-text' });
 
   // 성능 눈금.
   const meterGroup = svg('g', { opacity: 0 }, root);
-  text(meterGroup, meter.x + meter.width / 2, meter.top - 22, '성능', { class: 'ttc-meter-label' });
-  svg('rect', { x: meter.x, y: meter.top, width: meter.width, height: meter.height, rx: 10, class: 'ttc-meter' }, meterGroup);
-  const meterTrain = svg('rect', { x: meter.x, width: meter.width, rx: 10, class: 'ttc-meter-train' }, meterGroup);
-  const meterThink = svg('rect', { x: meter.x, width: meter.width, class: 'ttc-meter-think' }, meterGroup);
-  const note = text(root, 90, 884, 'o1 발표(OpenAI, 2024.9): 학습 연산을 늘려도, 대답할 때 연산을 늘려도 AIME 정답률이 꾸준히 올랐다', { class: 'ttc-note', opacity: 0 });
+  text(meterGroup, meter.x + meter.width / 2, meter.top - 22, '성능', { class: 'test-time-compute-meter-label' });
+  svg('rect', { x: meter.x, y: meter.top, width: meter.width, height: meter.height, rx: 10, class: 'test-time-compute-meter' }, meterGroup);
+  const meterTrain = svg('rect', { x: meter.x, width: meter.width, rx: 10, class: 'test-time-compute-meter-train' }, meterGroup);
+  const meterThink = svg('rect', { x: meter.x, width: meter.width, class: 'test-time-compute-meter-think' }, meterGroup);
+  const note = text(root, 90, 884, 'o1 발표(OpenAI, 2024.9): 학습 연산을 늘려도, 대답할 때 연산을 늘려도 AIME 정답률이 꾸준히 올랐다', { class: 'test-time-compute-note', opacity: 0 });
 
   // 시험 문제: 암산 → 연습장.
   const examGroup = svg('g', { opacity: 0 }, root);
-  svg('rect', { x: 1060, y: 214, width: 470, height: 116, rx: 16, class: 'ttc-exam' }, examGroup);
-  text(examGroup, 1086, 248, '시험 문제', { class: 'ttc-exam-label' });
-  text(examGroup, 1295, 306, '37 × 48 = ?', { class: 'ttc-exam-problem' });
+  svg('rect', { x: 1060, y: 214, width: 470, height: 116, rx: 16, class: 'test-time-compute-exam' }, examGroup);
+  text(examGroup, 1086, 248, '시험 문제', { class: 'test-time-compute-exam-label' });
+  text(examGroup, 1295, 306, '37 × 48 = ?', { class: 'test-time-compute-exam-problem' });
   const mental = svg('g', { opacity: 0 }, root);
-  svg('rect', { x: 1060, y: 360, width: 150, height: 96, rx: 48, class: 'ttc-bubble' }, mental);
-  text(mental, 1135, 400, '암산', { class: 'ttc-bubble-label' });
-  text(mental, 1135, 436, '1,7??', { class: 'ttc-bubble-guess' });
+  svg('rect', { x: 1060, y: 360, width: 150, height: 96, rx: 48, class: 'test-time-compute-bubble' }, mental);
+  text(mental, 1135, 400, '암산', { class: 'test-time-compute-bubble-label' });
+  text(mental, 1135, 436, '1,7??', { class: 'test-time-compute-bubble-guess' });
   const notebook = svg('g', { opacity: 0 }, root);
-  svg('rect', { x: 1230, y: 360, width: 300, height: 262, rx: 6, class: 'ttc-paper' }, notebook);
+  svg('rect', { x: 1230, y: 360, width: 300, height: 262, rx: 6, class: 'test-time-compute-paper' }, notebook);
   for (let i = 0; i < 6; i++) {
-    svg('line', { x1: 1244, y1: 410 + i * 38, x2: 1516, y2: 410 + i * 38, class: 'ttc-rule' }, notebook);
+    svg('line', { x1: 1244, y1: 410 + i * 38, x2: 1516, y2: 410 + i * 38, class: 'test-time-compute-rule' }, notebook);
   }
-  text(notebook, 1250, 394, '연습장', { class: 'ttc-paper-title' });
-  const notebookViews = notebookLines.map((line, i) => text(notebook, 1252, 440 + i * 38, line, { class: 'ttc-hand', opacity: 0 }));
-  const solved = text(notebook, 1252, 598, '답: 1,776 ✓', { class: 'ttc-hand ttc-solved', opacity: 0 });
+  text(notebook, 1250, 394, '연습장', { class: 'test-time-compute-paper-title' });
+  const notebookViews = notebookLines.map((line, i) => text(notebook, 1252, 440 + i * 38, line, { class: 'test-time-compute-hand', opacity: 0 }));
+  const solved = text(notebook, 1252, 598, '답: 1,776 ✓', { class: 'test-time-compute-hand test-time-compute-solved', opacity: 0 });
 
   // 연산이 쓰이는 자리: 학습할 때 + 대답할 때.
   const placeY = 776;
   const trainGPU = gpu(root, knobs[0].x, placeY);
   const answerGPU = gpu(root, knobs[0].x, placeY);
-  const placeLabels = knobs.map(({ x }, i) => text(root, x, placeY + 70, i === 0 ? '원래 자리' : '새 자리', { class: i === 0 ? 'ttc-place' : 'ttc-place ttc-place-new', opacity: 0 }));
+  const placeLabels = knobs.map(({ x }, i) => text(root, x, placeY + 70, i === 0 ? '원래 자리' : '새 자리', { class: i === 0 ? 'test-time-compute-place' : 'test-time-compute-place test-time-compute-place-new', opacity: 0 }));
 
   const update = (time: number) => {
     heading.update(time, (t) => (t < at.heading ? '' : t < at.second ? '지금까지 똑똑하게 만드는 손잡이: 하나' : '이제 손잡이가 둘'));
@@ -175,7 +175,7 @@ export const createTestTimeComputeScene = (): Scene => {
     setAttributes(answerGPU, {
       opacity: appear(time, at.place, .2).toFixed(3),
       transform: `translate(${lerp(knobs[0].x, knobs[1].x, move).toFixed(1)} ${placeY})`,
-      class: time >= at.more ? 'ttc-gpu-new' : '',
+      class: time >= at.more ? 'test-time-compute-gpu-new' : '',
     });
     setAttributes(placeLabels[0], { opacity: appear(time, at.compute, .3).toFixed(3) });
     setAttributes(placeLabels[1], { opacity: appear(time, at.more, .3).toFixed(3) });

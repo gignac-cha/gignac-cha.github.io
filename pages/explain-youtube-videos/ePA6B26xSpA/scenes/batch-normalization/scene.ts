@@ -138,58 +138,58 @@ const accuracy = (x: number, reach: number, top: number) => top * (1 - Math.exp(
 
 const createBatchNormalization = () => {
   const { element, root } = createDiagram('batch-normalization', '배치 정규화');
-  const caption = createSwapText(root, 800, 140, { class: 'bn-caption' });
+  const caption = createSwapText(root, 800, 140, { class: 'batch-normalization-caption' });
 
   // 1. 층마다 숫자 분포
   const layersGroup = svg('g', { opacity: 0 }, root);
   const stripGroups = Array.from({ length: stripCount }, (_, layer) => {
     const group = svg('g', { opacity: 0 }, layersGroup);
     const x = stripX(layer);
-    svg('rect', { class: 'bn-strip', x: x - strips.width / 2, y: strips.top, width: strips.width, height: strips.bottom - strips.top, rx: 16 }, group);
-    svg('line', { class: 'bn-zero', x1: x - strips.width / 2, x2: x + strips.width / 2, y1: stripMid, y2: stripMid }, group);
-    text(group, x, strips.bottom + 44, layer === 0 ? '입력' : `${layer}층`, { class: 'bn-layer-label' });
+    svg('rect', { class: 'batch-normalization-strip', x: x - strips.width / 2, y: strips.top, width: strips.width, height: strips.bottom - strips.top, rx: 16 }, group);
+    svg('line', { class: 'batch-normalization-zero', x1: x - strips.width / 2, x2: x + strips.width / 2, y1: stripMid, y2: stripMid }, group);
+    text(group, x, strips.bottom + 44, layer === 0 ? '입력' : `${layer}층`, { class: 'batch-normalization-layer-label' });
     const dots = raw[layer].flatMap((row, b) =>
-      row.map((_, f) => svg('circle', { class: 'bn-dot', cx: x - strips.width / 2 + 14 + ((b * features + f) % 61) * ((strips.width - 28) / 60), cy: stripMid, r: 3.2 }, group)),
+      row.map((_, f) => svg('circle', { class: 'batch-normalization-dot', cx: x - strips.width / 2 + 14 + ((b * features + f) % 61) * ((strips.width - 28) / 60), cy: stripMid, r: 3.2 }, group)),
     );
-    const overflow = text(group, x, strips.top - 14, '', { class: 'bn-overflow' });
+    const overflow = text(group, x, strips.top - 14, '', { class: 'batch-normalization-overflow' });
     return { group, x, dots, overflow };
   });
   // 층(1~3층)을 지난 뒤마다 정규화한다.
   const tuners = Array.from({ length: layerCount }, (_, index) => {
     const group = svg('g', { opacity: 0 }, layersGroup);
     const x = stripX(index + 1) + strips.width / 2 + 6;
-    svg('rect', { class: 'bn-tuner', x, y: stripMid - 34, width: 62, height: 68, rx: 12 }, group);
-    text(group, x + 31, stripMid + 9, 'BN', { class: 'bn-tuner-text' });
+    svg('rect', { class: 'batch-normalization-tuner', x, y: stripMid - 34, width: 62, height: 68, rx: 12 }, group);
+    text(group, x + 31, stripMid + 9, 'BN', { class: 'batch-normalization-tuner-text' });
     return group;
   });
-  const formula = text(layersGroup, 800, 850, '특징마다 (값 − 묶음 평균) ÷ 묶음 표준편차', { class: 'bn-formula', opacity: 0 });
+  const formula = text(layersGroup, 800, 850, '특징마다 (값 − 묶음 평균) ÷ 묶음 표준편차', { class: 'batch-normalization-formula', opacity: 0 });
 
   // 2. 합창단
   const choir = svg('g', { opacity: 0 }, root);
-  svg('line', { class: 'bn-wave-axis', x1: wave.left, x2: wave.right, y1: wave.mid, y2: wave.mid }, choir);
-  svg('rect', { class: 'bn-wave-frame', x: wave.left, y: wave.mid - wave.half - 20, width: wave.right - wave.left, height: (wave.half + 20) * 2, rx: 14 }, choir);
-  const wavePath = svg('path', { class: 'bn-wave' }, choir);
-  const waveLabel = text(choir, wave.left, wave.mid - wave.half - 34, '모두의 소리를 더한 화음', { class: 'bn-wave-label' });
+  svg('line', { class: 'batch-normalization-wave-axis', x1: wave.left, x2: wave.right, y1: wave.mid, y2: wave.mid }, choir);
+  svg('rect', { class: 'batch-normalization-wave-frame', x: wave.left, y: wave.mid - wave.half - 20, width: wave.right - wave.left, height: (wave.half + 20) * 2, rx: 14 }, choir);
+  const wavePath = svg('path', { class: 'batch-normalization-wave' }, choir);
+  const waveLabel = text(choir, wave.left, wave.mid - wave.half - 34, '모두의 소리를 더한 화음', { class: 'batch-normalization-wave-label' });
   const singers = Array.from({ length: features }, (_, i) => {
     const group = svg('g', {}, choir);
     const x = singerX(i);
-    const bar = svg('rect', { class: 'bn-volume', x: x - 22, y: volumeBottom, width: 44, height: 0, rx: 8 }, group);
-    svg('circle', { class: 'bn-singer', cx: x, cy: singerY, r: 30 }, group);
-    const mouth = svg('ellipse', { class: 'bn-mouth', cx: x, cy: singerY + 10, rx: 9, ry: 4 }, group);
-    svg('path', { class: 'bn-body', d: `M${x - 34},${singerY + 92}Q${x},${singerY + 26} ${x + 34},${singerY + 92}Z` }, group);
+    const bar = svg('rect', { class: 'batch-normalization-volume', x: x - 22, y: volumeBottom, width: 44, height: 0, rx: 8 }, group);
+    svg('circle', { class: 'batch-normalization-singer', cx: x, cy: singerY, r: 30 }, group);
+    const mouth = svg('ellipse', { class: 'batch-normalization-mouth', cx: x, cy: singerY + 10, rx: 9, ry: 4 }, group);
+    svg('path', { class: 'batch-normalization-body', d: `M${x - 34},${singerY + 92}Q${x},${singerY + 26} ${x + 34},${singerY + 92}Z` }, group);
     return { group, bar, mouth, x };
   });
-  const volumeLine = svg('line', { class: 'bn-volume-line', x1: 200, x2: 1400, opacity: 0 }, choir);
+  const volumeLine = svg('line', { class: 'batch-normalization-volume-line', x1: 200, x2: 1400, opacity: 0 }, choir);
 
   // 3. 학습 곡선
   const training = svg('g', { opacity: 0 }, root);
-  svg('path', { class: 'bn-axis', d: `M${chart.left},${chart.top - 20}V${chart.bottom}H${chart.right + 20}` }, training);
-  text(training, chart.left - 16, chart.top, '정확도', { class: 'bn-axis-label', 'text-anchor': 'end' });
-  text(training, chart.right + 20, chart.bottom + 40, '학습 단계 →', { class: 'bn-axis-label', 'text-anchor': 'end' });
+  svg('path', { class: 'batch-normalization-axis', d: `M${chart.left},${chart.top - 20}V${chart.bottom}H${chart.right + 20}` }, training);
+  text(training, chart.left - 16, chart.top, '정확도', { class: 'batch-normalization-axis-label', 'text-anchor': 'end' });
+  text(training, chart.right + 20, chart.bottom + 40, '학습 단계 →', { class: 'batch-normalization-axis-label', 'text-anchor': 'end' });
   const targetY = chart.bottom - target * (chart.bottom - chart.top);
-  svg('line', { class: 'bn-target', x1: chart.left, x2: chart.right, y1: targetY, y2: targetY }, training);
+  svg('line', { class: 'batch-normalization-target', x1: chart.left, x2: chart.right, y1: targetY, y2: targetY }, training);
   // 배치 정규화 곡선이 이 높이에서 오른쪽 끝까지 이어지므로, 글자는 선과 겹치지 않게 조금 더 위에 둔다.
-  text(training, chart.right, targetY - 24, '같은 정확도', { class: 'bn-target-label', 'text-anchor': 'end' });
+  text(training, chart.right, targetY - 24, '같은 정확도', { class: 'batch-normalization-target-label', 'text-anchor': 'end' });
   const curvePath = (reach: number, top: number) => {
     const points = Array.from({ length: 141 }, (_, i) => {
       const x = i / 140;
@@ -197,17 +197,17 @@ const createBatchNormalization = () => {
     });
     return `M${points.join('L')}`;
   };
-  const plain = svg('path', { class: 'bn-curve plain', d: curvePath(1, .735), pathLength: 1, 'stroke-dasharray': '1 1', 'stroke-dashoffset': 1 }, training);
-  const tuned = svg('path', { class: 'bn-curve tuned', d: curvePath(1 / 14, .74), pathLength: 1, 'stroke-dasharray': '1 1', 'stroke-dashoffset': 1 }, training);
-  const plainLabel = text(training, chart.right - 10, chart.bottom - accuracy(1, 1, .735) * (chart.bottom - chart.top) + 44, '배치 정규화 없이', { class: 'bn-curve-label plain', 'text-anchor': 'end', opacity: 0 });
-  const tunedLabel = text(training, chart.left + 220, chart.top - 4, '배치 정규화', { class: 'bn-curve-label tuned', opacity: 0 });
+  const plain = svg('path', { class: 'batch-normalization-curve plain', d: curvePath(1, .735), pathLength: 1, 'stroke-dasharray': '1 1', 'stroke-dashoffset': 1 }, training);
+  const tuned = svg('path', { class: 'batch-normalization-curve tuned', d: curvePath(1 / 14, .74), pathLength: 1, 'stroke-dasharray': '1 1', 'stroke-dashoffset': 1 }, training);
+  const plainLabel = text(training, chart.right - 10, chart.bottom - accuracy(1, 1, .735) * (chart.bottom - chart.top) + 44, '배치 정규화 없이', { class: 'batch-normalization-curve-label plain', 'text-anchor': 'end', opacity: 0 });
+  const tunedLabel = text(training, chart.left + 220, chart.top - 4, '배치 정규화', { class: 'batch-normalization-curve-label tuned', opacity: 0 });
   const reachX = lerp(chart.left, chart.right, 1 / 14);
   const reachMarks = svg('g', { opacity: 0 }, training);
-  svg('line', { class: 'bn-reach', x1: reachX, x2: reachX, y1: targetY, y2: chart.bottom }, reachMarks);
-  svg('line', { class: 'bn-reach plain', x1: chart.right, x2: chart.right, y1: targetY, y2: chart.bottom }, reachMarks);
-  text(reachMarks, reachX, chart.bottom + 40, '1/14', { class: 'bn-reach-label' });
-  text(reachMarks, chart.right, chart.bottom + 76, '1', { class: 'bn-reach-label plain' });
-  const note = text(training, 800, 820, '같은 정확도까지 학습 단계 14분의 1 (구글, 2015)', { class: 'bn-note', opacity: 0 });
+  svg('line', { class: 'batch-normalization-reach', x1: reachX, x2: reachX, y1: targetY, y2: chart.bottom }, reachMarks);
+  svg('line', { class: 'batch-normalization-reach plain', x1: chart.right, x2: chart.right, y1: targetY, y2: chart.bottom }, reachMarks);
+  text(reachMarks, reachX, chart.bottom + 40, '1/14', { class: 'batch-normalization-reach-label' });
+  text(reachMarks, chart.right, chart.bottom + 76, '1', { class: 'batch-normalization-reach-label plain' });
+  const note = text(training, 800, 820, '같은 정확도까지 학습 단계 14분의 1 (구글, 2015)', { class: 'batch-normalization-note', opacity: 0 });
 
   const update = (time: number) => {
     caption.update(time, captionAt);

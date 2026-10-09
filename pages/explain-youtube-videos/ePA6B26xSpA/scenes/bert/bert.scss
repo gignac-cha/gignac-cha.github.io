@@ -1,117 +1,117 @@
-.bt-name {
+.bert-name {
   font-size: 120px;
   font-weight: 800;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
-.bt-sub {
+.bert-sub {
   font-size: 28px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.bt-acronym {
+.bert-acronym {
   font-size: 36px;
   font-weight: 600;
 
   tspan.key {
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
     font-weight: 800;
   }
 }
-.bt-heading {
+.bert-heading {
   font-size: 30px;
   font-weight: 700;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 // 다음 단어 대신 빈칸.
-.bt-next-text {
+.bert-next-text {
   font-size: 30px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.bt-strike {
+.bert-strike {
   fill: none;
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
   stroke-width: 5;
   stroke-linecap: round;
   stroke-dasharray: 1;
 }
-.bt-test {
+.bert-test {
   rect {
     fill: #15161b;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
 }
-.bt-test-title {
+.bert-test-title {
   font-size: 28px;
   font-weight: 700;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.bt-token {
+.bert-token {
   font-size: 48px;
   font-weight: 600;
 
   &.answer {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
     font-weight: 800;
   }
 }
-.bt-mask {
+.bert-mask {
   rect {
-    fill: color-mix(in srgb, var(--d-yellow) 18%, var(--d-background));
-    stroke: var(--d-yellow);
+    fill: color-mix(in srgb, var(--diagram-yellow) 18%, var(--diagram-background));
+    stroke: var(--diagram-yellow);
     stroke-width: 3;
   }
 }
-.bt-mask-label {
+.bert-mask-label {
   font-size: 30px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.bt-mask-question {
+.bert-mask-question {
   font-size: 44px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.bt-bracket {
+.bert-bracket {
   fill: none;
-  stroke: var(--d-green);
+  stroke: var(--diagram-green);
   stroke-width: 3;
 }
-.bt-arrow {
+.bert-arrow {
   fill: none;
-  stroke: var(--d-green);
+  stroke: var(--diagram-green);
   stroke-width: 4;
   stroke-linecap: round;
   stroke-dasharray: 1;
 }
-.bt-context-label {
+.bert-context-label {
   font-size: 24px;
   font-weight: 700;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
-.bt-both {
+.bert-both {
   font-size: 34px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 // 이야기꾼과 독해 선수.
-.bt-row-name {
+.bert-row-name {
   font-size: 40px;
   font-weight: 800;
 }
-.bt-row.gpt .bt-row-name {
-  fill: var(--d-purple) !important;
+.bert-row.gpt .bert-row-name {
+  fill: var(--diagram-purple) !important;
 }
-.bt-row.bert .bt-row-name {
-  fill: var(--d-green) !important;
+.bert-row.bert .bert-row-name {
+  fill: var(--diagram-green) !important;
 }
-.bt-row-note {
+.bert-row-note {
   font-size: 26px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.bt-cell {
+.bert-cell {
   rect {
-    fill: var(--d-background);
+    fill: var(--diagram-background);
     stroke-width: 2;
   }
   text {
@@ -119,101 +119,101 @@
     font-weight: 600;
   }
 }
-.bt-row.gpt .bt-cell rect {
-  stroke: var(--d-purple);
+.bert-row.gpt .bert-cell rect {
+  stroke: var(--diagram-purple);
 }
-.bt-row.bert .bt-cell rect {
-  stroke: var(--d-green);
+.bert-row.bert .bert-cell rect {
+  stroke: var(--diagram-green);
 }
 // 빈칸(?)과 그 빈칸이 볼 수 있는 단어를 잇는 선.
-.bt-row .bt-cell.blank {
+.bert-row .bert-cell.blank {
   rect {
-    fill: color-mix(in srgb, var(--d-yellow) 18%, var(--d-background));
-    stroke: var(--d-yellow);
+    fill: color-mix(in srgb, var(--diagram-yellow) 18%, var(--diagram-background));
+    stroke: var(--diagram-yellow);
   }
   text {
     font-size: 34px;
     font-weight: 800;
-    fill: var(--d-yellow) !important;
+    fill: var(--diagram-yellow) !important;
   }
 }
-.bt-link {
+.bert-link {
   fill: none;
   stroke-width: 3;
   stroke-linecap: round;
   stroke-dasharray: 1;
 }
-.bt-row.gpt .bt-link {
-  stroke: var(--d-purple);
+.bert-row.gpt .bert-link {
+  stroke: var(--diagram-purple);
 }
-.bt-row.bert .bt-link {
-  stroke: var(--d-green);
+.bert-row.bert .bert-link {
+  stroke: var(--diagram-green);
 }
-.bt-verdict {
+.bert-verdict {
   font-size: 28px;
   font-weight: 800;
 }
-.bt-row.gpt .bt-verdict {
-  fill: var(--d-purple) !important;
+.bert-row.gpt .bert-verdict {
+  fill: var(--diagram-purple) !important;
 }
-.bt-row.bert .bt-verdict {
-  fill: var(--d-green) !important;
+.bert-row.bert .bert-verdict {
+  fill: var(--diagram-green) !important;
 }
-.bt-unseen {
+.bert-unseen {
   font-size: 20px;
-  fill: var(--d-subtle) !important;
+  fill: var(--diagram-subtle) !important;
 }
-.bt-cursor {
-  stroke: var(--d-purple);
+.bert-cursor {
+  stroke: var(--diagram-purple);
   stroke-width: 4;
   stroke-linecap: round;
 }
 // 기록판.
-.bt-record-label {
+.bert-record-label {
   font-size: 28px;
   font-weight: 700;
 }
-.bt-record-bench {
+.bert-record-bench {
   font-size: 20px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.bt-track {
+.bert-track {
   fill: #1a1b20;
 }
-.bt-bar {
+.bert-bar {
   &.previous {
-    fill: var(--d-subtle);
+    fill: var(--diagram-subtle);
   }
   &.bert {
-    fill: var(--d-green);
+    fill: var(--diagram-green);
   }
 }
-.bt-record-value {
+.bert-record-value {
   font-size: 24px;
   font-weight: 700;
 
   &.bert {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }
-.bt-legend {
+.bert-legend {
   font-size: 22px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.bt-eleven {
+.bert-eleven {
   font-size: 30px;
   font-weight: 800;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
-.bt-advice {
+.bert-advice {
   rect {
     fill: #15161b;
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 2;
   }
   text {
     font-size: 30px;
     font-weight: 700;
-    fill: var(--d-yellow) !important;
+    fill: var(--diagram-yellow) !important;
   }
 }

@@ -1,49 +1,49 @@
-.nw-heading {
+.next-word-heading {
   font-size: 30px;
   font-weight: 700;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.nw-note {
+.next-word-note {
   font-size: 22px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 // 다음 단어 맞히기.
-.nw-story {
+.next-word-story {
   font-size: 60px;
   font-weight: 700;
 }
-.nw-slot {
+.next-word-slot {
   rect:first-child {
-    fill: color-mix(in srgb, var(--d-yellow) 10%, var(--d-background));
-    stroke: var(--d-yellow);
+    fill: color-mix(in srgb, var(--diagram-yellow) 10%, var(--diagram-background));
+    stroke: var(--diagram-yellow);
     stroke-width: 3;
     stroke-dasharray: 10 8;
   }
 }
-.nw-slot-glow {
+.next-word-slot-glow {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 8;
   filter: blur(4px);
 }
-.nw-slot-mark {
+.next-word-slot-mark {
   font-size: 56px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.nw-caret {
-  fill: var(--d-yellow);
+.next-word-caret {
+  fill: var(--diagram-yellow);
 }
-.nw-hint {
+.next-word-hint {
   path {
     fill: none;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 2;
     stroke-dasharray: 6 6;
   }
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-blue);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-blue);
     stroke-width: 2;
   }
   text {
@@ -52,157 +52,157 @@
   }
 }
 // 책장과 책 한 쪽.
-.nw-corpus {
+.next-word-corpus {
   font-size: 34px;
   font-weight: 800;
 }
-.nw-board {
+.next-word-board {
   fill: #3a3027;
 }
-.nw-spine {
-  &.c0 { fill: #8a4b3c; }
-  &.c1 { fill: #3f6a8a; }
-  &.c2 { fill: #6b7d3e; }
-  &.c3 { fill: #a0814a; }
-  &.c4 { fill: #5c4a7d; }
-  &.c5 { fill: #4d5560; }
+.next-word-spine {
+  &.color-0 { fill: #8a4b3c; }
+  &.color-1 { fill: #3f6a8a; }
+  &.color-2 { fill: #6b7d3e; }
+  &.color-3 { fill: #a0814a; }
+  &.color-4 { fill: #5c4a7d; }
+  &.color-5 { fill: #4d5560; }
 }
-.nw-page-sheet {
+.next-word-page-sheet {
   fill: #1a1b20;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.nw-token {
+.next-word-token {
   font-size: 36px;
   font-weight: 600;
 
   &.target {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }
-.nw-target {
-  fill: color-mix(in srgb, var(--d-yellow) 10%, transparent);
-  stroke: var(--d-yellow);
+.next-word-target {
+  fill: color-mix(in srgb, var(--diagram-yellow) 10%, transparent);
+  stroke: var(--diagram-yellow);
   stroke-width: 2.5;
 
   &.right {
-    fill: color-mix(in srgb, var(--d-green) 12%, transparent);
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 12%, transparent);
+    stroke: var(--diagram-green);
   }
 }
-.nw-guess {
+.next-word-guess {
   font-size: 36px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.nw-answer {
+.next-word-answer {
   font-size: 28px;
   font-weight: 700;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
-.nw-labels-card {
+.next-word-labels-card {
   fill: #17181d;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.nw-labels-title {
+.next-word-labels-title {
   font-size: 24px;
   font-weight: 700;
 }
-.nw-labels-tag {
-  fill: var(--d-orange);
+.next-word-labels-tag {
+  fill: var(--diagram-orange);
 }
-.nw-cross {
+.next-word-cross {
   fill: none;
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
   stroke-width: 7;
   stroke-linecap: round;
   stroke-dasharray: 1;
 }
 // 문서 아이콘.
-.nw-doc {
+.next-word-doc {
   > rect:first-child {
     stroke-width: 2;
     fill: #17181d;
   }
-  &.kind-0 > rect:first-child { stroke: var(--d-blue); }
-  &.kind-1 > rect:first-child { stroke: var(--d-green); }
-  &.kind-2 > rect:first-child { stroke: var(--d-orange); }
-  &.kind-3 > rect:first-child { stroke: var(--d-purple); }
-  &.kind-4 > rect:first-child { stroke: var(--d-muted); }
+  &.kind-0 > rect:first-child { stroke: var(--diagram-blue); }
+  &.kind-1 > rect:first-child { stroke: var(--diagram-green); }
+  &.kind-2 > rect:first-child { stroke: var(--diagram-orange); }
+  &.kind-3 > rect:first-child { stroke: var(--diagram-purple); }
+  &.kind-4 > rect:first-child { stroke: var(--diagram-muted); }
 }
-.nw-doc-line {
-  fill: var(--d-subtle);
+.next-word-doc-line {
+  fill: var(--diagram-subtle);
 }
-.nw-textbook {
+.next-word-textbook {
   path:first-child {
     fill: #2a2416;
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 4;
     stroke-linejoin: round;
   }
 }
-.nw-textbook-spine {
+.next-word-textbook-spine {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 3;
 }
-.nw-textbook-label {
+.next-word-textbook-label {
   font-size: 44px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 // GPT-1.
-.nw-gpt {
+.next-word-gpt {
   font-size: 96px;
   font-weight: 800;
 }
-.nw-gpt-sub {
+.next-word-gpt-sub {
   font-size: 26px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.nw-letter-big {
+.next-word-letter-big {
   font-size: 110px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.nw-letter-english {
+.next-word-letter-english {
   font-size: 30px;
   font-weight: 700;
 }
-.nw-letter-korean {
+.next-word-letter-korean {
   font-size: 28px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 // 두 단계.
-.nw-stage {
+.next-word-stage {
   > rect {
     fill: #15161b;
     stroke-width: 2.5;
   }
   &.first > rect {
-    stroke: var(--d-blue);
+    stroke: var(--diagram-blue);
   }
   &.second > rect {
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
   }
 }
-.nw-stage-title {
+.next-word-stage-title {
   font-size: 32px;
   font-weight: 800;
 }
-.nw-stage-note {
+.next-word-stage-note {
   font-size: 24px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 
   &.small {
     font-size: 20px;
   }
 }
-.nw-task {
+.next-word-task {
   rect {
-    fill: color-mix(in srgb, var(--d-green) 14%, var(--d-background));
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 14%, var(--diagram-background));
+    stroke: var(--diagram-green);
     stroke-width: 2;
   }
   text {
@@ -210,20 +210,20 @@
     font-weight: 600;
   }
 }
-.nw-arrow {
+.next-word-arrow {
   fill: none;
-  stroke: var(--d-muted);
+  stroke: var(--diagram-muted);
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.nw-analogy-lead {
+.next-word-analogy-lead {
   font-size: 26px;
   font-weight: 700;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.nw-analogy-text {
+.next-word-analogy-text {
   font-size: 30px;
   font-weight: 700;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }

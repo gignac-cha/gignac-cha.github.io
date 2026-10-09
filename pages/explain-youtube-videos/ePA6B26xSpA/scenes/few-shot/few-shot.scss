@@ -1,170 +1,170 @@
-.fs-card {
+.few-shot-card {
   fill: #141519;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.fs-paper-title {
+.few-shot-paper-title {
   font-size: 40px;
   font-weight: 700;
   text-anchor: middle;
 }
-.fs-paper-meta {
+.few-shot-paper-meta {
   font-size: 24px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.fs-define {
+.few-shot-define {
   font-size: 30px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.fs-mode {
+.few-shot-mode {
   font-size: 24px;
   font-weight: 700;
   letter-spacing: .03em;
-  fill: var(--d-blue) !important;
+  fill: var(--diagram-blue) !important;
 
   &.zero {
-    fill: var(--d-purple) !important;
+    fill: var(--diagram-purple) !important;
   }
 }
-.fs-instruction {
+.few-shot-instruction {
   font-size: 36px;
   font-weight: 600;
-  fill: var(--d-purple) !important;
+  fill: var(--diagram-purple) !important;
 }
-.fs-pair {
-  .fs-word, .fs-answer {
+.few-shot-pair {
+  .few-shot-word, .few-shot-answer {
     font-size: 38px;
     font-weight: 600;
   }
-  .fs-arrow {
+  .few-shot-arrow {
     font-size: 36px;
-    fill: var(--d-muted) !important;
+    fill: var(--diagram-muted) !important;
   }
-  .fs-answer {
-    fill: var(--d-blue) !important;
+  .few-shot-answer {
+    fill: var(--diagram-blue) !important;
   }
-  &.answered .fs-answer, &.extra .fs-answer {
-    fill: var(--d-green) !important;
+  &.answered .few-shot-answer, &.extra .few-shot-answer {
+    fill: var(--diagram-green) !important;
     font-weight: 800;
   }
   &.extra {
-    .fs-word, .fs-answer, .fs-arrow {
+    .few-shot-word, .few-shot-answer, .few-shot-arrow {
       font-size: 32px;
     }
   }
 }
-.fs-sheet {
-  fill: color-mix(in srgb, var(--d-yellow) 7%, transparent);
-  stroke: var(--d-yellow);
+.few-shot-sheet {
+  fill: color-mix(in srgb, var(--diagram-yellow) 7%, transparent);
+  stroke: var(--diagram-yellow);
   stroke-width: 2;
   stroke-dasharray: 8 6;
 }
-.fs-sample-tag {
+.few-shot-sample-tag {
   rect {
-    fill: color-mix(in srgb, var(--d-yellow) 20%, var(--d-background));
-    stroke: var(--d-yellow);
+    fill: color-mix(in srgb, var(--diagram-yellow) 20%, var(--diagram-background));
+    stroke: var(--diagram-yellow);
     stroke-width: 2;
   }
   text {
     font-size: 22px;
     font-weight: 800;
     text-anchor: middle;
-    fill: var(--d-yellow) !important;
+    fill: var(--diagram-yellow) !important;
   }
 }
-.fs-cursor {
-  fill: var(--d-text);
+.few-shot-cursor {
+  fill: var(--diagram-text);
 }
-.fs-model {
+.few-shot-model {
   rect {
-    fill: color-mix(in srgb, var(--d-green) 10%, var(--d-background));
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 10%, var(--diagram-background));
+    stroke: var(--diagram-green);
     stroke-width: 3;
   }
 }
-.fs-model-name {
+.few-shot-model-name {
   font-size: 40px;
   font-weight: 800;
   text-anchor: middle;
 }
-.fs-model-note {
+.few-shot-model-note {
   font-size: 22px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.fs-flow {
+.few-shot-flow {
   fill: none;
-  stroke: var(--d-blue);
+  stroke: var(--diagram-blue);
   stroke-width: 4;
   stroke-dasharray: 1;
   stroke-linecap: round;
 
   &.answer {
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
   }
 }
-.fs-lock {
+.few-shot-lock {
   circle {
     fill: #1d1e24;
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 3;
   }
   rect {
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
   path {
     fill: none;
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 3;
   }
 }
-.fs-frozen {
+.few-shot-frozen {
   font-size: 26px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.fs-compare-title {
+.few-shot-compare-title {
   font-size: 34px;
   font-weight: 800;
   text-anchor: middle;
 }
-.fs-task {
+.few-shot-task {
   font-size: 24px;
   font-weight: 600;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.fs-tuned {
+.few-shot-tuned {
   rect {
-    fill: color-mix(in srgb, var(--d-orange) 18%, var(--d-background));
-    stroke: var(--d-orange);
+    fill: color-mix(in srgb, var(--diagram-orange) 18%, var(--diagram-background));
+    stroke: var(--diagram-orange);
     stroke-width: 2;
   }
   text {
     font-size: 22px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-orange) !important;
+    fill: var(--diagram-orange) !important;
   }
 }
-.fs-compare-note {
+.few-shot-compare-note {
   font-size: 28px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-orange) !important;
+  fill: var(--diagram-orange) !important;
 
   &.good {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }
-.fs-ask {
+.few-shot-ask {
   rect {
     fill: #1d1e24;
-    stroke: var(--d-blue);
+    stroke: var(--diagram-blue);
     stroke-width: 2;
   }
   text {

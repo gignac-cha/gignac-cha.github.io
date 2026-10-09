@@ -1,17 +1,17 @@
 .diagram {
-  --d-background: #0f1013;
-  --d-grid: #1c1d22;
-  --d-line: #3a3b44;
-  --d-text: #ededef;
-  --d-muted: #8b8b94;
-  --d-subtle: #55565e;
-  --d-blue: #5b9dff;
-  --d-orange: #ffad5b;
-  --d-green: #4fd18b;
-  --d-red: #ff6b6b;
-  --d-purple: #b18cff;
-  --d-yellow: #ffd75b;
-  background-color: var(--d-background);
+  --diagram-background: #0f1013;
+  --diagram-grid: #1c1d22;
+  --diagram-line: #3a3b44;
+  --diagram-text: #ededef;
+  --diagram-muted: #8b8b94;
+  --diagram-subtle: #55565e;
+  --diagram-blue: #5b9dff;
+  --diagram-orange: #ffad5b;
+  --diagram-green: #4fd18b;
+  --diagram-red: #ff6b6b;
+  --diagram-purple: #b18cff;
+  --diagram-yellow: #ffd75b;
+  background-color: var(--diagram-background);
 
   svg {
     display: block;
@@ -20,13 +20,13 @@
   }
   text {
     font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif;
-    fill: var(--d-text);
+    fill: var(--diagram-text);
   }
 }
 // 이름표가 바뀔 때 번지는 빛 (shared/swap-text.ts).
 .diagram text.swap-glow {
   fill: none !important;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 7px;
   stroke-linejoin: round;
   filter: blur(5px);
@@ -35,7 +35,7 @@
   font-size: 26px;
   font-weight: 600;
   letter-spacing: .02em;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 // Three.js 판 (shared/three-diagram.ts): 캔버스는 뒤, SVG 는 앞에 겹친다.
 // 장면 영역을 꽉 채운다(비교 탭 스타일과 불러오는 순서가 바뀌어도 같도록 position 은 absolute 로).
@@ -67,13 +67,13 @@
   border: 1px solid rgba(255, 255, 255, .14);
   border-radius: 999px;
   background-color: rgba(15, 16, 19, .78);
-  color: var(--d-muted);
+  color: var(--diagram-muted);
   font: inherit;
   font-size: 12px;
   cursor: pointer;
 
   &:hover {
-    color: var(--d-text);
+    color: var(--diagram-text);
   }
   &[hidden] {
     display: none;

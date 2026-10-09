@@ -1,109 +1,109 @@
-.cp-heading {
+.chatgpt-pieces-heading {
   font-size: 34px;
   font-weight: 800;
   text-anchor: middle;
 }
-.cp-lab {
+.chatgpt-pieces-lab {
   rect {
-    fill: color-mix(in srgb, var(--d-grid) 40%, var(--d-background));
-    stroke: var(--d-line);
+    fill: color-mix(in srgb, var(--diagram-grid) 40%, var(--diagram-background));
+    stroke: var(--diagram-line);
     stroke-width: 2;
     stroke-dasharray: 10 8;
   }
 }
-.cp-lab-label {
+.chatgpt-pieces-lab-label {
   font-size: 24px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.cp-block {
-  --tone: var(--d-blue);
+.chatgpt-pieces-block {
+  --tone: var(--diagram-blue);
 
   &.green {
-    --tone: var(--d-green);
+    --tone: var(--diagram-green);
   }
   &.orange {
-    --tone: var(--d-orange);
+    --tone: var(--diagram-orange);
   }
   &.purple {
-    --tone: var(--d-purple);
+    --tone: var(--diagram-purple);
   }
   rect {
-    fill: color-mix(in srgb, var(--tone) 20%, var(--d-background));
+    fill: color-mix(in srgb, var(--tone) 20%, var(--diagram-background));
     stroke: var(--tone);
     stroke-width: 3;
   }
 }
-.cp-block-name {
+.chatgpt-pieces-block-name {
   font-size: 32px;
   font-weight: 800;
 }
-.cp-block-year {
+.chatgpt-pieces-block-year {
   font-size: 26px;
   font-weight: 700;
   text-anchor: end;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.cp-link {
+.chatgpt-pieces-link {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
   stroke-dasharray: 10 6;
 }
-.cp-chat {
+.chatgpt-pieces-chat {
   fill: #212121;
   stroke: #3a3a3a;
   stroke-width: 2;
 }
-.cp-chat-title {
+.chatgpt-pieces-chat-title {
   font-size: 40px;
   font-weight: 800;
   text-anchor: middle;
 }
-.cp-chat-sub {
+.chatgpt-pieces-chat-sub {
   font-size: 22px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.cp-input {
+.chatgpt-pieces-input {
   rect {
     fill: #303030;
     stroke: #444;
     stroke-width: 1.5;
   }
   &.lit rect {
-    stroke: var(--d-text);
+    stroke: var(--diagram-text);
     stroke-width: 2.5;
   }
 }
-.cp-placeholder {
+.chatgpt-pieces-placeholder {
   font-size: 24px;
   fill: #9a9a9a !important;
 }
-.cp-send {
-  fill: var(--d-text);
+.chatgpt-pieces-send {
+  fill: var(--diagram-text);
 }
-.cp-send-arrow {
+.chatgpt-pieces-send-arrow {
   fill: none;
   stroke: #212121;
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.cp-bubble {
+.chatgpt-pieces-bubble {
   fill: #303030;
 }
-.cp-bubble-text {
+.chatgpt-pieces-bubble-text {
   font-size: 22px;
   text-anchor: middle;
 }
-.cp-anyone {
+.chatgpt-pieces-anyone {
   font-size: 30px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.cp-person {
-  fill: var(--d-blue);
+.chatgpt-pieces-person {
+  fill: var(--diagram-blue);
 }

@@ -1,180 +1,180 @@
 .batch-normalization {
-  .bn-caption {
+  .batch-normalization-caption {
     font-size: 36px;
     font-weight: 700;
     text-anchor: middle;
   }
-  .bn-strip {
-    fill: var(--d-grid);
-    stroke: var(--d-line);
+  .batch-normalization-strip {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
-  .bn-zero {
-    stroke: var(--d-line);
+  .batch-normalization-zero {
+    stroke: var(--diagram-line);
     stroke-width: 2;
     stroke-dasharray: 6 6;
   }
-  .bn-layer-label {
+  .batch-normalization-layer-label {
     font-size: 28px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
-  .bn-dot {
-    fill: var(--d-orange);
+  .batch-normalization-dot {
+    fill: var(--diagram-orange);
     opacity: .8;
 
     &.outside {
-      fill: var(--d-red);
+      fill: var(--diagram-red);
     }
     &.tuned {
-      fill: var(--d-green);
+      fill: var(--diagram-green);
     }
   }
-  .bn-overflow {
+  .batch-normalization-overflow {
     font-size: 22px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-red);
+    fill: var(--diagram-red);
   }
-  .bn-tuner {
-    fill: color-mix(in srgb, var(--d-green) 14%, var(--d-background));
-    stroke: var(--d-green);
+  .batch-normalization-tuner {
+    fill: color-mix(in srgb, var(--diagram-green) 14%, var(--diagram-background));
+    stroke: var(--diagram-green);
     stroke-width: 3;
   }
-  .bn-tuner-text {
+  .batch-normalization-tuner-text {
     font-size: 24px;
     font-weight: 800;
     text-anchor: middle;
-    fill: var(--d-green);
+    fill: var(--diagram-green);
   }
-  .bn-formula {
+  .batch-normalization-formula {
     font-size: 28px;
     font-weight: 600;
     text-anchor: middle;
-    fill: var(--d-green);
+    fill: var(--diagram-green);
   }
 
-  .bn-wave-frame {
+  .batch-normalization-wave-frame {
     fill: none;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
-  .bn-wave-axis {
-    stroke: var(--d-grid);
+  .batch-normalization-wave-axis {
+    stroke: var(--diagram-grid);
     stroke-width: 2;
   }
-  .bn-wave {
+  .batch-normalization-wave {
     fill: none;
-    stroke: var(--d-blue);
+    stroke: var(--diagram-blue);
     stroke-width: 3;
     stroke-linejoin: round;
 
     &.broken {
-      stroke: var(--d-red);
+      stroke: var(--diagram-red);
     }
     &.stable {
-      stroke: var(--d-green);
+      stroke: var(--diagram-green);
     }
   }
-  .bn-wave-label {
+  .batch-normalization-wave-label {
     font-size: 24px;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
-  .bn-volume {
-    fill: var(--d-blue);
+  .batch-normalization-volume {
+    fill: var(--diagram-blue);
     transition: fill .25s;
 
     &.loud {
-      fill: var(--d-red);
+      fill: var(--diagram-red);
     }
     &.quiet {
-      fill: var(--d-subtle);
+      fill: var(--diagram-subtle);
     }
     &.tuned {
-      fill: var(--d-green);
+      fill: var(--diagram-green);
     }
   }
-  .bn-volume-line {
-    stroke: var(--d-green);
+  .batch-normalization-volume-line {
+    stroke: var(--diagram-green);
     stroke-width: 2;
     stroke-dasharray: 8 6;
   }
-  .bn-singer {
-    fill: var(--d-grid);
-    stroke: var(--d-muted);
+  .batch-normalization-singer {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-muted);
     stroke-width: 3;
   }
-  .bn-mouth {
-    fill: var(--d-text);
+  .batch-normalization-mouth {
+    fill: var(--diagram-text);
   }
-  .bn-body {
-    fill: var(--d-grid);
-    stroke: var(--d-line);
+  .batch-normalization-body {
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
 
-  .bn-axis {
+  .batch-normalization-axis {
     fill: none;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 3;
   }
-  .bn-axis-label {
+  .batch-normalization-axis-label {
     font-size: 24px;
-    fill: var(--d-subtle);
+    fill: var(--diagram-subtle);
   }
-  .bn-target {
-    stroke: var(--d-yellow);
+  .batch-normalization-target {
+    stroke: var(--diagram-yellow);
     stroke-width: 2;
     stroke-dasharray: 10 8;
   }
-  .bn-target-label {
+  .batch-normalization-target-label {
     font-size: 24px;
     font-weight: 600;
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
-  .bn-curve {
+  .batch-normalization-curve {
     fill: none;
     stroke-width: 5;
 
     &.plain {
-      stroke: var(--d-muted);
+      stroke: var(--diagram-muted);
     }
     &.tuned {
-      stroke: var(--d-green);
+      stroke: var(--diagram-green);
     }
   }
-  .bn-curve-label {
+  .batch-normalization-curve-label {
     font-size: 28px;
     font-weight: 700;
 
     &.plain {
-      fill: var(--d-muted);
+      fill: var(--diagram-muted);
     }
     &.tuned {
-      fill: var(--d-green);
+      fill: var(--diagram-green);
     }
   }
-  .bn-reach {
-    stroke: var(--d-green);
+  .batch-normalization-reach {
+    stroke: var(--diagram-green);
     stroke-width: 2;
     stroke-dasharray: 6 6;
 
     &.plain {
-      stroke: var(--d-muted);
+      stroke: var(--diagram-muted);
     }
   }
-  .bn-reach-label {
+  .batch-normalization-reach-label {
     font-size: 26px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-green);
+    fill: var(--diagram-green);
 
     &.plain {
-      fill: var(--d-muted);
+      fill: var(--diagram-muted);
     }
   }
-  .bn-note {
+  .batch-normalization-note {
     font-size: 28px;
     font-weight: 600;
     text-anchor: middle;

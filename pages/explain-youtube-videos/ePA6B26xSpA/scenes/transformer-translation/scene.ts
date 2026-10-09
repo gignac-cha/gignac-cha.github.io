@@ -27,26 +27,26 @@ const cost = { previous: 1.2e21, transformer: 2.3e19 };
 const bleu = { x: 330, scale: 330 / 45 };
 const flops = { x: 860, width: 640 };
 
-const bar = (parent: SVGElement, x: number, y: number, className: string) => svg('rect', { class: `tt-bar ${className}`, x, y: y - 18, height: 36, rx: 8, width: 0 }, parent);
+const bar = (parent: SVGElement, x: number, y: number, className: string) => svg('rect', { class: `transformer-translation-bar ${className}`, x, y: y - 18, height: 36, rx: 8, width: 0 }, parent);
 
 export const createTransformerTranslationScene = (): Scene => {
-  const { element, root } = createDiagram('tt', '트랜스포머의 번역 시험');
+  const { element, root } = createDiagram('transformer-translation', '트랜스포머의 번역 시험');
 
   // 왼쪽: 번역 시험 점수.
   const left = svg('g', {}, root);
-  text(left, 90, 190, '번역 시험 점수', { class: 'tt-heading' });
-  text(left, 90, 224, 'WMT 2014 · BLEU', { class: 'tt-note' });
+  text(left, 90, 190, '번역 시험 점수', { class: 'transformer-translation-heading' });
+  text(left, 90, 224, 'WMT 2014 · BLEU', { class: 'transformer-translation-note' });
   const groups = scores.map((score, i) => {
     const y = 300 + i * 200;
     const group = svg('g', {}, left);
-    text(group, 90, y, score.label, { class: 'tt-group-label' });
-    text(group, bleu.x - 16, y + 52, '기존 최고', { class: 'tt-row-label', 'text-anchor': 'end' });
-    text(group, bleu.x - 16, y + 104, '트랜스포머', { class: 'tt-row-label transformer', 'text-anchor': 'end' });
+    text(group, 90, y, score.label, { class: 'transformer-translation-group-label' });
+    text(group, bleu.x - 16, y + 52, '기존 최고', { class: 'transformer-translation-row-label', 'text-anchor': 'end' });
+    text(group, bleu.x - 16, y + 104, '트랜스포머', { class: 'transformer-translation-row-label transformer', 'text-anchor': 'end' });
     const previous = bar(group, bleu.x, y + 44, 'previous');
     const transformer = bar(group, bleu.x, y + 96, 'transformer');
-    const previousValue = text(group, 0, y + 54, String(score.previous), { class: 'tt-value' });
-    const transformerValue = text(group, 0, y + 106, String(score.transformer), { class: 'tt-value transformer' });
-    const badge = svg('g', { class: 'tt-badge' }, group);
+    const previousValue = text(group, 0, y + 54, String(score.previous), { class: 'transformer-translation-value' });
+    const transformerValue = text(group, 0, y + 106, String(score.transformer), { class: 'transformer-translation-value transformer' });
+    const badge = svg('g', { class: 'transformer-translation-badge' }, group);
     svg('rect', { x: 0, y: -20, width: 76, height: 40, rx: 20 }, badge);
     text(badge, 38, 8, '최고', {});
     return { score, group, previous, transformer, previousValue, transformerValue, badge, y };
@@ -54,35 +54,35 @@ export const createTransformerTranslationScene = (): Scene => {
 
   // 오른쪽: 학습 계산량, GPU 여덟 장, 사흘 반.
   const right = svg('g', {}, root);
-  text(right, flops.x, 190, '학습에 든 계산량', { class: 'tt-heading' });
-  text(right, flops.x, 224, '영어 → 프랑스어 · FLOPs', { class: 'tt-note' });
-  text(right, flops.x, 284, '기존 최고 (ConvS2S 앙상블)', { class: 'tt-row-label left' });
+  text(right, flops.x, 190, '학습에 든 계산량', { class: 'transformer-translation-heading' });
+  text(right, flops.x, 224, '영어 → 프랑스어 · FLOPs', { class: 'transformer-translation-note' });
+  text(right, flops.x, 284, '기존 최고 (ConvS2S 앙상블)', { class: 'transformer-translation-row-label left' });
   const previousCost = bar(right, flops.x, 318, 'previous');
-  const previousCostValue = text(right, flops.x + flops.width, 284, '1.2 × 10²¹', { class: 'tt-value', 'text-anchor': 'end' });
-  text(right, flops.x, 384, '트랜스포머 (가장 큰 모델)', { class: 'tt-row-label left transformer' });
+  const previousCostValue = text(right, flops.x + flops.width, 284, '1.2 × 10²¹', { class: 'transformer-translation-value', 'text-anchor': 'end' });
+  text(right, flops.x, 384, '트랜스포머 (가장 큰 모델)', { class: 'transformer-translation-row-label left transformer' });
   const transformerCost = bar(right, flops.x, 418, 'transformer');
-  const transformerCostValue = text(right, flops.x + 40, 428, '2.3 × 10¹⁹ · 약 1/50', { class: 'tt-value transformer' });
+  const transformerCostValue = text(right, flops.x + 40, 428, '2.3 × 10¹⁹ · 약 1/50', { class: 'transformer-translation-value transformer' });
 
   const gpuGroup = svg('g', {}, right);
-  text(gpuGroup, flops.x, 508, 'GPU 8장 (P100)', { class: 'tt-row-label left' });
+  text(gpuGroup, flops.x, 508, 'GPU 8장 (P100)', { class: 'transformer-translation-row-label left' });
   const cards = Array.from({ length: 8 }, (_, i) => {
-    const card = svg('g', { class: 'tt-gpu', transform: `translate(${flops.x + i * 80} 530)` }, gpuGroup);
+    const card = svg('g', { class: 'transformer-translation-gpu', transform: `translate(${flops.x + i * 80} 530)` }, gpuGroup);
     svg('rect', { width: 66, height: 92, rx: 8 }, card);
     for (let k = 0; k < 4; k++) {
-      svg('rect', { class: 'tt-gpu-fin', x: 10, y: 14 + k * 18, width: 46, height: 8, rx: 3 }, card);
+      svg('rect', { class: 'transformer-translation-gpu-fin', x: 10, y: 14 + k * 18, width: 46, height: 8, rx: 3 }, card);
     }
     return card;
   });
   const timeline = svg('g', {}, right);
   const dayWidth = flops.width / 3.5;
-  svg('rect', { class: 'tt-track', x: flops.x, y: 680, width: flops.width, height: 22, rx: 11 }, timeline);
-  const fill = svg('rect', { class: 'tt-fill', x: flops.x, y: 680, width: 0, height: 22, rx: 11 }, timeline);
-  [0, 1, 2, 3].forEach((day) => text(timeline, flops.x + day * dayWidth, 740, `${day}일`, { class: 'tt-tick', 'text-anchor': day ? 'middle' : 'start' }));
-  const daysLabel = text(timeline, flops.x + flops.width, 740, '3.5일', { class: 'tt-tick end', 'text-anchor': 'end' });
+  svg('rect', { class: 'transformer-translation-track', x: flops.x, y: 680, width: flops.width, height: 22, rx: 11 }, timeline);
+  const fill = svg('rect', { class: 'transformer-translation-fill', x: flops.x, y: 680, width: 0, height: 22, rx: 11 }, timeline);
+  [0, 1, 2, 3].forEach((day) => text(timeline, flops.x + day * dayWidth, 740, `${day}일`, { class: 'transformer-translation-tick', 'text-anchor': day ? 'middle' : 'start' }));
+  const daysLabel = text(timeline, flops.x + flops.width, 740, '3.5일', { class: 'transformer-translation-tick end', 'text-anchor': 'end' });
 
-  const summary = svg('g', { class: 'tt-summary' }, root);
-  text(summary, 410, 846, '더 잘하고', { class: 'tt-summary-text', 'text-anchor': 'middle' });
-  text(summary, 1180, 846, '더 빨리 배운다', { class: 'tt-summary-text', 'text-anchor': 'middle' });
+  const summary = svg('g', { class: 'transformer-translation-summary' }, root);
+  text(summary, 410, 846, '더 잘하고', { class: 'transformer-translation-summary-text', 'text-anchor': 'middle' });
+  text(summary, 1180, 846, '더 빨리 배운다', { class: 'transformer-translation-summary-text', 'text-anchor': 'middle' });
 
   const update = (time: number) => {
     setAttributes(left, { opacity: appear(time, start + .2, .5).toFixed(3) });

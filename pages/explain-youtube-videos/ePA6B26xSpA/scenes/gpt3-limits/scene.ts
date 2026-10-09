@@ -42,14 +42,14 @@ export const createGPT3LimitsScene = (): Scene => {
 
   // 글 이어 쓰기 창.
   const editor = svg('g', {}, root);
-  svg('rect', { x: panel.x, y: panel.y, width: panel.width, height: panel.height, rx: 22, class: 'g3-panel' }, editor);
-  text(editor, panel.x + 32, panel.y + 40, 'GPT-3 · 2020', { class: 'g3-panel-label' });
-  const clip = svg('clipPath', { id: 'g3-panel-clip' }, root);
+  svg('rect', { x: panel.x, y: panel.y, width: panel.width, height: panel.height, rx: 22, class: 'gpt3-limits-panel' }, editor);
+  text(editor, panel.x + 32, panel.y + 40, 'GPT-3 · 2020', { class: 'gpt3-limits-panel-label' });
+  const clip = svg('clipPath', { id: 'gpt3-limits-panel-clip' }, root);
   svg('rect', { x: panel.x, y: panel.y + 52, width: panel.width, height: panel.height - 60, rx: 22 }, clip);
-  const scroller = svg('g', { 'clip-path': 'url(#g3-panel-clip)' }, editor);
+  const scroller = svg('g', { 'clip-path': 'url(#gpt3-limits-panel-clip)' }, editor);
   const content = svg('g', {}, scroller);
-  const promptText = text(content, panel.x + 36, lineY(0), '', { class: 'g3-prompt' });
-  const placeholder = text(content, panel.x + 36, lineY(1), '(대답이 올 자리)', { class: 'g3-placeholder' });
+  const promptText = text(content, panel.x + 36, lineY(0), '', { class: 'gpt3-limits-prompt' });
+  const placeholder = text(content, panel.x + 36, lineY(1), '(대답이 올 자리)', { class: 'gpt3-limits-placeholder' });
   // 이어 쓴 글은 단어마다 따로 둬서, 한 단어씩 나타나게 한다(놀이터 화면처럼 초록 바탕).
   const generated = continuation.map((line, i) => {
     const row = svg('g', {}, content);
@@ -59,9 +59,9 @@ export const createGPT3LimitsScene = (): Scene => {
       const width = measure(word);
       const group = svg('g', {}, row);
       // 바탕은 다음 단어까지 이어지게(띄어쓰기 포함) 그려 한 줄이 이어진 띠처럼 보인다.
-      const bg = svg('rect', { x: x - 6, y: lineY(i + 1) - 32, width: width + (w < words.length - 1 ? 14 : 12), height: 44, class: 'g3-generated-bg' }, group);
-      const label = text(group, x, lineY(i + 1), word, { class: 'g3-generated' });
-      const box = svg('rect', { x: x - 7, y: lineY(i + 1) - 35, width: width + 14, height: 50, rx: 8, class: 'g3-next-box' }, group);
+      const bg = svg('rect', { x: x - 6, y: lineY(i + 1) - 32, width: width + (w < words.length - 1 ? 14 : 12), height: 44, class: 'gpt3-limits-generated-bg' }, group);
+      const label = text(group, x, lineY(i + 1), word, { class: 'gpt3-limits-generated' });
+      const box = svg('rect', { x: x - 7, y: lineY(i + 1) - 35, width: width + 14, height: 50, rx: 8, class: 'gpt3-limits-next-box' }, group);
       const node = { group, bg, label, box, right: x + width, last: w === words.length - 1 };
       x += width + 14;
       return node;
@@ -69,32 +69,32 @@ export const createGPT3LimitsScene = (): Scene => {
     return { row, nodes };
   });
   // "끝없이": 그 뒤로도 줄이 계속 이어진다(내용 대신 막대로).
-  const endless = Array.from({ length: 6 }, (_, i) => svg('rect', { x: panel.x + 36, y: lineY(5 + i) - 22, width: 420 + ((i * 173) % 360), height: 22, rx: 11, class: 'g3-skeleton' }, content));
-  const cursor = svg('rect', { width: 3, height: 36, class: 'g3-cursor' }, content);
-  const source = text(root, panel.x + panel.width / 2, panel.y + panel.height + 44, 'OpenAI가 공개한 실제 예시(2022) · 한국어로 옮김', { class: 'g3-source' });
+  const endless = Array.from({ length: 6 }, (_, i) => svg('rect', { x: panel.x + 36, y: lineY(5 + i) - 22, width: 420 + ((i * 173) % 360), height: 22, rx: 11, class: 'gpt3-limits-skeleton' }, content));
+  const cursor = svg('rect', { width: 3, height: 36, class: 'gpt3-limits-cursor' }, content);
+  const source = text(root, panel.x + panel.width / 2, panel.y + panel.height + 44, 'OpenAI가 공개한 실제 예시(2022) · 한국어로 옮김', { class: 'gpt3-limits-source' });
 
   // 배운 것: 다음 단어 맞히기.
   const learned = svg('g', {}, root);
-  svg('rect', { x: 1120, y: 196, width: 380, height: 112, rx: 18, class: 'g3-card' }, learned);
-  text(learned, 1310, 240, '배운 것', { class: 'g3-card-label' });
-  text(learned, 1310, 282, '다음 단어 맞히기', { class: 'g3-card-text' });
+  svg('rect', { x: 1120, y: 196, width: 380, height: 112, rx: 18, class: 'gpt3-limits-card' }, learned);
+  text(learned, 1310, 240, '배운 것', { class: 'gpt3-limits-card-label' });
+  text(learned, 1310, 282, '다음 단어 맞히기', { class: 'gpt3-limits-card-text' });
 
   // 기대한 비서 ✕ / 실제로는 말 잇는 기계.
   const assistant = svg('g', {}, root);
-  svg('rect', { x: 1120, y: 336, width: 380, height: 112, rx: 18, class: 'g3-card' }, assistant);
-  text(assistant, 1310, 380, '기대한 것', { class: 'g3-card-label' });
-  text(assistant, 1310, 422, '시키는 일을 하는 비서', { class: 'g3-card-text' });
-  const strike = svg('line', { x1: 1160, y1: 414, x2: 1460, y2: 414, class: 'g3-strike' }, assistant);
+  svg('rect', { x: 1120, y: 336, width: 380, height: 112, rx: 18, class: 'gpt3-limits-card' }, assistant);
+  text(assistant, 1310, 380, '기대한 것', { class: 'gpt3-limits-card-label' });
+  text(assistant, 1310, 422, '시키는 일을 하는 비서', { class: 'gpt3-limits-card-text' });
+  const strike = svg('line', { x1: 1160, y1: 414, x2: 1460, y2: 414, class: 'gpt3-limits-strike' }, assistant);
   const machine = svg('g', {}, root);
-  svg('rect', { x: 1120, y: 476, width: 380, height: 112, rx: 18, class: 'g3-card machine' }, machine);
-  text(machine, 1310, 520, '실제 모습', { class: 'g3-card-label' });
-  text(machine, 1310, 562, '말을 끝없이 잇는 기계', { class: 'g3-card-text' });
+  svg('rect', { x: 1120, y: 476, width: 380, height: 112, rx: 18, class: 'gpt3-limits-card machine' }, machine);
+  text(machine, 1310, 520, '실제 모습', { class: 'gpt3-limits-card-label' });
+  text(machine, 1310, 562, '말을 끝없이 잇는 기계', { class: 'gpt3-limits-card-text' });
 
   const badges = [
     { label: '✕ 거침없이 틀린 말', at: at.wrong, y: 644 },
     { label: '⚠ 해로운 말', at: at.harmful, y: 724 },
   ].map(({ label, at: shownAt, y }) => {
-    const group = svg('g', { class: 'g3-badge' }, root);
+    const group = svg('g', { class: 'gpt3-limits-badge' }, root);
     svg('rect', { x: 1120, y: y - 34, width: 380, height: 60, rx: 30 }, group);
     text(group, 1310, y + 6, label);
     return { group, at: shownAt };

@@ -1,85 +1,85 @@
 .svm-frame {
   fill: none;
-  stroke: var(--d-grid);
+  stroke: var(--diagram-grid);
   stroke-width: 2;
 }
 .svm-side-blue {
-  fill: color-mix(in srgb, var(--d-blue) 9%, transparent);
+  fill: color-mix(in srgb, var(--diagram-blue) 9%, transparent);
 }
 .svm-side-orange {
-  fill: color-mix(in srgb, var(--d-orange) 9%, transparent);
+  fill: color-mix(in srgb, var(--diagram-orange) 9%, transparent);
 }
 .svm-road {
-  fill: color-mix(in srgb, var(--d-text) 7%, transparent);
+  fill: color-mix(in srgb, var(--diagram-text) 7%, transparent);
 }
 .svm-edge {
-  stroke: var(--d-muted);
+  stroke: var(--diagram-muted);
   stroke-width: 2;
   stroke-dasharray: 10 10;
 }
 .svm-boundary {
-  stroke: var(--d-text);
+  stroke: var(--diagram-text);
   stroke-width: 3;
 }
 .svm-candidate {
-  stroke: var(--d-muted);
+  stroke: var(--diagram-muted);
   stroke-width: 2;
 }
 .svm-road-label {
   font-size: 28px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .svm-point {
-  stroke: var(--d-background);
+  stroke: var(--diagram-background);
   stroke-width: 3;
 }
 .svm-blue {
-  fill: var(--d-blue);
+  fill: var(--diagram-blue);
 }
 .svm-orange {
-  fill: var(--d-orange);
+  fill: var(--diagram-orange);
 }
 .svm-test {
-  fill: var(--d-subtle);
-  stroke: var(--d-text);
+  fill: var(--diagram-subtle);
+  stroke: var(--diagram-text);
   stroke-dasharray: 4 4;
 
   &.svm-test-classified {
-    fill: var(--d-orange);
-    stroke: var(--d-text);
+    fill: var(--diagram-orange);
+    stroke: var(--diagram-text);
     stroke-dasharray: none;
   }
 }
 .svm-ring {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 3;
 }
 .svm-note {
   font-size: 28px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .svm-note-strong {
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 .svm-caption {
   font-size: 30px;
   text-anchor: middle;
-  fill: var(--d-text) !important;
+  fill: var(--diagram-text) !important;
 }
 .svm-network-edge {
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 1.5;
 }
 .svm-network-node {
-  fill: var(--d-background);
-  stroke: var(--d-muted);
+  fill: var(--diagram-background);
+  stroke: var(--diagram-muted);
   stroke-width: 3;
 }
 .svm-box {
   rect {
     fill: #050506;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
 }
@@ -87,7 +87,7 @@
   font-size: 140px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-subtle) !important;
+  fill: var(--diagram-subtle) !important;
 }
 .svm-compare-title {
   font-size: 40px;
@@ -95,11 +95,11 @@
   text-anchor: middle;
 
   &.svm-chosen {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }
 .svm-compare-note {
   font-size: 28px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }

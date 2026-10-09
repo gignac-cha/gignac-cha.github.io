@@ -76,15 +76,15 @@ const barHeight = (value: number) => ((Math.log10(value) - chart.min) / (chart.m
 export const createContextWindowScene = (): Scene => {
   const { element, root } = createDiagram('context-window', '100만 토큰 컨텍스트 창');
 
-  const sentence = text(root, 800, 246, '한 번에 100만 토큰이 넘는 글을 읽고 다룰 수 있는 모델입니다.', { class: 'cw-sentence', 'text-anchor': 'middle' });
+  const sentence = text(root, 800, 246, '한 번에 100만 토큰이 넘는 글을 읽고 다룰 수 있는 모델입니다.', { class: 'context-window-sentence', 'text-anchor': 'middle' });
   const chips = spaced.map(({ index, width }) => {
-    const node = svg('g', { class: `cw-chip ${palette[index % palette.length]}${halves.includes(index) ? ' half' : ''}` }, root);
+    const node = svg('g', { class: `context-window-chip ${palette[index % palette.length]}${halves.includes(index) ? ' half' : ''}` }, root);
     svg('rect', { x: -width / 2, y: -34, width, height: 64, rx: 12 }, node);
     const token = tokens[index];
     if (!halves.includes(index)) {
       const label = text(node, 0, 12, '', { 'text-anchor': 'middle' });
       if (token.startsWith(' ')) {
-        svg('tspan', { class: 'cw-space' }, label).textContent = '␣';
+        svg('tspan', { class: 'context-window-space' }, label).textContent = '␣';
       }
       svg('tspan', {}, label).textContent = token.trimStart();
     }
@@ -93,46 +93,46 @@ export const createContextWindowScene = (): Scene => {
   // '룰' 한 글자를 두 토큰에 걸쳐 쓴다.
   const split = svg('g', {}, root);
   const halfX = (spaced[halves[0]].x + spaced[halves[1]].x) / 2;
-  text(split, halfX, spaced[halves[0]].y + 12, '룰', { class: 'cw-half-glyph', 'text-anchor': 'middle' });
-  const bracket = svg('g', { class: 'cw-bracket' }, root);
+  text(split, halfX, spaced[halves[0]].y + 12, '룰', { class: 'context-window-half-glyph', 'text-anchor': 'middle' });
+  const bracket = svg('g', { class: 'context-window-bracket' }, root);
   svg('path', { d: `M${halfX - 40} ${spaced[halves[0]].y + 44} L${halfX - 40} ${spaced[halves[0]].y + 54} L${halfX + 40} ${spaced[halves[0]].y + 54} L${halfX + 40} ${spaced[halves[0]].y + 44}` }, bracket);
   text(bracket, halfX, spaced[halves[0]].y + 82, '한 글자 = 토큰 2개', { 'text-anchor': 'middle' });
 
-  const counter = text(root, 800, 440, '', { class: 'cw-counter', 'text-anchor': 'middle' });
-  const source = text(root, 800, 478, 'OpenAI 토크나이저(o200k) 기준', { class: 'cw-note', 'text-anchor': 'middle' });
+  const counter = text(root, 800, 440, '', { class: 'context-window-counter', 'text-anchor': 'middle' });
+  const source = text(root, 800, 478, 'OpenAI 토크나이저(o200k) 기준', { class: 'context-window-note', 'text-anchor': 'middle' });
 
   // 왼쪽 아래: 이 영상 대본 한 편이 2.2만 토큰. 100만 토큰이면 46편 가까이.
   const script = svg('g', {}, root);
-  text(script, 420, 560, '이 영상 대본 전체 ≈ 2.2만 토큰', { class: 'cw-heading', 'text-anchor': 'middle' });
+  text(script, 420, 560, '이 영상 대본 전체 ≈ 2.2만 토큰', { class: 'context-window-heading', 'text-anchor': 'middle' });
   const page = { width: 34, height: 44, pitch: { x: 46, y: 56 }, columns: 12, left: 420 - (12 * 46 - 12) / 2, top: 590 };
   const pages = Array.from({ length: Math.ceil(copies) }, (_, i) => {
     const x = page.left + (i % page.columns) * page.pitch.x;
     const y = page.top + Math.floor(i / page.columns) * page.pitch.y;
-    const node = svg('g', { class: `cw-page${i === 0 ? ' first' : ''}` }, script);
+    const node = svg('g', { class: `context-window-page${i === 0 ? ' first' : ''}` }, script);
     // 마지막 한 편은 일부(0.7편)만 채운다.
     const fill = Math.min(1, copies - i);
-    svg('rect', { class: 'cw-page-outline', x, y, width: page.width, height: page.height, rx: 4 }, node);
-    svg('rect', { class: 'cw-page-fill', x, y: y + page.height * (1 - fill), width: page.width, height: page.height * fill, rx: 4 }, node);
-    [10, 18, 26].forEach((dy) => svg('path', { class: 'cw-page-line', d: `M${x + 7} ${y + dy} L${x + page.width - 7} ${y + dy}` }, node));
+    svg('rect', { class: 'context-window-page-outline', x, y, width: page.width, height: page.height, rx: 4 }, node);
+    svg('rect', { class: 'context-window-page-fill', x, y: y + page.height * (1 - fill), width: page.width, height: page.height * fill, rx: 4 }, node);
+    [10, 18, 26].forEach((dy) => svg('path', { class: 'context-window-page-line', d: `M${x + 7} ${y + dy} L${x + page.width - 7} ${y + dy}` }, node));
     return node;
   });
-  const copiesLabel = text(script, 420, 850, '100만 토큰 ≈ 이 영상 대본 약 46편', { class: 'cw-heading accent', 'text-anchor': 'middle' });
+  const copiesLabel = text(script, 420, 850, '100만 토큰 ≈ 이 영상 대본 약 46편', { class: 'context-window-heading accent', 'text-anchor': 'middle' });
 
   // 오른쪽 아래: 한 번에 읽는 양(컨텍스트 창)이 늘어 온 길. 로그 눈금.
   const growth = svg('g', {}, root);
-  text(growth, 1190, 560, '한 번에 읽는 토큰 수', { class: 'cw-heading', 'text-anchor': 'middle' });
+  text(growth, 1190, 560, '한 번에 읽는 토큰 수', { class: 'context-window-heading', 'text-anchor': 'middle' });
   [1e3, 1e4, 1e5, 1e6].forEach((value) => {
     const y = chart.baseline - barHeight(value);
-    svg('path', { class: 'cw-grid', d: `M${chart.left - 10} ${f(y)} L${chart.left + chart.pitch * models.length} ${f(y)}` }, growth);
-    text(growth, chart.left - 18, y + 6, value === 1e6 ? '100만' : value === 1e5 ? '10만' : value === 1e4 ? '1만' : '1천', { class: 'cw-axis', 'text-anchor': 'end' });
+    svg('path', { class: 'context-window-grid', d: `M${chart.left - 10} ${f(y)} L${chart.left + chart.pitch * models.length} ${f(y)}` }, growth);
+    text(growth, chart.left - 18, y + 6, value === 1e6 ? '100만' : value === 1e5 ? '10만' : value === 1e4 ? '1만' : '1천', { class: 'context-window-axis', 'text-anchor': 'end' });
   });
   const bars = models.map((model, i) => {
     const x = chart.left + chart.pitch * i + chart.pitch / 2;
-    const node = svg('g', { class: `cw-bar${i === models.length - 1 ? ' latest' : ''}` }, growth);
+    const node = svg('g', { class: `context-window-bar${i === models.length - 1 ? ' latest' : ''}` }, growth);
     const rect = svg('rect', { x: x - chart.bar / 2, width: chart.bar, rx: 6 }, node);
-    const value = text(node, x, 0, model.label, { class: 'cw-value', 'text-anchor': 'middle' });
-    text(growth, x, chart.baseline + 30, model.name, { class: 'cw-model', 'text-anchor': 'middle' });
-    text(growth, x, chart.baseline + 56, model.year, { class: 'cw-axis', 'text-anchor': 'middle' });
+    const value = text(node, x, 0, model.label, { class: 'context-window-value', 'text-anchor': 'middle' });
+    text(growth, x, chart.baseline + 30, model.name, { class: 'context-window-model', 'text-anchor': 'middle' });
+    text(growth, x, chart.baseline + 56, model.year, { class: 'context-window-axis', 'text-anchor': 'middle' });
     return { node, rect, value, height: barHeight(model.value), at: at.chart + .2 + i * .32 };
   });
 

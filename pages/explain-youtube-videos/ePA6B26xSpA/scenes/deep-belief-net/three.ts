@@ -161,7 +161,7 @@ export const createDeepBeliefNetThree = (): SceneLayer => {
   });
 
   // SVG 판의 "한꺼번에 10층" 글자를 3D 탑 아래로 옮겨 붙인다.
-  const caption = base.element.querySelector<SVGTextElement>('text.dbn-caption');
+  const caption = base.element.querySelector<SVGTextElement>('text.deep-belief-net-caption');
 
   // SVG 판의 탑 자리(가로 340 근처)와 크기(10층 ≈ 세로 440)에 맞춘 시점.
   const target = new THREE.Vector3(.25, 2.4, 0);

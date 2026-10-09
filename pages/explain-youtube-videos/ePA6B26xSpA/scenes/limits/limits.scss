@@ -1,161 +1,161 @@
-.lm-panel-frame {
-  fill: color-mix(in srgb, var(--d-text) 3%, var(--d-background));
-  stroke: var(--d-line);
+.limits-panel-frame {
+  fill: color-mix(in srgb, var(--diagram-text) 3%, var(--diagram-background));
+  stroke: var(--diagram-line);
   stroke-width: 3;
 }
-.lm-slot {
+.limits-slot {
   fill: none;
-  stroke: var(--d-subtle);
+  stroke: var(--diagram-subtle);
   stroke-width: 2;
   stroke-dasharray: 8 8;
 }
-.lm-slot-caption {
+.limits-slot-caption {
   font-size: 22px;
   font-weight: 700;
 }
-.lm-header {
+.limits-header {
   font-size: 42px;
   font-weight: 800;
 }
-.lm-source {
+.limits-source {
   font-size: 19px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.lm-label {
+.limits-label {
   font-size: 22px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 
   &.strong {
     font-weight: 700;
-    fill: var(--d-text) !important;
+    fill: var(--diagram-text) !important;
   }
 }
-.lm-value {
+.limits-value {
   font-size: 26px;
   font-weight: 800;
 }
-.lm-axis {
+.limits-axis {
   font-size: 18px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.lm-axis-line {
-  stroke: var(--d-line);
+.limits-axis-line {
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
 
 // 환각
-.lm-bubble {
+.limits-bubble {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-line);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   text {
     font-size: 24px;
   }
   &.user rect {
-    fill: color-mix(in srgb, var(--d-blue) 18%, var(--d-background));
+    fill: color-mix(in srgb, var(--diagram-blue) 18%, var(--diagram-background));
     stroke: none;
   }
   &.bot.false rect {
-    stroke: var(--d-red);
+    stroke: var(--diagram-red);
   }
 }
-.lm-reply-lead {
+.limits-reply-lead {
   font-size: 28px !important;
   font-weight: 700;
 }
-.lm-citation {
+.limits-citation {
   font-size: 26px !important;
   font-family: ui-monospace, "SF Mono", Menlo, monospace !important;
 }
-.lm-bubble.false .lm-citation {
+.limits-bubble.false .limits-citation {
   text-decoration: line-through;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.lm-stamp {
+.limits-stamp {
   rect {
-    fill: color-mix(in srgb, var(--d-red) 16%, var(--d-background));
-    stroke: var(--d-red);
+    fill: color-mix(in srgb, var(--diagram-red) 16%, var(--diagram-background));
+    stroke: var(--diagram-red);
     stroke-width: 4;
   }
   text {
     font-size: 36px;
     font-weight: 900;
-    fill: var(--d-red) !important;
+    fill: var(--diagram-red) !important;
   }
 }
 
 // 전기와 칩
-.lm-power {
-  fill: var(--d-orange);
+.limits-power {
+  fill: var(--diagram-orange);
 
   &.projected {
-    fill: color-mix(in srgb, var(--d-orange) 35%, var(--d-background));
-    stroke: var(--d-orange);
+    fill: color-mix(in srgb, var(--diagram-orange) 35%, var(--diagram-background));
+    stroke: var(--diagram-orange);
     stroke-width: 2;
     stroke-dasharray: 8 6;
   }
 }
-.lm-chip {
+.limits-chip {
   rect {
-    fill: color-mix(in srgb, var(--d-green) 18%, var(--d-background));
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 18%, var(--diagram-background));
+    stroke: var(--diagram-green);
     stroke-width: 2;
   }
   path {
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
     stroke-width: 2;
   }
 }
 
 // 바닥나는 글
-.lm-window {
-  fill: color-mix(in srgb, var(--d-red) 10%, transparent);
+.limits-window {
+  fill: color-mix(in srgb, var(--diagram-red) 10%, transparent);
 }
-.lm-window-label {
+.limits-window-label {
   font-size: 19px;
   font-weight: 700;
-  fill: var(--d-red) !important;
+  fill: var(--diagram-red) !important;
 }
-.lm-stock-band {
-  fill: color-mix(in srgb, var(--d-yellow) 10%, transparent);
+.limits-stock-band {
+  fill: color-mix(in srgb, var(--diagram-yellow) 10%, transparent);
 }
-.lm-stock {
-  stroke: var(--d-yellow);
+.limits-stock {
+  stroke: var(--diagram-yellow);
   stroke-width: 3;
 }
-.lm-point {
+.limits-point {
   circle {
-    fill: var(--d-blue);
+    fill: var(--diagram-blue);
   }
 }
-.lm-point-label {
+.limits-point-label {
   font-size: 19px;
   font-weight: 600;
   // 점선이 글자를 지나도 읽히게 카드 바탕색 테두리를 두른다.
   paint-order: stroke;
-  stroke: color-mix(in srgb, var(--d-text) 3%, var(--d-background));
+  stroke: color-mix(in srgb, var(--diagram-text) 3%, var(--diagram-background));
   stroke-width: 8px;
   stroke-linejoin: round;
 }
-.lm-trend {
+.limits-trend {
   fill: none;
-  stroke: var(--d-blue);
+  stroke: var(--diagram-blue);
   stroke-width: 3;
   stroke-dasharray: 10 8;
 }
-.lm-hit {
+.limits-hit {
   fill: none;
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
   stroke-width: 4;
 }
 
 // 다음 단어 너머
-.lm-word {
+.limits-word {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-line);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   text {
@@ -163,17 +163,17 @@
     font-weight: 600;
   }
   &.next rect {
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-dasharray: 6 5;
   }
   &.next text {
-    fill: var(--d-yellow) !important;
+    fill: var(--diagram-yellow) !important;
   }
 }
-.lm-goal {
+.limits-goal {
   rect {
     fill: none;
-    stroke: var(--d-text);
+    stroke: var(--diagram-text);
     stroke-width: 2;
     stroke-dasharray: 8 6;
   }
@@ -182,28 +182,28 @@
     font-weight: 700;
   }
 }
-.lm-reach {
+.limits-reach {
   fill: none;
-  stroke: var(--d-muted);
+  stroke: var(--diagram-muted);
   stroke-width: 4;
   stroke-linecap: round;
 }
-.lm-cross path {
+.limits-cross path {
   fill: none;
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
   stroke-width: 7;
   stroke-linecap: round;
 }
-.lm-loop {
+.limits-loop {
   fill: none;
-  stroke: var(--d-green);
+  stroke: var(--diagram-green);
   stroke-width: 3;
   stroke-dasharray: 10 8;
 }
-.lm-step {
+.limits-step {
   rect {
-    fill: color-mix(in srgb, var(--d-green) 16%, var(--d-background));
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 16%, var(--diagram-background));
+    stroke: var(--diagram-green);
     stroke-width: 2;
   }
   text {
@@ -211,49 +211,49 @@
     font-weight: 700;
   }
 }
-.lm-ball {
-  fill: var(--d-orange);
+.limits-ball {
+  fill: var(--diagram-orange);
 }
-.lm-ground {
-  stroke: var(--d-muted);
+.limits-ground {
+  stroke: var(--diagram-muted);
   stroke-width: 3;
 }
-.lm-runner {
-  fill: var(--d-yellow);
-  filter: drop-shadow(0 0 6px var(--d-yellow));
+.limits-runner {
+  fill: var(--diagram-yellow);
+  filter: drop-shadow(0 0 6px var(--diagram-yellow));
 }
 
 // 믿고 맡기기
-.lm-task {
-  fill: var(--d-purple);
+.limits-task {
+  fill: var(--diagram-purple);
 }
-.lm-check {
+.limits-check {
   rect {
-    fill: color-mix(in srgb, var(--d-yellow) 8%, var(--d-background));
-    stroke: var(--d-yellow);
+    fill: color-mix(in srgb, var(--diagram-yellow) 8%, var(--diagram-background));
+    stroke: var(--diagram-yellow);
     stroke-width: 2;
   }
 }
-.lm-check-title {
+.limits-check-title {
   font-size: 30px;
   font-weight: 800;
 }
-.lm-question {
+.limits-question {
   font-size: 72px;
   font-weight: 900;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 
 // 세 번째 겨울?
-.lm-winter-title {
+.limits-winter-title {
   font-size: 84px;
   font-weight: 900;
   fill: #cfe3ff !important;
 }
-.lm-winter-note {
+.limits-winter-note {
   font-size: 32px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.lm-snow {
+.limits-snow {
   fill: #e8f1ff;
 }

@@ -1,122 +1,122 @@
-.af-segment {
+.alphafold-segment {
   stroke-linecap: round;
 }
-.af-bead {
-  stroke: var(--d-background);
+.alphafold-bead {
+  stroke: var(--diagram-background);
   stroke-width: 1.2;
 }
-.af-truth {
+.alphafold-truth {
   fill: none;
   stroke: #f4f4f6;
   stroke-width: 1.6;
   stroke-linejoin: round;
 }
-.af-truth-sample {
+.alphafold-truth-sample {
   stroke: #f4f4f6;
   stroke-width: 2;
 }
-.af-pocket-glow {
-  fill: var(--d-yellow);
+.alphafold-pocket-glow {
+  fill: var(--diagram-yellow);
 }
-.af-pocket-ring {
+.alphafold-pocket-ring {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 2.5;
 }
-.af-drug-bond {
+.alphafold-drug-bond {
   stroke: #f4f4f6;
   stroke-width: 4;
   stroke-linecap: round;
 }
-.af-atom {
-  stroke: var(--d-background);
+.alphafold-atom {
+  stroke: var(--diagram-background);
   stroke-width: 1.5;
 }
-.af-atom-c {
+.alphafold-atom-c {
   fill: #c9ccd6;
 }
-.af-atom-n {
-  fill: var(--d-blue);
+.alphafold-atom-n {
+  fill: var(--diagram-blue);
 }
-.af-atom-o {
-  fill: var(--d-red);
+.alphafold-atom-o {
+  fill: var(--diagram-red);
 }
-.af-label {
+.alphafold-label {
   font-size: 26px;
   text-anchor: middle;
 }
-.af-label-drug {
-  fill: var(--d-text) !important;
+.alphafold-label-drug {
+  fill: var(--diagram-text) !important;
 }
-.af-label-pocket {
-  fill: var(--d-yellow) !important;
+.alphafold-label-pocket {
+  fill: var(--diagram-yellow) !important;
   text-anchor: start;
 }
-.af-heading {
+.alphafold-heading {
   font-size: 24px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.af-heading-center {
+.alphafold-heading-center {
   text-anchor: middle;
 }
-.af-sequence {
+.alphafold-sequence {
   font-family: ui-monospace, "SF Mono", Menlo, monospace !important;
   font-size: 25px;
   font-weight: 600;
   letter-spacing: .06em;
 }
-.af-arrow {
-  stroke: var(--d-muted);
+.alphafold-arrow {
+  stroke: var(--diagram-muted);
   stroke-width: 3;
 }
-.af-arrow-head {
-  fill: var(--d-muted);
+.alphafold-arrow-head {
+  fill: var(--diagram-muted);
 }
-.af-question {
+.alphafold-question {
   font-size: 72px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.af-model {
+.alphafold-model {
   fill: #12233f;
-  stroke: var(--d-blue);
+  stroke: var(--diagram-blue);
   stroke-width: 2.5;
 }
-.af-model-text {
+.alphafold-model-text {
   font-size: 30px;
   font-weight: 700;
   text-anchor: middle;
 }
-.af-accuracy {
+.alphafold-accuracy {
   font-size: 30px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
-.af-legend {
+.alphafold-legend {
   font-size: 21px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.af-legend-center {
+.alphafold-legend-center {
   text-anchor: middle;
 }
-.af-note {
+.alphafold-note {
   font-size: 21px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.af-counter {
+.alphafold-counter {
   font-size: 64px;
   font-weight: 800;
   text-anchor: middle;
   font-variant-numeric: tabular-nums;
 }
-.af-source {
+.alphafold-source {
   font-size: 18px;
-  fill: var(--d-subtle) !important;
+  fill: var(--diagram-subtle) !important;
 }
-.af-caption {
+.alphafold-caption {
   font-size: 32px;
   font-weight: 600;
   text-anchor: middle;

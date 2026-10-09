@@ -81,22 +81,22 @@ const arrow = (parent: Element, x1: number, y1: number, x2: number, y2: number) 
   const f = (n: number) => n.toFixed(1);
   const left = [x2 - head * Math.cos(angle - .5), y2 - head * Math.sin(angle - .5)];
   const right = [x2 - head * Math.cos(angle + .5), y2 - head * Math.sin(angle + .5)];
-  return svg('path', { class: 'sd-arrow', d: `M${f(x1)} ${f(y1)} L${f(x2)} ${f(y2)} M${f(left[0])} ${f(left[1])} L${f(x2)} ${f(y2)} L${f(right[0])} ${f(right[1])}` }, parent);
+  return svg('path', { class: 'stable-diffusion-arrow', d: `M${f(x1)} ${f(y1)} L${f(x2)} ${f(y2)} M${f(left[0])} ${f(left[1])} L${f(x2)} ${f(y2)} L${f(right[0])} ${f(right[1])}` }, parent);
 };
 
 const person = (parent: Element, x: number, y: number, size: number) => {
-  const group = svg('g', { class: 'sd-person' }, parent);
+  const group = svg('g', { class: 'stable-diffusion-person' }, parent);
   svg('circle', { cx: x, cy: y - size * .32, r: size * .2 }, group);
   svg('path', { d: `M${x - size * .3} ${y + size * .42} Q${x} ${y - size * .18} ${x + size * .3} ${y + size * .42} Z` }, group);
   return group;
 };
 
 const fileCard = (parent: Element, x: number, y: number) => {
-  const group = svg('g', { class: 'sd-file', transform: `translate(${x} ${y})` }, parent);
+  const group = svg('g', { class: 'stable-diffusion-file', transform: `translate(${x} ${y})` }, parent);
   svg('path', { d: 'M-70 -90 H40 L70 -60 V90 H-70 Z' }, group);
-  svg('path', { d: 'M40 -90 V-60 H70', class: 'sd-file-fold' }, group);
-  text(group, 0, -10, '모델', { class: 'sd-file-title' });
-  text(group, 0, 26, '가중치 전체', { class: 'sd-file-sub' });
+  svg('path', { d: 'M40 -90 V-60 H70', class: 'stable-diffusion-file-fold' }, group);
+  text(group, 0, -10, '모델', { class: 'stable-diffusion-file-title' });
+  text(group, 0, 26, '가중치 전체', { class: 'stable-diffusion-file-sub' });
   return group;
 };
 
@@ -105,28 +105,28 @@ export const createStableDiffusionScene = (): Scene => {
 
   // 1) 공개: 모델 파일을 통째로 내려받아 고쳐 쓴다.
   const release = svg('g', {}, root);
-  text(release, 800, 196, 'Stable Diffusion', { class: 'sd-heading' });
-  text(release, 800, 238, '2022년 8월 · Stability AI 공개', { class: 'sd-caption', 'text-anchor': 'middle' });
+  text(release, 800, 196, 'Stable Diffusion', { class: 'stable-diffusion-heading' });
+  text(release, 800, 238, '2022년 8월 · Stability AI 공개', { class: 'stable-diffusion-caption', 'text-anchor': 'middle' });
   const download = svg('g', {}, release);
   fileCard(download, 520, 500);
   arrow(download, 640, 500, 900, 500);
-  const bar = svg('rect', { x: 660, y: 540, height: 14, rx: 7, class: 'sd-bar' }, download);
-  svg('rect', { x: 660, y: 540, width: 220, height: 14, rx: 7, class: 'sd-bar-track' }, download);
+  const bar = svg('rect', { x: 660, y: 540, height: 14, rx: 7, class: 'stable-diffusion-bar' }, download);
+  svg('rect', { x: 660, y: 540, width: 220, height: 14, rx: 7, class: 'stable-diffusion-bar-track' }, download);
   download.append(bar);
-  text(download, 770, 470, '누구나 내려받기', { class: 'sd-caption', 'text-anchor': 'middle' });
-  const laptop = svg('g', { class: 'sd-laptop', transform: 'translate(1080 500)' }, download);
+  text(download, 770, 470, '누구나 내려받기', { class: 'stable-diffusion-caption', 'text-anchor': 'middle' });
+  const laptop = svg('g', { class: 'stable-diffusion-laptop', transform: 'translate(1080 500)' }, download);
   svg('rect', { x: -120, y: -100, width: 240, height: 150, rx: 12 }, laptop);
   svg('path', { d: 'M-150 60 H150 L130 80 H-130 Z' }, laptop);
-  text(laptop, 0, -10, '내 컴퓨터', { class: 'sd-file-sub' });
+  text(laptop, 0, -10, '내 컴퓨터', { class: 'stable-diffusion-file-sub' });
   const copy = svg('g', {}, laptop);
-  svg('rect', { x: -48, y: 8, width: 96, height: 30, rx: 8, class: 'sd-chip' }, copy);
-  text(copy, 0, 30, '모델', { class: 'sd-chip-text' });
-  const edit = text(laptop, 0, 128, '✎ 고쳐 쓰기', { class: 'sd-edit' });
-  const origin = text(release, 800, 720, '바탕 기술: 잠재 확산 모델 · 독일 LMU 뮌헨 연구팀(2021)', { class: 'sd-caption', 'text-anchor': 'middle' });
+  svg('rect', { x: -48, y: 8, width: 96, height: 30, rx: 8, class: 'stable-diffusion-chip' }, copy);
+  text(copy, 0, 30, '모델', { class: 'stable-diffusion-chip-text' });
+  const edit = text(laptop, 0, 128, '✎ 고쳐 쓰기', { class: 'stable-diffusion-edit' });
+  const origin = text(release, 800, 720, '바탕 기술: 잠재 확산 모델 · 독일 LMU 뮌헨 연구팀(2021)', { class: 'stable-diffusion-caption', 'text-anchor': 'middle' });
 
   // 2) 비결: 그림을 요약본으로 압축하고, 요약본 위에서 확산을 돌린다.
   const secret = svg('g', {}, root);
-  text(secret, 800, 160, '비결 · 압축한 공간에서 확산', { class: 'sd-title' });
+  text(secret, 800, 160, '비결 · 압축한 공간에서 확산', { class: 'stable-diffusion-title' });
   const original = svg('g', {}, secret);
   const drawImage = (parent: Element, x0: number, y0: number) => {
     for (let k = 0; k < side * side; k++) {
@@ -134,15 +134,15 @@ export const createStableDiffusionScene = (): Scene => {
       const y = Math.floor(k / side);
       svg('rect', { x: x0 + x * big.cell, y: y0 + y * big.cell, width: big.cell + .4, height: big.cell + .4, fill: rgb(pixel(x, y)) }, parent);
     }
-    svg('rect', { x: x0, y: y0, width: imageSize, height: imageSize, class: 'sd-frame' }, parent);
+    svg('rect', { x: x0, y: y0, width: imageSize, height: imageSize, class: 'stable-diffusion-frame' }, parent);
   };
   drawImage(original, big.x, big.y);
   // 압축: 원본의 복사본이 깔때기를 지나 요약본 크기로 줄어든다.
   const ghost = svg('g', {}, secret);
   drawImage(ghost, 0, 0);
   const encoder = svg('g', {}, secret);
-  svg('path', { d: `M${big.x + imageSize + 20} ${big.y} L${latent.x - 30} ${latent.y} V${latent.y + latentSize} L${big.x + imageSize + 20} ${big.y + imageSize} Z`, class: 'sd-funnel' }, encoder);
-  text(encoder, (big.x + imageSize + latent.x) / 2 - 5, big.y + imageSize / 2 + 10, '압축', { class: 'sd-funnel-text' });
+  svg('path', { d: `M${big.x + imageSize + 20} ${big.y} L${latent.x - 30} ${latent.y} V${latent.y + latentSize} L${big.x + imageSize + 20} ${big.y + imageSize} Z`, class: 'stable-diffusion-funnel' }, encoder);
+  text(encoder, (big.x + imageSize + latent.x) / 2 - 5, big.y + imageSize / 2 + 10, '압축', { class: 'stable-diffusion-funnel-text' });
 
   const summary = svg('g', {}, secret);
   const layers = [3, 2, 1, 0].map((channel) => {
@@ -153,57 +153,57 @@ export const createStableDiffusionScene = (): Scene => {
       const y = Math.floor(k / latentSide);
       return { rect: svg('rect', { x: latent.x + x * latent.cell, y: latent.y + y * latent.cell, width: latent.cell + .4, height: latent.cell + .4 }, layer), color: latentColor(x, y, channel), k };
     });
-    svg('rect', { x: latent.x, y: latent.y, width: latentSize, height: latentSize, class: 'sd-frame' }, layer);
+    svg('rect', { x: latent.x, y: latent.y, width: latentSize, height: latentSize, class: 'stable-diffusion-frame' }, layer);
     return { channel, cells };
   });
-  const loop = svg('g', { class: 'sd-loop' }, secret);
+  const loop = svg('g', { class: 'stable-diffusion-loop' }, secret);
   const loopCenter = { x: latent.x + latentSize / 2 + 15, y: latent.y - 92 };
   const loopArc = svg('path', { d: `M${loopCenter.x - 46} ${loopCenter.y + 18} A50 50 0 1 1 ${loopCenter.x + 46} ${loopCenter.y + 18}` }, loop);
-  svg('path', { d: `M${loopCenter.x + 34} ${loopCenter.y + 8} L${loopCenter.x + 46} ${loopCenter.y + 20} L${loopCenter.x + 58} ${loopCenter.y + 6}`, class: 'sd-loop-head' }, loop);
-  text(loop, loopCenter.x, loopCenter.y + 10, '확산', { class: 'sd-loop-text' });
-  const loopSpinner = svg('circle', { r: 7, class: 'sd-loop-dot' }, loop);
+  svg('path', { d: `M${loopCenter.x + 34} ${loopCenter.y + 8} L${loopCenter.x + 46} ${loopCenter.y + 20} L${loopCenter.x + 58} ${loopCenter.y + 6}`, class: 'stable-diffusion-loop-head' }, loop);
+  text(loop, loopCenter.x, loopCenter.y + 10, '확산', { class: 'stable-diffusion-loop-text' });
+  const loopSpinner = svg('circle', { r: 7, class: 'stable-diffusion-loop-dot' }, loop);
 
   const decoder = svg('g', {}, secret);
-  svg('path', { d: `M${latent.x + latentSize + 60} ${latent.y} L${output.x - 20} ${output.y} V${output.y + imageSize} L${latent.x + latentSize + 60} ${latent.y + latentSize} Z`, class: 'sd-funnel' }, decoder);
-  text(decoder, (latent.x + latentSize + 60 + output.x - 20) / 2 + 5, output.y + imageSize / 2 + 10, '복원', { class: 'sd-funnel-text' });
+  svg('path', { d: `M${latent.x + latentSize + 60} ${latent.y} L${output.x - 20} ${output.y} V${output.y + imageSize} L${latent.x + latentSize + 60} ${latent.y + latentSize} Z`, class: 'stable-diffusion-funnel' }, decoder);
+  text(decoder, (latent.x + latentSize + 60 + output.x - 20) / 2 + 5, output.y + imageSize / 2 + 10, '복원', { class: 'stable-diffusion-funnel-text' });
   const result = svg('g', {}, secret);
   drawImage(result, output.x, output.y);
 
   const bigLabel = svg('g', {}, secret);
-  text(bigLabel, big.x + imageSize / 2, big.y + imageSize + 50, '원본 512×512×3', { class: 'sd-label' });
-  text(bigLabel, big.x + imageSize / 2, big.y + imageSize + 92, '786,432개 숫자', { class: 'sd-number' });
+  text(bigLabel, big.x + imageSize / 2, big.y + imageSize + 50, '원본 512×512×3', { class: 'stable-diffusion-label' });
+  text(bigLabel, big.x + imageSize / 2, big.y + imageSize + 92, '786,432개 숫자', { class: 'stable-diffusion-number' });
   const smallLabel = svg('g', {}, secret);
-  text(smallLabel, latent.x + latentSize / 2 + 15, latent.y + latentSize + 50, '요약본 64×64×4', { class: 'sd-label' });
-  text(smallLabel, latent.x + latentSize / 2 + 15, latent.y + latentSize + 92, '16,384개 숫자', { class: 'sd-number accent' });
-  const ratio = text(secret, latent.x + latentSize / 2 + 15, latent.y + latentSize + 136, '48분의 1', { class: 'sd-ratio' });
-  const outLabel = text(secret, output.x + imageSize / 2, output.y + imageSize + 50, '그림 512×512', { class: 'sd-label' });
+  text(smallLabel, latent.x + latentSize / 2 + 15, latent.y + latentSize + 50, '요약본 64×64×4', { class: 'stable-diffusion-label' });
+  text(smallLabel, latent.x + latentSize / 2 + 15, latent.y + latentSize + 92, '16,384개 숫자', { class: 'stable-diffusion-number accent' });
+  const ratio = text(secret, latent.x + latentSize / 2 + 15, latent.y + latentSize + 136, '48분의 1', { class: 'stable-diffusion-ratio' });
+  const outLabel = text(secret, output.x + imageSize / 2, output.y + imageSize + 50, '그림 512×512', { class: 'stable-diffusion-label' });
 
   // 3) 큰 데이터센터 없이, 게임용 그래픽 카드 한 장.
   const hardware = svg('g', {}, root);
-  const datacenter = svg('g', { class: 'sd-datacenter' }, hardware);
+  const datacenter = svg('g', { class: 'stable-diffusion-datacenter' }, hardware);
   for (let r = 0; r < 3; r++) {
     for (let c = 0; c < 5; c++) {
       const x = 180 + c * 84;
       const y = 300 + r * 120;
       svg('rect', { x, y, width: 70, height: 104, rx: 6 }, datacenter);
       for (let l = 0; l < 4; l++) {
-        svg('circle', { cx: x + 14, cy: y + 18 + l * 22, r: 4, class: 'sd-led' }, datacenter);
+        svg('circle', { cx: x + 14, cy: y + 18 + l * 22, r: 4, class: 'stable-diffusion-led' }, datacenter);
       }
     }
   }
-  text(hardware, 400, 700, '큰 데이터센터', { class: 'sd-label' });
-  const cross = svg('g', { class: 'sd-cross' }, hardware);
+  text(hardware, 400, 700, '큰 데이터센터', { class: 'stable-diffusion-label' });
+  const cross = svg('g', { class: 'stable-diffusion-cross' }, hardware);
   svg('path', { d: 'M150 270 L650 670 M650 270 L150 670' }, cross);
-  const gpu = svg('g', { class: 'sd-gpu', transform: 'translate(1110 470)' }, hardware);
+  const gpu = svg('g', { class: 'stable-diffusion-gpu', transform: 'translate(1110 470)' }, hardware);
   svg('rect', { x: -230, y: -90, width: 460, height: 180, rx: 18 }, gpu);
   [-110, 110].forEach((x) => {
-    svg('circle', { cx: x, cy: 0, r: 66, class: 'sd-fan' }, gpu);
-    svg('circle', { cx: x, cy: 0, r: 16, class: 'sd-fan-hub' }, gpu);
+    svg('circle', { cx: x, cy: 0, r: 66, class: 'stable-diffusion-fan' }, gpu);
+    svg('circle', { cx: x, cy: 0, r: 16, class: 'stable-diffusion-fan-hub' }, gpu);
   });
-  svg('rect', { x: -160, y: 90, width: 250, height: 18, class: 'sd-pcie' }, gpu);
-  const blades = [-110, 110].map((x) => svg('path', { class: 'sd-blades', d: Array.from({ length: 5 }, (_, i) => `M${x} 0 L${x + 58 * Math.cos((i * 2 * Math.PI) / 5)} ${58 * Math.sin((i * 2 * Math.PI) / 5)}`).join(' ') }, gpu));
-  text(gpu, 0, 170, '집의 게임용 그래픽 카드 한 장', { class: 'sd-label' });
-  const vram = text(hardware, 1110, 690, 'VRAM 10GB 미만에서 실행', { class: 'sd-number accent' });
+  svg('rect', { x: -160, y: 90, width: 250, height: 18, class: 'stable-diffusion-pcie' }, gpu);
+  const blades = [-110, 110].map((x) => svg('path', { class: 'stable-diffusion-blades', d: Array.from({ length: 5 }, (_, i) => `M${x} 0 L${x + 58 * Math.cos((i * 2 * Math.PI) / 5)} ${58 * Math.sin((i * 2 * Math.PI) / 5)}`).join(' ') }, gpu));
+  text(gpu, 0, 170, '집의 게임용 그래픽 카드 한 장', { class: 'stable-diffusion-label' });
+  const vram = text(hardware, 1110, 690, 'VRAM 10GB 미만에서 실행', { class: 'stable-diffusion-number accent' });
 
   // 4) 전 세계가 달려들어 몇 주 만에 앱과 변형 모델이 쏟아진다.
   const spread = svg('g', {}, root);
@@ -213,15 +213,15 @@ export const createStableDiffusionScene = (): Scene => {
     const radius = 250 + (i % 2) * 50;
     const x = 800 + Math.cos(angle) * radius * 1.45;
     const y = 450 + Math.sin(angle) * radius * .82;
-    const line = svg('line', { x1: 800, y1: 440, x2: x.toFixed(1), y2: y.toFixed(1), class: 'sd-spoke' }, spread);
+    const line = svg('line', { x1: 800, y1: 440, x2: x.toFixed(1), y2: y.toFixed(1), class: 'stable-diffusion-spoke' }, spread);
     return { node: person(spread, x, y, 44), line, at: at.crowd + random(i * 5 + 1) * 1.6 };
   });
   spread.append(...people.map(({ node }) => node));
-  const crowdLabel = text(spread, 800, 860, '전 세계 개발자 · 예술가', { class: 'sd-caption', 'text-anchor': 'middle' });
+  const crowdLabel = text(spread, 800, 860, '전 세계 개발자 · 예술가', { class: 'stable-diffusion-caption', 'text-anchor': 'middle' });
   const variantNames = ['웹 UI', '데스크톱 앱', '그림 도구 플러그인', '화풍 변형 모델', '내 사진으로 추가 학습'];
   const variantSpots = [[420, 250], [1180, 250], [330, 640], [1270, 640], [800, 760]];
   const variants = variantNames.map((name, i) => {
-    const group = svg('g', { class: 'sd-variant', transform: `translate(${variantSpots[i][0]} ${variantSpots[i][1]})` }, spread);
+    const group = svg('g', { class: 'stable-diffusion-variant', transform: `translate(${variantSpots[i][0]} ${variantSpots[i][1]})` }, spread);
     const width = name.length * 26 + 50;
     svg('rect', { x: -width / 2, y: -30, width, height: 60, rx: 30 }, group);
     text(group, 0, 10, name);
@@ -230,8 +230,8 @@ export const createStableDiffusionScene = (): Scene => {
 
   // 5) 그림 생성의 주인공: GAN → 확산.
   const lead = svg('g', {}, root);
-  text(lead, 800, 420, '그림 생성의 주인공', { class: 'sd-caption sd-lead-caption', 'text-anchor': 'middle' });
-  const leader = createSwapText(lead, 800, 520, { class: 'sd-lead' });
+  text(lead, 800, 420, '그림 생성의 주인공', { class: 'stable-diffusion-caption stable-diffusion-lead-caption', 'text-anchor': 'middle' });
+  const leader = createSwapText(lead, 800, 520, { class: 'stable-diffusion-lead' });
 
   const update = (time: number) => {
     // 1) 공개.

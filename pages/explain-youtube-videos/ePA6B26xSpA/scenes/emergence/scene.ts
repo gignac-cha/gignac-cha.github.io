@@ -53,38 +53,38 @@ const temperature = (time: number) => {
 };
 
 export const createEmergenceScene = (): Scene => {
-  const { element, root } = createDiagram('em', '창발 논쟁');
+  const { element, root } = createDiagram('emergence', '창발 논쟁');
 
-  const chart = svg('g', { class: 'em-chart' }, root);
-  svg('line', { class: 'em-grid', x1: box.left, y1: toY(1), x2: box.left + box.width, y2: toY(1) }, chart);
-  svg('path', { class: 'em-axis', d: `M${box.left} ${box.top - 20} V${box.top + box.height} H${box.left + box.width + 20}` }, chart);
-  text(chart, box.left - 14, toY(0) + 8, '0', { class: 'em-tick', 'text-anchor': 'end' });
-  text(chart, box.left - 14, toY(1) + 8, '100%', { class: 'em-tick', 'text-anchor': 'end' });
-  text(chart, box.left, box.top - 34, '정답률', { class: 'em-axis-label' });
-  text(chart, box.left + box.width, box.top + box.height + 48, '모델 크기 →', { class: 'em-axis-label', 'text-anchor': 'end' });
-  const exactCurve = svg('path', { class: 'em-curve exact' }, chart);
-  const partialCurve = svg('path', { class: 'em-curve partial' }, chart);
-  const exactLabel = text(chart, toX(.62), toY(.08) - 18, '정답 전체만 세면', { class: 'em-curve-label exact', 'text-anchor': 'end' });
-  const partialLabel = text(chart, toX(.5) - 10, toY(partial(.5)) - 26, '맞힌 글자만큼 세면', { class: 'em-curve-label partial', 'text-anchor': 'end' });
+  const chart = svg('g', { class: 'emergence-chart' }, root);
+  svg('line', { class: 'emergence-grid', x1: box.left, y1: toY(1), x2: box.left + box.width, y2: toY(1) }, chart);
+  svg('path', { class: 'emergence-axis', d: `M${box.left} ${box.top - 20} V${box.top + box.height} H${box.left + box.width + 20}` }, chart);
+  text(chart, box.left - 14, toY(0) + 8, '0', { class: 'emergence-tick', 'text-anchor': 'end' });
+  text(chart, box.left - 14, toY(1) + 8, '100%', { class: 'emergence-tick', 'text-anchor': 'end' });
+  text(chart, box.left, box.top - 34, '정답률', { class: 'emergence-axis-label' });
+  text(chart, box.left + box.width, box.top + box.height + 48, '모델 크기 →', { class: 'emergence-axis-label', 'text-anchor': 'end' });
+  const exactCurve = svg('path', { class: 'emergence-curve exact' }, chart);
+  const partialCurve = svg('path', { class: 'emergence-curve partial' }, chart);
+  const exactLabel = text(chart, toX(.62), toY(.08) - 18, '정답 전체만 세면', { class: 'emergence-curve-label exact', 'text-anchor': 'end' });
+  const partialLabel = text(chart, toX(.5) - 10, toY(partial(.5)) - 26, '맞힌 글자만큼 세면', { class: 'emergence-curve-label partial', 'text-anchor': 'end' });
 
-  const emergence = svg('g', { class: 'em-emergence' }, chart);
+  const emergence = svg('g', { class: 'emergence-emergence' }, chart);
   // 두 곡선 사이(초록 선 아래, 주황 선 위)에 두고 솟는 지점을 가리킨다.
-  svg('path', { d: `M${toX(.67)} ${toY(.3)} C${toX(.75)} ${toY(.3)}, ${toX(.8)} ${toY(.3)}, ${toX(.845)} ${toY(.3)}`, class: 'em-pointer' }, emergence);
-  text(emergence, toX(.655), toY(.3) + 4, '창발', { class: 'em-emergence-text', 'text-anchor': 'end' });
-  text(emergence, toX(.655), toY(.3) + 36, 'emergence', { class: 'em-emergence-sub', 'text-anchor': 'end' });
+  svg('path', { d: `M${toX(.67)} ${toY(.3)} C${toX(.75)} ${toY(.3)}, ${toX(.8)} ${toY(.3)}, ${toX(.845)} ${toY(.3)}`, class: 'emergence-pointer' }, emergence);
+  text(emergence, toX(.655), toY(.3) + 4, '창발', { class: 'emergence-emergence-text', 'text-anchor': 'end' });
+  text(emergence, toX(.655), toY(.3) + 36, 'emergence', { class: 'emergence-emergence-sub', 'text-anchor': 'end' });
 
   // 물이 0°C에서 한순간에 얼음이 된다.
-  const water = svg('g', { class: 'em-water' }, root);
+  const water = svg('g', { class: 'emergence-water' }, root);
   const tube = { x: 1010, top: 270, bottom: 570 };
   const tempToY = (t: number) => lerp(tube.bottom - 30, tube.top + 20, (t + 5) / 15);
-  svg('rect', { class: 'em-tube', x: tube.x - 14, y: tube.top, width: 28, height: tube.bottom - tube.top, rx: 14 }, water);
-  svg('circle', { class: 'em-bulb', cx: tube.x, cy: tube.bottom + 18, r: 26 }, water);
-  const mercury = svg('rect', { class: 'em-mercury', x: tube.x - 7, width: 14, rx: 7 }, water);
-  svg('line', { class: 'em-zero-tick', x1: tube.x - 26, y1: tempToY(0), x2: tube.x + 26, y2: tempToY(0) }, water);
-  text(water, tube.x - 34, tempToY(0) + 8, '0°C', { class: 'em-zero-label', 'text-anchor': 'end' });
-  const readout = text(water, 1290, 262, '', { class: 'em-readout', 'text-anchor': 'middle' });
-  const cube = svg('rect', { class: 'em-cube', x: 1140, y: 300, width: 300, height: 260, rx: 18 }, water);
-  const crystal = svg('g', { class: 'em-crystal' }, water);
+  svg('rect', { class: 'emergence-tube', x: tube.x - 14, y: tube.top, width: 28, height: tube.bottom - tube.top, rx: 14 }, water);
+  svg('circle', { class: 'emergence-bulb', cx: tube.x, cy: tube.bottom + 18, r: 26 }, water);
+  const mercury = svg('rect', { class: 'emergence-mercury', x: tube.x - 7, width: 14, rx: 7 }, water);
+  svg('line', { class: 'emergence-zero-tick', x1: tube.x - 26, y1: tempToY(0), x2: tube.x + 26, y2: tempToY(0) }, water);
+  text(water, tube.x - 34, tempToY(0) + 8, '0°C', { class: 'emergence-zero-label', 'text-anchor': 'end' });
+  const readout = text(water, 1290, 262, '', { class: 'emergence-readout', 'text-anchor': 'middle' });
+  const cube = svg('rect', { class: 'emergence-cube', x: 1140, y: 300, width: 300, height: 260, rx: 18 }, water);
+  const crystal = svg('g', { class: 'emergence-crystal' }, water);
   for (let i = 0; i < 4; i++) {
     const cx = 1200 + (i % 2) * 180 + (i > 1 ? 40 : 0);
     const cy = 360 + Math.floor(i / 2) * 130;
@@ -93,33 +93,33 @@ export const createEmergenceScene = (): Scene => {
       svg('line', { x1: cx - Math.cos(angle) * 46, y1: cy - Math.sin(angle) * 46, x2: cx + Math.cos(angle) * 46, y2: cy + Math.sin(angle) * 46 }, crystal);
     }
   }
-  const state = createSwapText(water, 1290, 612, { class: 'em-state' });
+  const state = createSwapText(water, 1290, 612, { class: 'emergence-state' });
 
   // 재는 방식: 같은 답을 두 가지로 채점한다.
-  const scoring = svg('g', { class: 'em-scoring' }, root);
-  text(scoring, 1230, 250, '재는 방식의 차이', { class: 'em-scoring-title' });
-  text(scoring, 990, 316, '123 + 456 = ?', { class: 'em-problem' });
-  text(scoring, 990, 370, '정답 579 · 모델의 답', { class: 'em-problem-sub' });
-  const digits = ['5', '7', '8'].map((digit, i) => text(scoring, 1300 + i * 32, 370, digit, { class: `em-digit ${i < 2 ? 'right' : 'wrong'}` }));
-  const cardExact = svg('g', { class: 'em-card exact' }, scoring);
+  const scoring = svg('g', { class: 'emergence-scoring' }, root);
+  text(scoring, 1230, 250, '재는 방식의 차이', { class: 'emergence-scoring-title' });
+  text(scoring, 990, 316, '123 + 456 = ?', { class: 'emergence-problem' });
+  text(scoring, 990, 370, '정답 579 · 모델의 답', { class: 'emergence-problem-sub' });
+  const digits = ['5', '7', '8'].map((digit, i) => text(scoring, 1300 + i * 32, 370, digit, { class: `emergence-digit ${i < 2 ? 'right' : 'wrong'}` }));
+  const cardExact = svg('g', { class: 'emergence-card exact' }, scoring);
   svg('rect', { x: 970, y: 410, width: 520, height: 104, rx: 16 }, cardExact);
-  text(cardExact, 1000, 456, '답 전체가 맞아야 1점', { class: 'em-card-rule' });
-  text(cardExact, 1000, 492, '한 자리라도 틀리면 0점', { class: 'em-card-note' });
-  text(cardExact, 1460, 478, '0점', { class: 'em-card-score', 'text-anchor': 'end' });
-  const cardPartial = svg('g', { class: 'em-card partial' }, scoring);
+  text(cardExact, 1000, 456, '답 전체가 맞아야 1점', { class: 'emergence-card-rule' });
+  text(cardExact, 1000, 492, '한 자리라도 틀리면 0점', { class: 'emergence-card-note' });
+  text(cardExact, 1460, 478, '0점', { class: 'emergence-card-score', 'text-anchor': 'end' });
+  const cardPartial = svg('g', { class: 'emergence-card partial' }, scoring);
   svg('rect', { x: 970, y: 534, width: 520, height: 104, rx: 16 }, cardPartial);
-  text(cardPartial, 1000, 580, '맞힌 자리만큼 부분 점수', { class: 'em-card-rule' });
-  text(cardPartial, 1000, 616, '세 자리 중 두 자리', { class: 'em-card-note' });
-  text(cardPartial, 1460, 602, '⅔점', { class: 'em-card-score', 'text-anchor': 'end' });
+  text(cardPartial, 1000, 580, '맞힌 자리만큼 부분 점수', { class: 'emergence-card-rule' });
+  text(cardPartial, 1000, 616, '세 자리 중 두 자리', { class: 'emergence-card-note' });
+  text(cardPartial, 1460, 602, '⅔점', { class: 'emergence-card-score', 'text-anchor': 'end' });
 
-  const debate = text(root, 800, 160, '창발일까, 재는 방식이 만든 착시일까? · 아직 논쟁 중', { class: 'em-debate', 'text-anchor': 'middle' });
+  const debate = text(root, 800, 160, '창발일까, 재는 방식이 만든 착시일까? · 아직 논쟁 중', { class: 'emergence-debate', 'text-anchor': 'middle' });
 
-  const fact = svg('g', { class: 'em-fact' }, root);
-  const factBand = svg('rect', { class: 'em-fact-band', x: toX(.8), y: box.top - 10, width: toX(1) - toX(.8) + 10, height: box.height + 10 }, fact);
-  const factArrow = svg('path', { class: 'em-fact-arrow', d: `M${toX(.45)} ${box.top + box.height + 92} H${toX(1) + 20}`, pathLength: 1 }, fact);
-  const factHead = svg('path', { class: 'em-fact-head', d: `M${toX(1) + 32} ${box.top + box.height + 92} l-20 -12 v24 z` }, fact);
-  const factBigger = text(fact, toX(.45), box.top + box.height + 80, '크게 만들면', { class: 'em-fact-text' });
-  const factLine = createSwapText(root, 800, 160, { class: 'em-fact-line', 'text-anchor': 'middle' });
+  const fact = svg('g', { class: 'emergence-fact' }, root);
+  const factBand = svg('rect', { class: 'emergence-fact-band', x: toX(.8), y: box.top - 10, width: toX(1) - toX(.8) + 10, height: box.height + 10 }, fact);
+  const factArrow = svg('path', { class: 'emergence-fact-arrow', d: `M${toX(.45)} ${box.top + box.height + 92} H${toX(1) + 20}`, pathLength: 1 }, fact);
+  const factHead = svg('path', { class: 'emergence-fact-head', d: `M${toX(1) + 32} ${box.top + box.height + 92} l-20 -12 v24 z` }, fact);
+  const factBigger = text(fact, toX(.45), box.top + box.height + 80, '크게 만들면', { class: 'emergence-fact-text' });
+  const factLine = createSwapText(root, 800, 160, { class: 'emergence-fact-line', 'text-anchor': 'middle' });
 
   const update = (time: number) => {
     setAttributes(chart, { opacity: appear(time, at.axes, .5).toFixed(3) });

@@ -37,52 +37,52 @@ const usa = wordX('usa');
 const arc = (from: number, to: number, height: number) => `M${from} ${box.top - 6} C${from} ${box.top - height}, ${to} ${box.top - height}, ${to} ${box.top - 6}`;
 
 const resultCard = (parent: SVGElement, x: number, kind: 'before' | 'after', heading: string, body: string, note: string) => {
-  const group = svg('g', { class: `bs-result ${kind}`, transform: `translate(${x} 380)` }, parent);
+  const group = svg('g', { class: `bert-search-result ${kind}`, transform: `translate(${x} 380)` }, parent);
   svg('rect', { width: 520, height: 176, rx: 18 }, group);
-  text(group, 32, 50, heading, { class: 'bs-result-heading' });
-  text(group, 32, 104, body, { class: 'bs-result-body' });
-  text(group, 32, 146, note, { class: 'bs-result-note' });
+  text(group, 32, 50, heading, { class: 'bert-search-result-heading' });
+  text(group, 32, 104, body, { class: 'bert-search-result-body' });
+  text(group, 32, 146, note, { class: 'bert-search-result-note' });
   return group;
 };
 
 export const createBERTSearchScene = (): Scene => {
-  const { element, root } = createDiagram('bs', '검색어를 읽는 버트(BERT)');
+  const { element, root } = createDiagram('bert-search', '검색어를 읽는 버트(BERT)');
 
   // 검색창
-  const searchBox = svg('g', { class: 'bs-box' }, root);
+  const searchBox = svg('g', { class: 'bert-search-box' }, root);
   svg('rect', { x: box.left, y: box.top, width: box.right - box.left, height: box.height, rx: box.height / 2 }, searchBox);
-  svg('circle', { class: 'bs-icon', cx: 290, cy: box.top + box.height / 2 - 4, r: 13 }, searchBox);
-  svg('line', { class: 'bs-icon', x1: 299, y1: box.top + box.height / 2 + 5, x2: 309, y2: box.top + box.height / 2 + 15 }, searchBox);
-  const mark = svg('rect', { class: 'bs-mark', x: toWord.left - 6, y: box.top + 18, width: toWord.width + 12, height: box.height - 36, rx: 10 }, root);
-  const typed = text(root, textX, baseline, '', { class: 'bs-query' });
+  svg('circle', { class: 'bert-search-icon', cx: 290, cy: box.top + box.height / 2 - 4, r: 13 }, searchBox);
+  svg('line', { class: 'bert-search-icon', x1: 299, y1: box.top + box.height / 2 + 5, x2: 309, y2: box.top + box.height / 2 + 15 }, searchBox);
+  const mark = svg('rect', { class: 'bert-search-mark', x: toWord.left - 6, y: box.top + 18, width: toWord.width + 12, height: box.height - 36, rx: 10 }, root);
+  const typed = text(root, textX, baseline, '', { class: 'bert-search-query' });
 
   // "to"가 앞뒤 단어와 이어지는 방향: 브라질 여행자가 → 미국으로.
-  const links = svg('g', { class: 'bs-links' }, root);
+  const links = svg('g', { class: 'bert-search-links' }, root);
   const linkWho = svg('path', { d: arc(toWord.center, traveler.center, 120), pathLength: 1 }, links);
   const linkWhere = svg('path', { d: arc(toWord.center, usa.center, 90), pathLength: 1 }, links);
   const linkLabels = svg('g', {}, links);
-  text(linkLabels, (toWord.center + traveler.center) / 2, box.top - 104, '누가', { class: 'bs-link-label' });
-  text(linkLabels, (toWord.center + usa.center) / 2 + 10, box.top - 80, '어디로', { class: 'bs-link-label' });
+  text(linkLabels, (toWord.center + traveler.center) / 2, box.top - 104, '누가', { class: 'bert-search-link-label' });
+  text(linkLabels, (toWord.center + usa.center) / 2 + 10, box.top - 80, '어디로', { class: 'bert-search-link-label' });
 
   const before = resultCard(root, 250, 'before', 'BERT 이전', '미국인이 브라질에 갈 때', '"to"를 흘려 읽어 방향이 거꾸로');
-  const beforeCross = svg('path', { class: 'bs-cross', d: 'M710 412 l28 28 M738 412 l-28 28' }, root);
+  const beforeCross = svg('path', { class: 'bert-search-cross', d: 'M710 412 l28 28 M738 412 l-28 28' }, root);
   const after = resultCard(root, 830, 'after', 'BERT 이후', '브라질 사람이 미국에 갈 때', '주브라질 미국 대사관 · 관광 비자 안내');
-  const afterCheck = svg('path', { class: 'bs-check', d: 'M1290 428 l12 12 l22 -26' }, root);
+  const afterCheck = svg('path', { class: 'bert-search-check', d: 'M1290 428 l12 12 l22 -26' }, root);
 
   // 구글의 소개와 영향 범위
-  const leap = svg('g', { class: 'bs-leap' }, root);
-  text(leap, 800, 640, '“검색 역사상 가장 큰 도약 중 하나”', { class: 'bs-quote' });
-  text(leap, 800, 684, '구글 검색 블로그 · 2019년 10월', { class: 'bs-source' });
+  const leap = svg('g', { class: 'bert-search-leap' }, root);
+  text(leap, 800, 640, '“검색 역사상 가장 큰 도약 중 하나”', { class: 'bert-search-quote' });
+  text(leap, 800, 684, '구글 검색 블로그 · 2019년 10월', { class: 'bert-search-source' });
 
-  const share = svg('g', { class: 'bs-share' }, root);
+  const share = svg('g', { class: 'bert-search-share' }, root);
   const icons = Array.from({ length: 10 }, (_, i) => {
-    const icon = svg('g', { class: 'bs-share-icon', transform: `translate(${440 + i * 72} 770)` }, share);
+    const icon = svg('g', { class: 'bert-search-share-icon', transform: `translate(${440 + i * 72} 770)` }, share);
     svg('rect', { x: -28, y: -24, width: 56, height: 48, rx: 14 }, icon);
     svg('circle', { cx: -3, cy: -3, r: 9 }, icon);
     svg('line', { x1: 4, y1: 4, x2: 11, y2: 11 }, icon);
     return icon;
   });
-  const shareLabel = text(share, 800, 846, '미국 영어 검색 10건 중 1건에 영향', { class: 'bs-share-label' });
+  const shareLabel = text(share, 800, 846, '미국 영어 검색 10건 중 1건에 영향', { class: 'bert-search-share-label' });
   const lit = 3;
 
   const update = (time: number) => {

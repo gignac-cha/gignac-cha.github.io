@@ -38,12 +38,12 @@ const ports = [
 
 // 발표 라이브에서 찍어 보낸 노트 스케치(손글씨 그대로).
 const sketchLines = [
-  { content: 'My Joke website', x: 120, y: 208, className: 'mm-hand mm-hand-title' },
-  { content: '[really funny joke 1]', x: 112, y: 292, className: 'mm-hand' },
-  { content: '[push to reveal punchline]', x: 126, y: 334, className: 'mm-hand' },
-  { content: '[same, but joke 2]', x: 112, y: 412, className: 'mm-hand' },
-  { content: '[push to reveal punchline]', x: 126, y: 454, className: 'mm-hand' },
-  { content: '© OpenAI 2023', x: 118, y: 532, className: 'mm-hand' },
+  { content: 'My Joke website', x: 120, y: 208, className: 'gpt4-multimodal-hand gpt4-multimodal-hand-title' },
+  { content: '[really funny joke 1]', x: 112, y: 292, className: 'gpt4-multimodal-hand' },
+  { content: '[push to reveal punchline]', x: 126, y: 334, className: 'gpt4-multimodal-hand' },
+  { content: '[same, but joke 2]', x: 112, y: 412, className: 'gpt4-multimodal-hand' },
+  { content: '[push to reveal punchline]', x: 126, y: 454, className: 'gpt4-multimodal-hand' },
+  { content: '© OpenAI 2023', x: 118, y: 532, className: 'gpt4-multimodal-hand' },
 ];
 // GPT-4가 알아본 부분.
 const regions = [
@@ -91,90 +91,90 @@ export const createGPT4MultimodalScene = (): Scene => {
   const sketch = svg('g', {}, demo);
   // 노트 한 장을 살짝 기울여 줄여 놓는다(아래 시험 그림과 겹치지 않게).
   const paper = svg('g', { transform: 'translate(40 4) scale(.86) rotate(-2.5 255 360)' }, sketch);
-  svg('rect', { x: 84, y: 140, width: 342, height: 440, rx: 6, class: 'mm-paper' }, paper);
-  svg('rect', { x: 100, y: 160, width: 310, height: 404, class: 'mm-pen' }, paper);
-  svg('line', { x1: 100, y1: 234, x2: 410, y2: 230, class: 'mm-pen' }, paper);
+  svg('rect', { x: 84, y: 140, width: 342, height: 440, rx: 6, class: 'gpt4-multimodal-paper' }, paper);
+  svg('rect', { x: 100, y: 160, width: 310, height: 404, class: 'gpt4-multimodal-pen' }, paper);
+  svg('line', { x1: 100, y1: 234, x2: 410, y2: 230, class: 'gpt4-multimodal-pen' }, paper);
   for (const { content, x, y, className } of sketchLines) {
     text(paper, x, y, content, { class: className });
   }
   const regionViews = regions.map(({ label, x, y, width, height }) => {
     const group = svg('g', { opacity: 0 }, paper);
-    svg('rect', { x, y, width, height, rx: 6, class: 'mm-region' }, group);
-    svg('rect', { x: x + width - 4, y: y - 14, width: 62, height: 28, rx: 14, class: 'mm-region-tag' }, group);
-    text(group, x + width + 27, y + 6, label, { class: 'mm-region-text' });
+    svg('rect', { x, y, width, height, rx: 6, class: 'gpt4-multimodal-region' }, group);
+    svg('rect', { x: x + width - 4, y: y - 14, width: 62, height: 28, rx: 14, class: 'gpt4-multimodal-region-tag' }, group);
+    text(group, x + width + 27, y + 6, label, { class: 'gpt4-multimodal-region-text' });
     return group;
   });
   const sketchCaption = svg('g', { opacity: 0 }, demo);
-  text(sketchCaption, 259, 556, '손으로 그린 웹사이트 스케치', { class: 'mm-caption' });
-  text(sketchCaption, 259, 586, 'GPT-4 발표 라이브 시연 · 2023.3.14', { class: 'mm-caption-sub' });
-  const photoArrow = svg('path', { d: 'M420 300 C 460 300, 476 312, 512 312', class: 'mm-arrow', opacity: 0 }, demo);
+  text(sketchCaption, 259, 556, '손으로 그린 웹사이트 스케치', { class: 'gpt4-multimodal-caption' });
+  text(sketchCaption, 259, 586, 'GPT-4 발표 라이브 시연 · 2023.3.14', { class: 'gpt4-multimodal-caption-sub' });
+  const photoArrow = svg('path', { d: 'M420 300 C 460 300, 476 312, 512 312', class: 'gpt4-multimodal-arrow', opacity: 0 }, demo);
 
   const promptGroup = svg('g', { opacity: 0 }, demo);
-  svg('rect', { x: 560, y: 404, width: 420, height: 128, rx: 16, class: 'mm-prompt' }, promptGroup);
-  text(promptGroup, 584, 438, '요청', { class: 'mm-prompt-label' });
-  promptLines.forEach((line, i) => text(promptGroup, 584, 468 + i * 24, line, { class: 'mm-prompt-text' }));
+  svg('rect', { x: 560, y: 404, width: 420, height: 128, rx: 16, class: 'gpt4-multimodal-prompt' }, promptGroup);
+  text(promptGroup, 584, 438, '요청', { class: 'gpt4-multimodal-prompt-label' });
+  promptLines.forEach((line, i) => text(promptGroup, 584, 468 + i * 24, line, { class: 'gpt4-multimodal-prompt-text' }));
 
-  const codeArrow = svg('path', { d: `M${model.x + model.width + 6} ${model.y + 70} C 980 ${model.y + 70}, 990 ${code.y + 90}, ${panel.x - 8} ${code.y + 90}`, class: 'mm-arrow', opacity: 0 }, demo);
+  const codeArrow = svg('path', { d: `M${model.x + model.width + 6} ${model.y + 70} C 980 ${model.y + 70}, 990 ${code.y + 90}, ${panel.x - 8} ${code.y + 90}`, class: 'gpt4-multimodal-arrow', opacity: 0 }, demo);
   const codeGroup = svg('g', { opacity: 0 }, demo);
-  svg('rect', { x: panel.x, y: code.y, width: panel.width, height: code.height, rx: 14, class: 'mm-code' }, codeGroup);
-  const codeViews = codeLines.map((line, i) => text(codeGroup, panel.x + 20, code.y + 30 + i * 14.6, line, { class: 'mm-code-text', opacity: 0 }));
+  svg('rect', { x: panel.x, y: code.y, width: panel.width, height: code.height, rx: 14, class: 'gpt4-multimodal-code' }, codeGroup);
+  const codeViews = codeLines.map((line, i) => text(codeGroup, panel.x + 20, code.y + 30 + i * 14.6, line, { class: 'gpt4-multimodal-code-text', opacity: 0 }));
 
   const siteGroup = svg('g', { opacity: 0 }, demo);
-  svg('rect', { x: panel.x, y: site.y, width: panel.width, height: site.height, rx: 14, class: 'mm-browser' }, siteGroup);
-  [0, 1, 2].forEach((i) => svg('circle', { cx: panel.x + 20 + i * 16, cy: site.y + 15, r: 5, class: 'mm-browser-dot' }, siteGroup));
-  svg('rect', { x: panel.x + 6, y: site.y + 30, width: panel.width - 12, height: site.height - 36, rx: 8, class: 'mm-page' }, siteGroup);
+  svg('rect', { x: panel.x, y: site.y, width: panel.width, height: site.height, rx: 14, class: 'gpt4-multimodal-browser' }, siteGroup);
+  [0, 1, 2].forEach((i) => svg('circle', { cx: panel.x + 20 + i * 16, cy: site.y + 15, r: 5, class: 'gpt4-multimodal-browser-dot' }, siteGroup));
+  svg('rect', { x: panel.x + 6, y: site.y + 30, width: panel.width - 12, height: site.height - 36, rx: 8, class: 'gpt4-multimodal-page' }, siteGroup);
   const center = panel.x + panel.width / 2;
-  text(siteGroup, center, site.y + 62, 'My Joke Website', { class: 'mm-page-title' });
+  text(siteGroup, center, site.y + 62, 'My Joke Website', { class: 'gpt4-multimodal-page-title' });
   const jokes = [
     { question: "Joke 1: Why don't scientists trust atoms?", punchline: 'Because they make up everything!', y: site.y + 88 },
     { question: "Joke 2: What's a skeleton's least favorite room in the house?", punchline: 'The living room!', y: site.y + 148 },
   ];
   const jokeViews = jokes.map(({ question, punchline, y }) => {
-    text(siteGroup, center, y, question, { class: 'mm-page-text' });
-    const button = svg('rect', { x: center - 52, y: y + 8, width: 104, height: 22, class: 'mm-page-button' }, siteGroup);
-    text(siteGroup, center, y + 23, 'Reveal Punchline', { class: 'mm-page-button-text' });
-    const answer = text(siteGroup, center, y + 48, punchline, { class: 'mm-page-text', opacity: 0 });
+    text(siteGroup, center, y, question, { class: 'gpt4-multimodal-page-text' });
+    const button = svg('rect', { x: center - 52, y: y + 8, width: 104, height: 22, class: 'gpt4-multimodal-page-button' }, siteGroup);
+    text(siteGroup, center, y + 23, 'Reveal Punchline', { class: 'gpt4-multimodal-page-button-text' });
+    const answer = text(siteGroup, center, y + 48, punchline, { class: 'gpt4-multimodal-page-text', opacity: 0 });
     return { button, answer };
   });
 
   // GPT-4 와 입력 칸.
   const modelGroup = svg('g', {}, root);
-  const modelBox = svg('rect', { x: model.x, y: model.y, width: model.width, height: model.height, rx: 22, class: 'mm-model' }, modelGroup);
-  text(modelGroup, model.x + model.width / 2 + 30, model.y + 86, 'GPT-4', { class: 'mm-model-name' });
-  text(modelGroup, model.x + model.width / 2 + 30, model.y + 124, '2023년 3월', { class: 'mm-model-date' });
+  const modelBox = svg('rect', { x: model.x, y: model.y, width: model.width, height: model.height, rx: 22, class: 'gpt4-multimodal-model' }, modelGroup);
+  text(modelGroup, model.x + model.width / 2 + 30, model.y + 86, 'GPT-4', { class: 'gpt4-multimodal-model-name' });
+  text(modelGroup, model.x + model.width / 2 + 30, model.y + 124, '2023년 3월', { class: 'gpt4-multimodal-model-date' });
   const portViews = ports.map(({ label, y }) => {
     const group = svg('g', { opacity: 0 }, modelGroup);
-    const pill = svg('rect', { x: model.x - 40, y: y - 20, width: 96, height: 40, rx: 20, class: 'mm-port' }, group);
-    text(group, model.x + 8, y + 8, label, { class: 'mm-port-text' });
+    const pill = svg('rect', { x: model.x - 40, y: y - 20, width: 96, height: 40, rx: 20, class: 'gpt4-multimodal-port' }, group);
+    text(group, model.x + 8, y + 8, label, { class: 'gpt4-multimodal-port-text' });
     return { group, pill };
   });
 
   // 3년 전 GPT-3: 글만 읽었다.
   const ghost = svg('g', { opacity: 0 }, root);
-  svg('rect', { x: model.x, y: 430, width: model.width, height: 104, rx: 22, class: 'mm-ghost' }, ghost);
-  text(ghost, model.x + model.width / 2 + 30, 474, 'GPT-3', { class: 'mm-ghost-name' });
-  text(ghost, model.x + model.width / 2 + 30, 506, '2020년 · 글만', { class: 'mm-model-date' });
-  svg('rect', { x: model.x - 40, y: 462, width: 96, height: 40, rx: 20, class: 'mm-port mm-port-ghost' }, ghost);
-  text(ghost, model.x + 8, 490, '글', { class: 'mm-port-text' });
-  svg('path', { d: `M${model.x + model.width + 24} 482 C ${model.x + model.width + 70} 470, ${model.x + model.width + 70} 330, ${model.x + model.width + 24} 300`, class: 'mm-arrow mm-arrow-years' }, ghost);
-  text(ghost, model.x + model.width + 70, 400, '3년', { class: 'mm-years' });
+  svg('rect', { x: model.x, y: 430, width: model.width, height: 104, rx: 22, class: 'gpt4-multimodal-ghost' }, ghost);
+  text(ghost, model.x + model.width / 2 + 30, 474, 'GPT-3', { class: 'gpt4-multimodal-ghost-name' });
+  text(ghost, model.x + model.width / 2 + 30, 506, '2020년 · 글만', { class: 'gpt4-multimodal-model-date' });
+  svg('rect', { x: model.x - 40, y: 462, width: 96, height: 40, rx: 20, class: 'gpt4-multimodal-port gpt4-multimodal-port-ghost' }, ghost);
+  text(ghost, model.x + 8, 490, '글', { class: 'gpt4-multimodal-port-text' });
+  svg('path', { d: `M${model.x + model.width + 24} 482 C ${model.x + model.width + 70} 470, ${model.x + model.width + 70} 330, ${model.x + model.width + 24} 300`, class: 'gpt4-multimodal-arrow gpt4-multimodal-arrow-years' }, ghost);
+  text(ghost, model.x + model.width + 70, 400, '3년', { class: 'gpt4-multimodal-years' });
 
   // 변호사 모의시험: 수험생 100명을 점수 순으로.
   const examGroup = svg('g', { opacity: 0 }, root);
-  text(examGroup, exam.left, 680, '미국 변호사 모의시험(UBE) · 수험생 100명을 점수 순으로 세우면', { class: 'mm-exam-heading' });
-  text(examGroup, exam.left, exam.y + exam.height + 34, '낮은 점수', { class: 'mm-exam-axis' });
-  text(examGroup, personX(99) + 9, exam.y + exam.height + 34, '높은 점수', { class: 'mm-exam-axis mm-end' });
-  const people = Array.from({ length: 100 }, (_, i) => svg('rect', { x: personX(i), y: exam.y, width: 9, height: exam.height, rx: 4, class: 'mm-person', opacity: 0 }, examGroup));
+  text(examGroup, exam.left, 680, '미국 변호사 모의시험(UBE) · 수험생 100명을 점수 순으로 세우면', { class: 'gpt4-multimodal-exam-heading' });
+  text(examGroup, exam.left, exam.y + exam.height + 34, '낮은 점수', { class: 'gpt4-multimodal-exam-axis' });
+  text(examGroup, personX(99) + 9, exam.y + exam.height + 34, '높은 점수', { class: 'gpt4-multimodal-exam-axis gpt4-multimodal-end' });
+  const people = Array.from({ length: 100 }, (_, i) => svg('rect', { x: personX(i), y: exam.y, width: 9, height: exam.height, rx: 4, class: 'gpt4-multimodal-person', opacity: 0 }, examGroup));
   const topBracket = svg('g', { opacity: 0 }, examGroup);
-  svg('path', { d: `M${personX(90)} ${exam.y - 12} V${exam.y - 22} H${personX(99) + 9} V${exam.y - 12}`, class: 'mm-bracket' }, topBracket);
-  text(topBracket, (personX(90) + personX(99) + 9) / 2, exam.y - 34, '상위 10%', { class: 'mm-exam-top' });
+  svg('path', { d: `M${personX(90)} ${exam.y - 12} V${exam.y - 22} H${personX(99) + 9} V${exam.y - 12}`, class: 'gpt4-multimodal-bracket' }, topBracket);
+  text(topBracket, (personX(90) + personX(99) + 9) / 2, exam.y - 34, '상위 10%', { class: 'gpt4-multimodal-exam-top' });
   const gpt4Marker = svg('g', { opacity: 0 }, examGroup);
-  svg('line', { x1: markerX(90), y1: exam.y - 6, x2: markerX(90), y2: exam.y + exam.height + 52, class: 'mm-marker' }, gpt4Marker);
-  text(gpt4Marker, markerX(90) - 12, exam.y + exam.height + 80, 'GPT-4 · 298/400점', { class: 'mm-marker-text mm-end' });
+  svg('line', { x1: markerX(90), y1: exam.y - 6, x2: markerX(90), y2: exam.y + exam.height + 52, class: 'gpt4-multimodal-marker' }, gpt4Marker);
+  text(gpt4Marker, markerX(90) - 12, exam.y + exam.height + 80, 'GPT-4 · 298/400점', { class: 'gpt4-multimodal-marker-text gpt4-multimodal-end' });
   const gpt35Marker = svg('g', { opacity: 0 }, examGroup);
-  svg('line', { x1: markerX(10), y1: exam.y - 6, x2: markerX(10), y2: exam.y + exam.height + 52, class: 'mm-marker mm-marker-dim' }, gpt35Marker);
-  text(gpt35Marker, markerX(10) + 12, exam.y + exam.height + 80, 'GPT-3.5(ChatGPT) · 213/400점 · 하위 10%', { class: 'mm-marker-text mm-marker-dim-text' });
-  text(examGroup, 1540, 884, '출처: GPT-4 기술 보고서(OpenAI, 2023)', { class: 'mm-source' });
+  svg('line', { x1: markerX(10), y1: exam.y - 6, x2: markerX(10), y2: exam.y + exam.height + 52, class: 'gpt4-multimodal-marker gpt4-multimodal-marker-dim' }, gpt35Marker);
+  text(gpt35Marker, markerX(10) + 12, exam.y + exam.height + 80, 'GPT-3.5(ChatGPT) · 213/400점 · 하위 10%', { class: 'gpt4-multimodal-marker-text gpt4-multimodal-marker-dim-text' });
+  text(examGroup, 1540, 884, '출처: GPT-4 기술 보고서(OpenAI, 2023)', { class: 'gpt4-multimodal-source' });
 
   const update = (time: number) => {
     // 시연은 시험 이야기로 넘어가면 물러난다.

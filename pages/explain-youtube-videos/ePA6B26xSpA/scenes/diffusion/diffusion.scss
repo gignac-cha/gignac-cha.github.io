@@ -1,5 +1,5 @@
 .diffusion-water {
-  fill: color-mix(in srgb, var(--d-blue) 7%, transparent);
+  fill: color-mix(in srgb, var(--diagram-blue) 7%, transparent);
 }
 .diffusion-haze {
   fill: #6f5cff;
@@ -10,7 +10,7 @@
 }
 .diffusion-glass {
   fill: none;
-  stroke: var(--d-muted);
+  stroke: var(--diagram-muted);
   stroke-width: 4;
   stroke-linejoin: round;
 }
@@ -55,29 +55,29 @@
 }
 .diffusion-rewind {
   path {
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
 }
 .diffusion-rewind-label {
   font-size: 28px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 .diffusion-picture {
   image-rendering: pixelated;
 }
 .diffusion-frame {
   fill: #000;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
 
   &.diffusion-frame-active {
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 6;
   }
   &.diffusion-frame-done {
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
     stroke-width: 6;
   }
 }
@@ -85,7 +85,7 @@
   font-size: 24px;
   text-anchor: middle;
   font-variant-numeric: tabular-nums;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .diffusion-step {
   line {
@@ -94,68 +94,68 @@
 }
 .diffusion-step-forward {
   line {
-    stroke: var(--d-muted);
+    stroke: var(--diagram-muted);
   }
   path {
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
 }
 .diffusion-step-backward {
   line {
-    stroke: var(--d-blue);
+    stroke: var(--diagram-blue);
   }
   path {
-    fill: var(--d-blue);
+    fill: var(--diagram-blue);
   }
 
   &.diffusion-step-active {
     line {
-      stroke: var(--d-yellow);
+      stroke: var(--diagram-yellow);
       stroke-width: 5;
     }
     path {
-      fill: var(--d-yellow);
+      fill: var(--diagram-yellow);
     }
   }
 }
 .diffusion-arrow-caption {
   font-size: 24px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .diffusion-arrow-caption-network {
-  fill: var(--d-blue) !important;
+  fill: var(--diagram-blue) !important;
   font-weight: 600;
 }
 .diffusion-metaphor {
   font-size: 24px;
   font-weight: 600;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 .diffusion-once-arc {
   fill: none;
-  stroke: var(--d-muted);
+  stroke: var(--diagram-muted);
   stroke-width: 3;
   stroke-dasharray: 12 10;
 }
 .diffusion-once-head {
-  fill: var(--d-muted);
+  fill: var(--diagram-muted);
 }
 .diffusion-once-label {
   font-size: 26px;
   font-weight: 600;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .diffusion-cross line {
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
   stroke-width: 8;
   stroke-linecap: round;
 }
 .diffusion-prompt {
   fill: #17181d;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
 .diffusion-prompt-text {
@@ -165,18 +165,18 @@
 .diffusion-prompt-mark {
   font-size: 48px;
   font-weight: 700;
-  fill: var(--d-red) !important;
+  fill: var(--diagram-red) !important;
 }
 .diffusion-chip {
   stroke-width: 2.5;
 }
 .diffusion-chip-ok {
-  fill: color-mix(in srgb, var(--d-green) 14%, transparent);
-  stroke: var(--d-green);
+  fill: color-mix(in srgb, var(--diagram-green) 14%, transparent);
+  stroke: var(--diagram-green);
 }
 .diffusion-chip-missing {
-  fill: color-mix(in srgb, var(--d-red) 14%, transparent);
-  stroke: var(--d-red);
+  fill: color-mix(in srgb, var(--diagram-red) 14%, transparent);
+  stroke: var(--diagram-red);
   stroke-dasharray: 8 6;
 }
 .diffusion-chip-text {
@@ -192,5 +192,5 @@
 .diffusion-note {
   font-size: 21px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }

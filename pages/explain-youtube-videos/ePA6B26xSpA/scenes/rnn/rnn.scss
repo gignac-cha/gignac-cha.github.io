@@ -1,13 +1,13 @@
 .rnn-axis {
   fill: none;
-  stroke: var(--d-subtle);
+  stroke: var(--diagram-subtle);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 .rnn-chip {
-  fill: color-mix(in srgb, var(--d-text) 6%, transparent);
-  stroke: var(--d-line);
+  fill: color-mix(in srgb, var(--diagram-text) 6%, transparent);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
 .rnn-chip-text {
@@ -22,7 +22,7 @@
 }
 .rnn-note {
   font-size: 28px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .rnn-center {
   text-anchor: middle;
@@ -31,43 +31,43 @@
   text-anchor: end;
 }
 .rnn-warn {
-  fill: var(--d-red) !important;
+  fill: var(--diagram-red) !important;
 }
 .rnn-sequence {
   fill: none;
-  stroke: var(--d-blue);
+  stroke: var(--diagram-blue);
   stroke-width: 5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 .rnn-pass {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
 
   &.rnn-passed {
-    stroke: var(--d-muted);
+    stroke: var(--diagram-muted);
   }
 }
 .rnn-cell {
-  fill: var(--d-background);
-  stroke: var(--d-line);
+  fill: var(--diagram-background);
+  stroke: var(--diagram-line);
   stroke-width: 3;
 
   &.rnn-active {
-    fill: color-mix(in srgb, var(--d-yellow) 14%, var(--d-background));
-    stroke: var(--d-yellow);
+    fill: color-mix(in srgb, var(--diagram-yellow) 14%, var(--diagram-background));
+    stroke: var(--diagram-yellow);
   }
 }
 .rnn-feed {
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 3;
   stroke-dasharray: 6 6;
 }
 .rnn-word {
-  fill: var(--d-background);
+  fill: var(--diagram-background);
   stroke-width: 2;
   stroke-opacity: .25;
 
@@ -75,7 +75,7 @@
     stroke-opacity: 1;
   }
   &.rnn-current {
-    fill: color-mix(in srgb, var(--d-yellow) 12%, var(--d-background));
+    fill: color-mix(in srgb, var(--diagram-yellow) 12%, var(--diagram-background));
     stroke-width: 4;
   }
 }
@@ -84,26 +84,26 @@
   text-anchor: middle;
 
   &.rnn-faded {
-    fill: var(--d-subtle) !important;
+    fill: var(--diagram-subtle) !important;
   }
 }
 .rnn-forget {
   font-size: 44px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-red) !important;
+  fill: var(--diagram-red) !important;
 }
 .rnn-memo-frame {
-  fill: var(--d-background);
-  stroke: var(--d-text);
+  fill: var(--diagram-background);
+  stroke: var(--diagram-text);
   stroke-width: 2;
 }
 .rnn-gradient {
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
   stroke-linecap: round;
 }
 .rnn-pointer {
   fill: none;
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
   stroke-width: 2;
 }

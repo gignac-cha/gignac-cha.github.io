@@ -47,80 +47,80 @@ const setText = (element: SVGTextElement, content: string) => {
 };
 
 const pair = (parent: SVGElement, y: number, word: string, answer: string, size: 'main' | 'extra' = 'main') => {
-  const group = svg('g', { class: `fs-pair ${size}` }, parent);
+  const group = svg('g', { class: `few-shot-pair ${size}` }, parent);
   // 예시 줄만 '샘플 서류'로 테두리를 보인다(update에서).
-  const sheet = svg('rect', { class: 'fs-sheet', x: column.word - 26, y: y - 46, width: 450, height: 64, rx: 10, opacity: 0 }, group);
-  text(group, column.word, y, word, { class: 'fs-word' });
-  text(group, column.arrow, y, '→', { class: 'fs-arrow' });
-  const answerText = text(group, column.answer, y, answer, { class: 'fs-answer' });
+  const sheet = svg('rect', { class: 'few-shot-sheet', x: column.word - 26, y: y - 46, width: 450, height: 64, rx: 10, opacity: 0 }, group);
+  text(group, column.word, y, word, { class: 'few-shot-word' });
+  text(group, column.arrow, y, '→', { class: 'few-shot-arrow' });
+  const answerText = text(group, column.answer, y, answer, { class: 'few-shot-answer' });
   return { group, sheet, answerText };
 };
 
 const modelBox = (parent: SVGElement, x: number, y: number, width: number, height: number, name: string, note?: string) => {
-  const group = svg('g', { class: 'fs-model' }, parent);
+  const group = svg('g', { class: 'few-shot-model' }, parent);
   svg('rect', { x: x - width / 2, y: y - height / 2, width, height, rx: 20 }, group);
-  text(group, x, y + (note ? 2 : 14), name, { class: 'fs-model-name' });
+  text(group, x, y + (note ? 2 : 14), name, { class: 'few-shot-model-name' });
   if (note) {
-    text(group, x, y + 40, note, { class: 'fs-model-note' });
+    text(group, x, y + 40, note, { class: 'few-shot-model-note' });
   }
   return group;
 };
 
 export const createFewShotScene = (): Scene => {
-  const { element, root } = createDiagram('fs', '퓨샷 학습');
+  const { element, root } = createDiagram('few-shot', '퓨샷 학습');
 
-  const paper = svg('g', { class: 'fs-paper' }, root);
-  svg('rect', { class: 'fs-card', x: 360, y: 300, width: 880, height: 200, rx: 22 }, paper);
-  text(paper, 800, 384, 'Language Models are Few-Shot Learners', { class: 'fs-paper-title' });
-  text(paper, 800, 440, '언어 모델은 퓨샷 학습자다 · OpenAI · 2020년 5월', { class: 'fs-paper-meta' });
+  const paper = svg('g', { class: 'few-shot-paper' }, root);
+  svg('rect', { class: 'few-shot-card', x: 360, y: 300, width: 880, height: 200, rx: 22 }, paper);
+  text(paper, 800, 384, 'Language Models are Few-Shot Learners', { class: 'few-shot-paper-title' });
+  text(paper, 800, 440, '언어 모델은 퓨샷 학습자다 · OpenAI · 2020년 5월', { class: 'few-shot-paper-meta' });
 
   const prompt = svg('g', {}, root);
-  const define = text(prompt, 800, 150, '퓨샷 = 예시 몇 개만 보고 요령 익히기', { class: 'fs-define' });
-  svg('rect', { class: 'fs-card', x: 160, y: 190, width: 740, height: 600, rx: 22 }, prompt);
-  const mode = createSwapText(prompt, 200, 244, { class: 'fs-mode' });
-  const instruction = text(prompt, column.word, rows.instruction, '영어로 번역하세요:', { class: 'fs-instruction' });
+  const define = text(prompt, 800, 150, '퓨샷 = 예시 몇 개만 보고 요령 익히기', { class: 'few-shot-define' });
+  svg('rect', { class: 'few-shot-card', x: 160, y: 190, width: 740, height: 600, rx: 22 }, prompt);
+  const mode = createSwapText(prompt, 200, 244, { class: 'few-shot-mode' });
+  const instruction = text(prompt, column.word, rows.instruction, '영어로 번역하세요:', { class: 'few-shot-instruction' });
   const examples = [pair(prompt, rows.example[0], '사과', 'apple'), pair(prompt, rows.example[1], '바나나', 'banana')];
-  const sampleTag = svg('g', { class: 'fs-sample-tag' }, prompt);
+  const sampleTag = svg('g', { class: 'few-shot-sample-tag' }, prompt);
   // 두 예시 줄의 오른쪽, 두 줄 사이 높이에 붙인다(테두리와 겹치지 않게).
   svg('rect', { x: 690, y: 374, width: 170, height: 44, rx: 22 }, sampleTag);
   text(sampleTag, 775, 404, '샘플 2장', {});
   const query = pair(prompt, rows.query, '포도', '');
-  const cursor = svg('rect', { class: 'fs-cursor', x: column.answer, y: rows.query - 34, width: 4, height: 40 }, prompt);
+  const cursor = svg('rect', { class: 'few-shot-cursor', x: column.answer, y: rows.query - 34, width: 4, height: 40 }, prompt);
   const extraPairs = extras.map((extra, i) => ({ ...extra, ...pair(prompt, rows.extra[i], extra.word, '', 'extra') }));
 
   const model = modelBox(prompt, 1260, 430, 340, 190, 'GPT-3', '매개변수 1,750억');
-  const sendArrow = svg('path', { class: 'fs-flow', d: 'M906 500 C980 500, 1000 440, 1084 436', pathLength: 1 }, prompt);
-  const returnArrow = svg('path', { class: 'fs-flow answer', d: 'M1180 528 C1120 600, 980 560, 906 530', pathLength: 1 }, prompt);
-  const lock = svg('g', { class: 'fs-lock', transform: 'translate(1420 344)' }, prompt);
+  const sendArrow = svg('path', { class: 'few-shot-flow', d: 'M906 500 C980 500, 1000 440, 1084 436', pathLength: 1 }, prompt);
+  const returnArrow = svg('path', { class: 'few-shot-flow answer', d: 'M1180 528 C1120 600, 980 560, 906 530', pathLength: 1 }, prompt);
+  const lock = svg('g', { class: 'few-shot-lock', transform: 'translate(1420 344)' }, prompt);
   svg('circle', { r: 30 }, lock);
   svg('rect', { x: -12, y: -4, width: 24, height: 18, rx: 3 }, lock);
   svg('path', { d: 'M-7 -4 v-6 a7 7 0 0 1 14 0 v6' }, lock);
-  const frozenLabel = text(prompt, 1240, 300, '미세 조정 없이 · 가중치 그대로', { class: 'fs-frozen' });
+  const frozenLabel = text(prompt, 1240, 300, '미세 조정 없이 · 가중치 그대로', { class: 'few-shot-frozen' });
 
   // BERT 시절: 일마다 따로 다듬은 모델 / GPT-3: 모델 하나에 말로 부탁.
   const compare = svg('g', {}, root);
   const bert = svg('g', {}, compare);
-  text(bert, 440, 210, 'BERT 시절', { class: 'fs-compare-title' });
+  text(bert, 440, 210, 'BERT 시절', { class: 'few-shot-compare-title' });
   const tasks = ['감정 분류', '질문 답변', '문장 관계'].map((task, i) => {
     const group = svg('g', {}, bert);
     modelBox(group, 400, 340 + i * 140, 360, 100, 'BERT');
-    text(group, 400, 340 + i * 140 - 64, task, { class: 'fs-task' });
-    const badge = svg('g', { class: 'fs-tuned', transform: `translate(640 ${340 + i * 140})` }, group);
+    text(group, 400, 340 + i * 140 - 64, task, { class: 'few-shot-task' });
+    const badge = svg('g', { class: 'few-shot-tuned', transform: `translate(640 ${340 + i * 140})` }, group);
     svg('rect', { x: -6, y: -22, width: 128, height: 44, rx: 22 }, badge);
     text(badge, 58, 8, '미세 조정', {});
     return { group, badge };
   });
-  const bertNote = text(bert, 440, 760, '일마다 모델을 따로 다듬기', { class: 'fs-compare-note' });
+  const bertNote = text(bert, 440, 760, '일마다 모델을 따로 다듬기', { class: 'few-shot-compare-note' });
   const gpt = svg('g', {}, compare);
-  text(gpt, 1170, 210, '이제는', { class: 'fs-compare-title' });
+  text(gpt, 1170, 210, '이제는', { class: 'few-shot-compare-title' });
   modelBox(gpt, 1170, 590, 360, 150, 'GPT-3', '모델 하나');
   const asks = ['영어로 번역해 줘', '이 글을 세 줄로 요약해 줘', '이 질문에 답해 줘'].map((ask, i) => {
-    const bubble = svg('g', { class: 'fs-ask', transform: `translate(1170 ${290 + i * 70})` }, gpt);
+    const bubble = svg('g', { class: 'few-shot-ask', transform: `translate(1170 ${290 + i * 70})` }, gpt);
     svg('rect', { x: -200, y: -26, width: 400, height: 52, rx: 26 }, bubble);
     text(bubble, 0, 9, ask, {});
     return bubble;
   });
-  const gptNote = text(gpt, 1170, 760, '말로 부탁하기만', { class: 'fs-compare-note good' });
+  const gptNote = text(gpt, 1170, 760, '말로 부탁하기만', { class: 'few-shot-compare-note good' });
 
   const update = (time: number) => {
     setAttributes(paper, { opacity: (appear(time, at.paper, .4) * (1 - appear(time, at.define, .4))).toFixed(3) });

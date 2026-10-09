@@ -1,46 +1,46 @@
-.ta-heading {
+.tool-agent-heading {
   font-size: 34px;
   font-weight: 700;
 }
-.ta-big {
+.tool-agent-big {
   font-size: 56px;
   font-weight: 800;
 }
-.ta-caption {
+.tool-agent-caption {
   font-size: 26px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.ta-arrow {
+.tool-agent-arrow {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 // 생각 줄기
-.ta-trace-ghost {
+.tool-agent-trace-ghost {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
   stroke-dasharray: 6 10;
   stroke-linejoin: round;
 }
-.ta-trace {
+.tool-agent-trace {
   fill: none;
-  stroke: var(--d-purple);
+  stroke: var(--diagram-purple);
   stroke-width: 5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.ta-head {
-  fill: var(--d-yellow);
-  filter: drop-shadow(0 0 8px var(--d-yellow));
+.tool-agent-head {
+  fill: var(--diagram-yellow);
+  filter: drop-shadow(0 0 8px var(--diagram-yellow));
 }
-.ta-thought {
+.tool-agent-thought {
   rect {
-    fill: color-mix(in srgb, var(--d-purple) 22%, var(--d-background));
-    stroke: var(--d-purple);
+    fill: color-mix(in srgb, var(--diagram-purple) 22%, var(--diagram-background));
+    stroke: var(--diagram-purple);
     stroke-width: 2;
   }
   text {
@@ -48,60 +48,60 @@
     font-weight: 700;
   }
 }
-.ta-answer {
+.tool-agent-answer {
   circle {
-    fill: color-mix(in srgb, var(--d-green) 22%, var(--d-background));
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 22%, var(--diagram-background));
+    stroke: var(--diagram-green);
     stroke-width: 3;
   }
   text {
     font-size: 30px;
     font-weight: 800;
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }
-.ta-icon {
+.tool-agent-icon {
   fill: none;
-  stroke: var(--d-text);
+  stroke: var(--diagram-text);
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
 
-  .ta-icon-cursor {
-    fill: var(--d-text);
-    stroke: var(--d-background);
+  .tool-agent-icon-cursor {
+    fill: var(--diagram-text);
+    stroke: var(--diagram-background);
     stroke-width: 2;
   }
 }
-.ta-card {
+.tool-agent-card {
   > rect {
-    fill: var(--d-background);
-    stroke: var(--d-line);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
     stroke-width: 2;
     transition: none;
   }
   &.active > rect {
-    fill: color-mix(in srgb, var(--d-blue) 14%, var(--d-background));
-    stroke: var(--d-blue);
+    fill: color-mix(in srgb, var(--diagram-blue) 14%, var(--diagram-background));
+    stroke: var(--diagram-blue);
   }
 }
-.ta-card-label {
+.tool-agent-card-label {
   font-size: 26px;
   font-weight: 700;
 }
-.ta-bar {
-  fill: var(--d-subtle);
+.tool-agent-bar {
+  fill: var(--diagram-subtle);
 
   &.result {
-    fill: var(--d-green);
+    fill: var(--diagram-green);
   }
 }
 
 // 대답하는 기계 → 일하는 기계
-.ta-bubble {
+.tool-agent-bubble {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-line);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   text {
@@ -109,134 +109,134 @@
     font-weight: 700;
   }
   &.reply rect {
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
   }
 }
-.ta-divider {
+.tool-agent-divider {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
   stroke-dasharray: 6 10;
 }
-.ta-loop-ring {
+.tool-agent-loop-ring {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
   stroke-dasharray: 10 10;
 }
-.ta-loop-step {
+.tool-agent-loop-step {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-line);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   text {
     font-size: 28px;
     font-weight: 700;
-    fill: var(--d-muted) !important;
+    fill: var(--diagram-muted) !important;
   }
   &.active {
     rect {
-      fill: color-mix(in srgb, var(--d-yellow) 16%, var(--d-background));
-      stroke: var(--d-yellow);
+      fill: color-mix(in srgb, var(--diagram-yellow) 16%, var(--diagram-background));
+      stroke: var(--diagram-yellow);
     }
     text {
-      fill: var(--d-text) !important;
+      fill: var(--diagram-text) !important;
     }
   }
 }
 
 // 브라우저와 코드 저장소 창
-.ta-panel {
+.tool-agent-panel {
   > rect {
-    fill: color-mix(in srgb, var(--d-text) 3%, var(--d-background));
-    stroke: var(--d-line);
+    fill: color-mix(in srgb, var(--diagram-text) 3%, var(--diagram-background));
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
 }
-.ta-panel-rule {
-  stroke: var(--d-line);
+.tool-agent-panel-rule {
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.ta-panel-dot {
-  fill: var(--d-subtle);
+.tool-agent-panel-dot {
+  fill: var(--diagram-subtle);
 }
-.ta-panel-title {
+.tool-agent-panel-title {
   font-size: 18px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.ta-panel-heading {
+.tool-agent-panel-heading {
   font-size: 32px;
   font-weight: 700;
 }
-.ta-address {
-  fill: var(--d-grid);
+.tool-agent-address {
+  fill: var(--diagram-grid);
 }
-.ta-field {
-  fill: var(--d-background);
-  stroke: var(--d-line);
+.tool-agent-field {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.ta-typed {
-  fill: var(--d-text);
+.tool-agent-typed {
+  fill: var(--diagram-text);
 }
-.ta-button {
+.tool-agent-button {
   rect:first-child {
-    fill: var(--d-blue);
+    fill: var(--diagram-blue);
   }
-  .ta-button-text {
-    fill: var(--d-background);
+  .tool-agent-button-text {
+    fill: var(--diagram-background);
   }
   &.pressed rect:first-child {
-    fill: color-mix(in srgb, var(--d-blue) 70%, white);
+    fill: color-mix(in srgb, var(--diagram-blue) 70%, white);
   }
 }
-.ta-ripple {
+.tool-agent-ripple {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 3;
 }
-.ta-cursor {
-  fill: var(--d-text);
-  stroke: var(--d-background);
+.tool-agent-cursor {
+  fill: var(--diagram-text);
+  stroke: var(--diagram-background);
   stroke-width: 2;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .6));
 }
-.ta-code {
-  fill: var(--d-subtle);
+.tool-agent-code {
+  fill: var(--diagram-subtle);
 
   &.bug {
-    fill: var(--d-red);
+    fill: var(--diagram-red);
   }
   &.fixed {
-    fill: var(--d-green);
+    fill: var(--diagram-green);
   }
 }
-.ta-gutter {
+.tool-agent-gutter {
   font-size: 26px;
   font-weight: 800;
-  fill: var(--d-red) !important;
+  fill: var(--diagram-red) !important;
 
   &.plus {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }
-.ta-status {
+.tool-agent-status {
   font-size: 28px;
   font-weight: 700;
-  fill: var(--d-red) !important;
+  fill: var(--diagram-red) !important;
 
   &.pass {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
   &.swap-glow {
     fill: none !important;
   }
 }
-.ta-task {
+.tool-agent-task {
   rect {
-    fill: color-mix(in srgb, var(--d-orange) 18%, var(--d-background));
-    stroke: var(--d-orange);
+    fill: color-mix(in srgb, var(--diagram-orange) 18%, var(--diagram-background));
+    stroke: var(--diagram-orange);
     stroke-width: 2;
   }
   text {
@@ -244,10 +244,10 @@
     font-weight: 700;
   }
 }
-.ta-diff {
+.tool-agent-diff {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-green);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-green);
     stroke-width: 2;
   }
   text {
@@ -255,25 +255,25 @@
     font-weight: 700;
   }
   .minus {
-    fill: var(--d-red);
+    fill: var(--diagram-red);
   }
   .plus {
-    fill: var(--d-green);
+    fill: var(--diagram-green);
   }
 }
 
 // 하나로 모인 에이전트
-.ta-agent-ring {
-  fill: color-mix(in srgb, var(--d-yellow) 7%, var(--d-background));
-  stroke: var(--d-yellow);
+.tool-agent-agent-ring {
+  fill: color-mix(in srgb, var(--diagram-yellow) 7%, var(--diagram-background));
+  stroke: var(--diagram-yellow);
   stroke-width: 3;
 }
-.ta-tool-disc {
-  fill: var(--d-background);
-  stroke: var(--d-line);
+.tool-agent-tool-disc {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.ta-tool-label {
+.tool-agent-tool-label {
   font-size: 26px;
   font-weight: 700;
 }

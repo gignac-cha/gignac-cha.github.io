@@ -44,7 +44,7 @@ const grids = {
 const picked = 5 * 14 + 10;
 
 const knob = (parent: SVGElement, x: number, y: number, angle: number, radius = 12) => {
-  const group = svg('g', { class: 'g2-knob', transform: `translate(${x} ${y})` }, parent);
+  const group = svg('g', { class: 'gpt2-knob', transform: `translate(${x} ${y})` }, parent);
   svg('circle', { r: radius }, group);
   const tick = svg('line', { x1: 0, y1: 0, x2: 0, y2: -radius * .78, transform: `rotate(${angle})` }, group);
   return { group, tick };
@@ -80,83 +80,83 @@ const stepPath = (steps: number) => {
 };
 
 export const createGPT2Scene = (): Scene => {
-  const { element, root } = createDiagram('g2', '매개변수와 GPT-2');
+  const { element, root } = createDiagram('gpt2', '매개변수와 GPT-2');
 
   const models = svg('g', {}, root);
-  const legend = svg('g', { class: 'g2-legend' }, models);
+  const legend = svg('g', { class: 'gpt2-legend' }, models);
   knob(legend, 70, 140, -30, 11);
-  text(legend, 94, 149, '손잡이 하나 = 매개변수 1,000만 개', { class: 'g2-legend-text' });
+  text(legend, 94, 149, '손잡이 하나 = 매개변수 1,000만 개', { class: 'gpt2-legend-text' });
 
   const gpt1 = createGrid(models, grids.gpt1, 1);
   const gpt2 = createGrid(models, grids.gpt2, 100);
   const gpt1Label = svg('g', {}, models);
-  text(gpt1Label, 201, 626, 'GPT-1', { class: 'g2-name' });
-  text(gpt1Label, 201, 664, '1억 1,700만', { class: 'g2-count' });
-  const gpt2Name = text(models, 621, 626, 'GPT-2', { class: 'g2-name' });
-  const gpt2Count = text(models, 621, 676, '15억', { class: 'g2-count big' });
-  const ratio = svg('g', { class: 'g2-ratio' }, models);
+  text(gpt1Label, 201, 626, 'GPT-1', { class: 'gpt2-name' });
+  text(gpt1Label, 201, 664, '1억 1,700만', { class: 'gpt2-count' });
+  const gpt2Name = text(models, 621, 626, 'GPT-2', { class: 'gpt2-name' });
+  const gpt2Count = text(models, 621, 676, '15억', { class: 'gpt2-count big' });
+  const ratio = svg('g', { class: 'gpt2-ratio' }, models);
   svg('path', { d: 'M272 470 C300 420, 350 410, 384 430' }, ratio);
-  svg('path', { class: 'g2-ratio-head', d: 'M384 430 l-16 -2 l8 -12 z' }, ratio);
-  text(ratio, 318, 400, '×13', { class: 'g2-ratio-text' });
+  svg('path', { class: 'gpt2-ratio-head', d: 'M384 430 l-16 -2 l8 -12 z' }, ratio);
+  text(ratio, 318, 400, '×13', { class: 'gpt2-ratio-text' });
 
   // 읽은 글: 책 → 인터넷
-  const books = svg('g', { class: 'g2-books' }, models);
+  const books = svg('g', { class: 'gpt2-books' }, models);
   [0, 1, 2].forEach((i) => svg('rect', { x: 166 + i * 24, y: 712 + (i % 2) * 6, width: 18, height: 58 - (i % 2) * 6, rx: 3 }, books));
-  text(books, 201, 812, '책 7,000여 권', { class: 'g2-data' });
-  const web = svg('g', { class: 'g2-web' }, models);
+  text(books, 201, 812, '책 7,000여 권', { class: 'gpt2-data' });
+  const web = svg('g', { class: 'gpt2-web' }, models);
   const pages = Array.from({ length: 15 }, (_, i) => {
     const page = svg('g', { transform: `translate(${470 + (i % 5) * 60} ${700 + Math.floor(i / 5) * 26})` }, web);
     svg('rect', { width: 48, height: 22, rx: 4 }, page);
     svg('line', { x1: 0, y1: 7, x2: 48, y2: 7 }, page);
     return page;
   });
-  const webLabel = text(web, 621, 812, '웹 문서 800만 개 · 40GB', { class: 'g2-data' });
+  const webLabel = text(web, 621, 812, '웹 문서 800만 개 · 40GB', { class: 'gpt2-data' });
 
   // 오른쪽 상세: 손잡이 하나가 신경망 안에서 하는 일, 그리고 손잡이 수와 섬세함.
-  const detail = svg('g', { class: 'g2-detail' }, root);
-  svg('rect', { class: 'g2-card', x: 980, y: 170, width: 560, height: 470, rx: 22 }, detail);
-  const pointer = svg('path', { class: 'g2-pointer', d: '' }, root);
+  const detail = svg('g', { class: 'gpt2-detail' }, root);
+  svg('rect', { class: 'gpt2-card', x: 980, y: 170, width: 560, height: 470, rx: 22 }, detail);
+  const pointer = svg('path', { class: 'gpt2-pointer', d: '' }, root);
 
-  const neuron = svg('g', { class: 'g2-neuron' }, detail);
-  const wire = svg('line', { class: 'g2-wire', x1: 1060, y1: 420, x2: 1460, y2: 420 }, neuron);
-  svg('circle', { class: 'g2-cell', cx: 1060, cy: 420, r: 30 }, neuron);
-  svg('circle', { class: 'g2-cell', cx: 1460, cy: 420, r: 30 }, neuron);
+  const neuron = svg('g', { class: 'gpt2-neuron' }, detail);
+  const wire = svg('line', { class: 'gpt2-wire', x1: 1060, y1: 420, x2: 1460, y2: 420 }, neuron);
+  svg('circle', { class: 'gpt2-cell', cx: 1060, cy: 420, r: 30 }, neuron);
+  svg('circle', { class: 'gpt2-cell', cx: 1460, cy: 420, r: 30 }, neuron);
   const bigKnob = knob(neuron, 1260, 420, -60, 58);
   bigKnob.group.classList.add('big');
-  const neuronCaption = text(neuron, 1260, 250, '매개변수 = 연결의 세기를 정하는 손잡이', { class: 'g2-caption' });
-  const turnCaption = text(neuron, 1260, 560, '돌리면 연결이 세지거나 약해진다', { class: 'g2-note' });
+  const neuronCaption = text(neuron, 1260, 250, '매개변수 = 연결의 세기를 정하는 손잡이', { class: 'gpt2-caption' });
+  const turnCaption = text(neuron, 1260, 560, '돌리면 연결이 세지거나 약해진다', { class: 'gpt2-note' });
 
-  const finer = svg('g', { class: 'g2-finer' }, detail);
-  svg('path', { class: 'g2-target', d: curvePath() }, finer);
-  const coarse = svg('path', { class: 'g2-steps', d: stepPath(6) }, finer);
-  const fine = svg('path', { class: 'g2-steps', d: stepPath(40) }, finer);
-  const stepsLabel = createSwapText(finer, 1260, 236, { class: 'g2-caption' });
-  const finerCaption = text(finer, 1260, 600, '손잡이가 많을수록 더 섬세하게', { class: 'g2-note' });
+  const finer = svg('g', { class: 'gpt2-finer' }, detail);
+  svg('path', { class: 'gpt2-target', d: curvePath() }, finer);
+  const coarse = svg('path', { class: 'gpt2-steps', d: stepPath(6) }, finer);
+  const fine = svg('path', { class: 'gpt2-steps', d: stepPath(40) }, finer);
+  const stepsLabel = createSwapText(finer, 1260, 236, { class: 'gpt2-caption' });
+  const finerCaption = text(finer, 1260, 600, '손잡이가 많을수록 더 섬세하게', { class: 'gpt2-note' });
 
   // 유니콘 기사: 사람이 쓴 첫머리 + GPT-2가 이어 쓴 글.
-  const story = svg('g', { class: 'g2-story' }, root);
-  svg('rect', { class: 'g2-card', x: 160, y: 120, width: 1280, height: 720, rx: 22 }, story);
-  text(story, 210, 172, 'GPT-2 공개 예시 · 2019년 2월', { class: 'g2-story-meta' });
-  const headTag = svg('g', { class: 'g2-tag human' }, story);
+  const story = svg('g', { class: 'gpt2-story' }, root);
+  svg('rect', { class: 'gpt2-card', x: 160, y: 120, width: 1280, height: 720, rx: 22 }, story);
+  text(story, 210, 172, 'GPT-2 공개 예시 · 2019년 2월', { class: 'gpt2-story-meta' });
+  const headTag = svg('g', { class: 'gpt2-tag human' }, story);
   svg('rect', { x: 210, y: 200, width: 200, height: 40, rx: 20 }, headTag);
   text(headTag, 310, 228, '사람이 쓴 첫머리', {});
   const promptLines = prompt.map((segments, i) => {
-    const line = text(story, 210, 290 + i * 40, '', { class: 'g2-prompt' });
+    const line = text(story, 210, 290 + i * 40, '', { class: 'gpt2-prompt' });
     return segments.map(([content, mark]) => {
       const span = svg('tspan', { class: mark ? `mark ${mark}` : '' }, line);
       span.textContent = content;
       return span;
     });
   });
-  text(story, 210, 414, promptGloss, { class: 'g2-gloss' });
-  const fakeTag = svg('g', { class: 'g2-tag machine' }, story);
+  text(story, 210, 414, promptGloss, { class: 'gpt2-gloss' });
+  const fakeTag = svg('g', { class: 'gpt2-tag machine' }, story);
   svg('rect', { x: 210, y: 452, width: 330, height: 40, rx: 20 }, fakeTag);
   text(fakeTag, 375, 480, 'GPT-2가 이어 쓴 글 (10번 중 하나)', {});
-  const fakeStamp = svg('g', { class: 'g2-stamp' }, story);
+  const fakeStamp = svg('g', { class: 'gpt2-stamp' }, story);
   svg('rect', { x: 556, y: 452, width: 110, height: 40, rx: 8 }, fakeStamp);
   text(fakeStamp, 611, 480, '가짜 기사', {});
-  const streamLines = continuation.map((_, i) => text(story, 210, 540 + i * 38, '', { class: 'g2-continuation' }));
-  const streamGloss = text(story, 210, 812, continuationGloss, { class: 'g2-gloss' });
+  const streamLines = continuation.map((_, i) => text(story, 210, 540 + i * 38, '', { class: 'gpt2-continuation' }));
+  const streamGloss = text(story, 210, 812, continuationGloss, { class: 'gpt2-gloss' });
 
   const total = continuation.reduce((sum, line) => sum + line.length, 0);
   const firstSentence = continuation[0].length;

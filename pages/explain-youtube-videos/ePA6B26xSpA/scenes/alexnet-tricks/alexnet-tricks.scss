@@ -1,22 +1,22 @@
 .alexnet {
-  --alexnet-relu: var(--d-blue);
-  --alexnet-dropout: var(--d-orange);
-  --alexnet-augment: var(--d-purple);
+  --alexnet-relu: var(--diagram-blue);
+  --alexnet-dropout: var(--diagram-orange);
+  --alexnet-augment: var(--diagram-purple);
 }
 
 .alexnet-tab {
-  --alexnet-tab-color: var(--d-subtle);
+  --alexnet-tab-color: var(--diagram-subtle);
 
   rect {
     fill: transparent;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   text {
     font-size: 28px;
     font-weight: 600;
     text-anchor: middle;
-    fill: var(--d-muted) !important;
+    fill: var(--diagram-muted) !important;
   }
   &.alexnet-tab-relu {
     --alexnet-tab-color: var(--alexnet-relu);
@@ -33,62 +33,62 @@
       stroke: var(--alexnet-tab-color);
     }
     text {
-      fill: var(--d-text) !important;
+      fill: var(--diagram-text) !important;
     }
   }
   &.done text {
-    fill: var(--d-subtle) !important;
+    fill: var(--diagram-subtle) !important;
   }
 }
 
 .alexnet-axis {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
 }
 .alexnet-axis-label {
   font-size: 28px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .alexnet-relu-negative,
 .alexnet-relu-positive {
   fill: none;
-  stroke: var(--d-text);
+  stroke: var(--diagram-text);
   stroke-width: 8;
   stroke-linecap: round;
   stroke-dasharray: 1;
 }
 .alexnet-relu-negative.active {
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
 }
 .alexnet-relu-positive.active {
-  stroke: var(--d-green);
+  stroke: var(--diagram-green);
 }
 .alexnet-relu-negative-label {
   font-size: 32px;
   font-weight: 600;
-  fill: var(--d-red) !important;
+  fill: var(--diagram-red) !important;
 }
 .alexnet-relu-positive-label {
   font-size: 32px;
   font-weight: 600;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
 .alexnet-relu-guide {
   fill: none;
-  stroke: var(--d-muted);
+  stroke: var(--diagram-muted);
   stroke-width: 2;
   stroke-dasharray: 6 8;
 }
 .alexnet-relu-dot {
   fill: var(--alexnet-relu);
-  stroke: var(--d-background);
+  stroke: var(--diagram-background);
   stroke-width: 4;
 }
 .alexnet-signal-label {
   font-size: 28px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .alexnet-signal-left {
   font-size: 30px;
@@ -96,7 +96,7 @@
   fill: var(--alexnet-relu) !important;
 }
 .alexnet-signal-wire {
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
 }
 .alexnet-signal-node {
@@ -107,17 +107,17 @@
 
 // 투명도는 회차가 바뀔 때 섞이도록 scene.ts 가 시간에 맞춰 정한다.
 .alexnet-edge {
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
 .alexnet-node {
-  fill: color-mix(in srgb, var(--alexnet-dropout) 22%, var(--d-background));
+  fill: color-mix(in srgb, var(--alexnet-dropout) 22%, var(--diagram-background));
   stroke: var(--alexnet-dropout);
   stroke-width: 3;
 
   &.off {
-    fill: var(--d-background);
-    stroke: var(--d-subtle);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-subtle);
     stroke-dasharray: 6 6;
   }
 }
@@ -133,7 +133,7 @@
 .alexnet-ring-label {
   font-size: 28px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 
   &.even {
     fill: var(--alexnet-dropout) !important;
@@ -142,17 +142,17 @@
 .alexnet-counter {
   font-size: 30px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 
 .alexnet-card-border {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
 .alexnet-card-label {
   font-size: 28px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .alexnet-arrow {
   fill: none;

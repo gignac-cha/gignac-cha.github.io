@@ -1,41 +1,41 @@
 .deep-blue-edge {
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 
   &.on {
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 5;
   }
   &.dim {
-    stroke: var(--d-grid);
+    stroke: var(--diagram-grid);
   }
 }
 .deep-blue-node {
-  fill: var(--d-muted);
-  stroke: var(--d-background);
+  fill: var(--diagram-muted);
+  stroke: var(--diagram-background);
   stroke-width: 2;
 
   &.good {
-    fill: var(--d-green);
+    fill: var(--diagram-green);
   }
   &.bad {
-    fill: var(--d-red);
+    fill: var(--diagram-red);
   }
   &.even {
-    fill: var(--d-subtle);
+    fill: var(--diagram-subtle);
   }
   &.dim {
     opacity: .35;
   }
   &.on {
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
 }
 .deep-blue-best {
   font-size: 28px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 .deep-blue-chess {
   .light {
@@ -63,29 +63,29 @@
 .deep-blue-machine {
   font-size: 30px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .deep-blue-fan line {
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
   stroke-width: 1.5;
 }
 .deep-blue-small {
   font-size: 30px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .deep-blue-big {
   font-size: 60px;
   font-weight: 700;
 }
 .deep-blue-warning {
-  fill: var(--d-red) !important;
+  fill: var(--diagram-red) !important;
 }
 .deep-blue-center {
   text-anchor: middle;
 }
 .deep-blue-card {
-  fill: color-mix(in srgb, var(--d-text) 4%, transparent);
-  stroke: var(--d-line);
+  fill: color-mix(in srgb, var(--diagram-text) 4%, transparent);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
 .deep-blue-card-title {
@@ -94,17 +94,17 @@
 }
 .deep-blue-rule {
   font-size: 30px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .deep-blue-cat {
   font-size: 150px;
   text-anchor: middle;
 }
 .deep-blue-fail {
-  fill: var(--d-red);
+  fill: var(--diagram-red);
 }
 .deep-blue-fail-mark {
-  stroke: var(--d-background);
+  stroke: var(--diagram-background);
   stroke-width: 5;
   stroke-linecap: round;
 }

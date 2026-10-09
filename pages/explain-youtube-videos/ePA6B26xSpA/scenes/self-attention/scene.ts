@@ -73,24 +73,24 @@ const gpu = { x: 1136, y: 200, columns: 64, rows: 56, pitch: 6 };
 const bank = { windowX: 200, y: 680, spacing: 70, period: 1.3 };
 
 const chip = (parent: SVGElement, x: number, y: number, label: string, width: number) => {
-  const group = svg('g', { class: 'sa-chip', transform: `translate(${x} ${y})` }, parent);
+  const group = svg('g', { class: 'self-attention-chip', transform: `translate(${x} ${y})` }, parent);
   svg('rect', { x: -width / 2, y: -32, width, height: 64, rx: 32 }, group);
   text(group, 0, 11, label);
   return group;
 };
 
 const person = (parent: SVGElement, className = '') => {
-  const group = svg('g', { class: `sa-person ${className}` }, parent);
+  const group = svg('g', { class: `self-attention-person ${className}` }, parent);
   svg('circle', { cx: 0, cy: -34, r: 13 }, group);
   svg('rect', { x: -18, y: -16, width: 36, height: 42, rx: 14 }, group);
   return group;
 };
 
 const booth = (parent: SVGElement, x: number) => {
-  const group = svg('g', { class: 'sa-booth', transform: `translate(${x} ${bank.y})` }, parent);
-  svg('rect', { class: 'sa-booth-frame', x: -46, y: -80, width: 92, height: 58, rx: 10 }, group);
-  text(group, 0, -92, '창구', { class: 'sa-booth-label' });
-  svg('line', { class: 'sa-booth-desk', x1: -56, y1: -22, x2: 56, y2: -22 }, group);
+  const group = svg('g', { class: 'self-attention-booth', transform: `translate(${x} ${bank.y})` }, parent);
+  svg('rect', { class: 'self-attention-booth-frame', x: -46, y: -80, width: 92, height: 58, rx: 10 }, group);
+  text(group, 0, -92, '창구', { class: 'self-attention-booth-label' });
+  svg('line', { class: 'self-attention-booth-desk', x1: -56, y1: -22, x2: 56, y2: -22 }, group);
   return group;
 };
 
@@ -174,25 +174,25 @@ const gpuCaptionAt = (time: number) => {
 };
 
 const createGPU = (root: SVGElement) => {
-  const group = svg('g', { class: 'sa-gpu' }, root);
+  const group = svg('g', { class: 'self-attention-gpu' }, root);
   const defs = svg('defs', {}, group);
   const pattern = (id: string, className: string) => {
     const element = svg('pattern', { id, width: gpu.pitch, height: gpu.pitch, patternUnits: 'userSpaceOnUse', x: gpu.x, y: gpu.y }, defs);
     svg('rect', { class: className, width: gpu.pitch - 1.5, height: gpu.pitch - 1.5, rx: .8 }, element);
   };
-  pattern('sa-core-idle', 'sa-core-idle');
-  pattern('sa-core-lit', 'sa-core-lit');
+  pattern('self-attention-core-idle', 'self-attention-core-idle');
+  pattern('self-attention-core-lit', 'self-attention-core-lit');
   const width = gpu.columns * gpu.pitch;
   const height = gpu.rows * gpu.pitch;
-  svg('rect', { class: 'sa-gpu-board', x: gpu.x - 18, y: gpu.y - 18, width: width + 36, height: height + 36, rx: 16 }, group);
-  text(group, gpu.x - 18, gpu.y - 36, 'GPU', { class: 'sa-gpu-title' });
-  text(group, gpu.x + width + 18, gpu.y - 36, 'P100 한 장 · 코어 3,584개', { class: 'sa-gpu-note', 'text-anchor': 'end' });
-  const idle = svg('rect', { x: gpu.x, y: gpu.y, width, height, fill: 'url(#sa-core-idle)' }, group);
-  const lit = svg('rect', { x: gpu.x, y: gpu.y, width, height, fill: 'url(#sa-core-lit)', opacity: 0 }, group);
+  svg('rect', { class: 'self-attention-gpu-board', x: gpu.x - 18, y: gpu.y - 18, width: width + 36, height: height + 36, rx: 16 }, group);
+  text(group, gpu.x - 18, gpu.y - 36, 'GPU', { class: 'self-attention-gpu-title' });
+  text(group, gpu.x + width + 18, gpu.y - 36, 'P100 한 장 · 코어 3,584개', { class: 'self-attention-gpu-note', 'text-anchor': 'end' });
+  const idle = svg('rect', { x: gpu.x, y: gpu.y, width, height, fill: 'url(#self-attention-core-idle)' }, group);
+  const lit = svg('rect', { x: gpu.x, y: gpu.y, width, height, fill: 'url(#self-attention-core-lit)', opacity: 0 }, group);
   const single = svg('g', {}, group);
-  svg('rect', { class: 'sa-core-lit', x: -(gpu.pitch - 1.5) / 2, y: -(gpu.pitch - 1.5) / 2, width: gpu.pitch - 1.5, height: gpu.pitch - 1.5 }, single);
-  svg('circle', { class: 'sa-core-ring', r: 12 }, single);
-  const caption = createSwapText(group, gpu.x + width / 2, gpu.y + height + 66, { class: 'sa-gpu-caption', 'text-anchor': 'middle' });
+  svg('rect', { class: 'self-attention-core-lit', x: -(gpu.pitch - 1.5) / 2, y: -(gpu.pitch - 1.5) / 2, width: gpu.pitch - 1.5, height: gpu.pitch - 1.5 }, single);
+  svg('circle', { class: 'self-attention-core-ring', r: 12 }, single);
+  const caption = createSwapText(group, gpu.x + width / 2, gpu.y + height + 66, { class: 'self-attention-gpu-caption', 'text-anchor': 'middle' });
 
   return (time: number) => {
     setAttributes(group, { opacity: appear(time, at.gpu, .5).toFixed(3) });
@@ -217,14 +217,14 @@ const createGPU = (root: SVGElement) => {
 
 const createBank = (root: SVGElement) => {
   // 창구 하나: 줄 선 손님이 한 명씩 빠지고 줄이 당겨진다(손님은 끝없이 이어진다).
-  const single = svg('g', { class: 'sa-bank' }, root);
+  const single = svg('g', { class: 'self-attention-bank' }, root);
   booth(single, bank.windowX);
   const teller = person(single, 'teller');
   setAttributes(teller, { transform: `translate(${bank.windowX} ${bank.y - 26}) scale(.62)` });
   const queue = Array.from({ length: 11 }, () => person(single));
 
   // 단어 수만큼 창구: 단어 아래마다 창구가 열리고 손님이 한꺼번에 처리된다.
-  const many = svg('g', { class: 'sa-bank many' }, root);
+  const many = svg('g', { class: 'self-attention-bank many' }, root);
   const windows = centers.map((x) => {
     const group = svg('g', {}, many);
     booth(group, x);
@@ -232,7 +232,7 @@ const createBank = (root: SVGElement) => {
     setAttributes(guest, { transform: `translate(${x} ${bank.y + 92})` });
     const tellerMany = person(group, 'teller');
     setAttributes(tellerMany, { transform: `translate(${x} ${bank.y - 26}) scale(.62)` });
-    const glow = svg('rect', { class: 'sa-booth-glow', x: x - 46, y: bank.y - 80, width: 92, height: 58, rx: 10 }, group);
+    const glow = svg('rect', { class: 'self-attention-booth-glow', x: x - 46, y: bank.y - 80, width: 92, height: 58, rx: 10 }, group);
     return { group, glow };
   });
 
@@ -264,46 +264,46 @@ const createBank = (root: SVGElement) => {
 };
 
 export const createSelfAttentionScene = (): Scene => {
-  const { element, root } = createDiagram('sa', '셀프 어텐션');
+  const { element, root } = createDiagram('self-attention', '셀프 어텐션');
 
-  const arcs = svg('g', { class: 'sa-arcs' }, root);
-  const arcPaths = pairs.map(([a, b]) => svg('path', { class: 'sa-arc', d: arcPath(a, b), pathLength: 1 }, arcs));
-  const ripples = centers.map((x) => svg('circle', { class: 'sa-ripple', cx: x, cy: rowY }, root));
+  const arcs = svg('g', { class: 'self-attention-arcs' }, root);
+  const arcPaths = pairs.map(([a, b]) => svg('path', { class: 'self-attention-arc', d: arcPath(a, b), pathLength: 1 }, arcs));
+  const ripples = centers.map((x) => svg('circle', { class: 'self-attention-ripple', cx: x, cy: rowY }, root));
 
-  const questions = svg('g', { class: 'sa-questions' }, root);
+  const questions = svg('g', { class: 'self-attention-questions' }, root);
   const questionTargets = [
     { target: animal, at: at.animal },
     { target: road, at: at.road },
   ].map(({ target, at: time0 }) => {
     const group = svg('g', {}, questions);
-    svg('path', { class: 'sa-question', d: questionPath(tired, target) }, group);
-    text(group, (centers[tired] + centers[target]) / 2, rowY + 34 + 74, '?', { class: 'sa-question-mark', 'text-anchor': 'middle' });
+    svg('path', { class: 'self-attention-question', d: questionPath(tired, target) }, group);
+    text(group, (centers[tired] + centers[target]) / 2, rowY + 34 + 74, '?', { class: 'self-attention-question-mark', 'text-anchor': 'middle' });
     return { group, at: time0 };
   });
 
-  const bars = svg('g', { class: 'sa-bars' }, root);
-  const barRects = centers.map((x) => svg('rect', { class: 'sa-bar', x: x - 22, width: 44, rx: 6 }, bars));
+  const bars = svg('g', { class: 'self-attention-bars' }, root);
+  const barRects = centers.map((x) => svg('rect', { class: 'self-attention-bar', x: x - 22, width: 44, rx: 6 }, bars));
   const barBase = 470;
 
   const chips = words.map((word, i) => chip(root, centers[i], rowY, word, widths[i]));
-  const check = svg('g', { class: 'sa-check' }, root);
+  const check = svg('g', { class: 'self-attention-check' }, root);
   svg('circle', { cx: 0, cy: 0, r: 18 }, check);
   svg('path', { d: 'M-8 0 L-2 7 L9 -6' }, check);
 
   // 차례로 읽는 칸(순환 신경망 · LSTM).
   // 읽는 칸은 화면 안쪽(GPU 판과 겹치지 않게)에 머물고, 화살표가 지금 읽는 단어를 가리킨다.
-  const readerArrow = svg('path', { class: 'sa-reader-arrow' }, root);
-  const reader = svg('g', { class: 'sa-reader' }, root);
-  svg('rect', { class: 'sa-reader-box', x: -140, y: -40, width: 280, height: 80, rx: 18 }, reader);
-  const readerLabel = text(reader, 0, 11, '', { class: 'sa-reader-label' });
+  const readerArrow = svg('path', { class: 'self-attention-reader-arrow' }, root);
+  const reader = svg('g', { class: 'self-attention-reader' }, root);
+  svg('rect', { class: 'self-attention-reader-box', x: -140, y: -40, width: 280, height: 80, rx: 18 }, reader);
+  const readerLabel = text(reader, 0, 11, '', { class: 'self-attention-reader-label' });
   const rnnSpan = svg('tspan', {}, readerLabel);
   rnnSpan.textContent = '순환 신경망';
   const lstmSpan = svg('tspan', {}, readerLabel);
   lstmSpan.textContent = ' · LSTM';
-  const strike = svg('path', { class: 'sa-strike', d: 'M-150 -48 L150 48 M-150 48 L150 -48', pathLength: 1 }, reader);
+  const strike = svg('path', { class: 'self-attention-strike', d: 'M-150 -48 L150 48 M-150 48 L150 -48', pathLength: 1 }, reader);
   const readerY = 440;
 
-  const caption = createSwapText(root, 580, 560, { class: 'sa-caption', 'text-anchor': 'middle' });
+  const caption = createSwapText(root, 580, 560, { class: 'self-attention-caption', 'text-anchor': 'middle' });
   const renderGPU = createGPU(root);
   const renderBank = createBank(root);
 

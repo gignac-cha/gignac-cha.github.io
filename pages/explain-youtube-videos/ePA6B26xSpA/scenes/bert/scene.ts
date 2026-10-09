@@ -57,14 +57,14 @@ const shown = (time: number, [from, to]: number[]) => appear(time, from, .4) * (
 
 const createCard = (root: SVGElement) => {
   const group = svg('g', {}, root);
-  text(group, 800, 380, 'BERT', { class: 'bt-name', 'text-anchor': 'middle' });
-  text(group, 800, 440, '구글 · 2018년 10월', { class: 'bt-sub', 'text-anchor': 'middle' });
-  const acronym = text(group, 800, 540, '', { class: 'bt-acronym', 'text-anchor': 'middle' });
+  text(group, 800, 380, 'BERT', { class: 'bert-name', 'text-anchor': 'middle' });
+  text(group, 800, 440, '구글 · 2018년 10월', { class: 'bert-sub', 'text-anchor': 'middle' });
+  const acronym = text(group, 800, 540, '', { class: 'bert-acronym', 'text-anchor': 'middle' });
   ['Bidirectional', ' Encoder', ' Representations from', ' Transformers'].forEach((part, i) => {
     const span = svg('tspan', { class: i === 0 ? 'key' : '' }, acronym);
     span.textContent = part;
   });
-  text(group, 800, 590, '트랜스포머의 읽는 쪽(인코더)을 키운 모델', { class: 'bt-sub', 'text-anchor': 'middle' });
+  text(group, 800, 590, '트랜스포머의 읽는 쪽(인코더)을 키운 모델', { class: 'bert-sub', 'text-anchor': 'middle' });
   const rest = group.lastElementChild as SVGTextElement;
   return (time: number) => {
     setAttributes(group, { opacity: shown(time, parts.card).toFixed(3) });
@@ -76,36 +76,36 @@ const createCard = (root: SVGElement) => {
 const createMasked = (root: SVGElement) => {
   const group = svg('g', {}, root);
   // "다음 단어가 아니라": GPT 식 문제는 지운다.
-  const nextWord = svg('g', { class: 'bt-next' }, group);
-  text(nextWord, 800, 236, 'I went to the  ___ →   다음 단어 맞히기', { class: 'bt-next-text', 'text-anchor': 'middle' });
-  const strike = svg('path', { class: 'bt-strike', d: 'M520 226 L1080 226', pathLength: 1 }, nextWord);
+  const nextWord = svg('g', { class: 'bert-next' }, group);
+  text(nextWord, 800, 236, 'I went to the  ___ →   다음 단어 맞히기', { class: 'bert-next-text', 'text-anchor': 'middle' });
+  const strike = svg('path', { class: 'bert-strike', d: 'M520 226 L1080 226', pathLength: 1 }, nextWord);
 
-  const test = svg('g', { class: 'bt-test' }, group);
+  const test = svg('g', { class: 'bert-test' }, group);
   svg('rect', { x: 150, y: 300, width: 1300, height: 290, rx: 20 }, test);
-  text(test, 190, 356, 'Q. 빈칸에 들어갈 알맞은 말은?', { class: 'bt-test-title' });
-  const heading = text(group, 800, 236, '빈칸 맞히기', { class: 'bt-heading', 'text-anchor': 'middle' });
+  text(test, 190, 356, 'Q. 빈칸에 들어갈 알맞은 말은?', { class: 'bert-test-title' });
+  const heading = text(group, 800, 236, '빈칸 맞히기', { class: 'bert-heading', 'text-anchor': 'middle' });
 
-  const words = tokens.map((word, i) => text(group, sentenceX[i], sentenceY, word, { class: `bt-token${i === masked ? ' hidden-word' : ''}`, 'text-anchor': 'middle' }));
-  const mask = svg('g', { class: 'bt-mask' }, group);
+  const words = tokens.map((word, i) => text(group, sentenceX[i], sentenceY, word, { class: `bert-token${i === masked ? ' hidden-word' : ''}`, 'text-anchor': 'middle' }));
+  const mask = svg('g', { class: 'bert-mask' }, group);
   svg('rect', { x: sentenceX[masked] - 95, y: sentenceY - 46, width: 190, height: 64, rx: 12 }, mask);
-  const maskLabel = text(mask, sentenceX[masked], sentenceY - 2, '[MASK]', { class: 'bt-mask-label', 'text-anchor': 'middle' });
-  const question = text(mask, sentenceX[masked], sentenceY - 2, '?', { class: 'bt-mask-question', 'text-anchor': 'middle' });
+  const maskLabel = text(mask, sentenceX[masked], sentenceY - 2, '[MASK]', { class: 'bert-mask-label', 'text-anchor': 'middle' });
+  const question = text(mask, sentenceX[masked], sentenceY - 2, '?', { class: 'bert-mask-question', 'text-anchor': 'middle' });
 
   // 앞 문맥과 뒤 문맥에서 빈칸으로 모이는 화살표.
   const arrow = (from: number, to: number, label: string) => {
-    const arc = svg('g', { class: 'bt-context' }, group);
+    const arc = svg('g', { class: 'bert-context' }, group);
     const x1 = (sentenceX[from] + sentenceX[to]) / 2;
     const x2 = sentenceX[masked] + (from < masked ? -40 : 40);
     // 화살표는 괄호에서 빈칸 쪽 끝에서 출발해, 괄호 가운데 아래의 글자를 지나지 않는다.
     const x0 = from < masked ? sentenceX[to] + 30 : sentenceX[from] - 30;
-    svg('path', { class: 'bt-bracket', d: `M${sentenceX[from] - 30} ${sentenceY + 34} L${sentenceX[from] - 30} ${sentenceY + 50} L${sentenceX[to] + 30} ${sentenceY + 50} L${sentenceX[to] + 30} ${sentenceY + 34}` }, arc);
-    svg('path', { class: 'bt-arrow', d: `M${x0} ${sentenceY + 50} Q${(x0 + x2) / 2} ${sentenceY + 100} ${x2} ${sentenceY + 40}`, pathLength: 1 }, arc);
-    text(arc, x1, sentenceY + 96, label, { class: 'bt-context-label', 'text-anchor': 'middle' });
+    svg('path', { class: 'bert-bracket', d: `M${sentenceX[from] - 30} ${sentenceY + 34} L${sentenceX[from] - 30} ${sentenceY + 50} L${sentenceX[to] + 30} ${sentenceY + 50} L${sentenceX[to] + 30} ${sentenceY + 34}` }, arc);
+    svg('path', { class: 'bert-arrow', d: `M${x0} ${sentenceY + 50} Q${(x0 + x2) / 2} ${sentenceY + 100} ${x2} ${sentenceY + 40}`, pathLength: 1 }, arc);
+    text(arc, x1, sentenceY + 96, label, { class: 'bert-context-label', 'text-anchor': 'middle' });
     return arc;
   };
   const before = arrow(0, 3, '앞 문맥');
   const after = arrow(5, 8, '뒤 문맥');
-  const both = text(group, 800, 690, '양방향으로 읽는다 · Bidirectional', { class: 'bt-both', 'text-anchor': 'middle' });
+  const both = text(group, 800, 690, '양방향으로 읽는다 · Bidirectional', { class: 'bert-both', 'text-anchor': 'middle' });
 
   return (time: number) => {
     setAttributes(group, { opacity: shown(time, parts.masked).toFixed(3) });
@@ -130,7 +130,7 @@ const createMasked = (root: SVGElement) => {
 
     for (const [arc, arcAt] of [[before, at.before], [after, at.after]] as const) {
       setAttributes(arc, { opacity: appear(time, arcAt, .3).toFixed(3) });
-      setAttributes(arc.querySelector('.bt-arrow')!, { 'stroke-dashoffset': (1 - ease(progress(time, arcAt, .5))).toFixed(3) });
+      setAttributes(arc.querySelector('.bert-arrow')!, { 'stroke-dashoffset': (1 - ease(progress(time, arcAt, .5))).toFixed(3) });
     }
     setAttributes(both, { opacity: appear(time, at.both, .4).toFixed(3) });
   };
@@ -146,29 +146,29 @@ const createCompare = (root: SVGElement) => {
   const before = tokens.map((_, i) => i).filter((i) => i < masked);
   const after = tokens.map((_, i) => i).filter((i) => i > masked);
   const row = (y: number, name: string, note: string, className: string, seen: number[], verdict: string) => {
-    const container = svg('g', { class: `bt-row ${className}` }, group);
-    text(container, 110, y - 70, name, { class: 'bt-row-name' });
-    text(container, 110 + name.length * 28 + 20, y - 70, note, { class: 'bt-row-note' });
+    const container = svg('g', { class: `bert-row ${className}` }, group);
+    text(container, 110, y - 70, name, { class: 'bert-row-name' });
+    text(container, 110 + name.length * 28 + 20, y - 70, note, { class: 'bert-row-note' });
     // 빈칸 아래에서 보이는 단어 아래로 휘어 내려가는 선(멀수록 깊게).
     const links = seen.map((i) => {
       const from = rowX[masked];
       const to = rowX[i];
       const depth = 30 + Math.abs(to - from) * .2;
-      return svg('path', { class: 'bt-link', d: `M${from} ${y + 24} C${from} ${y + 24 + depth} ${to} ${y + 24 + depth} ${to} ${y + 24}`, pathLength: 1 }, container);
+      return svg('path', { class: 'bert-link', d: `M${from} ${y + 24} C${from} ${y + 24 + depth} ${to} ${y + 24 + depth} ${to} ${y + 24}`, pathLength: 1 }, container);
     });
     const cells = tokens.map((word, i) => {
-      const cell = svg('g', { class: `bt-cell${i === masked ? ' blank' : ''}` }, container);
+      const cell = svg('g', { class: `bert-cell${i === masked ? ' blank' : ''}` }, container);
       svg('rect', { x: bounds[i].left, y: y - 30, width: cellWidth(word, i), height: 52, rx: 10 }, cell);
       text(cell, rowX[i], y + (i === masked ? 10 : 6), i === masked ? '?' : word, { 'text-anchor': 'middle' });
       return cell;
     });
-    const label = text(container, 1060, y + 8, verdict, { class: 'bt-verdict' });
+    const label = text(container, 1060, y + 8, verdict, { class: 'bert-verdict' });
     return { container, cells, links, label };
   };
   const gpt = row(380, 'GPT', '왼쪽에서 오른쪽으로 읽는 이야기꾼', 'gpt', before, '빈칸 앞 4단어만 보고 맞힌다');
   const bert = row(660, 'BERT', '문장 전체를 한눈에 훑는 독해 선수', 'bert', [...before, ...after], '빈칸 앞뒤 8단어를 다 보고 맞힌다');
-  const unseen = text(gpt.container, (bounds[after[0]].left + bounds[after[after.length - 1]].right) / 2, 380 + 66, '아직 읽지 않은 뒤 문맥', { class: 'bt-unseen', 'text-anchor': 'middle' });
-  const cursor = svg('path', { class: 'bt-cursor', d: 'M0 -40 L0 34' }, gpt.container);
+  const unseen = text(gpt.container, (bounds[after[0]].left + bounds[after[after.length - 1]].right) / 2, 380 + 66, '아직 읽지 않은 뒤 문맥', { class: 'bert-unseen', 'text-anchor': 'middle' });
+  const cursor = svg('path', { class: 'bert-cursor', d: 'M0 -40 L0 34' }, gpt.container);
   // GPT 가 빈칸까지 읽는 시간: "왼쪽에서 오른쪽으로 읽는" 동안 한 단어씩.
   const readFor = 1.1;
   const reachBlank = at.leftToRight + readFor;
@@ -204,27 +204,27 @@ const createCompare = (root: SVGElement) => {
 
 const createResults = (root: SVGElement) => {
   const group = svg('g', {}, root);
-  text(group, 800, 220, 'BERT가 한꺼번에 갈아치운 기록', { class: 'bt-heading', 'text-anchor': 'middle' });
+  text(group, 800, 220, 'BERT가 한꺼번에 갈아치운 기록', { class: 'bert-heading', 'text-anchor': 'middle' });
   const scale = board.width / 100;
   const rows = records.map((record, i) => {
     const y = board.y + i * board.step;
     const row = svg('g', {}, group);
-    text(row, board.x - 24, y + 4, record.label, { class: 'bt-record-label', 'text-anchor': 'end' });
-    text(row, board.x - 24, y + 34, record.bench, { class: 'bt-record-bench', 'text-anchor': 'end' });
-    svg('rect', { class: 'bt-track', x: board.x, y: y - 16, width: board.width, height: 40, rx: 8 }, row);
-    const bertBar = svg('rect', { class: 'bt-bar bert', x: board.x, y: y - 16, height: 40, rx: 8, width: 0 }, row);
-    const previousBar = svg('rect', { class: 'bt-bar previous', x: board.x, y: y - 16, height: 40, rx: 8, width: 0 }, row);
-    const previousValue = text(row, board.x + record.previous * scale - 12, y + 13, `${record.previous.toFixed(1)}`, { class: 'bt-record-value', 'text-anchor': 'end' });
-    const bertValue = text(row, board.x + record.bert * scale + 14, y + 13, `${record.bert.toFixed(1)}  +${(record.bert - record.previous).toFixed(1)}`, { class: 'bt-record-value bert' });
+    text(row, board.x - 24, y + 4, record.label, { class: 'bert-record-label', 'text-anchor': 'end' });
+    text(row, board.x - 24, y + 34, record.bench, { class: 'bert-record-bench', 'text-anchor': 'end' });
+    svg('rect', { class: 'bert-track', x: board.x, y: y - 16, width: board.width, height: 40, rx: 8 }, row);
+    const bertBar = svg('rect', { class: 'bert-bar bert', x: board.x, y: y - 16, height: 40, rx: 8, width: 0 }, row);
+    const previousBar = svg('rect', { class: 'bert-bar previous', x: board.x, y: y - 16, height: 40, rx: 8, width: 0 }, row);
+    const previousValue = text(row, board.x + record.previous * scale - 12, y + 13, `${record.previous.toFixed(1)}`, { class: 'bert-record-value', 'text-anchor': 'end' });
+    const bertValue = text(row, board.x + record.bert * scale + 14, y + 13, `${record.bert.toFixed(1)}  +${(record.bert - record.previous).toFixed(1)}`, { class: 'bert-record-value bert' });
     return { row, record, bertBar, previousBar, previousValue, bertValue };
   });
   const legend = svg('g', {}, group);
-  svg('rect', { class: 'bt-bar previous', x: board.x, y: 690, width: 24, height: 24, rx: 4 }, legend);
-  text(legend, board.x + 36, 710, '이전 최고 기록', { class: 'bt-legend' });
-  svg('rect', { class: 'bt-bar bert', x: board.x + 230, y: 690, width: 24, height: 24, rx: 4 }, legend);
-  text(legend, board.x + 266, 710, 'BERT', { class: 'bt-legend' });
-  const eleven = text(group, 800, 776, '11개 과제에서 최고 기록', { class: 'bt-eleven', 'text-anchor': 'middle' });
-  const advice = svg('g', { class: 'bt-advice' }, group);
+  svg('rect', { class: 'bert-bar previous', x: board.x, y: 690, width: 24, height: 24, rx: 4 }, legend);
+  text(legend, board.x + 36, 710, '이전 최고 기록', { class: 'bert-legend' });
+  svg('rect', { class: 'bert-bar bert', x: board.x + 230, y: 690, width: 24, height: 24, rx: 4 }, legend);
+  text(legend, board.x + 266, 710, 'BERT', { class: 'bert-legend' });
+  const eleven = text(group, 800, 776, '11개 과제에서 최고 기록', { class: 'bert-eleven', 'text-anchor': 'middle' });
+  const advice = svg('g', { class: 'bert-advice' }, group);
   svg('rect', { x: 560, y: 806, width: 480, height: 64, rx: 32 }, advice);
   text(advice, 800, 848, '"일단 BERT부터 써 봐"', { 'text-anchor': 'middle' });
 
@@ -247,7 +247,7 @@ const createResults = (root: SVGElement) => {
 };
 
 export const createBERTScene = (): Scene => {
-  const { element, root } = createDiagram('bt', '빈칸 맞히기(BERT)');
+  const { element, root } = createDiagram('bert', '빈칸 맞히기(BERT)');
   const renders = [createCard(root), createMasked(root), createCompare(root), createResults(root)];
   return {
     element,

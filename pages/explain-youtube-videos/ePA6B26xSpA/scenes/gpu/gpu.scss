@@ -1,23 +1,23 @@
 .gpu-bezel {
   fill: #050506;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
 }
 .gpu-stand {
-  fill: var(--d-grid);
-  stroke: var(--d-line);
+  fill: var(--diagram-grid);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
 .gpu-flash rect {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 2;
 }
 .gpu-caption {
   font-size: 34px;
   font-weight: 600;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 .gpu-heading {
   font-size: 44px;
@@ -27,88 +27,88 @@
 .gpu-sub {
   font-size: 30px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .gpu-left {
   text-anchor: start;
 }
 .gpu-engine {
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
   font-weight: 700;
 }
 .gpu-task {
-  fill: color-mix(in srgb, var(--d-orange) 10%, transparent);
-  stroke: var(--d-line);
+  fill: color-mix(in srgb, var(--diagram-orange) 10%, transparent);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 
   &.active {
-    fill: var(--d-orange);
-    stroke: var(--d-orange);
+    fill: var(--diagram-orange);
+    stroke: var(--diagram-orange);
   }
   &.done {
-    fill: color-mix(in srgb, var(--d-orange) 35%, transparent);
-    stroke: var(--d-orange);
+    fill: color-mix(in srgb, var(--diagram-orange) 35%, transparent);
+    stroke: var(--diagram-orange);
   }
 }
 .gpu-core {
-  fill: color-mix(in srgb, var(--d-orange) 8%, transparent);
-  stroke: var(--d-orange);
+  fill: color-mix(in srgb, var(--diagram-orange) 8%, transparent);
+  stroke: var(--diagram-orange);
   stroke-width: 4;
 
   &.active {
-    fill: color-mix(in srgb, var(--d-orange) 22%, transparent);
+    fill: color-mix(in srgb, var(--diagram-orange) 22%, transparent);
   }
 }
 .gpu-person {
-  fill: var(--d-text);
+  fill: var(--diagram-text);
 }
 .gpu-frame {
-  fill: color-mix(in srgb, var(--d-blue) 6%, transparent);
-  stroke: var(--d-blue);
+  fill: color-mix(in srgb, var(--diagram-blue) 6%, transparent);
+  stroke: var(--diagram-blue);
   stroke-width: 3;
 
   &.engine {
-    stroke: var(--d-green);
-    fill: color-mix(in srgb, var(--d-green) 8%, transparent);
-    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--d-green) 60%, transparent));
+    stroke: var(--diagram-green);
+    fill: color-mix(in srgb, var(--diagram-green) 8%, transparent);
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--diagram-green) 60%, transparent));
   }
 }
 .gpu-cells rect {
-  fill: color-mix(in srgb, var(--d-blue) 18%, transparent);
-  stroke: color-mix(in srgb, var(--d-blue) 45%, transparent);
+  fill: color-mix(in srgb, var(--diagram-blue) 18%, transparent);
+  stroke: color-mix(in srgb, var(--diagram-blue) 45%, transparent);
   stroke-width: 1.5;
 }
 .gpu-cells.lit rect {
-  fill: color-mix(in srgb, var(--d-blue) 70%, transparent);
-  stroke: var(--d-blue);
+  fill: color-mix(in srgb, var(--diagram-blue) 70%, transparent);
+  stroke: var(--diagram-blue);
 }
 .gpu-chip .gpu-person {
-  fill: var(--d-background);
+  fill: var(--diagram-background);
 }
 .gpu-net-edge {
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
 .gpu-net-node {
-  fill: var(--d-background);
-  stroke: var(--d-blue);
+  fill: var(--diagram-background);
+  stroke: var(--diagram-blue);
   stroke-width: 3;
 }
 .gpu-op {
   font-size: 34px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 .gpu-token {
   font-size: 30px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 .gpu-arrow {
   fill: none;
-  stroke: var(--d-muted);
+  stroke: var(--diagram-muted);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -116,43 +116,43 @@
 // CUDA 를 지나가는 곱셈·덧셈 기호가 설명 글자 사이로 비치지 않게 바탕색 테두리를 두른다.
 .diagram .gpu-cuda text.gpu-sub {
   paint-order: stroke;
-  stroke: var(--d-background);
+  stroke: var(--diagram-background);
   stroke-width: 14px;
   stroke-linejoin: round;
 }
 .gpu-cuda-box {
-  fill: var(--d-background);
-  stroke: var(--d-green);
+  fill: var(--diagram-background);
+  stroke: var(--diagram-green);
   stroke-width: 3;
 }
 .gpu-cuda-text {
   font-size: 30px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
 .gpu-lane-name {
   font-size: 32px;
   font-weight: 700;
 }
 .gpu-track {
-  fill: var(--d-grid);
+  fill: var(--diagram-grid);
 }
 .gpu-bar {
-  fill: var(--d-muted);
+  fill: var(--diagram-muted);
 
   &.fast {
-    fill: var(--d-blue);
+    fill: var(--diagram-blue);
   }
 }
 .gpu-lane-label {
   font-size: 30px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .gpu-faster {
   font-size: 32px;
   font-weight: 700;
   text-anchor: end;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }

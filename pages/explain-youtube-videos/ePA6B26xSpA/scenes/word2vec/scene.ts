@@ -30,12 +30,12 @@ const arrowPath = (x1: number, y1: number, x2: number, y2: number) => {
 
 const createPixels = (root: SVGElement) => {
   const group = svg('g', {}, root);
-  text(group, 428, 226, '사진', { class: 'w2v-caption', 'text-anchor': 'middle' });
+  text(group, 428, 226, '사진', { class: 'word2vec-caption', 'text-anchor': 'middle' });
   const numbers: SVGTextElement[] = [];
   apple.forEach((row, y) =>
     [...row].forEach((cell, x) => {
-      svg('rect', { class: `w2v-pixel w2v-pixel-${cell === '.' ? 'empty' : cell}`, x: 200 + x * 76, y: 250 + y * 76, width: 74, height: 74, rx: 6 }, group);
-      numbers.push(text(group, 237 + x * 76, 297 + y * 76, String(brightness[cell]), { class: `w2v-number ${cell === '.' ? '' : 'on-color'}` }));
+      svg('rect', { class: `word2vec-pixel word2vec-pixel-${cell === '.' ? 'empty' : cell}`, x: 200 + x * 76, y: 250 + y * 76, width: 74, height: 74, rx: 6 }, group);
+      numbers.push(text(group, 237 + x * 76, 297 + y * 76, String(brightness[cell]), { class: `word2vec-number ${cell === '.' ? '' : 'on-color'}` }));
     }),
   );
   return { group, numbers };
@@ -43,12 +43,12 @@ const createPixels = (root: SVGElement) => {
 
 const createWord = (root: SVGElement) => {
   const group = svg('g', {}, root);
-  text(group, 1140, 300, '단어', { class: 'w2v-caption', 'text-anchor': 'middle' });
-  text(group, 1140, 420, '사과', { class: 'w2v-big-word' });
-  const codes = text(group, 1140, 490, '49324 · 44284', { class: 'w2v-codes' });
-  const codesLabel = text(group, 1140, 536, '글자 번호일 뿐', { class: 'w2v-caption', 'text-anchor': 'middle' });
-  const link = svg('path', { class: 'w2v-no-link', d: 'M1010 400 L690 470' }, group);
-  const cross = svg('g', { class: 'w2v-cross', transform: 'translate(850 435)' }, group);
+  text(group, 1140, 300, '단어', { class: 'word2vec-caption', 'text-anchor': 'middle' });
+  text(group, 1140, 420, '사과', { class: 'word2vec-big-word' });
+  const codes = text(group, 1140, 490, '49324 · 44284', { class: 'word2vec-codes' });
+  const codesLabel = text(group, 1140, 536, '글자 번호일 뿐', { class: 'word2vec-caption', 'text-anchor': 'middle' });
+  const link = svg('path', { class: 'word2vec-no-link', d: 'M1010 400 L690 470' }, group);
+  const cross = svg('g', { class: 'word2vec-cross', transform: 'translate(850 435)' }, group);
   svg('circle', { r: 26 }, cross);
   svg('path', { d: 'M-10 -10 L10 10 M10 -10 L-10 10' }, cross);
   return { group, codes, codesLabel, link, cross };
@@ -61,25 +61,25 @@ interface Point {
 }
 
 const createPoint = (parent: SVGElement, name: string, id?: string): Point => {
-  const group = svg('g', { class: 'w2v-point' }, parent);
-  const chip = svg('g', { class: 'w2v-chip' }, group);
+  const group = svg('g', { class: 'word2vec-point' }, parent);
+  const chip = svg('g', { class: 'word2vec-chip' }, group);
   svg('rect', { x: -86, y: -36, width: 172, height: 72, rx: 36 }, chip);
-  text(chip, 0, 12, name, { class: 'w2v-chip-label' });
+  text(chip, 0, 12, name, { class: 'word2vec-chip-label' });
   if (id) {
-    text(chip, 0, 76, id, { class: 'w2v-chip-id' });
+    text(chip, 0, 76, id, { class: 'word2vec-chip-id' });
   }
-  svg('circle', { class: 'w2v-dot', r: 9 }, group);
+  svg('circle', { class: 'word2vec-dot', r: 9 }, group);
   // 화살표가 오른쪽으로 지나가는 단어는 라벨을 점 아래에 둔다.
   const below = name === '서울' || name === '한국';
-  const label = text(group, below ? 0 : 18, below ? 46 : 11, name, { class: 'w2v-label', 'text-anchor': below ? 'middle' : 'start' });
+  const label = text(group, below ? 0 : 18, below ? 46 : 11, name, { class: 'word2vec-label', 'text-anchor': below ? 'middle' : 'start' });
   return { group, label, chip };
 };
 
 // SVG 판. Three.js 판도 지도가 나오기 전(사진·기호·번호표)은 이 그림을 그대로 쓴다.
 export const createWord2VecSVG = (): Scene => {
-  const { element, root } = createDiagram('w2v', '단어 좌표(Word2Vec)');
+  const { element, root } = createDiagram('word2vec', '단어 좌표(Word2Vec)');
 
-  const grid = svg('g', { class: 'w2v-grid' }, root);
+  const grid = svg('g', { class: 'word2vec-grid' }, root);
   for (let x = 100; x <= 1500; x += 100) {
     svg('line', { x1: x, y1: 180, x2: x, y2: 840 }, grid);
   }
@@ -90,7 +90,7 @@ export const createWord2VecSVG = (): Scene => {
   const photo = createPixels(root);
   const written = createWord(root);
 
-  const unknownEdges = svg('g', { class: 'w2v-unknown' }, root);
+  const unknownEdges = svg('g', { class: 'word2vec-unknown' }, root);
   const pairs: Array<[string, string]> = [['사과', '배'], ['사과', '자동차'], ['배', '자동차']];
   const questions = pairs.map(([a, b]) => {
     const [x1, y1] = triangle[a];
@@ -102,34 +102,34 @@ export const createWord2VecSVG = (): Scene => {
     return mark;
   });
 
-  const friendLines = svg('g', { class: 'w2v-friend-lines' }, root);
+  const friendLines = svg('g', { class: 'word2vec-friend-lines' }, root);
   const friends = [
     { name: '컵', x: 900, y: 240 },
     { name: '마시다', x: 960, y: 400 },
     { name: '아침', x: 840, y: 480 },
   ].map((friend, index) => {
-    const group = svg('g', { class: 'w2v-friend', transform: `translate(${friend.x} ${friend.y})` }, root);
+    const group = svg('g', { class: 'word2vec-friend', transform: `translate(${friend.x} ${friend.y})` }, root);
     svg('rect', { x: -70, y: -30, width: 140, height: 60, rx: 30 }, group);
     text(group, 0, 10, friend.name);
     return { ...friend, group, at: map.friends[index], coffeeLine: svg('line', {}, friendLines), teaLine: svg('line', {}, friendLines) };
   });
 
-  const relations = svg('g', { class: 'w2v-relations' }, root);
-  const parallel = svg('path', { class: 'w2v-parallel' }, relations);
+  const relations = svg('g', { class: 'word2vec-relations' }, root);
+  const parallel = svg('path', { class: 'word2vec-parallel' }, relations);
   const arrows = {
-    gender: svg('path', { class: 'w2v-arrow reference' }, relations),
-    king: svg('path', { class: 'w2v-arrow result' }, relations),
-    country: svg('path', { class: 'w2v-arrow reference' }, relations),
-    city: svg('path', { class: 'w2v-arrow result' }, relations),
+    gender: svg('path', { class: 'word2vec-arrow reference' }, relations),
+    king: svg('path', { class: 'word2vec-arrow result' }, relations),
+    country: svg('path', { class: 'word2vec-arrow reference' }, relations),
+    city: svg('path', { class: 'word2vec-arrow result' }, relations),
   };
-  const targets = [svg('circle', { class: 'w2v-target', r: 22 }, relations), svg('circle', { class: 'w2v-target', r: 22 }, relations)];
+  const targets = [svg('circle', { class: 'word2vec-target', r: 22 }, relations), svg('circle', { class: 'word2vec-target', r: 22 }, relations)];
 
   const ids: Record<string, string> = { 사과: '#1824', 배: '#3301', 자동차: '#907' };
   const points = Object.fromEntries(Object.keys(places).map((name) => [name, createPoint(root, name, ids[name])]));
 
   const formulas = [
-    text(root, 800, 870, '왕 − 남자 + 여자 ≈ 여왕', { class: 'w2v-formula' }),
-    text(root, 800, 870, '서울 − 한국 + 일본 ≈ 도쿄', { class: 'w2v-formula' }),
+    text(root, 800, 870, '왕 − 남자 + 여자 ≈ 여왕', { class: 'word2vec-formula' }),
+    text(root, 800, 870, '서울 − 한국 + 일본 ≈ 도쿄', { class: 'word2vec-formula' }),
   ];
 
   const position = (name: string, time: number): [number, number] => {
@@ -193,7 +193,7 @@ export const createWord2VecSVG = (): Scene => {
       const asChip = name in triangle ? 1 - appear(time, map.place, .5) : 0;
       setAttributes(point.chip, { opacity: asChip.toFixed(3) });
       setAttributes(point.label, { opacity: (1 - asChip).toFixed(3) });
-      setAttributes(point.group.querySelector('.w2v-dot')!, { opacity: (1 - asChip).toFixed(3) });
+      setAttributes(point.group.querySelector('.word2vec-dot')!, { opacity: (1 - asChip).toFixed(3) });
     }
 
     const friendsGone = 1 - appear(time, map.fill, .6);

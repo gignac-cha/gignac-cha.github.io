@@ -1,8 +1,8 @@
-.ed {
-  --ed-encoder: var(--d-green);
-  --ed-decoder: var(--d-purple);
+.encoder-decoder {
+  --ed-encoder: var(--diagram-green);
+  --ed-decoder: var(--diagram-purple);
 }
-.ed-frame {
+.encoder-decoder-frame {
   fill: none;
   stroke-width: 3;
 
@@ -13,7 +13,7 @@
     stroke: var(--ed-decoder);
   }
 }
-.ed-name {
+.encoder-decoder-name {
   font-size: 26px;
   font-weight: 700;
 
@@ -24,10 +24,10 @@
     fill: var(--ed-decoder) !important;
   }
 }
-.ed-chip {
+.encoder-decoder-chip {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-line);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   text {
@@ -43,85 +43,85 @@
     fill: #0f1a2b;
   }
 }
-.ed-pulse {
+.encoder-decoder-pulse {
   fill: var(--ed-encoder);
 }
-.ed-stack {
-  rect:not(.ed-stack-glow) {
+.encoder-decoder-stack {
+  rect:not(.encoder-decoder-stack-glow) {
     stroke-width: 1.5;
   }
-  &.encoder rect:not(.ed-stack-glow) {
-    fill: color-mix(in srgb, var(--ed-encoder) 28%, var(--d-background));
+  &.encoder rect:not(.encoder-decoder-stack-glow) {
+    fill: color-mix(in srgb, var(--ed-encoder) 28%, var(--diagram-background));
     stroke: var(--ed-encoder);
   }
-  &.decoder rect:not(.ed-stack-glow) {
-    fill: color-mix(in srgb, var(--ed-decoder) 28%, var(--d-background));
+  &.decoder rect:not(.encoder-decoder-stack-glow) {
+    fill: color-mix(in srgb, var(--ed-decoder) 28%, var(--diagram-background));
     stroke: var(--ed-decoder);
   }
 }
-.ed-stack-glow {
+.encoder-decoder-stack-glow {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 5;
 }
-.ed-year {
+.encoder-decoder-year {
   font-size: 56px;
   font-weight: 800;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.ed-company {
+.encoder-decoder-company {
   font-size: 26px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.ed-model-name {
+.encoder-decoder-model-name {
   font-size: 44px;
   font-weight: 800;
 }
-.ed-model.encoder .ed-model-name {
+.encoder-decoder-model.encoder .encoder-decoder-model-name {
   fill: var(--ed-encoder) !important;
 }
-.ed-model.decoder .ed-model-name {
+.encoder-decoder-model.decoder .encoder-decoder-model-name {
   fill: var(--ed-decoder) !important;
 }
-.ed-model-detail {
+.encoder-decoder-model-detail {
   font-size: 22px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.ed-branch {
+.encoder-decoder-branch {
   fill: none;
   stroke: #5b9dff;
   stroke-width: 3;
   stroke-dasharray: 1;
 }
-.ed-road-arrow {
+.encoder-decoder-road-arrow {
   fill: none;
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.ed-road.encoder {
-  .ed-road-arrow {
+.encoder-decoder-road.encoder {
+  .encoder-decoder-road-arrow {
     stroke: var(--ed-encoder);
   }
   text {
     fill: var(--ed-encoder) !important;
   }
 }
-.ed-road.decoder {
-  .ed-road-arrow {
+.encoder-decoder-road.decoder {
+  .encoder-decoder-road-arrow {
     stroke: var(--ed-decoder);
   }
   text {
     fill: var(--ed-decoder) !important;
   }
 }
-.ed-road-label {
+.encoder-decoder-road-label {
   font-size: 24px;
   font-weight: 700;
 }
-.ed-question {
+.encoder-decoder-question {
   font-size: 36px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }

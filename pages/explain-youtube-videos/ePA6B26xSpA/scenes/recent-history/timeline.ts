@@ -29,35 +29,35 @@ export interface View {
 
 // view(time): 그 순간 축이 보여 주는 구간. zoom(time): 확대 보기로 얼마나 들어갔는지(0~1, 이름표 줄 배치에 쓴다).
 export const createTimeline = (root: SVGElement, view: (time: number) => View, zoom: (time: number) => number) => {
-  const clip = svg('clipPath', { id: `rh-clip-${Math.random().toString(36).slice(2, 8)}` }, root);
+  const clip = svg('clipPath', { id: `recent-history-clip-${Math.random().toString(36).slice(2, 8)}` }, root);
   svg('rect', { x: 60, y: 90, width: 1480, height: 510 }, clip);
   const stage = svg('g', { 'clip-path': `url(#${clip.id})` }, root);
 
   // 범례.
-  const legend = svg('g', { class: 'rh-legend' }, root);
-  svg('circle', { cx: 1316, cy: 64, r: 6, class: 'rh-swatch openai' }, legend);
+  const legend = svg('g', { class: 'recent-history-legend' }, root);
+  svg('circle', { cx: 1316, cy: 64, r: 6, class: 'recent-history-swatch openai' }, legend);
   text(legend, 1330, 70, '오픈AI', {});
-  svg('circle', { cx: 1416, cy: 64, r: 6, class: 'rh-swatch rival' }, legend);
+  svg('circle', { cx: 1416, cy: 64, r: 6, class: 'recent-history-swatch rival' }, legend);
   text(legend, 1430, 70, '경쟁사', {});
 
   // 2026년: "바로 지금".
-  const band = svg('rect', { y: 96, height: 500, class: 'rh-band' }, stage);
-  const bandLabel = text(stage, 0, 122, '2026 · 바로 지금', { class: 'rh-band-label' });
+  const band = svg('rect', { y: 96, height: 500, class: 'recent-history-band' }, stage);
+  const bandLabel = text(stage, 0, 122, '2026 · 바로 지금', { class: 'recent-history-band-label' });
 
   // 축과 달 눈금.
-  const line = svg('path', { class: 'rh-axis', d: `M${axis.left} ${axis.y} L${axis.right} ${axis.y}` }, stage);
+  const line = svg('path', { class: 'recent-history-axis', d: `M${axis.left} ${axis.y} L${axis.right} ${axis.y}` }, stage);
   const ticks = Array.from({ length: 18 }, (_, i) => {
     const at = 6 + i;
     const year = 2025 + Math.floor(at / 12);
     const monthOfYear = (at % 12) + 1;
-    const group = svg('g', { class: monthOfYear === 1 ? 'rh-tick year' : 'rh-tick' }, stage);
+    const group = svg('g', { class: monthOfYear === 1 ? 'recent-history-tick year' : 'recent-history-tick' }, stage);
     const mark = svg('path', {}, group);
     const label = text(group, 0, axis.y + 28, monthOfYear === 1 ? `${year}.1` : String(monthOfYear), { 'text-anchor': 'middle' });
     return { at, mark, label, year, monthOfYear };
   });
 
   // "거의 매달 새 모델".
-  const monthly = svg('g', { class: 'rh-monthly' }, stage);
+  const monthly = svg('g', { class: 'recent-history-monthly' }, stage);
   const monthlyPath = svg('path', {}, monthly);
   const monthlyLabel = text(monthly, 0, 150, '거의 매달 새 모델', { 'text-anchor': 'middle' });
 
@@ -68,28 +68,28 @@ export const createTimeline = (root: SVGElement, view: (time: number) => View, z
   const views = events
     .filter(({ id }) => id !== 'today')
     .map((event) => {
-      const className = `rh-event ${event.lane} ${event.kind}`;
+      const className = `recent-history-event ${event.lane} ${event.kind}`;
       const parts = [stemLayer, markLayer, labelLayer].map((layer) => svg('g', { class: className }, layer));
-      const stem = svg('path', { class: 'rh-stem' }, parts[0]);
-      const mark = event.span ? svg('rect', { class: 'rh-span', height: 10, rx: 5, y: axis.y - 5 }, parts[1]) : svg('circle', { class: 'rh-dot', cy: axis.y, r: 7 }, parts[1]);
+      const stem = svg('path', { class: 'recent-history-stem' }, parts[0]);
+      const mark = event.span ? svg('rect', { class: 'recent-history-span', height: 10, rx: 5, y: axis.y - 5 }, parts[1]) : svg('circle', { class: 'recent-history-dot', cy: axis.y, r: 7 }, parts[1]);
       const label = event.label === false ? undefined : parts[2];
-      const date = label && event.dateLabel ? text(label, 0, 0, event.dateLabel.split(' · ')[0], { class: 'rh-date', 'text-anchor': 'middle' }) : undefined;
-      const name = label ? text(label, 0, 0, typeof event.label === 'string' ? event.label : event.title, { class: 'rh-name', 'text-anchor': 'middle' }) : undefined;
+      const date = label && event.dateLabel ? text(label, 0, 0, event.dateLabel.split(' · ')[0], { class: 'recent-history-date', 'text-anchor': 'middle' }) : undefined;
+      const name = label ? text(label, 0, 0, typeof event.label === 'string' ? event.label : event.title, { class: 'recent-history-name', 'text-anchor': 'middle' }) : undefined;
       return { event, parts, stem, mark, label, date, name };
     });
 
   // 오늘.
-  const todayMark = svg('g', { class: 'rh-today' }, stage);
+  const todayMark = svg('g', { class: 'recent-history-today' }, stage);
   const todayLine = svg('path', {}, todayMark);
   const todayLabel = text(todayMark, 0, axis.y - 12, '오늘', {});
 
   // 지금 사건 카드.
-  const card = svg('g', { class: 'rh-card' }, root);
-  svg('rect', { x: 300, y: 614, width: 1000, height: 226, rx: 20, class: 'rh-card-box' }, card);
-  svg('rect', { x: 300, y: 634, width: 6, height: 186, rx: 3, class: 'rh-card-stripe' }, card);
-  const cardDate = text(card, 340, 656, '', { class: 'rh-card-date' });
-  const cardTitle = text(card, 340, 702, '', { class: 'rh-card-title' });
-  const cardNotes = [746, 782, 818].map((y) => text(card, 340, y, '', { class: 'rh-card-note' }));
+  const card = svg('g', { class: 'recent-history-card' }, root);
+  svg('rect', { x: 300, y: 614, width: 1000, height: 226, rx: 20, class: 'recent-history-card-box' }, card);
+  svg('rect', { x: 300, y: 634, width: 6, height: 186, rx: 3, class: 'recent-history-card-stripe' }, card);
+  const cardDate = text(card, 340, 656, '', { class: 'recent-history-card-date' });
+  const cardTitle = text(card, 340, 702, '', { class: 'recent-history-card-title' });
+  const cardNotes = [746, 782, 818].map((y) => text(card, 340, y, '', { class: 'recent-history-card-note' }));
   let shown: TimelineEvent | undefined;
 
   return (time: number) => {
@@ -166,7 +166,7 @@ export const createTimeline = (root: SVGElement, view: (time: number) => View, z
     // 카드.
     if (current !== shown) {
       shown = current;
-      card.setAttribute('class', `rh-card ${current?.lane ?? ''} ${current?.kind ?? ''}`);
+      card.setAttribute('class', `recent-history-card ${current?.lane ?? ''} ${current?.kind ?? ''}`);
       cardDate.textContent = current?.dateLabel ?? '';
       cardTitle.textContent = current?.title ?? '';
       cardNotes.forEach((note, i) => (note.textContent = current?.notes[i]?.text ?? ''));

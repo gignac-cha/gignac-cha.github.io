@@ -61,7 +61,7 @@ const sizes = [
 ];
 
 const formula = (parent: SVGElement, x: number, y: number, [base, power]: string[]) => {
-  const element = text(parent, x, y, base, { class: 'sl-law', 'text-anchor': 'end' });
+  const element = text(parent, x, y, base, { class: 'scaling-laws-law', 'text-anchor': 'end' });
   const sup = svg('tspan', { dy: -14, 'font-size': 18 }, element);
   sup.textContent = power;
   // 위첨자를 붙인 뒤 오른쪽 끝을 맞추려고 전체를 한 덩어리로 둔다.
@@ -69,13 +69,13 @@ const formula = (parent: SVGElement, x: number, y: number, [base, power]: string
 };
 
 export const createScalingLawsScene = (): Scene => {
-  const { element, root } = createDiagram('sl', '스케일링 법칙');
+  const { element, root } = createDiagram('scaling-laws', '스케일링 법칙');
 
   // 세 가지 그래프
   const trio = svg('g', {}, root);
-  const heading = svg('g', { class: 'sl-heading' }, trio);
-  text(heading, 800, 172, '스케일링 법칙', { class: 'sl-heading-title' });
-  text(heading, 800, 212, '세 가지를 늘리면 오차가 정해진 비율로 줄어든다', { class: 'sl-heading-sub' });
+  const heading = svg('g', { class: 'scaling-laws-heading' }, trio);
+  text(heading, 800, 172, '스케일링 법칙', { class: 'scaling-laws-heading-title' });
+  text(heading, 800, 212, '세 가지를 늘리면 오차가 정해진 비율로 줄어든다', { class: 'scaling-laws-heading-sub' });
   const charts = panels.map((panel) => {
     const panelGroup = svg('g', {}, trio);
     const chart = createLogChart(panelGroup, {
@@ -86,7 +86,7 @@ export const createScalingLawsScene = (): Scene => {
     const dashed = chart.curve(panel.f, panel.measured, panel.x[1], 'predicted');
     const law = formula(panelGroup, panel.left + 360, 300, panel.law);
     const middle = (panel.measured + panel.x[1]) / 2;
-    const predictLabel = text(panelGroup, chart.toX(middle) + 4, chart.toY(panel.f(middle)) - 26, '예측', { class: 'sl-predict-label', 'text-anchor': 'middle' });
+    const predictLabel = text(panelGroup, chart.toX(middle) + 4, chart.toY(panel.f(middle)) - 26, '예측', { class: 'scaling-laws-predict-label', 'text-anchor': 'middle' });
     return { panel, panelGroup, solid, dashed, law, predictLabel };
   });
 
@@ -99,46 +99,46 @@ export const createScalingLawsScene = (): Scene => {
     xLabel: '학습하며 읽은 글의 양 (토큰)', yLabel: '오차',
   });
   const guideX = sampleChart.toX(10);
-  const guide = svg('line', { class: 'sl-guide', x1: guideX, y1: 200, x2: guideX, y2: 640 }, sample);
-  const guideLabel = text(sample, guideX, 192, '같은 양의 글', { class: 'sl-guide-label', 'text-anchor': 'middle' });
+  const guide = svg('line', { class: 'scaling-laws-guide', x1: guideX, y1: 200, x2: guideX, y2: 640 }, sample);
+  const guideLabel = text(sample, guideX, 192, '같은 양의 글', { class: 'scaling-laws-guide-label', 'text-anchor': 'middle' });
   const learning = sizes.map((size, i) => {
     const curve = sampleChart.curve((e) => lossOfLearning(10 ** size.exponent, 10 ** e), 9, 11, `size-${i}`);
     const endY = sampleChart.toY(lossOfLearning(10 ** size.exponent, 1e11));
-    const label = text(sample, 1146, endY + 9, size.label, { class: `sl-size-label size-${i}` });
-    const dot = svg('circle', { class: `sl-dot size-${i}`, cx: guideX, cy: sampleChart.toY(lossOfLearning(10 ** size.exponent, 1e10)), r: 9 }, sample);
+    const label = text(sample, 1146, endY + 9, size.label, { class: `scaling-laws-size-label size-${i}` });
+    const dot = svg('circle', { class: `scaling-laws-dot size-${i}`, cx: guideX, cy: sampleChart.toY(lossOfLearning(10 ** size.exponent, 1e10)), r: 9 }, sample);
     return { curve, label, dot };
   });
-  const sizeHeader = text(sample, 1146, 196, '모델 크기', { class: 'sl-size-header' });
-  const sampleNote = text(sample, 730, 140, '큰 모델일수록 같은 글에서 더 많이 배운다', { class: 'sl-note', 'text-anchor': 'middle' });
-  text(sample, 730, 760, '논문 그림 2(학습 곡선)의 맞춤식 L(N, S)로 그림 · 모델 크기는 임베딩 제외 매개변수', { class: 'sl-source', 'text-anchor': 'middle' });
+  const sizeHeader = text(sample, 1146, 196, '모델 크기', { class: 'scaling-laws-size-header' });
+  const sampleNote = text(sample, 730, 140, '큰 모델일수록 같은 글에서 더 많이 배운다', { class: 'scaling-laws-note', 'text-anchor': 'middle' });
+  text(sample, 730, 760, '논문 그림 2(학습 곡선)의 맞춤식 L(N, S)로 그림 · 모델 크기는 임베딩 제외 매개변수', { class: 'scaling-laws-source', 'text-anchor': 'middle' });
 
   // 농사 비유: 밭(모델 크기), 물(데이터), 비료(연산) → 미리 알 수 있는 표.
-  const farm = svg('g', { class: 'sl-farm' }, root);
+  const farm = svg('g', { class: 'scaling-laws-farm' }, root);
   const field = svg('g', {}, farm);
-  const soil = svg('rect', { class: 'sl-soil', x: 160, y: 350, width: 240, height: 190, rx: 10 }, field);
+  const soil = svg('rect', { class: 'scaling-laws-soil', x: 160, y: 350, width: 240, height: 190, rx: 10 }, field);
   const crops = Array.from({ length: 4 * 12 }, (_, i) => {
     const column = i % 12;
     const row = Math.floor(i / 12);
-    return { column, element: svg('path', { class: 'sl-crop', d: `M${190 + column * 40} ${410 + row * 40} l0 -22 m0 8 l-9 -8 m9 8 l9 -8` }, field) };
+    return { column, element: svg('path', { class: 'scaling-laws-crop', d: `M${190 + column * 40} ${410 + row * 40} l0 -22 m0 8 l-9 -8 m9 8 l9 -8` }, field) };
   });
-  const fieldLabel = text(farm, 400, 650, '밭 = 모델 크기', { class: 'sl-farm-label', 'text-anchor': 'middle' });
-  const doubled = svg('g', { class: 'sl-farm-double' }, farm);
+  const fieldLabel = text(farm, 400, 650, '밭 = 모델 크기', { class: 'scaling-laws-farm-label', 'text-anchor': 'middle' });
+  const doubled = svg('g', { class: 'scaling-laws-farm-double' }, farm);
   const doubledLine = svg('path', { d: '' }, doubled);
   text(doubled, 400, 600, '×2', { 'text-anchor': 'middle' });
-  const water = svg('g', { class: 'sl-water' }, farm);
-  svg('path', { class: 'sl-cloud', d: 'M250 250 a28 28 0 0 1 50 -16 a34 34 0 0 1 62 6 a24 24 0 0 1 8 46 h-112 a22 22 0 0 1 -8 -36 z' }, water);
-  const drops = Array.from({ length: 6 }, () => svg('path', { class: 'sl-drop', d: 'M0 -9 C5 -1 7 3 0 9 C-7 3 -5 -1 0 -9 Z' }, water));
-  text(water, 400, 268, '물 = 데이터', { class: 'sl-farm-label' });
-  const fertilizer = svg('g', { class: 'sl-fertilizer' }, farm);
-  svg('path', { class: 'sl-bag', d: 'M664 430 h76 l10 120 h-96 z' }, fertilizer);
-  svg('path', { class: 'sl-bag-tie', d: 'M660 430 h84' }, fertilizer);
-  text(fertilizer, 702, 650, '비료 = 연산', { class: 'sl-farm-label', 'text-anchor': 'middle' });
+  const water = svg('g', { class: 'scaling-laws-water' }, farm);
+  svg('path', { class: 'scaling-laws-cloud', d: 'M250 250 a28 28 0 0 1 50 -16 a34 34 0 0 1 62 6 a24 24 0 0 1 8 46 h-112 a22 22 0 0 1 -8 -36 z' }, water);
+  const drops = Array.from({ length: 6 }, () => svg('path', { class: 'scaling-laws-drop', d: 'M0 -9 C5 -1 7 3 0 9 C-7 3 -5 -1 0 -9 Z' }, water));
+  text(water, 400, 268, '물 = 데이터', { class: 'scaling-laws-farm-label' });
+  const fertilizer = svg('g', { class: 'scaling-laws-fertilizer' }, farm);
+  svg('path', { class: 'scaling-laws-bag', d: 'M664 430 h76 l10 120 h-96 z' }, fertilizer);
+  svg('path', { class: 'scaling-laws-bag-tie', d: 'M660 430 h84' }, fertilizer);
+  text(fertilizer, 702, 650, '비료 = 연산', { class: 'scaling-laws-farm-label', 'text-anchor': 'middle' });
 
-  const table = svg('g', { class: 'sl-table' }, root);
-  text(table, 1160, 252, '미리 알 수 있는 표', { class: 'sl-table-title', 'text-anchor': 'middle' });
-  svg('rect', { class: 'sl-table-frame', x: 860, y: 280, width: 600, height: 290, rx: 16 }, table);
-  text(table, 900, 330, '두 배로 늘리면', { class: 'sl-table-head' });
-  text(table, 1420, 330, '오차', { class: 'sl-table-head', 'text-anchor': 'end' });
+  const table = svg('g', { class: 'scaling-laws-table' }, root);
+  text(table, 1160, 252, '미리 알 수 있는 표', { class: 'scaling-laws-table-title', 'text-anchor': 'middle' });
+  svg('rect', { class: 'scaling-laws-table-frame', x: 860, y: 280, width: 600, height: 290, rx: 16 }, table);
+  text(table, 900, 330, '두 배로 늘리면', { class: 'scaling-laws-table-head' });
+  text(table, 1420, 330, '오차', { class: 'scaling-laws-table-head', 'text-anchor': 'end' });
   // 1 − 2^(−지수): 나머지 두 가지가 발목을 잡지 않을 때 줄어드는 비율.
   const rows = [
     ['모델 크기 ×2', '−5.1%'],
@@ -146,16 +146,16 @@ export const createScalingLawsScene = (): Scene => {
     ['연산량 ×2', '−3.4%'],
   ].map(([name, change], i) => {
     const row = svg('g', {}, table);
-    svg('line', { class: 'sl-table-rule', x1: 880, y1: 352 + i * 68, x2: 1440, y2: 352 + i * 68 }, row);
-    text(row, 900, 398 + i * 68, name, { class: 'sl-table-cell' });
-    text(row, 1420, 398 + i * 68, change, { class: 'sl-table-value', 'text-anchor': 'end' });
+    svg('line', { class: 'scaling-laws-table-rule', x1: 880, y1: 352 + i * 68, x2: 1440, y2: 352 + i * 68 }, row);
+    text(row, 900, 398 + i * 68, name, { class: 'scaling-laws-table-cell' });
+    text(row, 1420, 398 + i * 68, change, { class: 'scaling-laws-table-value', 'text-anchor': 'end' });
     return row;
   });
-  text(table, 1160, 610, '법칙의 지수로 계산 · 나머지 둘이 넉넉할 때', { class: 'sl-table-note', 'text-anchor': 'middle' });
+  text(table, 1160, 610, '법칙의 지수로 계산 · 나머지 둘이 넉넉할 때', { class: 'scaling-laws-table-note', 'text-anchor': 'middle' });
 
-  const shift = svg('g', { class: 'sl-shift' }, root);
-  text(shift, 790, 742, '연구가', { class: 'sl-shift-prefix', 'text-anchor': 'end' });
-  const shiftWord = createSwapText(shift, 812, 748, { class: 'sl-shift-word' });
+  const shift = svg('g', { class: 'scaling-laws-shift' }, root);
+  text(shift, 790, 742, '연구가', { class: 'scaling-laws-shift-prefix', 'text-anchor': 'end' });
+  const shiftWord = createSwapText(shift, 812, 748, { class: 'scaling-laws-shift-word' });
 
   // 얼마를 쏟으면 얼마나 좋아질지: 연산량 그래프에서 읽어 낸다.
   const invest = svg('g', {}, root);
@@ -165,14 +165,14 @@ export const createScalingLawsScene = (): Scene => {
     xLabel: '투입: 연산량 (PF-일)', yLabel: '결과: 오차',
   });
   const investLine = investChart.curve((e) => lossOfCompute(10 ** e), -9, 1, 'measured');
-  const cursor = svg('g', { class: 'sl-cursor' }, invest);
+  const cursor = svg('g', { class: 'scaling-laws-cursor' }, invest);
   const cursorV = svg('line', {}, cursor);
   const cursorH = svg('line', {}, cursor);
   const cursorDot = svg('circle', { r: 11 }, cursor);
-  const readout = svg('g', { class: 'sl-readout' }, invest);
+  const readout = svg('g', { class: 'scaling-laws-readout' }, invest);
   svg('rect', { x: 1150, y: 300, width: 330, height: 120, rx: 16 }, readout);
-  text(readout, 1315, 350, '연산 ×10', { class: 'sl-readout-in', 'text-anchor': 'middle' });
-  text(readout, 1315, 396, '→ 오차 −11%', { class: 'sl-readout-out', 'text-anchor': 'middle' });
+  text(readout, 1315, 350, '연산 ×10', { class: 'scaling-laws-readout-in', 'text-anchor': 'middle' });
+  text(readout, 1315, 396, '→ 오차 −11%', { class: 'scaling-laws-readout-out', 'text-anchor': 'middle' });
 
   const update = (time: number) => {
     const trioShown = 1 - appear(time, at.sample - .2, .4);

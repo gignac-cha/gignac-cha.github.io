@@ -68,9 +68,9 @@ export const createAlphaFoldThree = (): SceneLayer => {
   scene.add(segments, beads, halos, atoms, bonds, truthLine);
 
   // SVG 판에서 단백질 위치를 따라다니는 것들(주머니 빛, 이름표). 입체에서 투영한 자리로 다시 옮긴다.
-  const pocketGlow = base.element.querySelector<SVGCircleElement>('.af-pocket-glow');
-  const pocketLabel = base.element.querySelector<SVGTextElement>('.af-label-pocket');
-  const drugLabel = base.element.querySelector<SVGTextElement>('.af-label-drug');
+  const pocketGlow = base.element.querySelector<SVGCircleElement>('.alphafold-pocket-glow');
+  const pocketLabel = base.element.querySelector<SVGTextElement>('.alphafold-label-pocket');
+  const drugLabel = base.element.querySelector<SVGTextElement>('.alphafold-label-drug');
 
   const target = new THREE.Vector3();
   const update = (time: number) => {

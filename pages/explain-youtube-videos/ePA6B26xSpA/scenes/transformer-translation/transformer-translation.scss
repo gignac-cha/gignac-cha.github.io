@@ -1,87 +1,87 @@
-.tt-heading {
+.transformer-translation-heading {
   font-size: 34px;
   font-weight: 800;
 }
-.tt-note {
+.transformer-translation-note {
   font-size: 22px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.tt-group-label {
+.transformer-translation-group-label {
   font-size: 28px;
   font-weight: 700;
 }
-.tt-row-label {
+.transformer-translation-row-label {
   font-size: 24px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 
   &.transformer {
-    fill: var(--d-yellow) !important;
+    fill: var(--diagram-yellow) !important;
   }
 }
-.tt-bar {
+.transformer-translation-bar {
   &.previous {
-    fill: var(--d-subtle);
+    fill: var(--diagram-subtle);
   }
   &.transformer {
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
 }
-.tt-value {
+.transformer-translation-value {
   font-size: 26px;
   font-weight: 700;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 
   &.transformer {
-    fill: var(--d-yellow) !important;
+    fill: var(--diagram-yellow) !important;
   }
 }
-.tt-badge {
+.transformer-translation-badge {
   rect {
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
   text {
     font-size: 22px;
     font-weight: 800;
     text-anchor: middle;
-    fill: var(--d-background) !important;
+    fill: var(--diagram-background) !important;
   }
 }
-.tt-gpu {
+.transformer-translation-gpu {
   > rect:first-child {
     fill: #17181d;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
-  .tt-gpu-fin {
-    fill: var(--d-subtle);
+  .transformer-translation-gpu-fin {
+    fill: var(--diagram-subtle);
   }
   &.on {
     > rect:first-child {
-      stroke: var(--d-green);
+      stroke: var(--diagram-green);
     }
-    .tt-gpu-fin {
-      fill: var(--d-green);
+    .transformer-translation-gpu-fin {
+      fill: var(--diagram-green);
     }
   }
 }
-.tt-track {
+.transformer-translation-track {
   fill: #1c1d22;
 }
-.tt-fill {
-  fill: var(--d-green);
+.transformer-translation-fill {
+  fill: var(--diagram-green);
 }
-.tt-tick {
+.transformer-translation-tick {
   font-size: 22px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 
   &.end {
     font-weight: 800;
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }
-.tt-summary-text {
+.transformer-translation-summary-text {
   font-size: 36px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }

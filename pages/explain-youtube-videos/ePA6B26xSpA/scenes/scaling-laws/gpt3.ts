@@ -22,7 +22,7 @@ const gpt2 = Math.log10(1.5e9);
 const gpt3 = Math.log10(1.75e11);
 
 export const createGPT3ScaleScene = (): Scene => {
-  const { element, root } = createDiagram('sl', 'GPT-3의 규모');
+  const { element, root } = createDiagram('scaling-laws', 'GPT-3의 규모');
   const chart = createLogChart(root, {
     box: { left: 250, top: 210, width: 1000, height: 440 },
     x: [5, 12], y: [1, 6], xTicks: [[5, '10만'], [7, '1,000만'], [9, '10억'], [11, '1,000억']], yTicks: [2, 3, 4],
@@ -30,40 +30,40 @@ export const createGPT3ScaleScene = (): Scene => {
   });
   const f = (e: number) => lossOfParameters(10 ** e);
 
-  const band = svg('g', { class: 'sl-band' }, root);
+  const band = svg('g', { class: 'scaling-laws-band' }, root);
   svg('rect', { x: chart.toX(5), y: 200, width: chart.toX(9) - chart.toX(5), height: 450 }, band);
-  text(band, (chart.toX(5) + chart.toX(9)) / 2, 236, '2020년 1월 논문이 잰 범위', { class: 'sl-band-label', 'text-anchor': 'middle' });
+  text(band, (chart.toX(5) + chart.toX(9)) / 2, 236, '2020년 1월 논문이 잰 범위', { class: 'scaling-laws-band-label', 'text-anchor': 'middle' });
   const measured = chart.curve(f, 5, 9, 'measured');
   const predicted = chart.curve(f, 9, 12, 'predicted');
 
   const marker = (exponent: number, className: string) => {
-    const group = svg('g', { class: `sl-marker ${className}`, transform: `translate(${chart.toX(exponent).toFixed(1)} ${chart.toY(f(exponent)).toFixed(1)})` }, root);
-    svg('circle', { class: 'sl-marker-ring', r: 24 }, group);
+    const group = svg('g', { class: `scaling-laws-marker ${className}`, transform: `translate(${chart.toX(exponent).toFixed(1)} ${chart.toY(f(exponent)).toFixed(1)})` }, root);
+    svg('circle', { class: 'scaling-laws-marker-ring', r: 24 }, group);
     svg('circle', { r: 13 }, group);
     return group;
   };
   const gpt2Marker = marker(gpt2, 'gpt2');
   const gpt2Label = svg('g', {}, root);
-  text(gpt2Label, chart.toX(gpt2), chart.toY(f(gpt2)) + 64, 'GPT-2', { class: 'sl-marker-name', 'text-anchor': 'middle' });
-  text(gpt2Label, chart.toX(gpt2), chart.toY(f(gpt2)) + 98, '15억', { class: 'sl-marker-count', 'text-anchor': 'middle' });
+  text(gpt2Label, chart.toX(gpt2), chart.toY(f(gpt2)) + 64, 'GPT-2', { class: 'scaling-laws-marker-name', 'text-anchor': 'middle' });
+  text(gpt2Label, chart.toX(gpt2), chart.toY(f(gpt2)) + 98, '15억', { class: 'scaling-laws-marker-count', 'text-anchor': 'middle' });
 
   const gpt3Marker = marker(gpt3, 'gpt3');
   const gpt3X = chart.toX(gpt3);
   const gpt3Y = chart.toY(f(gpt3));
   const gpt3Name = svg('g', {}, root);
-  text(gpt3Name, gpt3X + 34, gpt3Y - 24, 'GPT-3', { class: 'sl-marker-name big' });
-  text(gpt3Name, gpt3X + 36, gpt3Y - 70, '2020년 5월', { class: 'sl-marker-date' });
+  text(gpt3Name, gpt3X + 34, gpt3Y - 24, 'GPT-3', { class: 'scaling-laws-marker-name big' });
+  text(gpt3Name, gpt3X + 36, gpt3Y - 70, '2020년 5월', { class: 'scaling-laws-marker-date' });
   // 점 오른쪽 아래로 이어지는 예측 점선과 겹치지 않게 점의 왼쪽 아래에 둔다.
-  const gpt3Count = text(root, gpt3X + 36, gpt3Y + 76, '1,750억', { class: 'sl-marker-count big', 'text-anchor': 'end' });
+  const gpt3Count = text(root, gpt3X + 36, gpt3Y + 76, '1,750억', { class: 'scaling-laws-marker-count big', 'text-anchor': 'end' });
 
-  const ratio = svg('g', { class: 'sl-ratio' }, root);
+  const ratio = svg('g', { class: 'scaling-laws-ratio' }, root);
   const ratioArc = svg('path', { d: `M${chart.toX(gpt2)} ${chart.toY(f(gpt2)) - 34} C${chart.toX(gpt2) + 60} ${chart.toY(f(gpt2)) - 190}, ${gpt3X - 120} ${gpt3Y - 190}, ${gpt3X - 26} ${gpt3Y - 30}`, pathLength: 1 }, ratio);
-  const ratioText = text(ratio, (chart.toX(gpt2) + gpt3X) / 2 - 10, Math.min(chart.toY(f(gpt2)), gpt3Y) - 150, '100배 넘게', { class: 'sl-ratio-text', 'text-anchor': 'middle' });
+  const ratioText = text(ratio, (chart.toX(gpt2) + gpt3X) / 2 - 10, Math.min(chart.toY(f(gpt2)), gpt3Y) - 150, '100배 넘게', { class: 'scaling-laws-ratio-text', 'text-anchor': 'middle' });
 
-  const computer = svg('g', { class: 'sl-computer' }, root);
+  const computer = svg('g', { class: 'scaling-laws-computer' }, root);
   const chips = Array.from({ length: 40 }, (_, i) => svg('rect', { x: 1300 + (i % 8) * 24, y: 712 + Math.floor(i / 8) * 18, width: 18, height: 12, rx: 2 }, computer));
-  text(computer, 1280, 744, '학습: 마이크로소프트 슈퍼컴퓨터', { class: 'sl-computer-label', 'text-anchor': 'end' });
-  text(computer, 1280, 782, 'GPU 1만 개', { class: 'sl-computer-sub', 'text-anchor': 'end' });
+  text(computer, 1280, 744, '학습: 마이크로소프트 슈퍼컴퓨터', { class: 'scaling-laws-computer-label', 'text-anchor': 'end' });
+  text(computer, 1280, 782, 'GPU 1만 개', { class: 'scaling-laws-computer-sub', 'text-anchor': 'end' });
 
   const update = (time: number) => {
     setAttributes(band, { opacity: (appear(time, at.table, .4) * .9).toFixed(3) });

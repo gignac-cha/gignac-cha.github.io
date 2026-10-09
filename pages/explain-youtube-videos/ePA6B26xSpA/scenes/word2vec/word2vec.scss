@@ -1,196 +1,196 @@
-.w2v-caption {
+.word2vec-caption {
   font-size: 28px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.w2v-pixel {
-  &.w2v-pixel-empty {
+.word2vec-pixel {
+  &.word2vec-pixel-empty {
     fill: #191b21;
   }
-  &.w2v-pixel-r {
+  &.word2vec-pixel-r {
     fill: #e0524f;
   }
-  &.w2v-pixel-g {
-    fill: var(--d-green);
+  &.word2vec-pixel-g {
+    fill: var(--diagram-green);
   }
-  &.w2v-pixel-s {
+  &.word2vec-pixel-s {
     fill: #8a5a3a;
   }
 }
-.w2v-number {
+.word2vec-number {
   font-size: 28px;
   font-weight: 600;
   text-anchor: middle;
   font-variant-numeric: tabular-nums;
-  fill: var(--d-subtle) !important;
+  fill: var(--diagram-subtle) !important;
 
   &.on-color {
     fill: #0f1013 !important;
   }
 }
-.w2v-big-word {
+.word2vec-big-word {
   font-size: 104px;
   font-weight: 700;
   text-anchor: middle;
 }
-.w2v-codes {
+.word2vec-codes {
   font-size: 36px;
   font-weight: 600;
   text-anchor: middle;
   font-variant-numeric: tabular-nums;
-  fill: var(--d-blue) !important;
+  fill: var(--diagram-blue) !important;
 }
-.w2v-no-link {
+.word2vec-no-link {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
   stroke-dasharray: 10 10;
 }
-.w2v-cross {
+.word2vec-cross {
   circle {
-    fill: var(--d-background);
-    stroke: var(--d-red);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-red);
     stroke-width: 3;
   }
   path {
-    stroke: var(--d-red);
+    stroke: var(--diagram-red);
     stroke-width: 4;
     stroke-linecap: round;
   }
 }
 
-.w2v-unknown {
+.word2vec-unknown {
   line {
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 3;
     stroke-dasharray: 10 10;
   }
   circle {
-    fill: var(--d-background);
-    stroke: var(--d-subtle);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-subtle);
     stroke-width: 2;
   }
   text {
     font-size: 30px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-muted) !important;
+    fill: var(--diagram-muted) !important;
   }
 }
 
-.w2v-grid line {
-  stroke: var(--d-grid);
+.word2vec-grid line {
+  stroke: var(--diagram-grid);
   stroke-width: 2;
 }
 
-.w2v-chip {
+.word2vec-chip {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-line);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
 }
-.w2v-chip-label {
+.word2vec-chip-label {
   font-size: 34px;
   font-weight: 600;
   text-anchor: middle;
 }
-.w2v-chip-id {
+.word2vec-chip-id {
   font-size: 28px;
   text-anchor: middle;
   font-variant-numeric: tabular-nums;
-  fill: var(--d-subtle) !important;
+  fill: var(--diagram-subtle) !important;
 }
-.w2v-dot {
-  fill: var(--d-muted);
+.word2vec-dot {
+  fill: var(--diagram-muted);
 }
-.w2v-label {
+.word2vec-label {
   font-size: 30px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
   // 뒤로 지나가는 선이 글자를 가르지 않도록 배경색 테두리를 두른다.
   paint-order: stroke;
-  stroke: var(--d-background);
+  stroke: var(--diagram-background);
   stroke-width: 10px;
   stroke-linejoin: round;
 }
-.w2v-point {
+.word2vec-point {
   &.focus {
-    .w2v-dot {
-      fill: var(--d-blue);
+    .word2vec-dot {
+      fill: var(--diagram-blue);
     }
-    .w2v-label {
+    .word2vec-label {
       font-weight: 700;
-      fill: var(--d-blue) !important;
+      fill: var(--diagram-blue) !important;
     }
   }
   &.reference {
-    .w2v-dot {
-      fill: var(--d-orange);
+    .word2vec-dot {
+      fill: var(--diagram-orange);
     }
-    .w2v-label {
+    .word2vec-label {
       font-weight: 700;
-      fill: var(--d-orange) !important;
+      fill: var(--diagram-orange) !important;
     }
   }
   &.hit {
-    .w2v-dot {
-      fill: var(--d-green);
+    .word2vec-dot {
+      fill: var(--diagram-green);
     }
-    .w2v-label {
+    .word2vec-label {
       font-size: 34px;
       font-weight: 700;
-      fill: var(--d-green) !important;
+      fill: var(--diagram-green) !important;
     }
   }
 }
 
-.w2v-friend {
+.word2vec-friend {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-subtle);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-subtle);
     stroke-width: 2;
     stroke-dasharray: 6 6;
   }
   text {
     font-size: 28px;
     text-anchor: middle;
-    fill: var(--d-muted) !important;
+    fill: var(--diagram-muted) !important;
   }
 }
-.w2v-friend-lines line {
-  stroke: var(--d-yellow);
+.word2vec-friend-lines line {
+  stroke: var(--diagram-yellow);
   stroke-width: 2;
   stroke-opacity: .6;
 }
 
-.w2v-arrow {
+.word2vec-arrow {
   fill: none;
   stroke-width: 5;
   stroke-linecap: round;
   stroke-linejoin: round;
 
   &.reference {
-    stroke: var(--d-orange);
+    stroke: var(--diagram-orange);
   }
   &.result {
-    stroke: var(--d-blue);
+    stroke: var(--diagram-blue);
   }
 }
-.w2v-parallel {
+.word2vec-parallel {
   fill: none;
-  stroke: var(--d-subtle);
+  stroke: var(--diagram-subtle);
   stroke-width: 2;
   stroke-dasharray: 8 8;
 }
-.w2v-target {
+.word2vec-target {
   fill: none;
-  stroke: var(--d-green);
+  stroke: var(--diagram-green);
   stroke-width: 3;
   stroke-dasharray: 6 5;
 }
-.w2v-formula {
+.word2vec-formula {
   font-size: 34px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-text) !important;
+  fill: var(--diagram-text) !important;
 }

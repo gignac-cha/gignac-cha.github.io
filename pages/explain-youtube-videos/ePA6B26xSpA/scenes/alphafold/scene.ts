@@ -8,7 +8,7 @@ import { drug, drugBonds, pocket, rmsd, sequence } from './protein.ts';
 
 // 45:26 "이번 상대는 바둑이 아니라 단백질" ~ 46:24 "AI가 과학의 한복판으로 걸어 들어간 순간이었습니다".
 // 실제 단백질(사람 DHFR, PDB 1U72)과 실제 약(메토트렉세이트), 실제 알파폴드 예측(AlphaFold DB)을 그대로 그린다.
-const elementClass: Record<string, string> = { C: 'af-atom-c', N: 'af-atom-n', O: 'af-atom-o' };
+const elementClass: Record<string, string> = { C: 'alphafold-atom-c', N: 'alphafold-atom-n', O: 'alphafold-atom-o' };
 
 const formatCount = (value: number) => Math.round(value).toLocaleString('en-US');
 const setText = (element: Element, content: string) => {
@@ -21,71 +21,71 @@ const setText = (element: Element, content: string) => {
 export const createAlphaFoldSVG = ({ protein3d = false } = {}): Scene => {
   const { element, root } = createDiagram('alphafold', '단백질 구조 예측(알파폴드)');
   const defs = svg('defs', {}, root);
-  const blur = svg('filter', { id: 'af-glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, defs);
+  const blur = svg('filter', { id: 'alphafold-glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, defs);
   svg('feGaussianBlur', { stdDeviation: 22 }, blur);
 
   const stage = svg('g', {}, root);
   const protein = svg('g', {}, stage);
-  const pocketGlow = svg('circle', { class: 'af-pocket-glow', r: 70, filter: 'url(#af-glow)' }, protein);
+  const pocketGlow = svg('circle', { class: 'alphafold-pocket-glow', r: 70, filter: 'url(#alphafold-glow)' }, protein);
   // 끈(α탄소를 잇는 굵은 선)은 먼 마디부터 그리고, 구슬은 그 위에 얹는다.
   const segmentLayer = svg('g', {}, protein);
-  const segments = Array.from({ length: count - 1 }, () => svg('line', { class: 'af-segment' }, segmentLayer));
+  const segments = Array.from({ length: count - 1 }, () => svg('line', { class: 'alphafold-segment' }, segmentLayer));
   const beadLayer = svg('g', {}, protein);
-  const beads = Array.from({ length: count }, (_, i) => svg('circle', { class: 'af-bead', fill: rainbow(i) }, beadLayer));
-  const truth = svg('polyline', { class: 'af-truth' }, protein);
-  const pocketRings = pocket.map((i) => ({ i, ring: svg('circle', { class: 'af-pocket-ring', r: 11 }, protein) }));
+  const beads = Array.from({ length: count }, (_, i) => svg('circle', { class: 'alphafold-bead', fill: rainbow(i) }, beadLayer));
+  const truth = svg('polyline', { class: 'alphafold-truth' }, protein);
+  const pocketRings = pocket.map((i) => ({ i, ring: svg('circle', { class: 'alphafold-pocket-ring', r: 11 }, protein) }));
 
   const medicine = svg('g', {}, stage);
-  const bondLines = drugBonds.map(([a, b]) => ({ a, b, line: svg('line', { class: 'af-drug-bond' }, medicine) }));
-  const atoms = drug.map(({ element: kind }) => svg('circle', { class: `af-atom ${elementClass[kind] ?? 'af-atom-c'}`, r: 6.5 }, medicine));
-  const drugLabel = text(stage, 0, 0, '메토트렉세이트 (항암제)', { class: 'af-label af-label-drug' });
-  const pocketLabel = text(stage, 0, 0, '주머니 = 열쇠 구멍', { class: 'af-label af-label-pocket' });
+  const bondLines = drugBonds.map(([a, b]) => ({ a, b, line: svg('line', { class: 'alphafold-drug-bond' }, medicine) }));
+  const atoms = drug.map(({ element: kind }) => svg('circle', { class: `alphafold-atom ${elementClass[kind] ?? 'alphafold-atom-c'}`, r: 6.5 }, medicine));
+  const drugLabel = text(stage, 0, 0, '메토트렉세이트 (항암제)', { class: 'alphafold-label alphafold-label-drug' });
+  const pocketLabel = text(stage, 0, 0, '주머니 = 열쇠 구멍', { class: 'alphafold-label alphafold-label-pocket' });
 
   // 서열(끈)과 물음표.
   const sequenceGroup = svg('g', {}, stage);
-  text(sequenceGroup, 140, 318, '아미노산 서열 (끈)', { class: 'af-heading' });
+  text(sequenceGroup, 140, 318, '아미노산 서열 (끈)', { class: 'alphafold-heading' });
   // 한 줄 27글자(약 450px)로 끊어 가운데 화살표(x 660~)와 넉넉히 떨어뜨린다.
   const perRow = 27;
   const lines = Array.from({ length: Math.ceil(count / perRow) }, (_, row) => {
-    const line = text(sequenceGroup, 140, 362 + row * 38, '', { class: 'af-sequence' });
+    const line = text(sequenceGroup, 140, 362 + row * 38, '', { class: 'alphafold-sequence' });
     for (let k = row * perRow; k < Math.min(count, (row + 1) * perRow); k++) {
       const letter = svg('tspan', { fill: rainbow(k) }, line);
       letter.textContent = sequence[k];
     }
     return line;
   });
-  const structureHeading = text(stage, 1170, 250, '접힌 모양 (3차원 구조)', { class: 'af-heading af-heading-center' });
+  const structureHeading = text(stage, 1170, 250, '접힌 모양 (3차원 구조)', { class: 'alphafold-heading alphafold-heading-center' });
   const arrow = svg('g', {}, stage);
-  svg('line', { class: 'af-arrow', x1: 660, y1: 470, x2: 905, y2: 470 }, arrow);
-  svg('path', { class: 'af-arrow-head', d: 'M 905 470 l -18 -11 v 22 z' }, arrow);
-  const question = text(stage, 782, 445, '?', { class: 'af-question' });
+  svg('line', { class: 'alphafold-arrow', x1: 660, y1: 470, x2: 905, y2: 470 }, arrow);
+  svg('path', { class: 'alphafold-arrow-head', d: 'M 905 470 l -18 -11 v 22 z' }, arrow);
+  const question = text(stage, 782, 445, '?', { class: 'alphafold-question' });
   const model = svg('g', {}, stage);
-  svg('rect', { class: 'af-model', x: 690, y: 432, width: 186, height: 76, rx: 16 }, model);
-  text(model, 783, 481, '알파폴드 2', { class: 'af-model-text' });
+  svg('rect', { class: 'alphafold-model', x: 690, y: 432, width: 186, height: 76, rx: 16 }, model);
+  text(model, 783, 481, '알파폴드 2', { class: 'alphafold-model-text' });
 
-  const accuracy = text(stage, 1170, 700, `실험 구조와 평균 ${rmsd.toFixed(2)} Å 차이`, { class: 'af-accuracy' });
+  const accuracy = text(stage, 1170, 700, `실험 구조와 평균 ${rmsd.toFixed(2)} Å 차이`, { class: 'alphafold-accuracy' });
   const legend = svg('g', {}, stage);
   [[0, 83, 214], [101, 203, 243], [255, 219, 19], [255, 125, 69]].forEach((color, k) =>
     svg('circle', { cx: 1006 + k * 15, cy: 742, r: 6, fill: `rgb(${color.join(',')})` }, legend),
   );
-  text(legend, 1062, 749, '알파폴드 예측 (색 = 확신도)', { class: 'af-legend' });
-  svg('line', { class: 'af-truth-sample', x1: 1000, y1: 774, x2: 1050, y2: 774 }, legend);
-  text(legend, 1062, 781, '실험으로 밝힌 구조', { class: 'af-legend' });
-  const casp = text(stage, 800, 160, 'CASP14 전체 중앙값 GDT 92.4 · 90 이상이면 실험 수준', { class: 'af-note' });
+  text(legend, 1062, 749, '알파폴드 예측 (색 = 확신도)', { class: 'alphafold-legend' });
+  svg('line', { class: 'alphafold-truth-sample', x1: 1000, y1: 774, x2: 1050, y2: 774 }, legend);
+  text(legend, 1062, 781, '실험으로 밝힌 구조', { class: 'alphafold-legend' });
+  const casp = text(stage, 800, 160, 'CASP14 전체 중앙값 GDT 92.4 · 90 이상이면 실험 수준', { class: 'alphafold-note' });
 
   // 2억 개: 점 하나 = 구조 100만 개.
   const database = svg('g', {}, stage);
-  const counter = text(database, 800, 224, '0', { class: 'af-counter' });
+  const counter = text(database, 800, 224, '0', { class: 'alphafold-counter' });
   const dots = Array.from({ length: 200 }, (_, k) => {
     const column = k % 20;
     const row = Math.floor(k / 20);
     const shade = (Math.sin(k * 12.9898) * 43758.5453) % 1;
-    return svg('circle', { class: 'af-dot', cx: 420 + column * 40, cy: 290 + row * 38, r: 13, fill: `hsl(214, 85%, ${(46 + Math.abs(shade) * 18).toFixed(0)}%)` }, database);
+    return svg('circle', { class: 'alphafold-dot', cx: 420 + column * 40, cy: 290 + row * 38, r: 13, fill: `hsl(214, 85%, ${(46 + Math.abs(shade) * 18).toFixed(0)}%)` }, database);
   });
-  text(database, 800, 700, '● 하나 = 단백질 구조 100만 개', { class: 'af-legend af-legend-center' });
+  text(database, 800, 700, '● 하나 = 단백질 구조 100만 개', { class: 'alphafold-legend alphafold-legend-center' });
 
-  const source = text(root, 56, 868, '실제 구조: 사람 DHFR + 메토트렉세이트 (PDB 1U72)', { class: 'af-source' });
-  const caption = createSwapText(root, 800, 832, { class: 'af-caption' });
+  const source = text(root, 56, 868, '실제 구조: 사람 DHFR + 메토트렉세이트 (PDB 1U72)', { class: 'alphafold-source' });
+  const caption = createSwapText(root, 800, 832, { class: 'alphafold-caption' });
   const captionAt = (time: number) => {
     const steps: Array<[number, string]> = [
       [at.protein, '단백질'],

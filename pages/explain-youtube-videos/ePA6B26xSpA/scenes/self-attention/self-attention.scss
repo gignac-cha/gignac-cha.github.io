@@ -1,7 +1,7 @@
-.sa-chip {
+.self-attention-chip {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-line);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
     stroke-width: 2;
     transition: none;
   }
@@ -12,152 +12,152 @@
   }
   &.reading rect,
   &.spoken rect {
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 3;
   }
   &.focus rect {
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 3;
-    fill: color-mix(in srgb, var(--d-yellow) 22%, var(--d-background));
+    fill: color-mix(in srgb, var(--diagram-yellow) 22%, var(--diagram-background));
   }
   &.answer rect {
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
     stroke-width: 3;
-    fill: color-mix(in srgb, var(--d-green) 18%, var(--d-background));
+    fill: color-mix(in srgb, var(--diagram-green) 18%, var(--diagram-background));
   }
   &.active rect {
-    stroke: color-mix(in srgb, var(--d-yellow) 70%, var(--d-line));
+    stroke: color-mix(in srgb, var(--diagram-yellow) 70%, var(--diagram-line));
   }
 }
-.sa-check {
+.self-attention-check {
   circle {
-    fill: var(--d-green);
+    fill: var(--diagram-green);
   }
   path {
     fill: none;
-    stroke: var(--d-background);
+    stroke: var(--diagram-background);
     stroke-width: 4;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
 }
-.sa-reader-box {
-  fill: color-mix(in srgb, var(--d-blue) 14%, var(--d-background));
-  stroke: var(--d-blue);
+.self-attention-reader-box {
+  fill: color-mix(in srgb, var(--diagram-blue) 14%, var(--diagram-background));
+  stroke: var(--diagram-blue);
   stroke-width: 2.5;
 }
-.sa-reader-label {
+.self-attention-reader-label {
   font-size: 26px;
   font-weight: 700;
   text-anchor: middle;
 }
-.sa-reader-arrow {
+.self-attention-reader-arrow {
   fill: none;
-  stroke: var(--d-blue);
+  stroke: var(--diagram-blue);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.sa-strike {
+.self-attention-strike {
   fill: none;
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
   stroke-width: 6;
   stroke-linecap: round;
   stroke-dasharray: 1;
 }
-.sa-arc {
+.self-attention-arc {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-linecap: round;
   stroke-dasharray: 1;
 }
-.sa-ripple {
+.self-attention-ripple {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 3;
 }
-.sa-question {
+.self-attention-question {
   fill: none;
-  stroke: var(--d-muted);
+  stroke: var(--diagram-muted);
   stroke-width: 3;
   stroke-dasharray: 8 8;
 }
-.sa-question-mark {
+.self-attention-question-mark {
   font-size: 34px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.sa-bar {
-  fill: var(--d-yellow);
+.self-attention-bar {
+  fill: var(--diagram-yellow);
 }
-.sa-caption {
+.self-attention-caption {
   font-size: 32px;
   font-weight: 700;
 }
 // GPU 계산기 판.
-.sa-gpu-board {
+.self-attention-gpu-board {
   fill: #15161b;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.sa-gpu-title {
+.self-attention-gpu-title {
   font-size: 28px;
   font-weight: 800;
 }
-.sa-gpu-note {
+.self-attention-gpu-note {
   font-size: 20px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.sa-core-idle {
+.self-attention-core-idle {
   fill: #3a3b45;
 }
-.sa-gpu.idle .sa-core-idle {
+.self-attention-gpu.idle .self-attention-core-idle {
   fill: #2c2d35;
 }
-.sa-core-lit {
-  fill: var(--d-green);
+.self-attention-core-lit {
+  fill: var(--diagram-green);
 }
-.sa-core-ring {
+.self-attention-core-ring {
   fill: none;
-  stroke: var(--d-green);
+  stroke: var(--diagram-green);
   stroke-width: 3;
 }
-.sa-gpu-caption {
+.self-attention-gpu-caption {
   font-size: 26px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 // 은행 창구와 손님.
-.sa-booth-frame {
+.self-attention-booth-frame {
   fill: #17181d;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.sa-booth-label {
+.self-attention-booth-label {
   font-size: 20px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.sa-booth-desk {
-  stroke: var(--d-subtle);
+.self-attention-booth-desk {
+  stroke: var(--diagram-subtle);
   stroke-width: 6;
   stroke-linecap: round;
 }
-.sa-booth-glow {
+.self-attention-booth-glow {
   fill: none;
-  stroke: var(--d-green);
+  stroke: var(--diagram-green);
   stroke-width: 4;
 }
-.sa-person {
+.self-attention-person {
   circle,
   rect {
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   &.teller {
     circle,
     rect {
-      fill: var(--d-blue);
+      fill: var(--diagram-blue);
     }
   }
 }

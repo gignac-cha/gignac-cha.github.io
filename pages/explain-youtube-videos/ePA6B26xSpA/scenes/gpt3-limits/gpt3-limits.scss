@@ -1,82 +1,82 @@
-.g3-panel {
-  fill: color-mix(in srgb, var(--d-grid) 55%, var(--d-background));
-  stroke: var(--d-line);
+.gpt3-limits-panel {
+  fill: color-mix(in srgb, var(--diagram-grid) 55%, var(--diagram-background));
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.g3-panel-label {
+.gpt3-limits-panel-label {
   font-size: 22px;
   font-weight: 700;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.g3-prompt {
+.gpt3-limits-prompt {
   font-size: 30px;
   font-weight: 700;
 }
-.g3-placeholder {
+.gpt3-limits-placeholder {
   font-size: 28px;
   font-style: italic;
-  fill: var(--d-subtle) !important;
+  fill: var(--diagram-subtle) !important;
 }
 // 이어 쓴 글: 놀이터(Playground) 화면처럼 초록 바탕.
-.g3-generated-bg {
-  fill: color-mix(in srgb, var(--d-green) 22%, transparent);
+.gpt3-limits-generated-bg {
+  fill: color-mix(in srgb, var(--diagram-green) 22%, transparent);
 }
-.g3-generated {
+.gpt3-limits-generated {
   font-size: 30px;
   font-weight: 600;
   fill: #d8f5e4 !important;
 }
-.g3-next-box {
+.gpt3-limits-next-box {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 3;
 }
-.g3-skeleton {
-  fill: color-mix(in srgb, var(--d-green) 18%, transparent);
+.gpt3-limits-skeleton {
+  fill: color-mix(in srgb, var(--diagram-green) 18%, transparent);
 }
-.g3-cursor {
-  fill: var(--d-text);
+.gpt3-limits-cursor {
+  fill: var(--diagram-text);
 }
-.g3-source {
+.gpt3-limits-source {
   font-size: 22px;
   text-anchor: middle;
-  fill: var(--d-subtle) !important;
+  fill: var(--diagram-subtle) !important;
 }
-.g3-card {
-  fill: var(--d-background);
-  stroke: var(--d-line);
+.gpt3-limits-card {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 
   &.machine {
-    fill: color-mix(in srgb, var(--d-green) 12%, var(--d-background));
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 12%, var(--diagram-background));
+    stroke: var(--diagram-green);
   }
 }
-.g3-card-label {
+.gpt3-limits-card-label {
   font-size: 22px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.g3-card-text {
+.gpt3-limits-card-text {
   font-size: 30px;
   font-weight: 700;
   text-anchor: middle;
 }
-.g3-strike {
-  stroke: var(--d-red);
+.gpt3-limits-strike {
+  stroke: var(--diagram-red);
   stroke-width: 4;
   stroke-linecap: round;
 }
-.g3-badge {
+.gpt3-limits-badge {
   rect {
-    fill: color-mix(in srgb, var(--d-red) 14%, var(--d-background));
-    stroke: var(--d-red);
+    fill: color-mix(in srgb, var(--diagram-red) 14%, var(--diagram-background));
+    stroke: var(--diagram-red);
     stroke-width: 2.5;
   }
   text {
     font-size: 28px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-red) !important;
+    fill: var(--diagram-red) !important;
   }
 }

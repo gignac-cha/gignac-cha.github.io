@@ -1,171 +1,171 @@
 // 노트에 펜으로 그린 스케치.
-.mm-paper {
+.gpt4-multimodal-paper {
   fill: #f1efe8;
 }
-.mm-pen {
+.gpt4-multimodal-pen {
   fill: none;
   stroke: #2a2d36;
   stroke-width: 2;
 }
-.diagram text.mm-hand {
+.diagram text.gpt4-multimodal-hand {
   font-family: "Bradley Hand", "Noteworthy", "Chalkboard SE", "Segoe Print", cursive;
   font-size: 23px;
   fill: #20232b;
 }
-.diagram text.mm-hand-title {
+.diagram text.gpt4-multimodal-hand-title {
   font-size: 30px;
 }
-.mm-region {
-  fill: color-mix(in srgb, var(--d-yellow) 12%, transparent);
-  stroke: var(--d-yellow);
+.gpt4-multimodal-region {
+  fill: color-mix(in srgb, var(--diagram-yellow) 12%, transparent);
+  stroke: var(--diagram-yellow);
   stroke-width: 2.5;
   stroke-dasharray: 7 5;
 }
-.mm-region-tag {
-  fill: var(--d-yellow);
+.gpt4-multimodal-region-tag {
+  fill: var(--diagram-yellow);
 }
-.diagram text.mm-region-text {
+.diagram text.gpt4-multimodal-region-text {
   font-size: 17px;
   font-weight: 700;
   text-anchor: middle;
   fill: #1a1b20;
 }
-.mm-caption {
+.gpt4-multimodal-caption {
   font-size: 26px;
   font-weight: 700;
   text-anchor: middle;
 }
-.diagram text.mm-caption-sub {
+.diagram text.gpt4-multimodal-caption-sub {
   font-size: 19px;
   text-anchor: middle;
-  fill: var(--d-muted);
+  fill: var(--diagram-muted);
 }
-.mm-arrow {
+.gpt4-multimodal-arrow {
   fill: none;
-  stroke: var(--d-muted);
+  stroke: var(--diagram-muted);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-dasharray: 2 9;
 }
-.mm-arrow-years {
-  stroke: var(--d-subtle);
+.gpt4-multimodal-arrow-years {
+  stroke: var(--diagram-subtle);
 }
-.diagram text.mm-years {
+.diagram text.gpt4-multimodal-years {
   font-size: 24px;
   font-weight: 700;
-  fill: var(--d-muted);
+  fill: var(--diagram-muted);
 }
 
 // 모델과 입력 칸.
-.mm-model {
+.gpt4-multimodal-model {
   fill: #17181e;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2.5;
   transition: stroke .3s;
 
   &.lit {
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
   }
 }
-.mm-model-name {
+.gpt4-multimodal-model-name {
   font-size: 54px;
   font-weight: 800;
   text-anchor: middle;
 }
-.diagram text.mm-model-date {
+.diagram text.gpt4-multimodal-model-date {
   font-size: 22px;
   text-anchor: middle;
-  fill: var(--d-muted);
+  fill: var(--diagram-muted);
 }
-.mm-port {
+.gpt4-multimodal-port {
   fill: #23252d;
-  stroke: var(--d-blue);
+  stroke: var(--diagram-blue);
   stroke-width: 2.5;
   transition: stroke .3s, fill .3s;
 
   &.lit {
-    fill: color-mix(in srgb, var(--d-yellow) 22%, #23252d);
-    stroke: var(--d-yellow);
+    fill: color-mix(in srgb, var(--diagram-yellow) 22%, #23252d);
+    stroke: var(--diagram-yellow);
   }
 }
-.mm-port-ghost {
-  stroke: var(--d-subtle);
+.gpt4-multimodal-port-ghost {
+  stroke: var(--diagram-subtle);
 }
-.mm-port-text {
+.gpt4-multimodal-port-text {
   font-size: 22px;
   font-weight: 700;
   text-anchor: middle;
 }
-.mm-ghost {
+.gpt4-multimodal-ghost {
   fill: none;
-  stroke: var(--d-subtle);
+  stroke: var(--diagram-subtle);
   stroke-width: 2;
   stroke-dasharray: 8 7;
 }
-.diagram text.mm-ghost-name {
+.diagram text.gpt4-multimodal-ghost-name {
   font-size: 36px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-muted);
+  fill: var(--diagram-muted);
 }
 
 // 요청 문장.
-.mm-prompt {
+.gpt4-multimodal-prompt {
   fill: #1b1c22;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 1.5;
 }
-.diagram text.mm-prompt-label {
+.diagram text.gpt4-multimodal-prompt-label {
   font-size: 17px;
   font-weight: 700;
-  fill: var(--d-muted);
+  fill: var(--diagram-muted);
 }
-.mm-prompt-text {
+.gpt4-multimodal-prompt-text {
   font-size: 18px;
 }
 
 // 코드와 완성된 페이지.
-.mm-code {
+.gpt4-multimodal-code {
   fill: #121318;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 1.5;
 }
-.diagram text.mm-code-text {
+.diagram text.gpt4-multimodal-code-text {
   font-family: "SF Mono", Menlo, Consolas, monospace;
   font-size: 14px;
   fill: #b8d7ff;
   white-space: pre;
 }
-.mm-browser {
+.gpt4-multimodal-browser {
   fill: #e6e6ea;
 }
-.mm-browser-dot {
+.gpt4-multimodal-browser-dot {
   fill: #b5b5bd;
 }
-.mm-page {
+.gpt4-multimodal-page {
   fill: lightblue;
 }
-.diagram text.mm-page-title {
+.diagram text.gpt4-multimodal-page-title {
   font-family: Arial, sans-serif;
   font-size: 24px;
   font-weight: 700;
   text-anchor: middle;
   fill: darkblue;
 }
-.diagram text.mm-page-text {
+.diagram text.gpt4-multimodal-page-text {
   font-family: Arial, sans-serif;
   font-size: 13px;
   text-anchor: middle;
   fill: #111;
 }
-.mm-page-button {
+.gpt4-multimodal-page-button {
   fill: #0d1490;
 
   &.pressed {
     fill: #3d48d8;
   }
 }
-.diagram text.mm-page-button-text {
+.diagram text.gpt4-multimodal-page-button-text {
   font-family: Arial, sans-serif;
   font-size: 11px;
   text-anchor: middle;
@@ -173,53 +173,53 @@
 }
 
 // 변호사 모의시험.
-.mm-exam-heading {
+.gpt4-multimodal-exam-heading {
   font-size: 26px;
   font-weight: 700;
 }
-.diagram text.mm-exam-axis {
+.diagram text.gpt4-multimodal-exam-axis {
   font-size: 18px;
-  fill: var(--d-subtle);
+  fill: var(--diagram-subtle);
 }
-.mm-end {
+.gpt4-multimodal-end {
   text-anchor: end;
 }
-.mm-person {
-  fill: var(--d-line);
+.gpt4-multimodal-person {
+  fill: var(--diagram-line);
 
   &.top {
-    fill: var(--d-blue);
+    fill: var(--diagram-blue);
   }
 }
-.mm-bracket {
+.gpt4-multimodal-bracket {
   fill: none;
-  stroke: var(--d-blue);
+  stroke: var(--diagram-blue);
   stroke-width: 2.5;
 }
-.diagram text.mm-exam-top {
+.diagram text.gpt4-multimodal-exam-top {
   font-size: 24px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-blue);
+  fill: var(--diagram-blue);
 }
-.mm-marker {
-  stroke: var(--d-text);
+.gpt4-multimodal-marker {
+  stroke: var(--diagram-text);
   stroke-width: 3;
 }
-.mm-marker-dim {
-  stroke: var(--d-muted);
+.gpt4-multimodal-marker-dim {
+  stroke: var(--diagram-muted);
   stroke-dasharray: 5 5;
 }
-.mm-marker-text {
+.gpt4-multimodal-marker-text {
   font-size: 22px;
   font-weight: 700;
 }
-.diagram text.mm-marker-dim-text {
+.diagram text.gpt4-multimodal-marker-dim-text {
   font-weight: 500;
-  fill: var(--d-muted);
+  fill: var(--diagram-muted);
 }
-.diagram text.mm-source {
+.diagram text.gpt4-multimodal-source {
   font-size: 16px;
   text-anchor: end;
-  fill: var(--d-subtle);
+  fill: var(--diagram-subtle);
 }

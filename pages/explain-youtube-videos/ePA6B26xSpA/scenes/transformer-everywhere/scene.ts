@@ -32,40 +32,40 @@ const tower = { encoderX: 640, decoderX: 960, baseY: 850, scale: .7 };
 const card = { width: 320, height: 104, leftX: 80, rightX: 1200, rows: [330, 490, 650] };
 
 export const createTransformerEverywhereScene = (): Scene => {
-  const { element, root } = createDiagram('te', '트랜스포머의 확산');
+  const { element, root } = createDiagram('transformer-everywhere', '트랜스포머의 확산');
 
   const links = cards.map(({ side, row }) => {
     const y = card.rows[row] + card.height / 2;
     const from = side < 0 ? paper.x : paper.x + paper.width;
     const to = side < 0 ? card.leftX + card.width : card.rightX;
-    return svg('path', { class: 'te-link', d: `M${from} ${y} L${to} ${y}` }, root);
+    return svg('path', { class: 'transformer-everywhere-link', d: `M${from} ${y} L${to} ${y}` }, root);
   });
 
   const sheet = svg('g', {}, root);
   createPaper(sheet, paper.x, paper.y, paper.width, paper.height);
-  const ripple = svg('rect', { class: 'te-ripple', rx: 24 }, root);
+  const ripple = svg('rect', { class: 'transformer-everywhere-ripple', rx: 24 }, root);
   const drawing = svg('g', {}, sheet);
   const encoder = createEncoder(drawing);
   const decoder = createDecoder(drawing);
   setAttributes(encoder.group, { transform: `translate(${tower.encoderX} ${tower.baseY}) scale(${tower.scale})` });
   setAttributes(decoder.group, { transform: `translate(${tower.decoderX} ${tower.baseY}) scale(${tower.scale})` });
-  svg('path', { class: 'bp-cross', d: crossPath(tower.encoderX, tower.decoderX, tower.baseY, tower.scale) }, drawing);
-  const label = text(root, 800, 228, '만능 설계도 · Attention Is All You Need (2017)', { class: 'te-label', 'text-anchor': 'middle' });
+  svg('path', { class: 'blueprint-cross', d: crossPath(tower.encoderX, tower.decoderX, tower.baseY, tower.scale) }, drawing);
+  const label = text(root, 800, 228, '만능 설계도 · Attention Is All You Need (2017)', { class: 'transformer-everywhere-label', 'text-anchor': 'middle' });
 
   const cardGroups = cards.map(({ field, model, side, row }) => {
     const x = side < 0 ? card.leftX : card.rightX;
     const y = card.rows[row];
-    const group = svg('g', { class: 'te-card' }, root);
+    const group = svg('g', { class: 'transformer-everywhere-card' }, root);
     svg('rect', { x, y, width: card.width, height: card.height, rx: 16 }, group);
-    text(group, x + 28, y + 46, field, { class: 'te-card-field' });
-    text(group, x + 28, y + 80, model, { class: 'te-card-model' });
+    text(group, x + 28, y + 46, field, { class: 'transformer-everywhere-card-field' });
+    text(group, x + 28, y + 80, model, { class: 'transformer-everywhere-card-model' });
     return group;
   });
 
   // 오늘날의 거대 언어 모델들이 설계도 위에 선다.
   const modelChips = models.map((name, i) => {
     const x = 800 + (i - (models.length - 1) / 2) * 170;
-    const group = svg('g', { class: 'te-model' }, root);
+    const group = svg('g', { class: 'transformer-everywhere-model' }, root);
     svg('rect', { x: x - 74, y: 136, width: 148, height: 52, rx: 26 }, group);
     text(group, x, 170, name, { 'text-anchor': 'middle' });
     return group;
@@ -83,8 +83,8 @@ export const createTransformerEverywhereScene = (): Scene => {
     };
     return { base: make(false), overlay: make(true) };
   };
-  const name = spelled(178, ['Chat', 'G', 'P', 'T'], 3, 'te-chatgpt');
-  const expansion = spelled(228, ['Generative ', 'Pre-trained ', 'Transformer'], 2, 'te-expansion');
+  const name = spelled(178, ['Chat', 'G', 'P', 'T'], 3, 'transformer-everywhere-chatgpt');
+  const expansion = spelled(228, ['Generative ', 'Pre-trained ', 'Transformer'], 2, 'transformer-everywhere-expansion');
 
   const update = (time: number) => {
     setAttributes(sheet, { opacity: appear(time, start, .6).toFixed(3) });

@@ -1,333 +1,333 @@
-.sl-heading-title {
+.scaling-laws-heading-title {
   font-size: 44px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.sl-heading-sub {
+.scaling-laws-heading-sub {
   font-size: 24px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.sl-axis {
+.scaling-laws-axis {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
 }
-.sl-grid {
-  stroke: var(--d-grid);
+.scaling-laws-grid {
+  stroke: var(--diagram-grid);
   stroke-width: 2;
 }
-.sl-tick-label {
+.scaling-laws-tick-label {
   font-size: 22px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.sl-axis-label {
+.scaling-laws-axis-label {
   font-size: 24px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.sl-curve {
+.scaling-laws-curve {
   fill: none;
   stroke-width: 6;
   stroke-linecap: round;
   stroke-linejoin: round;
 
   &.measured {
-    stroke: var(--d-blue);
+    stroke: var(--diagram-blue);
   }
   &.predicted {
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 5;
     stroke-dasharray: 2 11;
   }
   &.size-0 {
-    stroke: color-mix(in srgb, var(--d-green) 30%, var(--d-subtle));
+    stroke: color-mix(in srgb, var(--diagram-green) 30%, var(--diagram-subtle));
   }
   &.size-1 {
-    stroke: color-mix(in srgb, var(--d-green) 55%, var(--d-subtle));
+    stroke: color-mix(in srgb, var(--diagram-green) 55%, var(--diagram-subtle));
   }
   &.size-2 {
-    stroke: color-mix(in srgb, var(--d-green) 80%, var(--d-subtle));
+    stroke: color-mix(in srgb, var(--diagram-green) 80%, var(--diagram-subtle));
   }
   &.size-3 {
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
   }
 }
-.sl-law {
+.scaling-laws-law {
   font-size: 26px;
   font-weight: 600;
   font-style: italic;
-  fill: var(--d-blue) !important;
+  fill: var(--diagram-blue) !important;
 }
-.sl-predict-label {
+.scaling-laws-predict-label {
   font-size: 22px;
   font-weight: 700;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.sl-guide {
-  stroke: var(--d-yellow);
+.scaling-laws-guide {
+  stroke: var(--diagram-yellow);
   stroke-width: 2;
   stroke-dasharray: 8 8;
 }
-.sl-guide-label {
+.scaling-laws-guide-label {
   font-size: 24px;
   font-weight: 700;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.sl-dot {
-  stroke: var(--d-background);
+.scaling-laws-dot {
+  stroke: var(--diagram-background);
   stroke-width: 3;
 
   &.size-0 {
-    fill: color-mix(in srgb, var(--d-green) 30%, var(--d-subtle));
+    fill: color-mix(in srgb, var(--diagram-green) 30%, var(--diagram-subtle));
   }
   &.size-1 {
-    fill: color-mix(in srgb, var(--d-green) 55%, var(--d-subtle));
+    fill: color-mix(in srgb, var(--diagram-green) 55%, var(--diagram-subtle));
   }
   &.size-2 {
-    fill: color-mix(in srgb, var(--d-green) 80%, var(--d-subtle));
+    fill: color-mix(in srgb, var(--diagram-green) 80%, var(--diagram-subtle));
   }
   &.size-3 {
-    fill: var(--d-green);
+    fill: var(--diagram-green);
   }
 }
-.sl-size-header {
+.scaling-laws-size-header {
   font-size: 22px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.sl-size-label {
+.scaling-laws-size-label {
   font-size: 26px;
   font-weight: 700;
 
   &.size-0 {
-    fill: color-mix(in srgb, var(--d-green) 30%, var(--d-subtle)) !important;
+    fill: color-mix(in srgb, var(--diagram-green) 30%, var(--diagram-subtle)) !important;
   }
   &.size-1 {
-    fill: color-mix(in srgb, var(--d-green) 55%, var(--d-subtle)) !important;
+    fill: color-mix(in srgb, var(--diagram-green) 55%, var(--diagram-subtle)) !important;
   }
   &.size-2 {
-    fill: color-mix(in srgb, var(--d-green) 80%, var(--d-subtle)) !important;
+    fill: color-mix(in srgb, var(--diagram-green) 80%, var(--diagram-subtle)) !important;
   }
   &.size-3 {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }
-.sl-note {
+.scaling-laws-note {
   font-size: 28px;
   font-weight: 700;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
-.sl-source {
+.scaling-laws-source {
   font-size: 20px;
-  fill: var(--d-subtle) !important;
+  fill: var(--diagram-subtle) !important;
 }
-.sl-soil {
-  fill: color-mix(in srgb, #8a5a32 45%, var(--d-background));
+.scaling-laws-soil {
+  fill: color-mix(in srgb, #8a5a32 45%, var(--diagram-background));
   stroke: #8a5a32;
   stroke-width: 2;
 }
-.sl-crop {
+.scaling-laws-crop {
   fill: none;
-  stroke: var(--d-green);
+  stroke: var(--diagram-green);
   stroke-width: 3;
   stroke-linecap: round;
 }
-.sl-farm-label {
+.scaling-laws-farm-label {
   font-size: 26px;
   font-weight: 600;
 }
-.sl-farm-double {
+.scaling-laws-farm-double {
   path {
     fill: none;
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 3;
   }
   text {
     font-size: 34px;
     font-weight: 800;
-    fill: var(--d-yellow) !important;
+    fill: var(--diagram-yellow) !important;
   }
 }
-.sl-cloud {
+.scaling-laws-cloud {
   fill: #2a2c35;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.sl-drop {
-  fill: var(--d-blue);
+.scaling-laws-drop {
+  fill: var(--diagram-blue);
 }
-.sl-bag {
-  fill: color-mix(in srgb, var(--d-orange) 30%, var(--d-background));
-  stroke: var(--d-orange);
+.scaling-laws-bag {
+  fill: color-mix(in srgb, var(--diagram-orange) 30%, var(--diagram-background));
+  stroke: var(--diagram-orange);
   stroke-width: 3;
   stroke-linejoin: round;
 }
-.sl-bag-tie {
-  stroke: var(--d-orange);
+.scaling-laws-bag-tie {
+  stroke: var(--diagram-orange);
   stroke-width: 6;
   stroke-linecap: round;
 }
-.sl-table-title {
+.scaling-laws-table-title {
   font-size: 30px;
   font-weight: 700;
 }
-.sl-table-frame {
+.scaling-laws-table-frame {
   fill: #141519;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.sl-table-head {
+.scaling-laws-table-head {
   font-size: 22px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.sl-table-rule {
-  stroke: var(--d-grid);
+.scaling-laws-table-rule {
+  stroke: var(--diagram-grid);
   stroke-width: 2;
 }
-.sl-table-cell {
+.scaling-laws-table-cell {
   font-size: 30px;
   font-weight: 600;
 }
-.sl-table-value {
+.scaling-laws-table-value {
   font-size: 32px;
   font-weight: 800;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
-.sl-table-note {
+.scaling-laws-table-note {
   font-size: 20px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.sl-shift-prefix {
+.scaling-laws-shift-prefix {
   font-size: 34px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.sl-shift-word {
+.scaling-laws-shift-word {
   font-size: 52px;
   font-weight: 800;
-  fill: var(--d-red) !important;
+  fill: var(--diagram-red) !important;
 
   &.engineering {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
   &.swap-glow {
     fill: none !important;
   }
 }
-.sl-cursor {
+.scaling-laws-cursor {
   line {
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 2;
     stroke-dasharray: 6 6;
   }
   circle {
-    fill: var(--d-yellow);
-    stroke: var(--d-background);
+    fill: var(--diagram-yellow);
+    stroke: var(--diagram-background);
     stroke-width: 3;
   }
 }
-.sl-readout {
+.scaling-laws-readout {
   rect {
     fill: #141519;
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 2;
   }
 }
-.sl-readout-in {
+.scaling-laws-readout-in {
   font-size: 28px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.sl-readout-out {
+.scaling-laws-readout-out {
   font-size: 34px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.sl-band {
+.scaling-laws-band {
   rect {
-    fill: color-mix(in srgb, var(--d-blue) 7%, transparent);
+    fill: color-mix(in srgb, var(--diagram-blue) 7%, transparent);
   }
 }
-.sl-band-label {
+.scaling-laws-band-label {
   font-size: 22px;
-  fill: var(--d-blue) !important;
+  fill: var(--diagram-blue) !important;
 }
-.sl-marker {
+.scaling-laws-marker {
   circle {
-    stroke: var(--d-background);
+    stroke: var(--diagram-background);
     stroke-width: 3;
   }
-  .sl-marker-ring {
+  .scaling-laws-marker-ring {
     fill: none;
     stroke-width: 3;
     opacity: .5;
   }
   &.gpt2 circle {
-    fill: var(--d-blue);
+    fill: var(--diagram-blue);
   }
-  &.gpt2 .sl-marker-ring {
-    stroke: var(--d-blue);
+  &.gpt2 .scaling-laws-marker-ring {
+    stroke: var(--diagram-blue);
   }
   &.gpt3 circle {
-    fill: var(--d-green);
+    fill: var(--diagram-green);
   }
-  &.gpt3 .sl-marker-ring {
-    stroke: var(--d-green);
+  &.gpt3 .scaling-laws-marker-ring {
+    stroke: var(--diagram-green);
   }
-  &.pulse .sl-marker-ring {
+  &.pulse .scaling-laws-marker-ring {
     opacity: 1;
-    filter: drop-shadow(0 0 10px var(--d-green));
+    filter: drop-shadow(0 0 10px var(--diagram-green));
   }
 }
-.sl-marker-name {
+.scaling-laws-marker-name {
   font-size: 30px;
   font-weight: 800;
 
   &.big {
     font-size: 40px;
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }
-.sl-marker-date {
+.scaling-laws-marker-date {
   font-size: 22px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.sl-marker-count {
+.scaling-laws-marker-count {
   font-size: 26px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 
   &.big {
     font-size: 52px;
     font-weight: 800;
-    fill: var(--d-yellow) !important;
+    fill: var(--diagram-yellow) !important;
   }
 }
-.sl-ratio {
+.scaling-laws-ratio {
   path {
     fill: none;
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 3;
     stroke-dasharray: 1;
   }
 }
-.sl-ratio-text {
+.scaling-laws-ratio-text {
   font-size: 40px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.sl-computer {
+.scaling-laws-computer {
   rect {
-    fill: color-mix(in srgb, var(--d-green) 35%, var(--d-background));
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 35%, var(--diagram-background));
+    stroke: var(--diagram-green);
     stroke-width: 1;
   }
 }
-.sl-computer-label {
+.scaling-laws-computer-label {
   font-size: 26px;
   font-weight: 600;
 }
-.sl-computer-sub {
+.scaling-laws-computer-sub {
   font-size: 22px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }

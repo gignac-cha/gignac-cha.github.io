@@ -1,11 +1,11 @@
 .cnn-card {
-  fill: color-mix(in srgb, var(--d-text) 4%, transparent);
-  stroke: var(--d-grid);
+  fill: color-mix(in srgb, var(--diagram-text) 4%, transparent);
+  stroke: var(--diagram-grid);
   stroke-width: 2;
 }
 .cnn-stroke {
   fill: none;
-  stroke: var(--d-text);
+  stroke: var(--diagram-text);
   stroke-width: 12;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -13,7 +13,7 @@
 .cnn-label {
   font-size: 30px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .cnn-heading {
   font-size: 30px;
@@ -24,19 +24,19 @@
 }
 .cnn-note {
   font-size: 28px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .cnn-cell {
   fill: none;
-  stroke: var(--d-grid);
+  stroke: var(--diagram-grid);
   stroke-width: 1.5;
 }
 .cnn-ink {
-  fill: var(--d-text);
+  fill: var(--diagram-text);
 }
 .cnn-window {
-  fill: color-mix(in srgb, var(--d-yellow) 10%, transparent);
-  stroke: var(--d-yellow);
+  fill: color-mix(in srgb, var(--diagram-yellow) 10%, transparent);
+  stroke: var(--diagram-yellow);
   stroke-width: 4;
 
   &.cnn-same {
@@ -44,24 +44,24 @@
   }
 }
 .cnn-link {
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 2;
   stroke-dasharray: 6 6;
 }
 .cnn-cursor {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 3;
 }
 .cnn-weight {
-  stroke: var(--d-background);
+  stroke: var(--diagram-background);
   stroke-width: 3;
 }
 .cnn-weight-plus {
-  fill: var(--d-blue);
+  fill: var(--diagram-blue);
 }
 .cnn-weight-minus {
-  fill: color-mix(in srgb, var(--d-red) 45%, var(--d-background));
+  fill: color-mix(in srgb, var(--diagram-red) 45%, var(--diagram-background));
 }
 .cnn-kernel-frame {
   fill: none;
@@ -69,19 +69,19 @@
   stroke-width: 6;
 
   &.cnn-same {
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
   }
 }
 .cnn-response {
-  fill: var(--d-blue);
+  fill: var(--diagram-blue);
 }
 .cnn-ring {
   fill: none;
-  stroke: var(--d-green);
+  stroke: var(--diagram-green);
   stroke-width: 4;
 }
 .cnn-kept {
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
 .cnn-count {
   font-size: 34px;
@@ -93,31 +93,31 @@
   transition: fill .3s;
 
   &.cnn-count-dropped {
-    fill: var(--d-subtle) !important;
+    fill: var(--diagram-subtle) !important;
   }
 }
 .cnn-count-few {
   text-anchor: start;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
 .cnn-strike {
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
   stroke-width: 4;
 }
 .cnn-tile {
-  fill: color-mix(in srgb, var(--d-text) 4%, transparent);
-  stroke: var(--d-line);
+  fill: color-mix(in srgb, var(--diagram-text) 4%, transparent);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
 .cnn-tile-stroke {
   fill: none;
-  stroke: var(--d-blue);
+  stroke: var(--diagram-blue);
   stroke-width: 9;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 .cnn-fan line {
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 1.5;
 }
 .cnn-bar-label {
@@ -126,11 +126,11 @@
   text-anchor: middle;
 }
 .cnn-bar-track {
-  fill: color-mix(in srgb, var(--d-text) 6%, transparent);
+  fill: color-mix(in srgb, var(--diagram-text) 6%, transparent);
 }
 .cnn-bar {
-  fill: var(--d-subtle);
+  fill: var(--diagram-subtle);
 }
 .cnn-bar-win {
-  fill: var(--d-green);
+  fill: var(--diagram-green);
 }

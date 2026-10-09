@@ -1,8 +1,8 @@
-.cw-sentence {
+.context-window-sentence {
   font-size: 40px;
   font-weight: 600;
 }
-.cw-chip {
+.context-window-chip {
   rect {
     fill: transparent;
     stroke: transparent;
@@ -13,89 +13,89 @@
     font-weight: 600;
   }
   // 토큰 앞에 붙은 공백.
-  .cw-space {
+  .context-window-space {
     font-size: 30px;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   @each $name in blue, purple, orange, green {
     &.#{$name}.boxed rect {
-      fill: color-mix(in srgb, var(--d-#{$name}) 20%, var(--d-background));
-      stroke: color-mix(in srgb, var(--d-#{$name}) 70%, var(--d-background));
+      fill: color-mix(in srgb, var(--diagram-#{$name}) 20%, var(--diagram-background));
+      stroke: color-mix(in srgb, var(--diagram-#{$name}) 70%, var(--diagram-background));
     }
   }
 }
-.cw-half-glyph {
+.context-window-half-glyph {
   font-size: 40px;
   font-weight: 600;
 }
-.cw-bracket {
+.context-window-bracket {
   path {
     fill: none;
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 2;
   }
   text {
     font-size: 20px;
     font-weight: 600;
-    fill: var(--d-yellow) !important;
+    fill: var(--diagram-yellow) !important;
   }
 }
-.cw-counter {
+.context-window-counter {
   font-size: 34px;
   font-weight: 800;
 }
-.cw-note {
+.context-window-note {
   font-size: 20px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.cw-heading {
+.context-window-heading {
   font-size: 28px;
   font-weight: 700;
 
   &.accent {
-    fill: var(--d-yellow) !important;
+    fill: var(--diagram-yellow) !important;
   }
 }
-.cw-page-outline {
-  fill: var(--d-background);
-  stroke: var(--d-line);
+.context-window-page-outline {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.cw-page-fill {
-  fill: color-mix(in srgb, var(--d-blue) 30%, var(--d-background));
+.context-window-page-fill {
+  fill: color-mix(in srgb, var(--diagram-blue) 30%, var(--diagram-background));
 }
-.cw-page.first .cw-page-fill {
-  fill: color-mix(in srgb, var(--d-blue) 60%, var(--d-background));
+.context-window-page.first .context-window-page-fill {
+  fill: color-mix(in srgb, var(--diagram-blue) 60%, var(--diagram-background));
 }
-.cw-page-line {
-  stroke: color-mix(in srgb, var(--d-text) 45%, transparent);
+.context-window-page-line {
+  stroke: color-mix(in srgb, var(--diagram-text) 45%, transparent);
   stroke-width: 2;
 }
-.cw-grid {
-  stroke: var(--d-grid);
+.context-window-grid {
+  stroke: var(--diagram-grid);
   stroke-width: 2;
 }
-.cw-axis {
+.context-window-axis {
   font-size: 17px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.cw-model {
+.context-window-model {
   font-size: 17px;
   font-weight: 600;
 }
-.cw-bar {
+.context-window-bar {
   rect {
-    fill: color-mix(in srgb, var(--d-blue) 55%, var(--d-background));
+    fill: color-mix(in srgb, var(--diagram-blue) 55%, var(--diagram-background));
   }
   &.latest rect {
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
 }
-.cw-value {
+.context-window-value {
   font-size: 17px;
   font-weight: 700;
 
   .latest & {
-    fill: var(--d-yellow) !important;
+    fill: var(--diagram-yellow) !important;
   }
 }

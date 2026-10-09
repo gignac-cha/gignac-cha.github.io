@@ -1,154 +1,154 @@
-.rm-panel {
+.reasoning-model-panel {
   fill: #15161b;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 1.5;
 }
-.rm-name {
+.reasoning-model-name {
   font-size: 26px;
   font-weight: 800;
 }
-.diagram text.rm-date {
+.diagram text.reasoning-model-date {
   font-size: 20px;
   text-anchor: end;
-  fill: var(--d-muted);
+  fill: var(--diagram-muted);
 }
-.rm-bubble {
+.reasoning-model-bubble {
   fill: #2a2b33;
 }
-.diagram text.rm-mono {
+.diagram text.reasoning-model-mono {
   font-family: "SF Mono", Menlo, Consolas, monospace;
   font-size: 15px;
   white-space: pre;
 }
-.rm-badge {
-  fill: color-mix(in srgb, var(--d-red) 16%, transparent);
-  stroke: color-mix(in srgb, var(--d-red) 70%, transparent);
+.reasoning-model-badge {
+  fill: color-mix(in srgb, var(--diagram-red) 16%, transparent);
+  stroke: color-mix(in srgb, var(--diagram-red) 70%, transparent);
   stroke-width: 1.5;
 }
-.diagram text.rm-badge-text {
+.diagram text.reasoning-model-badge-text {
   font-size: 17px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-red);
+  fill: var(--diagram-red);
 }
-.diagram text.rm-answer {
+.diagram text.reasoning-model-answer {
   font-size: 17px;
   fill: #c9c9cf;
 }
-.diagram text.rm-fail {
+.diagram text.reasoning-model-fail {
   font-size: 23px;
   font-weight: 700;
-  fill: var(--d-red);
+  fill: var(--diagram-red);
 }
-.diagram text.rm-success {
+.diagram text.reasoning-model-success {
   font-family: "SF Mono", Menlo, Consolas, monospace;
   font-size: 22px;
   font-weight: 700;
-  fill: var(--d-green);
+  fill: var(--diagram-green);
 }
 
 // 생각 중 표시: 생각하는 동안 글자가 숨 쉬듯 깜박인다(scene.ts 에서 재생 시간으로).
-.diagram text.rm-status {
+.diagram text.reasoning-model-status {
   font-size: 22px;
   font-weight: 700;
-  fill: var(--d-muted);
+  fill: var(--diagram-muted);
 
   &.active {
-    fill: var(--d-text);
+    fill: var(--diagram-text);
   }
   &.glow {
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
 }
-.diagram text.rm-long {
+.diagram text.reasoning-model-long {
   font-size: 19px;
   text-anchor: end;
-  fill: var(--d-muted);
+  fill: var(--diagram-muted);
 }
 
 // 속으로 쓴 풀이 과정.
-.rm-cot {
+.reasoning-model-cot {
   fill: #121318;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 1.5;
 }
-.diagram text.rm-cot-text {
+.diagram text.reasoning-model-cot-text {
   font-family: "SF Mono", Menlo, Consolas, monospace;
   font-size: 13.5px;
   fill: #8f96a6;
   white-space: pre;
 }
-.diagram text.rm-count {
+.diagram text.reasoning-model-count {
   font-size: 18px;
   font-weight: 700;
   text-anchor: end;
-  fill: var(--d-yellow);
+  fill: var(--diagram-yellow);
 }
-.rm-attempts {
+.reasoning-model-attempts {
   fill: #121318;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 2;
 }
-.rm-attempt-title {
+.reasoning-model-attempt-title {
   font-size: 21px;
   font-weight: 700;
 }
-.diagram text.rm-attempt-work {
+.diagram text.reasoning-model-attempt-work {
   font-size: 18px;
   fill: #b8d7ff;
 }
-.rm-mark {
+.reasoning-model-mark {
   font-size: 34px;
   font-weight: 800;
   text-anchor: middle;
 
   &.no {
-    fill: var(--d-red) !important;
+    fill: var(--diagram-red) !important;
   }
   &.ok {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }
-.rm-back {
+.reasoning-model-back {
   fill: none;
-  stroke: var(--d-orange);
+  stroke: var(--diagram-orange);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-dasharray: 3 7;
 }
-.diagram text.rm-back-text {
+.diagram text.reasoning-model-back-text {
   font-size: 17px;
   font-weight: 700;
   text-anchor: end;
-  fill: var(--d-orange);
+  fill: var(--diagram-orange);
 }
 
 // 성적.
-.rm-score-heading {
+.reasoning-model-score-heading {
   font-size: 24px;
   font-weight: 700;
 }
-.diagram text.rm-score-label {
+.diagram text.reasoning-model-score-label {
   font-size: 21px;
   font-weight: 600;
   text-anchor: end;
-  fill: var(--d-muted);
+  fill: var(--diagram-muted);
 }
-.rm-score-track {
-  fill: var(--d-grid);
+.reasoning-model-score-track {
+  fill: var(--diagram-grid);
 }
-.rm-score-old {
-  fill: var(--d-subtle);
+.reasoning-model-score-old {
+  fill: var(--diagram-subtle);
 }
-.rm-score-new {
-  fill: var(--d-blue);
+.reasoning-model-score-new {
+  fill: var(--diagram-blue);
 }
-.rm-score-value {
+.reasoning-model-score-value {
   font-size: 22px;
   font-weight: 800;
 }
-.diagram text.rm-source {
+.diagram text.reasoning-model-source {
   font-size: 16px;
   text-anchor: end;
-  fill: var(--d-subtle);
+  fill: var(--diagram-subtle);
 }

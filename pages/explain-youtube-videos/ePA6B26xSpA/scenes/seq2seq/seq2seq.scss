@@ -1,15 +1,15 @@
-.s2s-caption {
+.seq2seq-caption {
   font-size: 28px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.s2s-heading {
+.seq2seq-heading {
   font-size: 32px;
   font-weight: 700;
 }
-.s2s-chip {
+.seq2seq-chip {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-line);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   text {
@@ -18,98 +18,98 @@
     text-anchor: middle;
   }
   &.muted text {
-    fill: var(--d-muted) !important;
+    fill: var(--diagram-muted) !important;
   }
   &.active rect {
-    stroke: var(--d-blue);
-    fill: color-mix(in srgb, var(--d-blue) 16%, var(--d-background));
+    stroke: var(--diagram-blue);
+    fill: color-mix(in srgb, var(--diagram-blue) 16%, var(--diagram-background));
   }
   &.output rect {
-    stroke: var(--d-green);
-    fill: color-mix(in srgb, var(--d-green) 16%, var(--d-background));
+    stroke: var(--diagram-green);
+    fill: color-mix(in srgb, var(--diagram-green) 16%, var(--diagram-background));
   }
 }
-.s2s-pair-link {
-  stroke: var(--d-subtle);
+.seq2seq-pair-link {
+  stroke: var(--diagram-subtle);
   stroke-width: 2;
   stroke-dasharray: 8 8;
 }
-.s2s-awkward {
+.seq2seq-awkward {
   font-size: 40px;
   font-weight: 700;
 }
-.s2s-squiggle {
+.seq2seq-squiggle {
   fill: none;
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
   stroke-width: 3;
 }
-.s2s-awkward-label {
+.seq2seq-awkward-label {
   font-size: 30px;
   font-weight: 700;
-  fill: var(--d-red) !important;
+  fill: var(--diagram-red) !important;
 }
-.s2s-arrow {
+.seq2seq-arrow {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.s2s-cell {
+.seq2seq-cell {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-line);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
     stroke-width: 3;
   }
   &.active rect {
-    fill: color-mix(in srgb, var(--d-blue) 18%, var(--d-background));
-    stroke: var(--d-blue);
+    fill: color-mix(in srgb, var(--diagram-blue) 18%, var(--diagram-background));
+    stroke: var(--diagram-blue);
   }
 }
-.s2s-cell-label {
+.seq2seq-cell-label {
   font-size: 28px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 
   .active & {
-    fill: var(--d-text) !important;
+    fill: var(--diagram-text) !important;
   }
 }
-.s2s-capsule-ring {
-  fill: color-mix(in srgb, var(--d-yellow) 8%, var(--d-background));
-  stroke: var(--d-yellow);
+.seq2seq-capsule-ring {
+  fill: color-mix(in srgb, var(--diagram-yellow) 8%, var(--diagram-background));
+  stroke: var(--diagram-yellow);
   stroke-width: 4;
 
   &.strained {
-    fill: color-mix(in srgb, var(--d-red) 10%, var(--d-background));
-    stroke: var(--d-red);
+    fill: color-mix(in srgb, var(--diagram-red) 10%, var(--diagram-background));
+    stroke: var(--diagram-red);
     stroke-width: 6;
   }
 }
-.s2s-capsule-bar {
-  fill: var(--d-yellow);
+.seq2seq-capsule-bar {
+  fill: var(--diagram-yellow);
 }
-.s2s-packet {
-  fill: var(--d-yellow);
+.seq2seq-packet {
+  fill: var(--diagram-yellow);
 }
-.s2s-long-line {
+.seq2seq-long-line {
   font-size: 30px;
   font-weight: 600;
-  fill: var(--d-subtle) !important;
+  fill: var(--diagram-subtle) !important;
 
   tspan.read {
-    fill: var(--d-blue);
+    fill: var(--diagram-blue);
   }
   tspan.faded {
-    fill: var(--d-subtle);
+    fill: var(--diagram-subtle);
     fill-opacity: .35;
   }
   &.output {
     font-size: 34px;
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
   tspan.garbled {
-    fill: var(--d-red);
+    fill: var(--diagram-red);
   }
 }

@@ -1,12 +1,12 @@
-.att-row-label {
+.attention-row-label {
   font-size: 28px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.att-chip {
+.attention-chip {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-line);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   text {
@@ -15,92 +15,92 @@
     text-anchor: middle;
   }
   &.source.focus rect {
-    stroke: var(--d-yellow);
-    fill: color-mix(in srgb, var(--d-yellow) 16%, var(--d-background));
+    stroke: var(--diagram-yellow);
+    fill: color-mix(in srgb, var(--diagram-yellow) 16%, var(--diagram-background));
   }
   &.slot {
     rect {
       stroke-dasharray: 8 8;
-      stroke: var(--d-subtle);
+      stroke: var(--diagram-subtle);
     }
     text {
-      fill: var(--d-subtle) !important;
+      fill: var(--diagram-subtle) !important;
     }
     &.current rect {
-      stroke: var(--d-yellow);
+      stroke: var(--diagram-yellow);
     }
   }
   &.output rect {
-    stroke: var(--d-green);
-    fill: color-mix(in srgb, var(--d-green) 16%, var(--d-background));
+    stroke: var(--diagram-green);
+    fill: color-mix(in srgb, var(--diagram-green) 16%, var(--diagram-background));
   }
 }
-.att-summary {
+.attention-summary {
   line {
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 3;
   }
 }
-.att-summary-ring {
-  fill: var(--d-background);
-  stroke: var(--d-subtle);
+.attention-summary-ring {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-subtle);
   stroke-width: 3;
 }
-.att-summary-label {
+.attention-summary-label {
   font-size: 28px;
   font-weight: 600;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.att-link {
-  stroke: var(--d-yellow);
+.attention-link {
+  stroke: var(--diagram-yellow);
   stroke-linecap: round;
 }
-.att-pointer {
-  fill: var(--d-yellow);
+.attention-pointer {
+  fill: var(--diagram-yellow);
 }
-.att-matrix-label {
+.attention-matrix-label {
   font-size: 30px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.att-cell {
-  fill: var(--d-yellow);
+.attention-cell {
+  fill: var(--diagram-yellow);
 }
-.att-axis {
+.attention-axis {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
 }
-.att-axis-label {
+.attention-axis-label {
   font-size: 28px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.att-curve {
+.attention-curve {
   fill: none;
   stroke-width: 6;
   stroke-linecap: round;
   stroke-dasharray: 1;
 
   &.summary {
-    stroke: var(--d-red);
+    stroke: var(--diagram-red);
   }
   &.attention {
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
   }
   &.highlight {
     stroke-width: 8;
-    filter: drop-shadow(0 0 10px var(--d-green));
+    filter: drop-shadow(0 0 10px var(--diagram-green));
   }
 }
-.att-legend {
+.attention-legend {
   font-size: 30px;
   font-weight: 700;
 
   &.summary {
-    fill: var(--d-red) !important;
+    fill: var(--diagram-red) !important;
   }
   &.attention {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }

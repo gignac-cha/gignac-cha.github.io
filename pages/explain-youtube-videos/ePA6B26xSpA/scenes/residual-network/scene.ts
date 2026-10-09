@@ -428,7 +428,7 @@ const createResidualNetwork = () => {
       });
       const heard = run && i < run.count && i <= reached;
       const red = heard ? Math.round(((i / (run.count - 1)) * run.garble * 100) / 5) * 5 : 0;
-      const style = heard ? `fill: color-mix(in srgb, var(--d-red) ${red}%, var(--d-yellow)); stroke: none` : '';
+      const style = heard ? `fill: color-mix(in srgb, var(--diagram-red) ${red}%, var(--diagram-yellow)); stroke: none` : '';
       parts.forEach((part) => setAttributes(part, { style }));
     });
     // 괄호는 지금 줄에 선 사람(오른쪽에서 이어 붙는 사람 포함)을 감싼다.

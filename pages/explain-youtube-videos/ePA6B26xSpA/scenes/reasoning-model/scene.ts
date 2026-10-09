@@ -80,77 +80,77 @@ export const createReasoningModelScene = (): Scene => {
 
   const panelViews = panels.map(({ x, name, date }) => {
     const group = svg('g', { opacity: 0 }, root);
-    svg('rect', { x, y: panel.y, width: panel.width, height: panel.height, rx: 20, class: 'rm-panel' }, group);
-    const nameView = text(group, x + 28, panel.y + 44, name, { class: 'rm-name' });
-    const dateView = text(group, x + panel.width - 28, panel.y + 44, date, { class: 'rm-date' });
+    svg('rect', { x, y: panel.y, width: panel.width, height: panel.height, rx: 20, class: 'reasoning-model-panel' }, group);
+    const nameView = text(group, x + 28, panel.y + 44, name, { class: 'reasoning-model-name' });
+    const dateView = text(group, x + panel.width - 28, panel.y + 44, date, { class: 'reasoning-model-date' });
     const bubble = svg('g', { opacity: 0 }, group);
-    svg('rect', { x: x + 96, y: panel.y + 66, width: panel.width - 120, height: 92, rx: 18, class: 'rm-bubble' }, bubble);
-    question.forEach((line, i) => text(bubble, x + 118, panel.y + 96 + i * 25, line, { class: 'rm-mono' }));
+    svg('rect', { x: x + 96, y: panel.y + 66, width: panel.width - 120, height: 92, rx: 18, class: 'reasoning-model-bubble' }, bubble);
+    question.forEach((line, i) => text(bubble, x + 118, panel.y + 96 + i * 25, line, { class: 'reasoning-model-mono' }));
     return { group, nameView, dateView, bubble };
   });
 
   // 왼쪽: GPT-4o 는 곧바로 대답한다.
   const left = panels[0].x;
   const instantBadge = svg('g', { opacity: 0 }, root);
-  svg('rect', { x: left + 150, y: panel.y + 24, width: 170, height: 30, rx: 15, class: 'rm-badge' }, instantBadge);
-  text(instantBadge, left + 235, panel.y + 45, '생각 없이 곧바로', { class: 'rm-badge-text' });
-  const instantViews = instantLines.map((line, i) => text(root, left + 28, panel.y + 202 + i * 26, line, { class: 'rm-answer', opacity: 0 }));
+  svg('rect', { x: left + 150, y: panel.y + 24, width: 170, height: 30, rx: 15, class: 'reasoning-model-badge' }, instantBadge);
+  text(instantBadge, left + 235, panel.y + 45, '생각 없이 곧바로', { class: 'reasoning-model-badge-text' });
+  const instantViews = instantLines.map((line, i) => text(root, left + 28, panel.y + 202 + i * 26, line, { class: 'reasoning-model-answer', opacity: 0 }));
   const weakness = svg('g', { opacity: 0 }, root);
-  text(weakness, left + 28, panel.y + panel.height - 30, '✕  풀지 못하고 규칙을 되묻는다', { class: 'rm-fail' });
+  text(weakness, left + 28, panel.y + panel.height - 30, '✕  풀지 못하고 규칙을 되묻는다', { class: 'reasoning-model-fail' });
 
   // 오른쪽: o1 은 먼저 생각한다.
   const right = panels[1].x;
-  const status = text(root, right + 28, panel.y + 198, '', { class: 'rm-status', opacity: 0 });
-  const longNote = text(root, right + panel.width - 28, panel.y + 198, '어려운 문제는 몇십 초까지', { class: 'rm-long', opacity: 0 });
-  const clip = svg('clipPath', { id: 'rm-cot-clip' }, root);
+  const status = text(root, right + 28, panel.y + 198, '', { class: 'reasoning-model-status', opacity: 0 });
+  const longNote = text(root, right + panel.width - 28, panel.y + 198, '어려운 문제는 몇십 초까지', { class: 'reasoning-model-long', opacity: 0 });
+  const clip = svg('clipPath', { id: 'reasoning-model-cot-clip' }, root);
   const clipRect = svg('rect', { x: cot.x, y: cot.y, width: cot.width, height: 0, rx: 12 }, clip);
-  const cotGroup = svg('g', { 'clip-path': 'url(#rm-cot-clip)' }, root);
-  svg('rect', { x: cot.x, y: cot.y, width: cot.width, height: cot.height, rx: 12, class: 'rm-cot' }, cotGroup);
-  const cotLines = Array.from({ length: visible }, () => text(cotGroup, cot.x + 18, 0, '', { class: 'rm-cot-text' }));
-  const fadeTop = svg('rect', { x: cot.x, y: cot.y, width: cot.width, height: 40, class: 'rm-cot-fade-top' }, cotGroup);
-  const fadeBottom = svg('rect', { x: cot.x, y: cot.y + cot.height - 40, width: cot.width, height: 40, class: 'rm-cot-fade-bottom' }, cotGroup);
-  const lineCount = text(root, cot.x + cot.width - 14, cot.y + cot.height - 14, `풀이 과정 ${chainOfThought.length}줄`, { class: 'rm-count', opacity: 0 });
+  const cotGroup = svg('g', { 'clip-path': 'url(#reasoning-model-cot-clip)' }, root);
+  svg('rect', { x: cot.x, y: cot.y, width: cot.width, height: cot.height, rx: 12, class: 'reasoning-model-cot' }, cotGroup);
+  const cotLines = Array.from({ length: visible }, () => text(cotGroup, cot.x + 18, 0, '', { class: 'reasoning-model-cot-text' }));
+  const fadeTop = svg('rect', { x: cot.x, y: cot.y, width: cot.width, height: 40, class: 'reasoning-model-cot-fade-top' }, cotGroup);
+  const fadeBottom = svg('rect', { x: cot.x, y: cot.y + cot.height - 40, width: cot.width, height: 40, class: 'reasoning-model-cot-fade-bottom' }, cotGroup);
+  const lineCount = text(root, cot.x + cot.width - 14, cot.y + cot.height - 14, `풀이 과정 ${chainOfThought.length}줄`, { class: 'reasoning-model-count', opacity: 0 });
   // 그라데이션(위아래 가장자리를 흐리게): 상자 끝에서 진하고 안쪽으로 갈수록 투명하다.
   const defs = svg('defs', {}, root);
-  [['rm-fade-top', 1, 0], ['rm-fade-bottom', 0, 1]].forEach(([id, from, to]) => {
+  [['reasoning-model-fade-top', 1, 0], ['reasoning-model-fade-bottom', 0, 1]].forEach(([id, from, to]) => {
     const gradient = svg('linearGradient', { id: String(id), x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
     svg('stop', { offset: 0, 'stop-color': '#121318', 'stop-opacity': Number(from) }, gradient);
     svg('stop', { offset: 1, 'stop-color': '#121318', 'stop-opacity': Number(to) }, gradient);
   });
-  setAttributes(fadeTop, { fill: 'url(#rm-fade-top)' });
-  setAttributes(fadeBottom, { fill: 'url(#rm-fade-bottom)' });
+  setAttributes(fadeTop, { fill: 'url(#reasoning-model-fade-top)' });
+  setAttributes(fadeBottom, { fill: 'url(#reasoning-model-fade-bottom)' });
 
   // 틀린 길 → 되돌아가 → 다른 방법.
   const attemptGroup = svg('g', { opacity: 0 }, root);
-  svg('rect', { x: cot.x, y: cot.y, width: cot.width, height: cot.height, rx: 12, class: 'rm-attempts' }, attemptGroup);
+  svg('rect', { x: cot.x, y: cot.y, width: cot.width, height: cot.height, rx: 12, class: 'reasoning-model-attempts' }, attemptGroup);
   const attemptViews = attempts.map(({ title, work, ok }, i) => {
     const y = cot.y + 56 + i * 76;
     const group = svg('g', { opacity: 0 }, attemptGroup);
-    text(group, cot.x + 24, y - 14, `${i + 1}. ${title}`, { class: 'rm-attempt-title' });
-    text(group, cot.x + 24, y + 16, work, { class: 'rm-mono rm-attempt-work' });
-    const mark = text(group, cot.x + cot.width - 30, y + 4, ok ? '✓' : '✕', { class: ok ? 'rm-mark ok' : 'rm-mark no', opacity: 0 });
+    text(group, cot.x + 24, y - 14, `${i + 1}. ${title}`, { class: 'reasoning-model-attempt-title' });
+    text(group, cot.x + 24, y + 16, work, { class: 'reasoning-model-mono reasoning-model-attempt-work' });
+    const mark = text(group, cot.x + cot.width - 30, y + 4, ok ? '✓' : '✕', { class: ok ? 'reasoning-model-mark ok' : 'reasoning-model-mark no', opacity: 0 });
     return { group, mark };
   });
   const backArrow = svg('g', { opacity: 0 }, attemptGroup);
-  svg('path', { d: `M${cot.x + cot.width - 70} ${cot.y + 132} C ${cot.x + cot.width - 120} ${cot.y + 150}, ${cot.x + cot.width - 120} ${cot.y + 70}, ${cot.x + cot.width - 74} ${cot.y + 54}`, class: 'rm-back' }, backArrow);
-  text(backArrow, cot.x + cot.width - 128, cot.y + 108, '되돌아감', { class: 'rm-back-text' });
+  svg('path', { d: `M${cot.x + cot.width - 70} ${cot.y + 132} C ${cot.x + cot.width - 120} ${cot.y + 150}, ${cot.x + cot.width - 120} ${cot.y + 70}, ${cot.x + cot.width - 74} ${cot.y + 54}`, class: 'reasoning-model-back' }, backArrow);
+  text(backArrow, cot.x + cot.width - 128, cot.y + 108, '되돌아감', { class: 'reasoning-model-back-text' });
   const final = svg('g', { opacity: 0 }, root);
-  text(final, right + 28, panel.y + panel.height - 30, `✓  ${answer}`, { class: 'rm-success' });
+  text(final, right + 28, panel.y + panel.height - 30, `✓  ${answer}`, { class: 'reasoning-model-success' });
 
   // 성적.
   const scoreGroup = svg('g', { opacity: 0 }, root);
   const scoreViews = scores.map(({ heading, x, unit, values }) => {
-    text(scoreGroup, x, 688, heading, { class: 'rm-score-heading' });
+    text(scoreGroup, x, 688, heading, { class: 'reasoning-model-score-heading' });
     return values.map((value, i) => {
       const y = bar.rows[i];
-      text(scoreGroup, x + bar.label - 18, y + 8, i === 0 ? 'GPT-4o' : 'o1', { class: 'rm-score-label' });
-      svg('rect', { x: x + bar.label, y: y - 17, width: bar.width, height: 34, rx: 6, class: 'rm-score-track' }, scoreGroup);
-      const fill = svg('rect', { x: x + bar.label, y: y - 17, height: 34, rx: 6, class: i === 0 ? 'rm-score-old' : 'rm-score-new' }, scoreGroup);
-      const label = text(scoreGroup, x + bar.label, y + 9, `${value}${unit}`, { class: 'rm-score-value', opacity: 0 });
+      text(scoreGroup, x + bar.label - 18, y + 8, i === 0 ? 'GPT-4o' : 'o1', { class: 'reasoning-model-score-label' });
+      svg('rect', { x: x + bar.label, y: y - 17, width: bar.width, height: 34, rx: 6, class: 'reasoning-model-score-track' }, scoreGroup);
+      const fill = svg('rect', { x: x + bar.label, y: y - 17, height: 34, rx: 6, class: i === 0 ? 'reasoning-model-score-old' : 'reasoning-model-score-new' }, scoreGroup);
+      const label = text(scoreGroup, x + bar.label, y + 9, `${value}${unit}`, { class: 'reasoning-model-score-value', opacity: 0 });
       return { fill, label, value };
     });
   });
-  text(scoreGroup, 1540, 884, '출처: OpenAI, Learning to Reason with LLMs(2024.9)', { class: 'rm-source' });
+  text(scoreGroup, 1540, 884, '출처: OpenAI, Learning to Reason with LLMs(2024.9)', { class: 'reasoning-model-source' });
 
   const update = (time: number) => {
     // 패널

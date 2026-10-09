@@ -1,191 +1,191 @@
-.sd-heading {
+.stable-diffusion-heading {
   font-size: 56px;
   font-weight: 800;
   text-anchor: middle;
 }
-.sd-title {
+.stable-diffusion-title {
   font-size: 34px;
   font-weight: 700;
   text-anchor: middle;
 }
-.sd-caption {
+.stable-diffusion-caption {
   font-size: 26px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.sd-arrow {
+.stable-diffusion-arrow {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.sd-file {
+.stable-diffusion-file {
   path {
-    fill: color-mix(in srgb, var(--d-purple) 16%, var(--d-background));
-    stroke: var(--d-purple);
+    fill: color-mix(in srgb, var(--diagram-purple) 16%, var(--diagram-background));
+    stroke: var(--diagram-purple);
     stroke-width: 3;
     stroke-linejoin: round;
   }
-  .sd-file-fold {
+  .stable-diffusion-file-fold {
     fill: none;
   }
 }
-.sd-file-title {
+.stable-diffusion-file-title {
   font-size: 34px;
   font-weight: 800;
   text-anchor: middle;
 }
-.sd-file-sub {
+.stable-diffusion-file-sub {
   font-size: 24px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.sd-bar-track {
+.stable-diffusion-bar-track {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.sd-bar {
-  fill: var(--d-purple);
+.stable-diffusion-bar {
+  fill: var(--diagram-purple);
 }
-.sd-laptop {
+.stable-diffusion-laptop {
   rect,
   path {
-    fill: var(--d-grid);
-    stroke: var(--d-line);
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
     stroke-width: 3;
   }
 }
-.sd-chip {
-  fill: color-mix(in srgb, var(--d-purple) 30%, var(--d-background)) !important;
-  stroke: var(--d-purple) !important;
+.stable-diffusion-chip {
+  fill: color-mix(in srgb, var(--diagram-purple) 30%, var(--diagram-background)) !important;
+  stroke: var(--diagram-purple) !important;
 }
-.sd-chip-text {
+.stable-diffusion-chip-text {
   font-size: 20px;
   font-weight: 700;
   text-anchor: middle;
 }
-.sd-edit {
+.stable-diffusion-edit {
   font-size: 26px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
-.sd-frame {
+.stable-diffusion-frame {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.sd-funnel {
-  fill: color-mix(in srgb, var(--d-blue) 10%, transparent);
-  stroke: var(--d-blue);
+.stable-diffusion-funnel {
+  fill: color-mix(in srgb, var(--diagram-blue) 10%, transparent);
+  stroke: var(--diagram-blue);
   stroke-width: 2;
   stroke-dasharray: 6 6;
 }
-.sd-funnel-text {
+.stable-diffusion-funnel-text {
   font-size: 24px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-blue) !important;
+  fill: var(--diagram-blue) !important;
 }
 .stable-diffusion g.faded {
   opacity: .35;
   transition: opacity .4s;
 }
-.sd-loop {
+.stable-diffusion-loop {
   path {
     fill: none;
-    stroke: var(--d-purple);
+    stroke: var(--diagram-purple);
     stroke-width: 4;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
 }
-.sd-loop-text {
+.stable-diffusion-loop-text {
   font-size: 26px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-purple) !important;
+  fill: var(--diagram-purple) !important;
 }
-.sd-loop-dot {
-  fill: var(--d-yellow);
+.stable-diffusion-loop-dot {
+  fill: var(--diagram-yellow);
 }
-.sd-label {
+.stable-diffusion-label {
   font-size: 26px;
   font-weight: 700;
   text-anchor: middle;
 }
-.sd-number {
+.stable-diffusion-number {
   font-size: 28px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 
   &.accent {
-    fill: var(--d-yellow) !important;
+    fill: var(--diagram-yellow) !important;
   }
 }
-.sd-ratio {
+.stable-diffusion-ratio {
   font-size: 40px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.sd-datacenter {
+.stable-diffusion-datacenter {
   rect {
-    fill: var(--d-grid);
-    stroke: var(--d-line);
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
-  .sd-led {
-    fill: var(--d-green);
+  .stable-diffusion-led {
+    fill: var(--diagram-green);
   }
-  &.off .sd-led {
-    fill: var(--d-subtle);
+  &.off .stable-diffusion-led {
+    fill: var(--diagram-subtle);
   }
 }
-.sd-cross path {
+.stable-diffusion-cross path {
   fill: none;
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
   stroke-width: 10;
   stroke-linecap: round;
 }
-.sd-gpu {
+.stable-diffusion-gpu {
   > rect:first-child {
     fill: #23252d;
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
     stroke-width: 3;
   }
 }
-.sd-fan {
+.stable-diffusion-fan {
   fill: #15161b;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
 }
-.sd-fan-hub {
-  fill: var(--d-line);
+.stable-diffusion-fan-hub {
+  fill: var(--diagram-line);
 }
-.sd-blades {
-  stroke: var(--d-muted);
+.stable-diffusion-blades {
+  stroke: var(--diagram-muted);
   stroke-width: 10;
   stroke-linecap: round;
 }
-.sd-pcie {
-  fill: var(--d-yellow);
+.stable-diffusion-pcie {
+  fill: var(--diagram-yellow);
   opacity: .8;
 }
-.sd-person {
-  fill: var(--d-blue);
+.stable-diffusion-person {
+  fill: var(--diagram-blue);
 }
-.sd-spoke {
-  stroke: var(--d-line);
+.stable-diffusion-spoke {
+  stroke: var(--diagram-line);
   stroke-width: 2;
   stroke-dasharray: 4 6;
 }
-.sd-variant {
+.stable-diffusion-variant {
   rect {
-    fill: color-mix(in srgb, var(--d-green) 18%, var(--d-background));
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 18%, var(--diagram-background));
+    stroke: var(--diagram-green);
     stroke-width: 2.5;
   }
   text {
@@ -194,16 +194,16 @@
     text-anchor: middle;
   }
 }
-.sd-lead-caption {
+.stable-diffusion-lead-caption {
   font-size: 32px;
 }
-.sd-lead {
+.stable-diffusion-lead {
   font-size: 96px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-orange) !important;
+  fill: var(--diagram-orange) !important;
 
   &.diffusion {
-    fill: var(--d-purple) !important;
+    fill: var(--diagram-purple) !important;
   }
 }

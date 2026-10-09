@@ -32,26 +32,26 @@ export interface ChartOptions {
 
 // 로그-로그 그래프. 거듭제곱 법칙은 여기서 곧은 선이 된다.
 export const createLogChart = (parent: Element, { box, x, y, xTicks, yTicks, xLabel, yLabel }: ChartOptions) => {
-  const group = svg('g', { class: 'sl-chart' }, parent);
+  const group = svg('g', { class: 'scaling-laws-chart' }, parent);
   const { left, top, width, height } = box;
   const toX = (exponent: number) => left + ((exponent - x[0]) / (x[1] - x[0])) * width;
   const toY = (value: number) => top + height - ((Math.log10(value) - Math.log10(y[0])) / (Math.log10(y[1]) - Math.log10(y[0]))) * height;
 
   for (const value of yTicks) {
-    svg('line', { class: 'sl-grid', x1: left, y1: toY(value), x2: left + width, y2: toY(value) }, group);
-    text(group, left - 14, toY(value) + 8, String(value), { class: 'sl-tick-label', 'text-anchor': 'end' });
+    svg('line', { class: 'scaling-laws-grid', x1: left, y1: toY(value), x2: left + width, y2: toY(value) }, group);
+    text(group, left - 14, toY(value) + 8, String(value), { class: 'scaling-laws-tick-label', 'text-anchor': 'end' });
   }
-  svg('path', { class: 'sl-axis', d: `M${left} ${top - 10} V${top + height} H${left + width + 10}` }, group);
+  svg('path', { class: 'scaling-laws-axis', d: `M${left} ${top - 10} V${top + height} H${left + width + 10}` }, group);
   for (const [exponent, label] of xTicks) {
-    svg('line', { class: 'sl-axis', x1: toX(exponent), y1: top + height, x2: toX(exponent), y2: top + height + 8 }, group);
-    text(group, toX(exponent), top + height + 36, label, { class: 'sl-tick-label', 'text-anchor': 'middle' });
+    svg('line', { class: 'scaling-laws-axis', x1: toX(exponent), y1: top + height, x2: toX(exponent), y2: top + height + 8 }, group);
+    text(group, toX(exponent), top + height + 36, label, { class: 'scaling-laws-tick-label', 'text-anchor': 'middle' });
   }
-  text(group, left + width / 2, top + height + 76, xLabel, { class: 'sl-axis-label', 'text-anchor': 'middle' });
-  text(group, left - 4, top - 26, yLabel, { class: 'sl-axis-label' });
+  text(group, left + width / 2, top + height + 76, xLabel, { class: 'scaling-laws-axis-label', 'text-anchor': 'middle' });
+  text(group, left - 4, top - 26, yLabel, { class: 'scaling-laws-axis-label' });
 
   // f(지수) = 오차. draw(p)는 from에서 to 쪽으로 p만큼 그린다(점선도 그대로 이어진다).
   const curve = (f: (exponent: number) => number, from: number, to: number, className: string) => {
-    const element = svg('path', { class: `sl-curve ${className}` }, group);
+    const element = svg('path', { class: `scaling-laws-curve ${className}` }, group);
     let drawn = -1;
     const draw = (p: number) => {
       const amount = Math.round(p * 120) / 120;

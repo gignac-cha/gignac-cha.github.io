@@ -1,118 +1,118 @@
-.bs-box {
+.bert-search-box {
   rect {
     fill: #17181d;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
-  .bs-icon {
+  .bert-search-icon {
     fill: none;
-    stroke: var(--d-muted);
+    stroke: var(--diagram-muted);
     stroke-width: 3;
     stroke-linecap: round;
   }
 }
-.bs-query {
+.bert-search-query {
   font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace !important;
   font-size: 40px;
   white-space: pre;
 }
-.bs-mark {
-  fill: color-mix(in srgb, var(--d-yellow) 22%, transparent);
-  stroke: var(--d-yellow);
+.bert-search-mark {
+  fill: color-mix(in srgb, var(--diagram-yellow) 22%, transparent);
+  stroke: var(--diagram-yellow);
   stroke-width: 2;
 }
-.bs-links {
+.bert-search-links {
   path {
     fill: none;
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 3;
     stroke-dasharray: 1;
     stroke-linecap: round;
   }
 }
-.bs-link-label {
+.bert-search-link-label {
   font-size: 24px;
   font-weight: 600;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.bs-result {
+.bert-search-result {
   rect {
     fill: #15161a;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   &.after rect {
-    stroke: var(--d-green);
-    fill: color-mix(in srgb, var(--d-green) 9%, var(--d-background));
+    stroke: var(--diagram-green);
+    fill: color-mix(in srgb, var(--diagram-green) 9%, var(--diagram-background));
   }
 }
-.bs-result-heading {
+.bert-search-result-heading {
   font-size: 22px;
   font-weight: 700;
   letter-spacing: .04em;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 
   .after & {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }
-.bs-result-body {
+.bert-search-result-body {
   font-size: 34px;
   font-weight: 700;
 }
-.bs-result-note {
+.bert-search-result-note {
   font-size: 22px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.bs-cross {
+.bert-search-cross {
   fill: none;
-  stroke: var(--d-red);
+  stroke: var(--diagram-red);
   stroke-width: 5;
   stroke-linecap: round;
 }
-.bs-check {
+.bert-search-check {
   fill: none;
-  stroke: var(--d-green);
+  stroke: var(--diagram-green);
   stroke-width: 5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.bs-quote {
+.bert-search-quote {
   font-size: 40px;
   font-weight: 700;
   text-anchor: middle;
 }
-.bs-source {
+.bert-search-source {
   font-size: 22px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.bs-share-icon {
+.bert-search-share-icon {
   rect {
     fill: #17181d;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   circle, line {
     fill: none;
-    stroke: var(--d-subtle);
+    stroke: var(--diagram-subtle);
     stroke-width: 3;
     stroke-linecap: round;
   }
   &.lit {
     rect {
-      fill: color-mix(in srgb, var(--d-yellow) 22%, var(--d-background));
-      stroke: var(--d-yellow);
+      fill: color-mix(in srgb, var(--diagram-yellow) 22%, var(--diagram-background));
+      stroke: var(--diagram-yellow);
     }
     circle, line {
-      stroke: var(--d-yellow);
+      stroke: var(--diagram-yellow);
     }
   }
 }
-.bs-share-label {
+.bert-search-share-label {
   font-size: 26px;
   font-weight: 600;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }

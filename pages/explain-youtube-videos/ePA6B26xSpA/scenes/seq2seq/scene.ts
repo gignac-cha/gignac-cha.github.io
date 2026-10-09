@@ -23,7 +23,7 @@ const longOutput = [
   { word: '?', garbled: true },
 ];
 
-const arrow = (parent: SVGElement, x1: number, y1: number, x2: number, y2: number, className = 's2s-arrow') => {
+const arrow = (parent: SVGElement, x1: number, y1: number, x2: number, y2: number, className = 'seq2seq-arrow') => {
   const angle = Math.atan2(y2 - y1, x2 - x1);
   const head = 14;
   const f = (n: number) => n.toFixed(1);
@@ -33,7 +33,7 @@ const arrow = (parent: SVGElement, x1: number, y1: number, x2: number, y2: numbe
 };
 
 const chip = (parent: SVGElement, x: number, y: number, label: string, className = '') => {
-  const group = svg('g', { class: `s2s-chip ${className}`, transform: `translate(${x} ${y})` }, parent);
+  const group = svg('g', { class: `seq2seq-chip ${className}`, transform: `translate(${x} ${y})` }, parent);
   const width = Math.max(110, label.length * 20 + 56);
   svg('rect', { x: -width / 2, y: -32, width, height: 64, rx: 32 }, group);
   text(group, 0, 11, label);
@@ -42,21 +42,21 @@ const chip = (parent: SVGElement, x: number, y: number, label: string, className
 
 const createOldTranslation = (root: SVGElement) => {
   const group = svg('g', { transform: 'translate(0 40)' }, root);
-  text(group, 800, 210, '규칙과 통계 · 조각끼리 짝 맞추기', { class: 's2s-caption', 'text-anchor': 'middle' });
+  text(group, 800, 210, '규칙과 통계 · 조각끼리 짝 맞추기', { class: 'seq2seq-caption', 'text-anchor': 'middle' });
   const pieces = [
     { en: 'I', fr: 'Je', from: 640, to: 540 },
     { en: 'miss', fr: 'manque', from: 800, to: 800 },
     { en: 'you', fr: 'toi', from: 960, to: 1060 },
   ].map((piece) => ({
     ...piece,
-    link: svg('line', { class: 's2s-pair-link' }, group),
+    link: svg('line', { class: 'seq2seq-pair-link' }, group),
     english: chip(group, piece.from, 330, piece.en),
     french: chip(group, piece.to, 520, piece.fr, 'muted'),
   }));
   const result = svg('g', {}, group);
-  text(result, 800, 720, 'Je manque toi', { class: 's2s-awkward', 'text-anchor': 'middle' });
-  svg('path', { class: 's2s-squiggle', d: Array.from({ length: 16 }, (_, i) => `${i === 0 ? 'M' : 'L'}${686 + i * 15} ${i % 2 ? 744 : 752}`).join(' ') }, result);
-  text(result, 950, 720, '번역투', { class: 's2s-awkward-label' });
+  text(result, 800, 720, 'Je manque toi', { class: 'seq2seq-awkward', 'text-anchor': 'middle' });
+  svg('path', { class: 'seq2seq-squiggle', d: Array.from({ length: 16 }, (_, i) => `${i === 0 ? 'M' : 'L'}${686 + i * 15} ${i % 2 ? 744 : 752}`).join(' ') }, result);
+  text(result, 950, 720, '번역투', { class: 'seq2seq-awkward-label' });
 
   return (time: number) => {
     setAttributes(group, { opacity: (appear(time, start, .4) * (1 - appear(time, model.show, .5))).toFixed(3) });
@@ -74,10 +74,10 @@ const createOldTranslation = (root: SVGElement) => {
 const createModel = (root: SVGElement) => {
   // 아래쪽 여백이 남지 않도록 전체를 조금 내려 화면 가운데에 둔다.
   const group = svg('g', { transform: 'translate(0 60)' }, root);
-  text(group, 400, 236, '인코더', { class: 's2s-heading', 'text-anchor': 'middle' });
-  text(group, 400, 276, '끝까지 듣기', { class: 's2s-caption', 'text-anchor': 'middle' });
-  text(group, 1200, 236, '디코더', { class: 's2s-heading', 'text-anchor': 'middle' });
-  text(group, 1200, 276, '한 단어씩 말하기', { class: 's2s-caption', 'text-anchor': 'middle' });
+  text(group, 400, 236, '인코더', { class: 'seq2seq-heading', 'text-anchor': 'middle' });
+  text(group, 400, 276, '끝까지 듣기', { class: 'seq2seq-caption', 'text-anchor': 'middle' });
+  text(group, 1200, 236, '디코더', { class: 'seq2seq-heading', 'text-anchor': 'middle' });
+  text(group, 1200, 276, '한 단어씩 말하기', { class: 'seq2seq-caption', 'text-anchor': 'middle' });
 
   const wires = svg('g', {}, group);
   [[encoderX[0], encoderX[1]], [encoderX[1], encoderX[2]], [decoderX[0], decoderX[1]], [decoderX[1], decoderX[2]]].forEach(([a, b]) => arrow(wires, a + 60, cellY, b - 62, cellY));
@@ -85,9 +85,9 @@ const createModel = (root: SVGElement) => {
   arrow(wires, capsule.x + 84, cellY, decoderX[0] - 62, cellY);
 
   const cell = (x: number) => {
-    const node = svg('g', { class: 's2s-cell', transform: `translate(${x} ${cellY})` }, group);
+    const node = svg('g', { class: 'seq2seq-cell', transform: `translate(${x} ${cellY})` }, group);
     svg('rect', { x: -55, y: -55, width: 110, height: 110, rx: 22 }, node);
-    const label = text(node, 0, 10, 'LSTM', { class: 's2s-cell-label' });
+    const label = text(node, 0, 10, 'LSTM', { class: 'seq2seq-cell-label' });
     return { node, label };
   };
   const encoder = encoderX.map(cell);
@@ -106,24 +106,24 @@ const createModel = (root: SVGElement) => {
     return output;
   });
 
-  const summary = svg('g', { class: 's2s-capsule', transform: `translate(${capsule.x} ${capsule.y})` }, group);
-  const ring = svg('circle', { class: 's2s-capsule-ring', r: 80 }, summary);
-  const bars = [-44, -22, 0, 22, 44].map((x) => svg('rect', { class: 's2s-capsule-bar', x: x - 7, width: 14, rx: 7 }, summary));
-  text(group, capsule.x, capsule.y + 128, '요약', { class: 's2s-heading', 'text-anchor': 'middle' });
-  const packet = svg('circle', { class: 's2s-packet', r: 12 }, group);
+  const summary = svg('g', { class: 'seq2seq-capsule', transform: `translate(${capsule.x} ${capsule.y})` }, group);
+  const ring = svg('circle', { class: 'seq2seq-capsule-ring', r: 80 }, summary);
+  const bars = [-44, -22, 0, 22, 44].map((x) => svg('rect', { class: 'seq2seq-capsule-bar', x: x - 7, width: 14, rx: 7 }, summary));
+  text(group, capsule.x, capsule.y + 128, '요약', { class: 'seq2seq-heading', 'text-anchor': 'middle' });
+  const packet = svg('circle', { class: 'seq2seq-packet', r: 12 }, group);
 
-  const longInputs = svg('g', { class: 's2s-long' }, group);
+  const longInputs = svg('g', { class: 'seq2seq-long' }, group);
   const lines = [longWords.slice(0, 8), longWords.slice(8)];
   const longSpans: SVGTSpanElement[] = [];
   lines.forEach((words, row) => {
-    const line = text(longInputs, 400, 660 + row * 50, '', { class: 's2s-long-line', 'text-anchor': 'middle' });
+    const line = text(longInputs, 400, 660 + row * 50, '', { class: 'seq2seq-long-line', 'text-anchor': 'middle' });
     words.forEach((word, i) => {
       const span = svg('tspan', {}, line);
       span.textContent = (i ? ' ' : '') + word;
       longSpans.push(span);
     });
   });
-  const longOut = text(group, 1200, 372, '', { class: 's2s-long-line output', 'text-anchor': 'middle' });
+  const longOut = text(group, 1200, 372, '', { class: 'seq2seq-long-line output', 'text-anchor': 'middle' });
   const outSpans = longOutput.map(({ word, garbled }, i) => {
     const span = svg('tspan', { class: garbled ? 'garbled' : '' }, longOut);
     span.textContent = (i ? ' ' : '') + word;
@@ -181,7 +181,7 @@ const createModel = (root: SVGElement) => {
 };
 
 export const createSeq2SeqScene = (): Scene => {
-  const { element, root } = createDiagram('s2s', '시퀀스 투 시퀀스(Seq2Seq)');
+  const { element, root } = createDiagram('seq2seq', '시퀀스 투 시퀀스(Seq2Seq)');
   const renders = [createOldTranslation(root), createModel(root)];
   return {
     element,

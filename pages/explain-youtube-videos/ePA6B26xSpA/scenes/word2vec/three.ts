@@ -174,15 +174,15 @@ export const createWord2VecThree = (): SceneLayer => {
 
   // 위에 겹치는 글자(SVG).
   const overlay = svg('g', {}, root);
-  const note = text(overlay, 56, 114, '실제 단어 좌표는 300차원 · 3D로 줄여 본 모습', { class: 'w2v3-note' });
-  const lines = svg('g', { class: 'w2v3-lines' }, overlay);
-  const friendLines = friends.map(() => ({ coffee: svg('line', { class: 'w2v3-friend-line' }, lines), tea: svg('line', { class: 'w2v3-friend-line' }, lines) }));
+  const note = text(overlay, 56, 114, '실제 단어 좌표는 300차원 · 3D로 줄여 본 모습', { class: 'word2vec-three-note' });
+  const lines = svg('g', { class: 'word2vec-three-lines' }, overlay);
+  const friendLines = friends.map(() => ({ coffee: svg('line', { class: 'word2vec-three-friend-line' }, lines), tea: svg('line', { class: 'word2vec-three-friend-line' }, lines) }));
 
   const labels = svg('g', {}, overlay);
-  const wordLabels = Object.fromEntries(Object.keys(words).map((name) => [name, text(labels, 0, 0, name, { class: 'w2v3-label' })]));
-  const vectorReadout = text(labels, 0, 0, `[${words.사과.at.map(format).join(', ')}]`, { class: 'w2v3-vector' });
+  const wordLabels = Object.fromEntries(Object.keys(words).map((name) => [name, text(labels, 0, 0, name, { class: 'word2vec-three-label' })]));
+  const vectorReadout = text(labels, 0, 0, `[${words.사과.at.map(format).join(', ')}]`, { class: 'word2vec-three-vector' });
   const friendChips = friends.map(({ name }) => {
-    const group = svg('g', { class: 'w2v3-friend' }, labels);
+    const group = svg('g', { class: 'word2vec-three-friend' }, labels);
     svg('rect', { x: -66, y: -28, width: 132, height: 56, rx: 28 }, group);
     text(group, 0, 10, name);
     return group;
@@ -190,17 +190,17 @@ export const createWord2VecThree = (): SceneLayer => {
   // 번호표: SVG 판과 같은 모양·자리라 판이 바뀌어도 그대로 이어진다.
   const chips = Object.fromEntries(
     Object.entries(ids).map(([name, id]) => {
-      const group = svg('g', { class: 'w2v-chip' }, labels);
+      const group = svg('g', { class: 'word2vec-chip' }, labels);
       svg('rect', { x: -86, y: -36, width: 172, height: 72, rx: 36 }, group);
-      text(group, 0, 12, name, { class: 'w2v-chip-label' });
-      text(group, 0, 76, id, { class: 'w2v-chip-id' });
+      text(group, 0, 12, name, { class: 'word2vec-chip-label' });
+      text(group, 0, 76, id, { class: 'word2vec-chip-id' });
       return [name, group];
     }),
   );
-  const targets = [svg('circle', { class: 'w2v3-target', r: 30 }, labels), svg('circle', { class: 'w2v3-target', r: 30 }, labels)];
+  const targets = [svg('circle', { class: 'word2vec-three-target', r: 30 }, labels), svg('circle', { class: 'word2vec-three-target', r: 30 }, labels)];
   const formulas = [
-    text(overlay, 800, 862, '왕 − 남자 + 여자 ≈ 여왕', { class: 'w2v3-formula' }),
-    text(overlay, 800, 862, '서울 − 한국 + 일본 ≈ 도쿄', { class: 'w2v3-formula' }),
+    text(overlay, 800, 862, '왕 − 남자 + 여자 ≈ 여왕', { class: 'word2vec-three-formula' }),
+    text(overlay, 800, 862, '서울 − 한국 + 일본 ≈ 도쿄', { class: 'word2vec-three-formula' }),
   ];
 
   // 카메라: 처음엔 위에서 내려다봐 SVG 판의 격자처럼 납작하게 보이다가, 기울어지며 세 번째 축(높이)이 드러난다.
@@ -327,7 +327,7 @@ export const createWord2VecThree = (): SceneLayer => {
 
     for (const [name, label] of Object.entries(wordLabels)) {
       const { x, y } = screen(states[name].position);
-      setAttributes(label, { x: x.toFixed(1), y: (y - 30).toFixed(1), opacity: states[name].label.toFixed(3), class: `w2v3-label ${role(name)}`.trim() });
+      setAttributes(label, { x: x.toFixed(1), y: (y - 30).toFixed(1), opacity: states[name].label.toFixed(3), class: `word2vec-three-label ${role(name)}`.trim() });
     }
     const appleSpot = screen(states.사과.position);
     // 좌표 글자는 막대(아래로 내려가는 줄기)를 가로지르지 않게 공 왼쪽 아래에 둔다.

@@ -1,31 +1,31 @@
 .alphago-moves {
   .moves-fifth {
-    fill: color-mix(in srgb, var(--d-yellow) 55%, transparent);
+    fill: color-mix(in srgb, var(--diagram-yellow) 55%, transparent);
   }
   .moves-fifth-label {
     font-size: 22px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
   .moves-ring {
     fill: none;
-    stroke: var(--d-blue);
+    stroke: var(--diagram-blue);
     stroke-width: 4;
 
     &.lee {
-      stroke: var(--d-red);
+      stroke: var(--diagram-red);
     }
     &.glow {
-      stroke: var(--d-yellow);
-      filter: drop-shadow(0 0 10px var(--d-yellow));
+      stroke: var(--diagram-yellow);
+      filter: drop-shadow(0 0 10px var(--diagram-yellow));
     }
   }
   .moves-question {
     font-size: 40px;
     font-weight: 900;
     text-anchor: middle;
-    fill: var(--d-red);
+    fill: var(--diagram-red);
     paint-order: stroke;
     stroke: #000;
     stroke-width: 6px;
@@ -42,7 +42,7 @@
     font-size: 30px;
     font-weight: 900;
     text-anchor: middle;
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
     paint-order: stroke;
     stroke: #000;
     stroke-width: 7px;
@@ -51,7 +51,7 @@
     font-size: 26px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-red);
+    fill: var(--diagram-red);
   }
   .moves-info {
     font-size: 32px;
@@ -59,51 +59,51 @@
   }
   .moves-players {
     font-size: 24px;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   .moves-chance-title {
     font-size: 26px;
     font-weight: 600;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   .moves-grid {
     image-rendering: pixelated;
   }
   .moves-grid-frame {
     fill: none;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   .moves-chance {
     font-size: 52px;
     font-weight: 800;
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
   .moves-chance-note {
     font-size: 22px;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   .moves-chip {
     stroke-width: 3;
 
     &.alphago {
-      fill: color-mix(in srgb, var(--d-blue) 12%, var(--d-background));
-      stroke: var(--d-blue);
+      fill: color-mix(in srgb, var(--diagram-blue) 12%, var(--diagram-background));
+      stroke: var(--diagram-blue);
     }
     &.lee {
-      fill: color-mix(in srgb, var(--d-red) 14%, var(--d-background));
-      stroke: var(--d-red);
+      fill: color-mix(in srgb, var(--diagram-red) 14%, var(--diagram-background));
+      stroke: var(--diagram-red);
     }
     &.remember {
-      stroke: var(--d-yellow);
+      stroke: var(--diagram-yellow);
       stroke-width: 5;
-      filter: drop-shadow(0 0 10px var(--d-yellow));
+      filter: drop-shadow(0 0 10px var(--diagram-yellow));
     }
   }
   .moves-chip-round {
     font-size: 22px;
     text-anchor: middle;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   .moves-chip-winner {
     font-size: 24px;
@@ -117,7 +117,7 @@
   }
   .moves-spot {
     fill: none;
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 3;
   }
 }

@@ -1,50 +1,50 @@
 // Three.js 판(three.ts) 위에 겹치는 글자. 공간 위에서도 읽히도록 배경색 테두리를 두른다.
 .word2vec-three {
-  .w2v3-label {
+  .word2vec-three-label {
     font-size: 30px;
     font-weight: 600;
     text-anchor: middle;
-    fill: var(--d-text);
+    fill: var(--diagram-text);
     paint-order: stroke;
-    stroke: var(--d-background);
+    stroke: var(--diagram-background);
     stroke-width: 7px;
     stroke-linejoin: round;
 
     &.focus {
       font-size: 36px;
-      fill: var(--d-yellow);
+      fill: var(--diagram-yellow);
     }
     &.reference {
       fill: #ffffff;
     }
     &.hit {
       font-size: 36px;
-      fill: var(--d-green);
+      fill: var(--diagram-green);
     }
   }
-  .w2v3-vector {
+  .word2vec-three-vector {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 24px;
     text-anchor: end;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
     paint-order: stroke;
-    stroke: var(--d-background);
+    stroke: var(--diagram-background);
     stroke-width: 6px;
   }
-  .w2v3-note {
+  .word2vec-three-note {
     font-size: 21px;
-    fill: var(--d-subtle);
+    fill: var(--diagram-subtle);
   }
-  .w2v3-friend-line {
-    stroke: var(--d-orange);
+  .word2vec-three-friend-line {
+    stroke: var(--diagram-orange);
     stroke-opacity: .55;
     stroke-width: 2;
     stroke-dasharray: 6 6;
   }
-  .w2v3-friend {
+  .word2vec-three-friend {
     rect {
-      fill: color-mix(in srgb, var(--d-orange) 14%, var(--d-background));
-      stroke: var(--d-orange);
+      fill: color-mix(in srgb, var(--diagram-orange) 14%, var(--diagram-background));
+      stroke: var(--diagram-orange);
       stroke-width: 2;
       stroke-dasharray: 6 5;
     }
@@ -52,22 +52,22 @@
       font-size: 26px;
       font-weight: 600;
       text-anchor: middle;
-      fill: var(--d-orange);
+      fill: var(--diagram-orange);
     }
   }
-  .w2v3-target {
+  .word2vec-three-target {
     fill: none;
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 3;
     stroke-dasharray: 7 6;
   }
-  .w2v3-formula {
+  .word2vec-three-formula {
     font-size: 40px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-text);
+    fill: var(--diagram-text);
     paint-order: stroke;
-    stroke: var(--d-background);
+    stroke: var(--diagram-background);
     stroke-width: 8px;
   }
 }

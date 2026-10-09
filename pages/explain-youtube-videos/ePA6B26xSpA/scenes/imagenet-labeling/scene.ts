@@ -109,7 +109,7 @@ export const createImageNetLabelingScene = (): Scene => {
   subjects.slice(0, 8).forEach(([emoji, name], i) => {
     const x = 1250 + (i % 2) * 150;
     const y = 270 + Math.floor(i / 2) * 64;
-    svg('rect', { x, y, width: 136, height: 50, rx: 25, class: `imagenet-chip c${i % 6}` }, categories);
+    svg('rect', { x, y, width: 136, height: 50, rx: 25, class: `imagenet-chip color-${i % 6}` }, categories);
     text(categories, x + 68, y + 35, `${emoji} ${name}`, { class: 'imagenet-chip-text' });
   });
   text(categories, 1390, 560, '…', { class: 'imagenet-category-title' });
@@ -137,7 +137,7 @@ export const createImageNetLabelingScene = (): Scene => {
       const labeled = time >= labeledAt;
       setAttributes(rect, {
         opacity: hidden ? 0 : mosaicIn.toFixed(3),
-        class: labeled ? (colored ? `labeled c${category}` : 'labeled') : '',
+        class: labeled ? (colored ? `labeled color-${category}` : 'labeled') : '',
       });
     });
 

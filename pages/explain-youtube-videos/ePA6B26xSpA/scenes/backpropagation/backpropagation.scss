@@ -3,142 +3,142 @@
     font-size: 36px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-red);
+    fill: var(--diagram-red);
 
     &.solved {
-      fill: var(--d-green);
+      fill: var(--diagram-green);
     }
   }
   .backpropagation-edge {
-    stroke: color-mix(in srgb, var(--d-muted) 45%, transparent);
+    stroke: color-mix(in srgb, var(--diagram-muted) 45%, transparent);
     stroke-linecap: round;
     transition: stroke .3s;
 
     &.blamed {
-      stroke: color-mix(in srgb, var(--d-red) calc(var(--blame, 0) * 100%), color-mix(in srgb, var(--d-muted) 45%, transparent));
+      stroke: color-mix(in srgb, var(--diagram-red) calc(var(--blame, 0) * 100%), color-mix(in srgb, var(--diagram-muted) 45%, transparent));
     }
     &.fixing {
-      stroke: var(--d-green);
+      stroke: var(--diagram-green);
     }
   }
   .backpropagation-pulse-forward {
-    fill: var(--d-blue);
-    filter: drop-shadow(0 0 8px var(--d-blue));
+    fill: var(--diagram-blue);
+    filter: drop-shadow(0 0 8px var(--diagram-blue));
   }
   .backpropagation-pulse-backward {
-    fill: var(--d-red);
-    filter: drop-shadow(0 0 8px var(--d-red));
+    fill: var(--diagram-red);
+    filter: drop-shadow(0 0 8px var(--diagram-red));
   }
   .backpropagation-node {
-    fill: var(--d-background);
-    stroke: var(--d-muted);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-muted);
     stroke-width: 4;
     transition: stroke .3s, fill .3s;
 
     &.output {
-      stroke: var(--d-text);
+      stroke: var(--diagram-text);
     }
     &.wrong {
-      stroke: var(--d-red);
-      fill: color-mix(in srgb, var(--d-red) 20%, var(--d-background));
+      stroke: var(--diagram-red);
+      fill: color-mix(in srgb, var(--diagram-red) 20%, var(--diagram-background));
     }
     &.right {
-      stroke: var(--d-green);
-      fill: color-mix(in srgb, var(--d-green) 18%, var(--d-background));
+      stroke: var(--diagram-green);
+      fill: color-mix(in srgb, var(--diagram-green) 18%, var(--diagram-background));
     }
     &.feature {
-      stroke: var(--d-green);
+      stroke: var(--diagram-green);
     }
     &.fixing {
-      stroke: var(--d-green);
-      filter: drop-shadow(0 0 10px color-mix(in srgb, var(--d-green) 60%, transparent));
+      stroke: var(--diagram-green);
+      filter: drop-shadow(0 0 10px color-mix(in srgb, var(--diagram-green) 60%, transparent));
     }
   }
   .backpropagation-tint {
-    fill: var(--d-red);
+    fill: var(--diagram-red);
     pointer-events: none;
   }
   .backpropagation-output-mark {
     font-size: 48px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-green);
+    fill: var(--diagram-green);
 
     &.wrong {
-      fill: var(--d-red);
+      fill: var(--diagram-red);
     }
   }
   .backpropagation-label {
     font-size: 32px;
     font-weight: 600;
     text-anchor: middle;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
 
     &.kitchen {
-      fill: var(--d-orange);
+      fill: var(--diagram-orange);
     }
   }
   .backpropagation-bar-track {
-    fill: var(--d-grid);
+    fill: var(--diagram-grid);
   }
   .backpropagation-bar {
-    fill: var(--d-red);
+    fill: var(--diagram-red);
   }
   .backpropagation-bar-caption {
     font-size: 28px;
     text-anchor: end;
-    fill: var(--d-red);
+    fill: var(--diagram-red);
   }
   .backpropagation-bubble {
-    fill: color-mix(in srgb, var(--d-red) 16%, var(--d-background));
-    stroke: var(--d-red);
+    fill: color-mix(in srgb, var(--diagram-red) 16%, var(--diagram-background));
+    stroke: var(--diagram-red);
     stroke-width: 3;
   }
   .backpropagation-bubble-text {
     font-size: 34px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-red);
+    fill: var(--diagram-red);
   }
   .backpropagation-error {
     font-size: 32px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-red);
+    fill: var(--diagram-red);
   }
   .backpropagation-xor-plane {
-    fill: var(--d-grid);
-    stroke: var(--d-line);
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   .backpropagation-xor-band {
-    fill: color-mix(in srgb, var(--d-yellow) 12%, transparent);
+    fill: color-mix(in srgb, var(--diagram-yellow) 12%, transparent);
   }
   .backpropagation-xor-line {
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
     stroke-width: 3;
   }
   .backpropagation-xor-dot {
     stroke-width: 4;
 
     &.on {
-      fill: var(--d-yellow);
-      stroke: var(--d-yellow);
+      fill: var(--diagram-yellow);
+      stroke: var(--diagram-yellow);
     }
     &.off {
-      fill: var(--d-background);
-      stroke: var(--d-muted);
+      fill: var(--diagram-background);
+      stroke: var(--diagram-muted);
     }
   }
   .backpropagation-xor-label {
     font-size: 30px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-green);
+    fill: var(--diagram-green);
   }
   .backpropagation-feature-frame {
-    fill: color-mix(in srgb, var(--d-green) 5%, transparent);
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 5%, transparent);
+    stroke: var(--diagram-green);
     stroke-width: 3;
     stroke-dasharray: 10 8;
   }
@@ -146,6 +146,6 @@
     font-size: 30px;
     font-weight: 600;
     text-anchor: middle;
-    fill: var(--d-green);
+    fill: var(--diagram-green);
   }
 }

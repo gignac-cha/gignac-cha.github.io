@@ -26,11 +26,11 @@ export const createDeepBeliefNetSVG = ({ naiveTower = true } = {}): Scene => {
   const { element, root } = createDiagram('deep-belief-net', '심층 신뢰망');
 
   // 왼쪽: 한꺼번에 올린 10층은 무너진다.
-  const naive = svg('g', { class: 'dbn-naive', display: naiveTower ? 'inline' : 'none' }, root);
+  const naive = svg('g', { class: 'deep-belief-net-naive', display: naiveTower ? 'inline' : 'none' }, root);
   const naiveFloors = Array.from({ length: 10 }, (_, i) =>
-    svg('rect', { x: 190, y: 742 - i * 44, width: 300, height: 36, rx: 6, class: 'dbn-naive-floor' }, naive),
+    svg('rect', { x: 190, y: 742 - i * 44, width: 300, height: 36, rx: 6, class: 'deep-belief-net-naive-floor' }, naive),
   );
-  const naiveLabel = text(root, 340, 836, '한꺼번에 10층', { class: 'dbn-caption' });
+  const naiveLabel = text(root, 340, 836, '한꺼번에 10층', { class: 'deep-belief-net-caption' });
 
   // 오른쪽: 한 층씩 쌓는 깊은 신경망.
   const links = svg('g', {}, root);
@@ -38,43 +38,43 @@ export const createDeepBeliefNetSVG = ({ naiveTower = true } = {}): Scene => {
   const nodesGroup = svg('g', {}, root);
   const layerViews = layers.map((layer, index) => {
     const width = layer.count * spacing + 24;
-    const slab = svg('rect', { x: centerX - width / 2, y: layer.y - 36, width, height: 72, rx: 36, class: 'dbn-slab' }, slabs);
-    const name = text(root, centerX - 490, layer.y + 10, layer.name, { class: 'dbn-layer-name' });
-    const nodes = Array.from({ length: layer.count }, (_, i) => svg('circle', { cx: nodeX(index, i), cy: layer.y, r: 17, class: 'dbn-node' }, nodesGroup));
+    const slab = svg('rect', { x: centerX - width / 2, y: layer.y - 36, width, height: 72, rx: 36, class: 'deep-belief-net-slab' }, slabs);
+    const name = text(root, centerX - 490, layer.y + 10, layer.name, { class: 'deep-belief-net-layer-name' });
+    const nodes = Array.from({ length: layer.count }, (_, i) => svg('circle', { cx: nodeX(index, i), cy: layer.y, r: 17, class: 'deep-belief-net-node' }, nodesGroup));
     const edges =
       index === 0
         ? []
         : Array.from({ length: layers[index - 1].count * layer.count }, (_, k) => {
             const from = Math.floor(k / layer.count);
             const to = k % layer.count;
-            return svg('line', { x1: nodeX(index - 1, from), y1: layers[index - 1].y, x2: nodeX(index, to), y2: layer.y, class: 'dbn-link' }, links);
+            return svg('line', { x1: nodeX(index - 1, from), y1: layers[index - 1].y, x2: nodeX(index, to), y2: layer.y, class: 'deep-belief-net-link' }, links);
           });
     return { slab, name, nodes, edges };
   });
 
   // 특징을 요약하며 위로 올라가는 신호.
   const particles = Array.from({ length: 18 }, (_, i) => ({
-    dot: svg('circle', { r: 7, class: 'dbn-particle' }, root),
+    dot: svg('circle', { r: 7, class: 'deep-belief-net-particle' }, root),
     route: layers.map((layer, index) => Math.floor(random(i * 7 + index) * layer.count)),
     offset: random(i * 3 + 1) * 1.6,
   }));
 
-  const pulse = svg('rect', { x: centerX - 440, y: 0, width: 880, height: 10, rx: 5, class: 'dbn-pulse' }, root);
+  const pulse = svg('rect', { x: centerX - 440, y: 0, width: 880, height: 10, rx: 5, class: 'deep-belief-net-pulse' }, root);
 
-  const tag = svg('g', { class: 'dbn-tag', transform: 'translate(1290 110)' }, root);
-  svg('path', { d: 'M0 0 H150 L180 30 L150 60 H0 Z', class: 'dbn-tag-body' }, tag);
-  svg('circle', { cx: 150, cy: 30, r: 7, class: 'dbn-tag-hole' }, tag);
-  text(tag, 70, 41, '정답', { class: 'dbn-tag-text' });
-  const strike = svg('line', { x1: -14, y1: 70, x2: 196, y2: -10, class: 'dbn-strike' }, tag);
-  const tagCaption = text(root, 1380, 210, '이름표 없이', { class: 'dbn-caption' });
+  const tag = svg('g', { class: 'deep-belief-net-tag', transform: 'translate(1290 110)' }, root);
+  svg('path', { d: 'M0 0 H150 L180 30 L150 60 H0 Z', class: 'deep-belief-net-tag-body' }, tag);
+  svg('circle', { cx: 150, cy: 30, r: 7, class: 'deep-belief-net-tag-hole' }, tag);
+  text(tag, 70, 41, '정답', { class: 'deep-belief-net-tag-text' });
+  const strike = svg('line', { x1: -14, y1: 70, x2: 196, y2: -10, class: 'deep-belief-net-strike' }, tag);
+  const tagCaption = text(root, 1380, 210, '이름표 없이', { class: 'deep-belief-net-caption' });
 
-  const trainedLabel = text(root, centerX, 160, '학습된다', { class: 'dbn-trained' });
+  const trainedLabel = text(root, centerX, 160, '학습된다', { class: 'deep-belief-net-trained' });
 
-  const deep = svg('g', { class: 'dbn-deep' }, root);
-  svg('path', { d: 'M1555 800 V250 M1531 278 L1555 250 L1579 278', class: 'dbn-depth' }, deep);
-  text(deep, 140, 470, '딥러닝', { class: 'dbn-deep-title' });
-  text(deep, 140, 530, '층이 깊은', { class: 'dbn-deep-sub' });
-  text(deep, 140, 574, '신경망의 학습', { class: 'dbn-deep-sub' });
+  const deep = svg('g', { class: 'deep-belief-net-deep' }, root);
+  svg('path', { d: 'M1555 800 V250 M1531 278 L1555 250 L1579 278', class: 'deep-belief-net-depth' }, deep);
+  text(deep, 140, 470, '딥러닝', { class: 'deep-belief-net-deep-title' });
+  text(deep, 140, 530, '층이 깊은', { class: 'deep-belief-net-deep-sub' });
+  text(deep, 140, 574, '신경망의 학습', { class: 'deep-belief-net-deep-sub' });
 
   const update = (time: number) => {
     // 왼쪽 탑: 한 번에 나타났다가 기울며 무너진다.
@@ -88,7 +88,7 @@ export const createDeepBeliefNetSVG = ({ naiveTower = true } = {}): Scene => {
       const dy = fall * fall * height * 300;
       setAttributes(floor, {
         transform: `translate(${dx.toFixed(1)} ${dy.toFixed(1)}) rotate(${tilt.toFixed(1)} 340 ${742 - i * 44})`,
-        class: fall > 0 ? 'dbn-naive-floor broken' : 'dbn-naive-floor',
+        class: fall > 0 ? 'deep-belief-net-naive-floor broken' : 'deep-belief-net-naive-floor',
       });
     });
     const ghost = lerp(1, .22, appear(time, at.collapse + 1.3, .6));
@@ -105,11 +105,11 @@ export const createDeepBeliefNetSVG = ({ naiveTower = true } = {}): Scene => {
       const built = index === 0 ? outline : appear(time, rise, .5);
       const settled = index === 0 ? 1 : progress(time, rise, solid - rise);
       const state = trained ? 'trained' : index === 0 ? 'input' : settled >= 1 ? 'solid' : built > 0 ? 'building' : 'empty';
-      setAttributes(slab, { class: `dbn-slab ${state}`, opacity: Math.max(outline * .9, built).toFixed(3) });
+      setAttributes(slab, { class: `deep-belief-net-slab ${state}`, opacity: Math.max(outline * .9, built).toFixed(3) });
       setAttributes(name, { opacity: (outline * (built > 0 || index === 0 ? 1 : .35)).toFixed(3) });
-      nodes.forEach((node) => setAttributes(node, { opacity: built.toFixed(3), class: `dbn-node ${state}` }));
+      nodes.forEach((node) => setAttributes(node, { opacity: built.toFixed(3), class: `deep-belief-net-node ${state}` }));
       const passed = backprop > 0 && backprop < 1 && pulseY < layers[index].y + 10 && pulseY > layers[index].y - 150;
-      edges.forEach((edge) => setAttributes(edge, { opacity: (built * .9).toFixed(3), class: passed ? 'dbn-link hot' : trained ? 'dbn-link trained' : 'dbn-link' }));
+      edges.forEach((edge) => setAttributes(edge, { opacity: (built * .9).toFixed(3), class: passed ? 'deep-belief-net-link hot' : trained ? 'deep-belief-net-link trained' : 'deep-belief-net-link' }));
     });
 
     // 아래에서 위로: 각 층이 입력을 요약한다.

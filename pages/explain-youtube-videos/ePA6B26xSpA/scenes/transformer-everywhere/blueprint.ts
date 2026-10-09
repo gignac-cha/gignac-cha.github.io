@@ -38,35 +38,35 @@ export const towerShape = {
 };
 
 const box = (parent: SVGElement, { label, y, height, kind }: Box) => {
-  const group = svg('g', { class: `bp-box ${kind}` }, parent);
+  const group = svg('g', { class: `blueprint-box ${kind}` }, parent);
   svg('rect', { x: -boxWidth / 2 + 20, y, width: boxWidth - 40, height, rx: 8 }, group);
-  text(group, 0, y + height / 2 + 6, label, { class: 'bp-box-label' });
+  text(group, 0, y + height / 2 + 6, label, { class: 'blueprint-box-label' });
   return group;
 };
 
 const arrowUp = (parent: SVGElement, x: number, from: number, to: number) =>
-  svg('path', { class: 'bp-wire', d: `M${x} ${from} L${x} ${to + 4} M${x - 6} ${to + 12} L${x} ${to + 2} L${x + 6} ${to + 12}` }, parent);
+  svg('path', { class: 'blueprint-wire', d: `M${x} ${from} L${x} ${to + 4} M${x - 6} ${to + 12} L${x} ${to + 2} L${x + 6} ${to + 12}` }, parent);
 
 const embedding = (parent: SVGElement, label: string, caption: string) => {
-  text(parent, 0, 0, caption, { class: 'bp-caption' });
+  text(parent, 0, 0, caption, { class: 'blueprint-caption' });
   arrowUp(parent, 0, -24, -46);
   box(parent, { label, y: -90, height: 44, kind: 'plain' });
   arrowUp(parent, 0, -92, -106);
   // 위치 정보(Positional Encoding)를 더하는 ⊕.
-  const plus = svg('g', { class: 'bp-plus', transform: 'translate(0 -120)' }, parent);
+  const plus = svg('g', { class: 'blueprint-plus', transform: 'translate(0 -120)' }, parent);
   svg('circle', { r: 13 }, plus);
   svg('path', { d: 'M-8 0 L8 0 M0 -8 L0 8' }, plus);
-  const wave = svg('g', { class: 'bp-wave', transform: 'translate(-64 -120)' }, parent);
+  const wave = svg('g', { class: 'blueprint-wave', transform: 'translate(-64 -120)' }, parent);
   svg('circle', { r: 18 }, wave);
   svg('path', { d: 'M-12 0 C-8 -12 -4 -12 0 0 C4 12 8 12 12 0' }, wave);
-  svg('path', { class: 'bp-wire', d: 'M-46 -120 L-14 -120' }, parent);
+  svg('path', { class: 'blueprint-wire', d: 'M-46 -120 L-14 -120' }, parent);
   arrowUp(parent, 0, -133, -150);
 };
 
 const block = (parent: SVGElement, boxes: Box[], top: number, bottom: number) => {
-  const group = svg('g', { class: 'bp-block' }, parent);
-  svg('rect', { class: 'bp-block-frame', x: -halfWidth, y: top, width: halfWidth * 2, height: bottom - top, rx: 16 }, group);
-  text(group, -halfWidth - 14, (top + bottom) / 2 + 8, 'N×', { class: 'bp-n', 'text-anchor': 'end' });
+  const group = svg('g', { class: 'blueprint-block' }, parent);
+  svg('rect', { class: 'blueprint-block-frame', x: -halfWidth, y: top, width: halfWidth * 2, height: bottom - top, rx: 16 }, group);
+  text(group, -halfWidth - 14, (top + bottom) / 2 + 8, 'N×', { class: 'blueprint-n', 'text-anchor': 'end' });
   const parts = boxes.map((part) => box(group, part));
   // 상자 사이를 잇는 선.
   boxes.forEach((part, i) => {
@@ -78,7 +78,7 @@ const block = (parent: SVGElement, boxes: Box[], top: number, bottom: number) =>
 };
 
 export const createEncoder = (parent: SVGElement) => {
-  const group = svg('g', { class: 'bp-tower encoder' }, parent);
+  const group = svg('g', { class: 'blueprint-tower encoder' }, parent);
   const base = svg('g', {}, group);
   embedding(base, 'Input Embedding', 'Inputs');
   const { group: detail, parts } = block(group, encoderBoxes, towerShape.encoder.blockTop, towerShape.encoder.blockBottom);
@@ -87,7 +87,7 @@ export const createEncoder = (parent: SVGElement) => {
 };
 
 export const createDecoder = (parent: SVGElement) => {
-  const group = svg('g', { class: 'bp-tower decoder' }, parent);
+  const group = svg('g', { class: 'blueprint-tower decoder' }, parent);
   const base = svg('g', {}, group);
   embedding(base, 'Output Embedding', 'Outputs (shifted right)');
   const { group: detail, parts } = block(group, decoderBoxes, towerShape.decoder.blockTop, towerShape.decoder.blockBottom);
@@ -97,7 +97,7 @@ export const createDecoder = (parent: SVGElement) => {
   arrowUp(head, 0, -680, -706);
   box(head, { label: 'Softmax', y: -746, height: 40, kind: 'plain' });
   arrowUp(head, 0, -746, -772);
-  text(head, 0, -784, 'Output Probabilities', { class: 'bp-caption' });
+  text(head, 0, -784, 'Output Probabilities', { class: 'blueprint-caption' });
   return { group, base, detail, parts, head };
 };
 
@@ -112,13 +112,13 @@ export const crossPath = (encoderX: number, decoderX: number, baseY: number, sca
 
 // 설계도 종이(모눈).
 export const createPaper = (parent: SVGElement, x: number, y: number, width: number, height: number) => {
-  const group = svg('g', { class: 'bp-paper' }, parent);
-  svg('rect', { class: 'bp-paper-sheet', x, y, width, height, rx: 18 }, group);
+  const group = svg('g', { class: 'blueprint-paper' }, parent);
+  svg('rect', { class: 'blueprint-paper-sheet', x, y, width, height, rx: 18 }, group);
   for (let gx = x + 30; gx < x + width; gx += 30) {
-    svg('line', { class: 'bp-paper-line', x1: gx, y1: y + 6, x2: gx, y2: y + height - 6 }, group);
+    svg('line', { class: 'blueprint-paper-line', x1: gx, y1: y + 6, x2: gx, y2: y + height - 6 }, group);
   }
   for (let gy = y + 30; gy < y + height; gy += 30) {
-    svg('line', { class: 'bp-paper-line', x1: x + 6, y1: gy, x2: x + width - 6, y2: gy }, group);
+    svg('line', { class: 'blueprint-paper-line', x1: x + 6, y1: gy, x2: x + width - 6, y2: gy }, group);
   }
   return group;
 };

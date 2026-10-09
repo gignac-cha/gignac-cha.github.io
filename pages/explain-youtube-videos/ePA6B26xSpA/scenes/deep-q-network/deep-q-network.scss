@@ -6,7 +6,7 @@
   }
   .dqn-screen {
     fill: #000;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   .dqn-wall {
@@ -23,18 +23,18 @@
     fill: #c84848;
   }
   .dqn-miss {
-    fill: var(--d-red);
+    fill: var(--diagram-red);
   }
   .dqn-hole {
     fill: none;
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 3;
     stroke-dasharray: 8 6;
   }
   .dqn-annotation {
     font-size: 26px;
     font-weight: 700;
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
     paint-order: stroke;
     stroke: #000;
     stroke-width: 6px;
@@ -43,19 +43,19 @@
     font-size: 26px;
     font-weight: 800;
     text-anchor: middle;
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
     paint-order: stroke;
     stroke: #000;
     stroke-width: 6px;
   }
 
   .dqn-card {
-    fill: var(--d-grid);
-    stroke: var(--d-line);
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
     stroke-width: 2;
 
     &.muted {
-      fill: color-mix(in srgb, var(--d-red) 6%, var(--d-background));
+      fill: color-mix(in srgb, var(--diagram-red) 6%, var(--diagram-background));
     }
   }
   .dqn-paper-title {
@@ -64,15 +64,15 @@
   }
   .dqn-paper-meta {
     font-size: 24px;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   .dqn-cartridge {
-    fill: var(--d-grid);
-    stroke: var(--d-line);
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
     stroke-width: 2;
 
     &.focus {
-      stroke: var(--d-yellow);
+      stroke: var(--diagram-yellow);
       stroke-width: 3;
     }
   }
@@ -86,14 +86,14 @@
   }
   .dqn-thumb-frame {
     fill: none;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   .dqn-label {
     font-size: 26px;
     font-weight: 600;
     text-anchor: middle;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   .dqn-big-number {
     font-size: 56px;
@@ -105,10 +105,10 @@
     font-size: 32px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-red);
+    fill: var(--diagram-red);
   }
   .dqn-cross {
-    stroke: var(--d-red);
+    stroke: var(--diagram-red);
     stroke-width: 3;
     opacity: .5;
   }
@@ -116,7 +116,7 @@
     font-size: 54px;
     font-weight: 800;
     text-anchor: middle;
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
   .dqn-stage-note {
     font-size: 32px;
@@ -127,17 +127,17 @@
     font-size: 30px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-red);
+    fill: var(--diagram-red);
   }
   .dqn-footnote {
     font-size: 20px;
     text-anchor: middle;
-    fill: var(--d-subtle);
+    fill: var(--diagram-subtle);
   }
 
   .dqn-agent {
-    fill: color-mix(in srgb, var(--d-blue) 14%, var(--d-background));
-    stroke: var(--d-blue);
+    fill: color-mix(in srgb, var(--diagram-blue) 14%, var(--diagram-background));
+    stroke: var(--diagram-blue);
     stroke-width: 3;
   }
   .dqn-agent-text {
@@ -151,10 +151,10 @@
     stroke-dasharray: 10 8;
 
     &.action {
-      stroke: var(--d-blue);
+      stroke: var(--diagram-blue);
     }
     &.observe {
-      stroke: var(--d-yellow);
+      stroke: var(--diagram-yellow);
     }
   }
   .dqn-arrow-label {
@@ -162,17 +162,17 @@
     font-weight: 700;
 
     &.action {
-      fill: var(--d-blue);
+      fill: var(--diagram-blue);
     }
     &.observe {
-      fill: var(--d-yellow);
+      fill: var(--diagram-yellow);
     }
   }
   .dqn-reward {
     font-size: 34px;
     font-weight: 800;
     text-anchor: middle;
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
   .dqn-dog-rule {
     font-size: 28px;
@@ -180,13 +180,13 @@
     text-anchor: middle;
   }
   .dqn-bar-track {
-    fill: var(--d-grid);
+    fill: var(--diagram-grid);
   }
   .dqn-bar {
-    fill: var(--d-blue);
+    fill: var(--diagram-blue);
 
     &.best {
-      fill: var(--d-green);
+      fill: var(--diagram-green);
     }
   }
   .dqn-bar-label {
@@ -196,17 +196,17 @@
   }
 
   .dqn-layer {
-    fill: color-mix(in srgb, var(--d-purple) 16%, var(--d-background));
-    stroke: var(--d-purple);
+    fill: color-mix(in srgb, var(--diagram-purple) 16%, var(--diagram-background));
+    stroke: var(--diagram-purple);
     stroke-width: 2;
 
     &.input {
       fill: none;
-      stroke: var(--d-muted);
+      stroke: var(--diagram-muted);
     }
     &.output {
-      fill: color-mix(in srgb, var(--d-green) 16%, var(--d-background));
-      stroke: var(--d-green);
+      fill: color-mix(in srgb, var(--diagram-green) 16%, var(--diagram-background));
+      stroke: var(--diagram-green);
     }
   }
   .dqn-layer-label {
@@ -217,11 +217,11 @@
   .dqn-layer-detail {
     font-size: 22px;
     text-anchor: middle;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   .dqn-flow {
     fill: none;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 3;
   }
 }

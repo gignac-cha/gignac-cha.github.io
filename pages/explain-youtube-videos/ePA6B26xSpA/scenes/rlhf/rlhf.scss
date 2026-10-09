@@ -6,7 +6,7 @@
 .rlhf-small {
   font-size: 22px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .rlhf-label {
   font-size: 26px;
@@ -17,11 +17,11 @@
   font-size: 26px;
   font-weight: 600;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 .rlhf-arrow {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -29,37 +29,37 @@
 .rlhf-flow-label {
   font-size: 22px;
   font-weight: 700;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .rlhf-pill {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-line);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   text {
     font-size: 22px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-muted) !important;
+    fill: var(--diagram-muted) !important;
   }
   &.done rect {
-    stroke: color-mix(in srgb, var(--d-blue) 50%, var(--d-line));
+    stroke: color-mix(in srgb, var(--diagram-blue) 50%, var(--diagram-line));
   }
   &.active {
     rect {
-      fill: color-mix(in srgb, var(--d-blue) 22%, var(--d-background));
-      stroke: var(--d-blue);
+      fill: color-mix(in srgb, var(--diagram-blue) 22%, var(--diagram-background));
+      stroke: var(--diagram-blue);
     }
     text {
-      fill: var(--d-text) !important;
+      fill: var(--diagram-text) !important;
     }
   }
 }
 .rlhf-model {
   rect {
-    fill: color-mix(in srgb, var(--d-green) 14%, var(--d-background));
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 14%, var(--diagram-background));
+    stroke: var(--diagram-green);
     stroke-width: 3;
   }
 }
@@ -69,37 +69,37 @@
   text-anchor: middle;
 }
 .rlhf-meter-track {
-  fill: var(--d-grid);
-  stroke: var(--d-line);
+  fill: var(--diagram-grid);
+  stroke: var(--diagram-line);
   stroke-width: 1.5;
 }
 .rlhf-meter {
-  fill: var(--d-yellow);
+  fill: var(--diagram-yellow);
 }
 .rlhf-person {
-  fill: var(--d-blue);
+  fill: var(--diagram-blue);
 
   &.small {
-    fill: color-mix(in srgb, var(--d-blue) 80%, var(--d-text));
+    fill: color-mix(in srgb, var(--diagram-blue) 80%, var(--diagram-text));
   }
 }
 .rlhf-prompt {
-  fill: var(--d-background);
-  stroke: var(--d-line);
+  fill: var(--diagram-background);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
 .rlhf-tag {
   font-size: 22px;
   font-weight: 700;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .rlhf-prompt-text {
   font-size: 30px;
   font-weight: 700;
 }
 .rlhf-demo {
-  fill: color-mix(in srgb, var(--d-blue) 10%, var(--d-background));
-  stroke: var(--d-blue);
+  fill: color-mix(in srgb, var(--diagram-blue) 10%, var(--diagram-background));
+  stroke: var(--diagram-blue);
   stroke-width: 2;
 }
 .rlhf-demo-text {
@@ -109,20 +109,20 @@
 }
 .rlhf-answer {
   rect {
-    fill: var(--d-background);
-    stroke: var(--d-line);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   &.best rect {
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
     stroke-width: 3.5;
-    fill: color-mix(in srgb, var(--d-green) 12%, var(--d-background));
+    fill: color-mix(in srgb, var(--diagram-green) 12%, var(--diagram-background));
   }
 }
 .rlhf-answer-id {
   font-size: 24px;
   font-weight: 800;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .rlhf-answer-text {
   font-size: 24px;
@@ -133,22 +133,22 @@
   font-size: 24px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 .rlhf-score {
-  fill: var(--d-purple);
+  fill: var(--diagram-purple);
 }
 .rlhf-order {
   font-size: 40px;
   font-weight: 800;
   text-anchor: middle;
   letter-spacing: .06em;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 .rlhf-judge {
   rect {
-    fill: color-mix(in srgb, var(--d-purple) 16%, var(--d-background));
-    stroke: var(--d-purple);
+    fill: color-mix(in srgb, var(--diagram-purple) 16%, var(--diagram-background));
+    stroke: var(--diagram-purple);
     stroke-width: 3;
   }
 }
@@ -159,24 +159,24 @@
 }
 .rlhf-loop {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
   stroke-dasharray: 8 8;
 
   &.back {
-    stroke: color-mix(in srgb, var(--d-yellow) 60%, var(--d-line));
+    stroke: color-mix(in srgb, var(--diagram-yellow) 60%, var(--diagram-line));
   }
 }
 .rlhf-packet {
-  fill: var(--d-green);
+  fill: var(--diagram-green);
 
   &.score {
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
 }
 .rlhf-name-card {
-  fill: color-mix(in srgb, var(--d-yellow) 10%, var(--d-background));
-  stroke: var(--d-yellow);
+  fill: color-mix(in srgb, var(--diagram-yellow) 10%, var(--diagram-background));
+  stroke: var(--diagram-yellow);
   stroke-width: 2.5;
 }
 .rlhf-name {
@@ -186,12 +186,12 @@
 }
 .rlhf-clip {
   rect {
-    fill: color-mix(in srgb, var(--d-grid) 55%, var(--d-background));
-    stroke: var(--d-line);
+    fill: color-mix(in srgb, var(--diagram-grid) 55%, var(--diagram-background));
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   &.picked rect {
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
     stroke-width: 4;
   }
   &.dropped {
@@ -199,22 +199,22 @@
   }
 }
 .rlhf-ground {
-  stroke: var(--d-subtle);
+  stroke: var(--diagram-subtle);
   stroke-width: 3;
 }
 .rlhf-clip-label {
   font-size: 26px;
   font-weight: 700;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
 .rlhf-check {
   font-size: 26px;
   font-weight: 800;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
 .hopper {
   line {
-    stroke: var(--d-orange);
+    stroke: var(--diagram-orange);
     stroke-width: 16;
     stroke-linecap: round;
   }
@@ -222,8 +222,8 @@
     stroke-width: 22;
   }
   .hopper-joint {
-    fill: var(--d-background);
-    stroke: var(--d-orange);
+    fill: var(--diagram-background);
+    stroke: var(--diagram-orange);
     stroke-width: 3;
   }
 }
@@ -236,66 +236,66 @@
   }
 }
 .rlhf-action {
-  fill: color-mix(in srgb, var(--d-green) 18%, var(--d-background));
-  stroke: var(--d-green);
+  fill: color-mix(in srgb, var(--diagram-green) 18%, var(--diagram-background));
+  stroke: var(--diagram-green);
   stroke-width: 2.5;
 }
 .rlhf-action-text {
   font-size: 28px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
 .rlhf-score-chip {
-  fill: color-mix(in srgb, var(--d-yellow) 20%, var(--d-background));
-  stroke: var(--d-yellow);
+  fill: color-mix(in srgb, var(--diagram-yellow) 20%, var(--diagram-background));
+  stroke: var(--diagram-yellow);
   stroke-width: 2.5;
 }
 .rlhf-score-chip-text {
   font-size: 26px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
 .rlhf-reward {
   font-size: 34px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-orange) !important;
+  fill: var(--diagram-orange) !important;
 
   &.score {
-    fill: var(--d-yellow) !important;
+    fill: var(--diagram-yellow) !important;
   }
 }
 .rlhf-axis {
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
 .rlhf-bar {
-  fill: var(--d-green);
+  fill: var(--diagram-green);
 }
 // 인스트럭트GPT 장면.
-.ig-box {
+.instruct-gpt-box {
   stroke-width: 3;
 
   &.small {
-    fill: color-mix(in srgb, var(--d-green) 30%, var(--d-background));
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 30%, var(--diagram-background));
+    stroke: var(--diagram-green);
   }
   &.winner {
-    fill: var(--d-green);
+    fill: var(--diagram-green);
   }
   &.big {
-    fill: color-mix(in srgb, var(--d-blue) 14%, var(--d-background));
-    stroke: var(--d-blue);
+    fill: color-mix(in srgb, var(--diagram-blue) 14%, var(--diagram-background));
+    stroke: var(--diagram-blue);
   }
 }
-.ig-pulse {
+.instruct-gpt-pulse {
   fill: none;
-  stroke: var(--d-green);
+  stroke: var(--diagram-green);
   stroke-width: 3;
 }
-.ig-name {
+.instruct-gpt-name {
   font-size: 32px;
   font-weight: 800;
   text-anchor: middle;
@@ -304,46 +304,46 @@
     font-size: 56px;
   }
 }
-.ig-params {
+.instruct-gpt-params {
   font-size: 24px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.ig-question {
+.instruct-gpt-question {
   font-size: 30px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.ig-verdict {
-  fill: color-mix(in srgb, var(--d-green) 20%, var(--d-background));
-  stroke: var(--d-green);
+.instruct-gpt-verdict {
+  fill: color-mix(in srgb, var(--diagram-green) 20%, var(--diagram-background));
+  stroke: var(--diagram-green);
   stroke-width: 2.5;
 }
-.ig-verdict-text {
+.instruct-gpt-verdict-text {
   font-size: 26px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
-.ig-ratio-line {
+.instruct-gpt-ratio-line {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 2.5;
   stroke-dasharray: 8 8;
 }
-.ig-ratio {
+.instruct-gpt-ratio {
   font-size: 44px;
   font-weight: 800;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.ig-note {
+.instruct-gpt-note {
   font-size: 20px;
   text-anchor: end;
-  fill: var(--d-subtle) !important;
+  fill: var(--diagram-subtle) !important;
 }
-.ig-lesson {
+.instruct-gpt-lesson {
   font-size: 34px;
   font-weight: 800;
   text-anchor: middle;

@@ -1,127 +1,127 @@
-.dbn-naive-floor {
-  fill: color-mix(in srgb, var(--d-muted) 22%, transparent);
-  stroke: var(--d-muted);
+.deep-belief-net-naive-floor {
+  fill: color-mix(in srgb, var(--diagram-muted) 22%, transparent);
+  stroke: var(--diagram-muted);
   stroke-width: 2;
 
   &.broken {
-    fill: color-mix(in srgb, var(--d-red) 18%, transparent);
-    stroke: var(--d-red);
+    fill: color-mix(in srgb, var(--diagram-red) 18%, transparent);
+    stroke: var(--diagram-red);
   }
 }
-.dbn-caption {
+.deep-belief-net-caption {
   font-size: 30px;
   text-anchor: middle;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.dbn-slab {
+.deep-belief-net-slab {
   fill: transparent;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
   stroke-dasharray: 10 10;
 
   &.input {
-    fill: color-mix(in srgb, var(--d-text) 5%, transparent);
+    fill: color-mix(in srgb, var(--diagram-text) 5%, transparent);
     stroke-dasharray: none;
   }
   &.building {
-    fill: color-mix(in srgb, var(--d-blue) 8%, transparent);
-    stroke: var(--d-blue);
+    fill: color-mix(in srgb, var(--diagram-blue) 8%, transparent);
+    stroke: var(--diagram-blue);
     stroke-dasharray: none;
   }
   &.solid {
-    fill: color-mix(in srgb, var(--d-blue) 22%, transparent);
-    stroke: var(--d-blue);
+    fill: color-mix(in srgb, var(--diagram-blue) 22%, transparent);
+    stroke: var(--diagram-blue);
     stroke-width: 3;
     stroke-dasharray: none;
   }
   &.trained {
-    fill: color-mix(in srgb, var(--d-green) 22%, transparent);
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 22%, transparent);
+    stroke: var(--diagram-green);
     stroke-width: 3;
     stroke-dasharray: none;
   }
 }
-.dbn-layer-name {
+.deep-belief-net-layer-name {
   font-size: 28px;
   font-weight: 600;
   text-anchor: end;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.dbn-node {
-  fill: var(--d-background);
-  stroke: var(--d-muted);
+.deep-belief-net-node {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-muted);
   stroke-width: 3;
 
   &.building {
-    stroke: var(--d-blue);
+    stroke: var(--diagram-blue);
   }
   &.solid {
-    fill: var(--d-blue);
-    stroke: var(--d-blue);
+    fill: var(--diagram-blue);
+    stroke: var(--diagram-blue);
   }
   &.trained {
-    fill: var(--d-green);
-    stroke: var(--d-green);
+    fill: var(--diagram-green);
+    stroke: var(--diagram-green);
   }
 }
-.dbn-link {
-  stroke: var(--d-line);
+.deep-belief-net-link {
+  stroke: var(--diagram-line);
   stroke-width: 1.5;
 
   &.hot {
-    stroke: var(--d-orange);
+    stroke: var(--diagram-orange);
     stroke-width: 2.5;
   }
   &.trained {
-    stroke: color-mix(in srgb, var(--d-green) 45%, transparent);
+    stroke: color-mix(in srgb, var(--diagram-green) 45%, transparent);
   }
 }
-.dbn-particle {
-  fill: var(--d-yellow);
+.deep-belief-net-particle {
+  fill: var(--diagram-yellow);
 }
-.dbn-pulse {
-  fill: var(--d-orange);
-  filter: drop-shadow(0 0 12px var(--d-orange));
+.deep-belief-net-pulse {
+  fill: var(--diagram-orange);
+  filter: drop-shadow(0 0 12px var(--diagram-orange));
 }
-.dbn-tag-body {
-  fill: color-mix(in srgb, var(--d-yellow) 18%, transparent);
-  stroke: var(--d-yellow);
+.deep-belief-net-tag-body {
+  fill: color-mix(in srgb, var(--diagram-yellow) 18%, transparent);
+  stroke: var(--diagram-yellow);
   stroke-width: 3;
 }
-.dbn-tag-hole {
-  fill: var(--d-background);
-  stroke: var(--d-yellow);
+.deep-belief-net-tag-hole {
+  fill: var(--diagram-background);
+  stroke: var(--diagram-yellow);
   stroke-width: 2;
 }
-.dbn-tag-text {
+.deep-belief-net-tag-text {
   font-size: 30px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.dbn-strike {
-  stroke: var(--d-red);
+.deep-belief-net-strike {
+  stroke: var(--diagram-red);
   stroke-width: 6;
   stroke-linecap: round;
 }
-.dbn-trained {
+.deep-belief-net-trained {
   font-size: 40px;
   font-weight: 700;
   text-anchor: middle;
-  fill: var(--d-green) !important;
+  fill: var(--diagram-green) !important;
 }
-.dbn-depth {
+.deep-belief-net-depth {
   fill: none;
-  stroke: var(--d-muted);
+  stroke: var(--diagram-muted);
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.dbn-deep-title {
+.deep-belief-net-deep-title {
   font-size: 72px;
   font-weight: 800;
 }
-.dbn-deep-sub {
+.deep-belief-net-deep-sub {
   font-size: 34px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }

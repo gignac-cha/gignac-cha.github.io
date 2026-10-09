@@ -1,188 +1,188 @@
-.em-axis {
+.emergence-axis {
   fill: none;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 3;
 }
-.em-grid {
-  stroke: var(--d-grid);
+.emergence-grid {
+  stroke: var(--diagram-grid);
   stroke-width: 2;
   stroke-dasharray: 6 6;
 }
-.em-tick {
+.emergence-tick {
   font-size: 22px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.em-axis-label {
+.emergence-axis-label {
   font-size: 26px;
   font-weight: 600;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.em-curve {
+.emergence-curve {
   fill: none;
   stroke-width: 7;
   stroke-linecap: round;
   stroke-linejoin: round;
 
   &.exact {
-    stroke: var(--d-orange);
+    stroke: var(--diagram-orange);
   }
   &.partial {
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
   }
 }
-.em-curve-label {
+.emergence-curve-label {
   font-size: 26px;
   font-weight: 700;
 
   &.exact {
-    fill: var(--d-orange) !important;
+    fill: var(--diagram-orange) !important;
   }
   &.partial {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }
-.em-pointer {
+.emergence-pointer {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 3;
   stroke-dasharray: 6 6;
 }
-.em-emergence-text {
+.emergence-emergence-text {
   font-size: 44px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.em-emergence-sub {
+.emergence-emergence-sub {
   font-size: 22px;
   font-style: italic;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.em-tube {
+.emergence-tube {
   fill: #1b1c22;
-  stroke: var(--d-line);
+  stroke: var(--diagram-line);
   stroke-width: 2;
 }
-.em-bulb {
-  fill: var(--d-red);
+.emergence-bulb {
+  fill: var(--diagram-red);
 }
-.em-mercury {
-  fill: var(--d-red);
+.emergence-mercury {
+  fill: var(--diagram-red);
 }
-.em-zero-tick {
-  stroke: var(--d-blue);
+.emergence-zero-tick {
+  stroke: var(--diagram-blue);
   stroke-width: 3;
 }
-.em-zero-label {
+.emergence-zero-label {
   font-size: 22px;
   font-weight: 700;
-  fill: var(--d-blue) !important;
+  fill: var(--diagram-blue) !important;
 }
-.em-readout {
+.emergence-readout {
   font-size: 36px;
   font-weight: 800;
 }
-.em-cube {
-  fill: color-mix(in srgb, var(--d-blue) 30%, var(--d-background));
-  stroke: var(--d-blue);
+.emergence-cube {
+  fill: color-mix(in srgb, var(--diagram-blue) 30%, var(--diagram-background));
+  stroke: var(--diagram-blue);
   stroke-width: 3;
 
   &.ice {
-    fill: color-mix(in srgb, #dff1ff 55%, var(--d-background));
+    fill: color-mix(in srgb, #dff1ff 55%, var(--diagram-background));
     stroke: #dff1ff;
   }
 }
-.em-crystal line {
+.emergence-crystal line {
   stroke: #ffffff;
   stroke-width: 3;
   stroke-linecap: round;
   opacity: .8;
 }
-.em-state {
+.emergence-state {
   font-size: 34px;
   font-weight: 800;
   text-anchor: middle;
 }
-.em-scoring-title {
+.emergence-scoring-title {
   font-size: 30px;
   font-weight: 800;
   text-anchor: middle;
 }
-.em-problem {
+.emergence-problem {
   font-size: 34px;
   font-weight: 700;
   font-family: Menlo, Consolas, monospace !important;
 }
-.em-problem-sub {
+.emergence-problem-sub {
   font-size: 26px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.em-digit {
+.emergence-digit {
   font-size: 34px;
   font-weight: 800;
   font-family: Menlo, Consolas, monospace !important;
 
   &.right {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
   &.wrong {
-    fill: var(--d-red) !important;
+    fill: var(--diagram-red) !important;
   }
 }
-.em-card {
+.emergence-card {
   rect {
     fill: #141519;
     stroke-width: 2;
   }
   &.exact rect {
-    stroke: var(--d-orange);
+    stroke: var(--diagram-orange);
   }
   &.partial rect {
-    stroke: var(--d-green);
+    stroke: var(--diagram-green);
   }
 }
-.em-card-rule {
+.emergence-card-rule {
   font-size: 28px;
   font-weight: 700;
 }
-.em-card-note {
+.emergence-card-note {
   font-size: 21px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.em-card-score {
+.emergence-card-score {
   font-size: 40px;
   font-weight: 800;
 
   .exact & {
-    fill: var(--d-orange) !important;
+    fill: var(--diagram-orange) !important;
   }
   .partial & {
-    fill: var(--d-green) !important;
+    fill: var(--diagram-green) !important;
   }
 }
-.em-debate {
+.emergence-debate {
   font-size: 30px;
   font-weight: 700;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.em-fact-band {
-  fill: color-mix(in srgb, var(--d-yellow) 9%, transparent);
+.emergence-fact-band {
+  fill: color-mix(in srgb, var(--diagram-yellow) 9%, transparent);
 }
-.em-fact-arrow {
+.emergence-fact-arrow {
   fill: none;
-  stroke: var(--d-yellow);
+  stroke: var(--diagram-yellow);
   stroke-width: 6;
   stroke-dasharray: 1;
 }
-.em-fact-head {
-  fill: var(--d-yellow);
+.emergence-fact-head {
+  fill: var(--diagram-yellow);
 }
-.em-fact-text {
+.emergence-fact-text {
   font-size: 28px;
   font-weight: 700;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }
-.em-fact-line {
+.emergence-fact-line {
   font-size: 34px;
   font-weight: 800;
-  fill: var(--d-yellow) !important;
+  fill: var(--diagram-yellow) !important;
 }

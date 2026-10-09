@@ -10,23 +10,23 @@
   .alphago-board-note {
     font-size: 22px;
     text-anchor: middle;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   .alphago-footnote {
     font-size: 20px;
-    fill: var(--d-subtle);
+    fill: var(--diagram-subtle);
   }
 }
 
 .alphago {
   .alphago-empty {
-    fill: var(--d-blue);
+    fill: var(--diagram-blue);
   }
   .alphago-candidate {
-    fill: color-mix(in srgb, var(--d-blue) 45%, transparent);
-    stroke: var(--d-blue);
+    fill: color-mix(in srgb, var(--diagram-blue) 45%, transparent);
+    stroke: var(--diagram-blue);
     stroke-width: 3;
-    filter: drop-shadow(0 0 8px var(--d-blue));
+    filter: drop-shadow(0 0 8px var(--diagram-blue));
   }
   .alphago-gauge {
     &.white {
@@ -34,26 +34,26 @@
     }
     &.black {
       fill: #2b2b2b;
-      stroke: var(--d-green);
+      stroke: var(--diagram-green);
       stroke-width: 2;
     }
   }
   .alphago-gauge-label {
     font-size: 22px;
     font-weight: 600;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
 
   .alphago-count-label {
     font-size: 28px;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   .alphago-count {
     font-size: 52px;
     font-weight: 800;
 
     &.go {
-      fill: var(--d-yellow);
+      fill: var(--diagram-yellow);
     }
   }
   .alphago-exponent {
@@ -61,21 +61,21 @@
   }
   .alphago-count-bar {
     &.go {
-      fill: var(--d-yellow);
+      fill: var(--diagram-yellow);
     }
     &.atoms {
-      fill: var(--d-muted);
+      fill: var(--diagram-muted);
     }
   }
 
   .alphago-fan {
     fill: none;
-    stroke: var(--d-blue);
+    stroke: var(--diagram-blue);
     stroke-width: 1.2;
     opacity: .8;
   }
   .alphago-root {
-    fill: var(--d-text);
+    fill: var(--diagram-text);
   }
   .alphago-tree-name {
     font-size: 32px;
@@ -85,17 +85,17 @@
   .alphago-tree-detail {
     font-size: 22px;
     text-anchor: middle;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   .alphago-tree-total {
     font-size: 34px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-yellow);
+    fill: var(--diagram-yellow);
   }
   .alphago-cross {
     fill: none;
-    stroke: var(--d-red);
+    stroke: var(--diagram-red);
     stroke-width: 10;
     stroke-linecap: round;
   }
@@ -103,38 +103,38 @@
     font-size: 28px;
     font-weight: 700;
     text-anchor: middle;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
 
   .alphago-eye {
-    fill: var(--d-grid);
+    fill: var(--diagram-grid);
     stroke-width: 3;
 
     &.policy {
-      stroke: var(--d-blue);
+      stroke: var(--diagram-blue);
     }
     &.value {
-      stroke: var(--d-green);
+      stroke: var(--diagram-green);
     }
   }
   .alphago-eye-shape {
-    fill: var(--d-text);
+    fill: var(--diagram-text);
 
     &.policy {
-      stroke: var(--d-blue);
+      stroke: var(--diagram-blue);
       stroke-width: 3;
     }
     &.value {
-      stroke: var(--d-green);
+      stroke: var(--diagram-green);
       stroke-width: 3;
     }
   }
   .alphago-pupil {
     &.policy {
-      fill: var(--d-blue);
+      fill: var(--diagram-blue);
     }
     &.value {
-      fill: var(--d-green);
+      fill: var(--diagram-green);
     }
   }
   .alphago-eye-title {
@@ -143,16 +143,16 @@
   }
   .alphago-eye-body {
     font-size: 28px;
-    fill: var(--d-text);
+    fill: var(--diagram-text);
   }
   .alphago-eye-detail {
     font-size: 22px;
     text-anchor: end;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   .alphago-step {
-    fill: var(--d-grid);
-    stroke: var(--d-line);
+    fill: var(--diagram-grid);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
   .alphago-step-title {
@@ -161,11 +161,11 @@
   }
   .alphago-step-detail {
     font-size: 22px;
-    fill: var(--d-muted);
+    fill: var(--diagram-muted);
   }
   .alphago-loop {
     fill: none;
-    stroke: var(--d-yellow);
+    stroke: var(--diagram-yellow);
     stroke-width: 5;
     stroke-dasharray: 120 60;
   }

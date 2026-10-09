@@ -59,28 +59,28 @@ const stepTime = .6;
 const shown = (time: number, [from, to]: number[]) => appear(time, from, .4) * (1 - appear(time, to, .4));
 
 const docIcon = (parent: SVGElement, x: number, y: number, kind: number, size = 1) => {
-  const group = svg('g', { class: `nw-doc kind-${kind % 5}`, transform: `translate(${x} ${y}) scale(${size})` }, parent);
+  const group = svg('g', { class: `next-word-doc kind-${kind % 5}`, transform: `translate(${x} ${y}) scale(${size})` }, parent);
   svg('rect', { x: -26, y: -34, width: 52, height: 68, rx: 6 }, group);
   for (let i = 0; i < 4; i++) {
-    svg('rect', { class: 'nw-doc-line', x: -16, y: -20 + i * 13, width: i === 3 ? 18 : 32, height: 4, rx: 2 }, group);
+    svg('rect', { class: 'next-word-doc-line', x: -16, y: -20 + i * 13, width: i === 3 ? 18 : 32, height: 4, rx: 2 }, group);
   }
   return group;
 };
 
 const createTask = (root: SVGElement) => {
   const group = svg('g', {}, root);
-  text(group, 800, 250, '다음 단어 맞히기', { class: 'nw-heading', 'text-anchor': 'middle' });
-  const words = [['옛날', 440], ['옛적', 590], ['어느', 740], ['마을에', 920]].map(([word, x]) => text(group, x as number, 462, word as string, { class: 'nw-story', 'text-anchor': 'middle' }));
-  const slot = svg('g', { class: 'nw-slot' }, group);
+  text(group, 800, 250, '다음 단어 맞히기', { class: 'next-word-heading', 'text-anchor': 'middle' });
+  const words = [['옛날', 440], ['옛적', 590], ['어느', 740], ['마을에', 920]].map(([word, x]) => text(group, x as number, 462, word as string, { class: 'next-word-story', 'text-anchor': 'middle' }));
+  const slot = svg('g', { class: 'next-word-slot' }, group);
   svg('rect', { x: 1040, y: 400, width: 180, height: 84, rx: 14 }, slot);
-  const glow = svg('rect', { class: 'nw-slot-glow', x: 1034, y: 394, width: 192, height: 96, rx: 18 }, slot);
-  text(slot, 1130, 462, '?', { class: 'nw-slot-mark', 'text-anchor': 'middle' });
-  const caret = svg('rect', { class: 'nw-caret', x: 1186, y: 414, width: 4, height: 56 }, slot);
+  const glow = svg('rect', { class: 'next-word-slot-glow', x: 1034, y: 394, width: 192, height: 96, rx: 18 }, slot);
+  text(slot, 1130, 462, '?', { class: 'next-word-slot-mark', 'text-anchor': 'middle' });
+  const caret = svg('rect', { class: 'next-word-caret', x: 1186, y: 414, width: 4, height: 56 }, slot);
   const hints = [
     { label: '문법', x: 960, at: at.grammar },
     { label: '세상 돌아가는 이치', x: 1300, at: at.world },
   ].map(({ label, x, at: hintAt }) => {
-    const hint = svg('g', { class: 'nw-hint' }, group);
+    const hint = svg('g', { class: 'next-word-hint' }, group);
     svg('path', { d: `M${x} 600 L1130 488` }, hint);
     const width = label.length * 26 + 48;
     svg('rect', { x: x - width / 2, y: 600, width, height: 56, rx: 28 }, hint);
@@ -101,11 +101,11 @@ const createTask = (root: SVGElement) => {
 const createBooks = (root: SVGElement) => {
   const group = svg('g', {}, root);
   // 책장: 6칸에 책등이 빼곡히 꽂힌다.
-  const shelf = svg('g', { class: 'nw-shelf' }, group);
+  const shelf = svg('g', { class: 'next-word-shelf' }, group);
   const spines: { node: SVGElement; order: number }[] = [];
   for (let row = 0; row < 6; row++) {
     const y = 300 + row * 82;
-    svg('rect', { class: 'nw-board', x: 110, y: y + 2, width: 500, height: 6, rx: 3 }, shelf);
+    svg('rect', { class: 'next-word-board', x: 110, y: y + 2, width: 500, height: 6, rx: 3 }, shelf);
     let x = 116;
     let i = 0;
     while (x < 600) {
@@ -114,18 +114,18 @@ const createBooks = (root: SVGElement) => {
       if (x + width > 604) {
         break;
       }
-      const node = svg('rect', { class: `nw-spine c${Math.floor(random(row * 13 + i * 3) * 6)}`, x, y: y - height, width: width - 2, height, rx: 2 }, shelf);
+      const node = svg('rect', { class: `next-word-spine color-${Math.floor(random(row * 13 + i * 3) * 6)}`, x, y: y - height, width: width - 2, height, rx: 2 }, shelf);
       spines.push({ node, order: row * 40 + i });
       x += width;
       i++;
     }
   }
-  text(group, 110, 196, 'BooksCorpus', { class: 'nw-corpus' });
-  text(group, 110, 820, '미출간 책 7,000여 권 · GPT-1이 읽은 책', { class: 'nw-note' });
+  text(group, 110, 196, 'BooksCorpus', { class: 'next-word-corpus' });
+  text(group, 110, 820, '미출간 책 7,000여 권 · GPT-1이 읽은 책', { class: 'next-word-note' });
 
   // 책 한 쪽: 앞 단어만 보고 다음 단어를 맞히면, 책에 적힌 단어가 곧 정답이다.
-  const page = svg('g', { class: 'nw-page' }, group);
-  svg('rect', { class: 'nw-page-sheet', x: 700, y: 236, width: 800, height: 330, rx: 12 }, page);
+  const page = svg('g', { class: 'next-word-page' }, group);
+  svg('rect', { class: 'next-word-page-sheet', x: 700, y: 236, width: 800, height: 330, rx: 12 }, page);
   const tokens: { node: SVGTextElement; box: SVGRectElement; index: number }[] = [];
   let index = 0;
   bookLines.forEach((line, row) => {
@@ -133,25 +133,25 @@ const createBooks = (root: SVGElement) => {
     const y = 330 + row * 84;
     for (const word of line) {
       const width = word.length * 36;
-      const box = svg('rect', { class: 'nw-target', x: x - 10, y: y - 46, width: width + 20, height: 62, rx: 10 }, page);
-      const node = text(page, x, y, word, { class: 'nw-token' });
+      const box = svg('rect', { class: 'next-word-target', x: x - 10, y: y - 46, width: width + 20, height: 62, rx: 10 }, page);
+      const node = text(page, x, y, word, { class: 'next-word-token' });
       tokens.push({ node, box, index });
       index++;
       x += width + 30;
     }
   });
-  const guess = text(page, 0, 0, '?', { class: 'nw-guess', 'text-anchor': 'middle' });
-  text(group, 700, 606, '현진건 「운수 좋은 날」(1924) 첫 문장', { class: 'nw-note' });
-  const answer = text(group, 700, 676, '정답은 이미 책 속에 · 책에 적힌 다음 단어', { class: 'nw-answer' });
+  const guess = text(page, 0, 0, '?', { class: 'next-word-guess', 'text-anchor': 'middle' });
+  text(group, 700, 606, '현진건 「운수 좋은 날」(1924) 첫 문장', { class: 'next-word-note' });
+  const answer = text(group, 700, 676, '정답은 이미 책 속에 · 책에 적힌 다음 단어', { class: 'next-word-answer' });
 
-  const sheet = svg('g', { class: 'nw-labels' }, group);
-  svg('rect', { class: 'nw-labels-card', x: 1200, y: 640, width: 300, height: 190, rx: 14 }, sheet);
-  text(sheet, 1230, 690, '사람이 붙인 정답표', { class: 'nw-labels-title' });
+  const sheet = svg('g', { class: 'next-word-labels' }, group);
+  svg('rect', { class: 'next-word-labels-card', x: 1200, y: 640, width: 300, height: 190, rx: 14 }, sheet);
+  text(sheet, 1230, 690, '사람이 붙인 정답표', { class: 'next-word-labels-title' });
   for (let i = 0; i < 3; i++) {
-    svg('rect', { class: 'nw-doc-line', x: 1230, y: 714 + i * 30, width: 160 - i * 30, height: 10, rx: 5 }, sheet);
-    svg('rect', { class: 'nw-labels-tag', x: 1410, y: 708 + i * 30, width: 60, height: 22, rx: 6 }, sheet);
+    svg('rect', { class: 'next-word-doc-line', x: 1230, y: 714 + i * 30, width: 160 - i * 30, height: 10, rx: 5 }, sheet);
+    svg('rect', { class: 'next-word-labels-tag', x: 1410, y: 708 + i * 30, width: 60, height: 22, rx: 6 }, sheet);
   }
-  const cross = svg('path', { class: 'nw-cross', d: 'M1196 636 L1504 834 M1504 636 L1196 834', pathLength: 1 }, sheet);
+  const cross = svg('path', { class: 'next-word-cross', d: 'M1196 636 L1504 834 M1504 636 L1196 834', pathLength: 1 }, sheet);
 
   return (time: number) => {
     setAttributes(group, { opacity: shown(time, parts.books).toFixed(3) });
@@ -186,7 +186,7 @@ const createBooks = (root: SVGElement) => {
 
 const createTextbook = (root: SVGElement) => {
   const group = svg('g', {}, root);
-  text(group, 800, 210, '세상의 모든 글', { class: 'nw-heading', 'text-anchor': 'middle' });
+  text(group, 800, 210, '세상의 모든 글', { class: 'next-word-heading', 'text-anchor': 'middle' });
   const docs = Array.from({ length: 48 }, (_, i) => {
     const column = i % 12;
     const row = Math.floor(i / 12);
@@ -194,10 +194,10 @@ const createTextbook = (root: SVGElement) => {
     const y = 320 + row * 120 + (random(i * 5) - .5) * 30;
     return { node: docIcon(group, x, y, i), x, y, delay: random(i * 7) * .8 };
   });
-  const book = svg('g', { class: 'nw-textbook' }, group);
+  const book = svg('g', { class: 'next-word-textbook' }, group);
   svg('path', { d: 'M800 470 C740 440 640 440 590 460 L590 720 C640 700 740 700 800 730 C860 700 960 700 1010 720 L1010 460 C960 440 860 440 800 470 Z' }, book);
-  svg('path', { class: 'nw-textbook-spine', d: 'M800 470 L800 730' }, book);
-  text(group, 800, 820, '= 교과서', { class: 'nw-textbook-label', 'text-anchor': 'middle' });
+  svg('path', { class: 'next-word-textbook-spine', d: 'M800 470 L800 730' }, book);
+  text(group, 800, 820, '= 교과서', { class: 'next-word-textbook-label', 'text-anchor': 'middle' });
   const label = group.lastElementChild as SVGTextElement;
   return (time: number) => {
     setAttributes(group, { opacity: shown(time, parts.textbook).toFixed(3) });
@@ -216,20 +216,20 @@ const createTextbook = (root: SVGElement) => {
 
 const createGPT = (root: SVGElement) => {
   const group = svg('g', {}, root);
-  text(group, 800, 300, 'GPT-1', { class: 'nw-gpt', 'text-anchor': 'middle' });
-  text(group, 800, 356, '2018년 6월 · 오픈AI', { class: 'nw-gpt-sub', 'text-anchor': 'middle' });
-  text(group, 800, 400, '트랜스포머 디코더 12층 · 매개변수 1억 1,700만 개', { class: 'nw-gpt-sub', 'text-anchor': 'middle' });
+  text(group, 800, 300, 'GPT-1', { class: 'next-word-gpt', 'text-anchor': 'middle' });
+  text(group, 800, 356, '2018년 6월 · 오픈AI', { class: 'next-word-gpt-sub', 'text-anchor': 'middle' });
+  text(group, 800, 400, '트랜스포머 디코더 12층 · 매개변수 1억 1,700만 개', { class: 'next-word-gpt-sub', 'text-anchor': 'middle' });
   // 이름 풀이: 말하는 순서(미리 학습한 → 생성형 → 트랜스포머)대로 글자가 켜진다.
   const letters = [
     { letter: 'G', english: 'Generative', korean: '생성형', x: 520, at: at.generative },
     { letter: 'P', english: 'Pre-trained', korean: '미리 학습한', x: 800, at: at.pre },
     { letter: 'T', english: 'Transformer', korean: '트랜스포머', x: 1080, at: at.transformer },
   ].map(({ letter, english, korean, x, at: letterAt }) => {
-    const column = svg('g', { class: 'nw-letter' }, group);
-    const big = text(column, x, 580, letter, { class: 'nw-letter-big', 'text-anchor': 'middle' });
+    const column = svg('g', { class: 'next-word-letter' }, group);
+    const big = text(column, x, 580, letter, { class: 'next-word-letter-big', 'text-anchor': 'middle' });
     const words = svg('g', {}, column);
-    text(words, x, 640, english, { class: 'nw-letter-english', 'text-anchor': 'middle' });
-    text(words, x, 690, korean, { class: 'nw-letter-korean', 'text-anchor': 'middle' });
+    text(words, x, 640, english, { class: 'next-word-letter-english', 'text-anchor': 'middle' });
+    text(words, x, 690, korean, { class: 'next-word-letter-korean', 'text-anchor': 'middle' });
     return { big, words, at: letterAt };
   });
   return (time: number) => {
@@ -244,33 +244,33 @@ const createGPT = (root: SVGElement) => {
 
 const createStages = (root: SVGElement) => {
   const group = svg('g', {}, root);
-  text(group, 800, 196, '공부를 두 단계로', { class: 'nw-heading', 'text-anchor': 'middle' });
-  const first = svg('g', { class: 'nw-stage first' }, group);
+  text(group, 800, 196, '공부를 두 단계로', { class: 'next-word-heading', 'text-anchor': 'middle' });
+  const first = svg('g', { class: 'next-word-stage first' }, group);
   svg('rect', { x: 110, y: 240, width: 800, height: 380, rx: 20 }, first);
-  text(first, 146, 296, '1단계 · 사전 학습', { class: 'nw-stage-title' });
-  text(first, 146, 334, '방대한 글로 폭넓게 · 다음 단어 맞히기', { class: 'nw-stage-note' });
+  text(first, 146, 296, '1단계 · 사전 학습', { class: 'next-word-stage-title' });
+  text(first, 146, 334, '방대한 글로 폭넓게 · 다음 단어 맞히기', { class: 'next-word-stage-note' });
   const piles = Array.from({ length: 33 }, (_, i) => docIcon(first, 180 + (i % 11) * 66, 400 + Math.floor(i / 11) * 76, i, .78));
 
-  const arrow = svg('path', { class: 'nw-arrow', d: 'M920 430 L968 430 M954 418 L970 430 L954 442' }, group);
+  const arrow = svg('path', { class: 'next-word-arrow', d: 'M920 430 L968 430 M954 418 L970 430 L954 442' }, group);
 
-  const second = svg('g', { class: 'nw-stage second' }, group);
+  const second = svg('g', { class: 'next-word-stage second' }, group);
   svg('rect', { x: 980, y: 240, width: 510, height: 380, rx: 20 }, second);
-  text(second, 1016, 296, '2단계 · 미세 조정', { class: 'nw-stage-title' });
-  const secondNote = text(second, 1016, 334, '원하는 일에 맞춰 살짝 다듬기', { class: 'nw-stage-note' });
+  text(second, 1016, 296, '2단계 · 미세 조정', { class: 'next-word-stage-title' });
+  const secondNote = text(second, 1016, 334, '원하는 일에 맞춰 살짝 다듬기', { class: 'next-word-stage-note' });
   const tasks = ['자연어 추론', '질문 답변', '문장 유사도', '분류'].map((label, i) => {
-    const chip = svg('g', { class: 'nw-task' }, second);
+    const chip = svg('g', { class: 'next-word-task' }, second);
     const x = 1016 + (i % 2) * 230;
     const y = 384 + Math.floor(i / 2) * 84;
     svg('rect', { x, y, width: 210, height: 60, rx: 30 }, chip);
     text(chip, x + 105, y + 39, label, { 'text-anchor': 'middle' });
     return chip;
   });
-  text(second, 1016, 590, 'GPT-1 논문의 과제 유형', { class: 'nw-stage-note small' });
+  text(second, 1016, 590, 'GPT-1 논문의 과제 유형', { class: 'next-word-stage-note small' });
 
-  const analogy = svg('g', { class: 'nw-analogy' }, group);
-  text(analogy, 110, 712, '의대생이라면', { class: 'nw-analogy-lead' });
-  const basics = text(analogy, 510, 712, '기초 의학을 다 배우고', { class: 'nw-analogy-text', 'text-anchor': 'middle' });
-  const major = text(analogy, 1235, 712, '전공을 고른다', { class: 'nw-analogy-text', 'text-anchor': 'middle' });
+  const analogy = svg('g', { class: 'next-word-analogy' }, group);
+  text(analogy, 110, 712, '의대생이라면', { class: 'next-word-analogy-lead' });
+  const basics = text(analogy, 510, 712, '기초 의학을 다 배우고', { class: 'next-word-analogy-text', 'text-anchor': 'middle' });
+  const major = text(analogy, 1235, 712, '전공을 고른다', { class: 'next-word-analogy-text', 'text-anchor': 'middle' });
 
   return (time: number) => {
     setAttributes(group, { opacity: shown(time, parts.stages).toFixed(3) });
@@ -288,7 +288,7 @@ const createStages = (root: SVGElement) => {
 };
 
 export const createNextWordScene = (): Scene => {
-  const { element, root } = createDiagram('nw', '다음 단어 맞히기(GPT-1)');
+  const { element, root } = createDiagram('next-word', '다음 단어 맞히기(GPT-1)');
   const renders = [createTask(root), createBooks(root), createTextbook(root), createGPT(root), createStages(root)];
   return {
     element,

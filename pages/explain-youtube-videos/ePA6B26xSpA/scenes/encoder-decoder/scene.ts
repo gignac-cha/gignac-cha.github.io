@@ -38,10 +38,10 @@ const slabStep = 21;
 
 // 층을 얇은 판으로 쌓은 탑(탑 좌표, 블록 아래 -150 부터 위로).
 const createStack = (parent: SVGElement, count: number, className: string) => {
-  const group = svg('g', { class: `ed-stack ${className}` }, parent);
+  const group = svg('g', { class: `encoder-decoder-stack ${className}` }, parent);
   const slabs = Array.from({ length: count }, (_, i) =>
     svg('rect', { x: -110, y: towerShape.encoder.blockBottom - (i + 1) * slabStep + 3, width: 220, height: slabStep - 5, rx: 5 }, group));
-  const outline = svg('rect', { class: 'ed-stack-glow', x: -124, width: 248, rx: 12 }, group);
+  const outline = svg('rect', { class: 'encoder-decoder-stack-glow', x: -124, width: 248, rx: 12 }, group);
   return {
     group,
     update: (shown: number, glow: number) => {
@@ -53,7 +53,7 @@ const createStack = (parent: SVGElement, count: number, className: string) => {
 };
 
 const chip = (parent: SVGElement, x: number, y: number, label: string, className = '') => {
-  const group = svg('g', { class: `ed-chip ${className}`, transform: `translate(${x} ${y})` }, parent);
+  const group = svg('g', { class: `encoder-decoder-chip ${className}`, transform: `translate(${x} ${y})` }, parent);
   const width = Math.max(70, label.length * 16 + 36);
   svg('rect', { x: -width / 2, y: -22, width, height: 44, rx: 22 }, group);
   text(group, 0, 8, label);
@@ -61,57 +61,57 @@ const chip = (parent: SVGElement, x: number, y: number, label: string, className
 };
 
 export const createEncoderDecoderScene = (): Scene => {
-  const { element, root } = createDiagram('ed', '인코더와 디코더');
+  const { element, root } = createDiagram('encoder-decoder', '인코더와 디코더');
 
   const paper = createPaper(root, 360, 150, 880, 730);
-  const cross = svg('path', { class: 'bp-cross' }, root);
+  const cross = svg('path', { class: 'blueprint-cross' }, root);
   const encoder = createEncoder(root);
   const decoder = createDecoder(root);
   const encoderStack = createStack(encoder.group, layers.bert, 'encoder');
   const decoderStack = createStack(decoder.group, layers.gpt, 'decoder');
 
   // 반쪽마다 테두리와 이름.
-  const frame = (x: number, top: number, className: string) => svg('rect', { class: `ed-frame ${className}`, x: x - 100, y: top, width: 200, height: baseY + 26 - top, rx: 18 }, root);
+  const frame = (x: number, top: number, className: string) => svg('rect', { class: `encoder-decoder-frame ${className}`, x: x - 100, y: top, width: 200, height: baseY + 26 - top, rx: 18 }, root);
   const encoderFrame = frame(together.encoderX, baseY + towerShape.encoder.top * scale - 20, 'encoder');
   const decoderFrame = frame(together.decoderX, baseY + towerShape.decoder.top * scale - 20, 'decoder');
-  const encoderName = text(root, together.encoderX, baseY + towerShape.encoder.top * scale - 70, '인코더 · 읽고 이해하는 쪽', { class: 'ed-name encoder', 'text-anchor': 'middle' });
-  const decoderName = text(root, together.decoderX, 132, '디코더 · 한 단어씩 써 내려가는 쪽', { class: 'ed-name decoder', 'text-anchor': 'middle' });
+  const encoderName = text(root, together.encoderX, baseY + towerShape.encoder.top * scale - 70, '인코더 · 읽고 이해하는 쪽', { class: 'encoder-decoder-name encoder', 'text-anchor': 'middle' });
+  const decoderName = text(root, together.decoderX, 132, '디코더 · 한 단어씩 써 내려가는 쪽', { class: 'encoder-decoder-name decoder', 'text-anchor': 'middle' });
 
   // 인코더는 원문 전체를 한꺼번에 받고, 디코더는 한 단어씩 써 낸다.
   const inputs = ['I', 'miss', 'you'].map((word, i) => chip(root, together.encoderX + (i - 1) * 76, 846, word));
   const outputs = ['Tu', 'me', 'manques'].map((word, i) => chip(root, together.decoderX + (i - 1) * 104 + (i === 2 ? 16 : 0), 196, word, 'output'));
-  const pulses = [0, 1, 2].map(() => svg('circle', { class: 'ed-pulse', r: 7 }, root));
+  const pulses = [0, 1, 2].map(() => svg('circle', { class: 'encoder-decoder-pulse', r: 7 }, root));
 
-  const year = text(root, 800, 470, '2018', { class: 'ed-year', 'text-anchor': 'middle' });
+  const year = text(root, 800, 470, '2018', { class: 'encoder-decoder-year', 'text-anchor': 'middle' });
   const companies = [
     { x: apart.encoderX, label: '구글', at: at.google },
     { x: apart.decoderX, label: '오픈AI', at: at.openai },
-  ].map(({ x, label, at: shownAt }) => ({ node: text(root, x, 236, label, { class: 'ed-company', 'text-anchor': 'middle' }), at: shownAt }));
+  ].map(({ x, label, at: shownAt }) => ({ node: text(root, x, 236, label, { class: 'encoder-decoder-company', 'text-anchor': 'middle' }), at: shownAt }));
   const models = [
     { x: apart.encoderX, name: 'BERT', detail: '2018년 10월 · 인코더 24층', at: at.bert, className: 'encoder' },
     { x: apart.decoderX, name: 'GPT', detail: '2018년 6월 · 디코더 12층', at: at.gpt, className: 'decoder' },
   ].map(({ x, name, detail, at: shownAt, className }) => {
-    const group = svg('g', { class: `ed-model ${className}` }, root);
-    text(group, x, 196, name, { class: 'ed-model-name', 'text-anchor': 'middle' });
-    text(group, x, 846, detail, { class: 'ed-model-detail', 'text-anchor': 'middle' });
+    const group = svg('g', { class: `encoder-decoder-model ${className}` }, root);
+    text(group, x, 196, name, { class: 'encoder-decoder-model-name', 'text-anchor': 'middle' });
+    text(group, x, 846, detail, { class: 'encoder-decoder-model-detail', 'text-anchor': 'middle' });
     return { group, at: shownAt };
   });
 
   // 같은 뿌리에서 나온 두 갈래, 그리고 서로 다른 길.
-  const tree = svg('g', { class: 'ed-tree' }, root);
+  const tree = svg('g', { class: 'encoder-decoder-tree' }, root);
   const branches = [apart.encoderX, apart.decoderX].map((x) =>
-    svg('path', { class: 'ed-branch', d: `M800 676 C800 600 ${x + (x < 800 ? 260 : -260)} 640 ${x + (x < 800 ? 100 : -100)} 540`, pathLength: 1 }, tree));
+    svg('path', { class: 'encoder-decoder-branch', d: `M800 676 C800 600 ${x + (x < 800 ? 260 : -260)} 640 ${x + (x < 800 ? 100 : -100)} 540`, pathLength: 1 }, tree));
   const rootChip = chip(tree, 800, 700, '트랜스포머 2017', 'root');
   const roads = [
     { x: apart.encoderX, label: '읽고 이해하기', dir: -1 },
     { x: apart.decoderX, label: '이어서 써 내기', dir: 1 },
   ].map(({ x, label, dir }) => {
-    const group = svg('g', { class: `ed-road ${dir < 0 ? 'encoder' : 'decoder'}` }, root);
-    svg('path', { class: 'ed-road-arrow', d: `M${x + dir * 130} 330 L${x + dir * 210} 250 M${x + dir * 210 - dir * 18} 248 L${x + dir * 210} 250 L${x + dir * 208} 268` }, group);
-    text(group, x + dir * 200, 300, label, { class: 'ed-road-label', 'text-anchor': dir < 0 ? 'end' : 'start' });
+    const group = svg('g', { class: `encoder-decoder-road ${dir < 0 ? 'encoder' : 'decoder'}` }, root);
+    svg('path', { class: 'encoder-decoder-road-arrow', d: `M${x + dir * 130} 330 L${x + dir * 210} 250 M${x + dir * 210 - dir * 18} 248 L${x + dir * 210} 250 L${x + dir * 208} 268` }, group);
+    text(group, x + dir * 200, 300, label, { class: 'encoder-decoder-road-label', 'text-anchor': dir < 0 ? 'end' : 'start' });
     return group;
   });
-  const question = text(root, 800, 760, '이 뼈대에 무엇을, 어떻게 가르칠까?', { class: 'ed-question', 'text-anchor': 'middle' });
+  const question = text(root, 800, 760, '이 뼈대에 무엇을, 어떻게 가르칠까?', { class: 'encoder-decoder-question', 'text-anchor': 'middle' });
 
   const update = (time: number) => {
     setAttributes(paper, { opacity: (appear(time, start, .5) * (1 - .6 * appear(time, at.split, .6))).toFixed(3) });

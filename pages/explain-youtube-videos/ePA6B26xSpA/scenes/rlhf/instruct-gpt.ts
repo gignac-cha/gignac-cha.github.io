@@ -32,28 +32,28 @@ export const createInstructGPTScene = (): Scene => {
   svg('line', { x1: 200, y1: baseline, x2: 1460, y2: baseline, class: 'rlhf-axis' }, root);
 
   const small = svg('g', {}, root);
-  const smallRect = svg('rect', { x: smallBox.x, y: smallBox.y, width: smallBox.size, height: smallBox.size, rx: 4, class: 'ig-box small' }, small);
-  text(small, 420, smallBox.y - 64, 'InstructGPT', { class: 'ig-name' });
-  text(small, 420, smallBox.y - 26, '매개변수 13억 개', { class: 'ig-params' });
-  const pulse = svg('rect', { class: 'ig-pulse' }, small);
+  const smallRect = svg('rect', { x: smallBox.x, y: smallBox.y, width: smallBox.size, height: smallBox.size, rx: 4, class: 'instruct-gpt-box small' }, small);
+  text(small, 420, smallBox.y - 64, 'InstructGPT', { class: 'instruct-gpt-name' });
+  text(small, 420, smallBox.y - 26, '매개변수 13억 개', { class: 'instruct-gpt-params' });
+  const pulse = svg('rect', { class: 'instruct-gpt-pulse' }, small);
 
   const big = svg('g', {}, root);
-  const bigRect = svg('rect', { x: bigBox.x, width: bigBox.size, rx: 6, class: 'ig-box big' }, big);
+  const bigRect = svg('rect', { x: bigBox.x, width: bigBox.size, rx: 6, class: 'instruct-gpt-box big' }, big);
   const bigLabel = svg('g', {}, big);
-  text(bigLabel, bigBox.x + bigBox.size / 2, baseline - bigSide / 2 - 6, 'GPT-3', { class: 'ig-name large' });
-  text(bigLabel, bigBox.x + bigBox.size / 2, baseline - bigSide / 2 + 40, '매개변수 1,750억 개', { class: 'ig-params' });
+  text(bigLabel, bigBox.x + bigBox.size / 2, baseline - bigSide / 2 - 6, 'GPT-3', { class: 'instruct-gpt-name large' });
+  text(bigLabel, bigBox.x + bigBox.size / 2, baseline - bigSide / 2 + 40, '매개변수 1,750억 개', { class: 'instruct-gpt-params' });
 
-  const question = text(root, 640, 300, '사람들은 어느 쪽 답을 더 좋아했을까?', { class: 'ig-question' });
+  const question = text(root, 640, 300, '사람들은 어느 쪽 답을 더 좋아했을까?', { class: 'instruct-gpt-question' });
   const verdict = svg('g', {}, root);
-  svg('rect', { x: 250, y: 470, width: 340, height: 60, rx: 30, class: 'ig-verdict' }, verdict);
-  text(verdict, 420, 510, '✓ 사람들이 더 좋아함', { class: 'ig-verdict-text' });
+  svg('rect', { x: 250, y: 470, width: 340, height: 60, rx: 30, class: 'instruct-gpt-verdict' }, verdict);
+  text(verdict, 420, 510, '✓ 사람들이 더 좋아함', { class: 'instruct-gpt-verdict-text' });
 
   const ratio = svg('g', {}, root);
-  svg('path', { d: `M${smallBox.x + smallBox.size + 24} ${baseline - 24} Q660 ${baseline - 40} ${bigBox.x - 24} ${baseline - 120}`, class: 'ig-ratio-line' }, ratio);
-  text(ratio, 660, 640, '약 135배', { class: 'ig-ratio' });
-  text(ratio, 660, 680, '1,750억 ÷ 13억', { class: 'ig-params' });
-  const note = text(root, 1460, 812, '네모의 넓이 = 매개변수 수', { class: 'ig-note' });
-  const lesson = text(root, 800, 860, '크기만이 전부는 아니다', { class: 'ig-lesson' });
+  svg('path', { d: `M${smallBox.x + smallBox.size + 24} ${baseline - 24} Q660 ${baseline - 40} ${bigBox.x - 24} ${baseline - 120}`, class: 'instruct-gpt-ratio-line' }, ratio);
+  text(ratio, 660, 640, '약 135배', { class: 'instruct-gpt-ratio' });
+  text(ratio, 660, 680, '1,750억 ÷ 13억', { class: 'instruct-gpt-params' });
+  const note = text(root, 1460, 812, '네모의 넓이 = 매개변수 수', { class: 'instruct-gpt-note' });
+  const lesson = text(root, 800, 860, '크기만이 전부는 아니다', { class: 'instruct-gpt-lesson' });
 
   const update = (time: number) => {
     const smallIn = appear(time, at.name, .5);

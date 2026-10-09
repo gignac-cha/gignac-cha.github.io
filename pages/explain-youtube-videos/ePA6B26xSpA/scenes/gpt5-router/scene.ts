@@ -53,53 +53,53 @@ export const createGPT5RouterScene = (): Scene => {
   const { element, root } = createDiagram('gpt5-router', 'GPT-5 라우터');
 
   // 하나의 시스템(GPT-5): 처음엔 점선, "하나로 묶은"에서 실선으로 닫힌다.
-  const frame = svg('rect', { class: 'gr-frame', x: 600, y: 160, width: 900, height: 600, rx: 30 }, root);
-  const name = text(root, 640, 222, 'GPT-5', { class: 'gr-name' });
+  const frame = svg('rect', { class: 'gpt5-router-frame', x: 600, y: 160, width: 900, height: 600, rx: 30 }, root);
+  const name = text(root, 640, 222, 'GPT-5', { class: 'gpt5-router-name' });
 
   const card = ({ x, y, width, height }: typeof fastCard, title: string, note: string, className: string) => {
-    const node = svg('g', { class: `gr-card ${className}` }, root);
-    svg('rect', { class: 'gr-card-box', x, y, width, height, rx: 22 }, node);
-    const icon = svg('g', { class: 'gr-icon', transform: `translate(${x + 56} ${y + 62})` }, node);
-    text(node, x + 100, y + 72, title, { class: 'gr-card-title' });
-    text(node, x + 100, y + 108, note, { class: 'gr-card-note' });
-    svg('rect', { class: 'gr-meter-track', x: x + 32, y: y + height - 38, width: width - 64, height: 10, rx: 5 }, node);
-    const meter = svg('rect', { class: 'gr-meter', x: x + 32, y: y + height - 38, width: 0, height: 10, rx: 5 }, node);
+    const node = svg('g', { class: `gpt5-router-card ${className}` }, root);
+    svg('rect', { class: 'gpt5-router-card-box', x, y, width, height, rx: 22 }, node);
+    const icon = svg('g', { class: 'gpt5-router-icon', transform: `translate(${x + 56} ${y + 62})` }, node);
+    text(node, x + 100, y + 72, title, { class: 'gpt5-router-card-title' });
+    text(node, x + 100, y + 108, note, { class: 'gpt5-router-card-note' });
+    svg('rect', { class: 'gpt5-router-meter-track', x: x + 32, y: y + height - 38, width: width - 64, height: 10, rx: 5 }, node);
+    const meter = svg('rect', { class: 'gpt5-router-meter', x: x + 32, y: y + height - 38, width: 0, height: 10, rx: 5 }, node);
     return { node, icon, meter, width: width - 64 };
   };
   const fast = card(fastCard, '빠르게 답하는 모델', '대부분의 질문에 바로', 'fast');
   svg('path', { d: lightning }, fast.icon);
   const deep = card(deepCard, '깊게 생각하는 모델', '어려운 문제는 오래 생각', 'deep');
   [-16, 0, 16].forEach((x) => svg('circle', { cx: x, cy: 0, r: 6 }, deep.icon));
-  const deepLabel = text(root, deepCard.x + deepCard.width / 2, deepCard.y + deepCard.height + 34, '', { class: 'gr-thinking', 'text-anchor': 'middle' });
+  const deepLabel = text(root, deepCard.x + deepCard.width / 2, deepCard.y + deepCard.height + 34, '', { class: 'gpt5-router-thinking', 'text-anchor': 'middle' });
 
-  const wires = svg('g', { class: 'gr-wires' }, root);
+  const wires = svg('g', { class: 'gpt5-router-wires' }, root);
   const fastWire = svg('path', { d: curve(toFast) }, wires);
   const deepWire = svg('path', { d: curve(toDeep) }, wires);
-  const hub = svg('g', { class: 'gr-router' }, root);
+  const hub = svg('g', { class: 'gpt5-router-router' }, root);
   svg('circle', { cx: router.x, cy: router.y, r: router.r }, hub);
   text(hub, router.x, router.y + 9, '라우터', { 'text-anchor': 'middle' });
   const factorViews = factors.map((factor, i) => {
-    const node = svg('g', { class: 'gr-factor' }, root);
+    const node = svg('g', { class: 'gpt5-router-factor' }, root);
     svg('rect', { x: router.x - 100, y: 562 + i * 46, width: 200, height: 38, rx: 19 }, node);
     text(node, router.x, 588 + i * 46, factor, { 'text-anchor': 'middle' });
     return node;
   });
-  const decideCaption = text(root, 1050, 830, '질문을 보고, 얼마나 생각할지 스스로 정한다', { class: 'gr-caption', 'text-anchor': 'middle' });
+  const decideCaption = text(root, 1050, 830, '질문을 보고, 얼마나 생각할지 스스로 정한다', { class: 'gpt5-router-caption', 'text-anchor': 'middle' });
 
   const questionViews = questions.map((question) => {
-    const node = svg('g', { class: 'gr-question' }, root);
+    const node = svg('g', { class: 'gpt5-router-question' }, root);
     const width = question.text.length * 22 + 50;
     svg('rect', { x: 490 - width, y: question.y - 32, width, height: 64, rx: 32 }, node);
     text(node, 490 - width / 2, question.y + 9, question.text, { 'text-anchor': 'middle' });
-    const dot = svg('circle', { class: 'gr-dot', r: 10 }, root);
+    const dot = svg('circle', { class: 'gpt5-router-dot', r: 10 }, root);
     return { ...question, node, dot };
   });
 
   // 모든 사용자: 왼쪽에서 질문이 쏟아져 들어와 라우터에서 갈라진다. 대부분은 빠른 모델로.
   const crowd = svg('g', {}, root);
-  const crowdLabel = text(root, 280, 690, '모든 ChatGPT 사용자', { class: 'gr-crowd-label', 'text-anchor': 'middle' });
+  const crowdLabel = text(root, 280, 690, '모든 ChatGPT 사용자', { class: 'gpt5-router-crowd-label', 'text-anchor': 'middle' });
   const crowdDots = Array.from({ length: 30 }, (_, i) => ({
-    dot: svg('circle', { class: 'gr-dot small', r: 6 }, crowd),
+    dot: svg('circle', { class: 'gpt5-router-dot small', r: 6 }, crowd),
     born: at.everyone + i * .085,
     y: 250 + random(i * 3 + 1) * 420,
     deep: random(i * 3 + 2) < .28,

@@ -1,38 +1,38 @@
-.te-link {
+.transformer-everywhere-link {
   fill: none;
   stroke: #5b9dff;
   stroke-width: 3;
   stroke-dasharray: 10 10;
 }
-.te-ripple {
+.transformer-everywhere-ripple {
   fill: none;
   stroke: #5b9dff;
   stroke-width: 3;
 }
-.te-label {
+.transformer-everywhere-label {
   font-size: 24px;
   font-weight: 600;
   fill: #8fb4ec !important;
 }
-.te-card {
+.transformer-everywhere-card {
   rect {
     fill: #15161b;
-    stroke: var(--d-line);
+    stroke: var(--diagram-line);
     stroke-width: 2;
   }
 }
-.te-card-field {
+.transformer-everywhere-card-field {
   font-size: 32px;
   font-weight: 800;
 }
-.te-card-model {
+.transformer-everywhere-card-model {
   font-size: 22px;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.te-model {
+.transformer-everywhere-model {
   rect {
-    fill: color-mix(in srgb, var(--d-green) 14%, var(--d-background));
-    stroke: var(--d-green);
+    fill: color-mix(in srgb, var(--diagram-green) 14%, var(--diagram-background));
+    stroke: var(--diagram-green);
     stroke-width: 2;
   }
   text {
@@ -40,16 +40,16 @@
     font-weight: 700;
   }
 }
-.te-chatgpt {
+.transformer-everywhere-chatgpt {
   font-size: 64px;
   font-weight: 800;
 }
-.te-expansion {
+.transformer-everywhere-expansion {
   font-size: 30px;
   font-weight: 700;
-  fill: var(--d-muted) !important;
+  fill: var(--diagram-muted) !important;
 }
-.te-chatgpt.highlight,
-.te-expansion.highlight {
-  fill: var(--d-yellow) !important;
+.transformer-everywhere-chatgpt.highlight,
+.transformer-everywhere-expansion.highlight {
+  fill: var(--diagram-yellow) !important;
 }
