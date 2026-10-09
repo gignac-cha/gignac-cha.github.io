@@ -129,6 +129,16 @@ const createData = (parent: SVGElement) => {
   text(node, plot.left + 8, y(3e14) - 12, '공개된 사람의 글 ≈ 300조 토큰', { class: 'lm-label strong' });
   [2020, 2024, 2028, 2032].forEach((year) => text(node, x(year), plot.bottom + 28, String(year), { class: 'lm-axis', 'text-anchor': 'middle' }));
   svg('path', { class: 'lm-axis-line', d: `M${plot.left} ${plot.bottom} L${plot.right} ${plot.bottom}` }, node);
+  // 점선은 점과 글자 아래에 깐다. 세 점에 맞춘 직선(로그 눈금)을 300조에 닿을 때까지 늘린다.
+  const years = [2020, 2022, 2024];
+  const logs = [3e11, 1.4e12, 1.5e13].map(Math.log10);
+  const meanX = years.reduce((a, b) => a + b) / 3;
+  const meanY = logs.reduce((a, b) => a + b) / 3;
+  const slope = years.reduce((sum, year, i) => sum + (year - meanX) * (logs[i] - meanY), 0) / years.reduce((sum, year) => sum + (year - meanX) ** 2, 0);
+  const lineAt = (year: number) => 10 ** (meanY + slope * (year - meanX));
+  const hitYear = meanX + (Math.log10(3e14) - meanY) / slope;
+  const trend = svg('path', { class: 'lm-trend' }, node);
+  const hit = svg('circle', { class: 'lm-hit', cx: f(x(hitYear)), cy: f(y(3e14)), r: 0 }, node);
   const points = [
     { year: 2020, tokens: 3e11, label: 'GPT-3 · 3,000억' },
     { year: 2022, tokens: 1.4e12, label: 'Chinchilla · 1.4조' },
@@ -139,16 +149,6 @@ const createData = (parent: SVGElement) => {
     text(dot, x(point.year) + 16, y(point.tokens) + 7, point.label, { class: 'lm-point-label' });
     return { dot, at: at.data + .3 + i * .25 };
   });
-  // 세 점에 맞춘 직선(로그 눈금)을 300조에 닿을 때까지 늘린다.
-  const years = [2020, 2022, 2024];
-  const logs = [3e11, 1.4e12, 1.5e13].map(Math.log10);
-  const meanX = years.reduce((a, b) => a + b) / 3;
-  const meanY = logs.reduce((a, b) => a + b) / 3;
-  const slope = years.reduce((sum, year, i) => sum + (year - meanX) * (logs[i] - meanY), 0) / years.reduce((sum, year) => sum + (year - meanX) ** 2, 0);
-  const lineAt = (year: number) => 10 ** (meanY + slope * (year - meanX));
-  const hitYear = meanX + (Math.log10(3e14) - meanY) / slope;
-  const trend = svg('path', { class: 'lm-trend' }, node);
-  const hit = svg('circle', { class: 'lm-hit', cx: f(x(hitYear)), cy: f(y(3e14)), r: 0 }, node);
 
   return (time: number) => {
     for (const point of points) {

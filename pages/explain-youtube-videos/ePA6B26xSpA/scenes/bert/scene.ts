@@ -96,8 +96,10 @@ const createMasked = (root: SVGElement) => {
     const arc = svg('g', { class: 'bt-context' }, group);
     const x1 = (sentenceX[from] + sentenceX[to]) / 2;
     const x2 = sentenceX[masked] + (from < masked ? -40 : 40);
+    // 화살표는 괄호에서 빈칸 쪽 끝에서 출발해, 괄호 가운데 아래의 글자를 지나지 않는다.
+    const x0 = from < masked ? sentenceX[to] + 30 : sentenceX[from] - 30;
     svg('path', { class: 'bt-bracket', d: `M${sentenceX[from] - 30} ${sentenceY + 34} L${sentenceX[from] - 30} ${sentenceY + 50} L${sentenceX[to] + 30} ${sentenceY + 50} L${sentenceX[to] + 30} ${sentenceY + 34}` }, arc);
-    svg('path', { class: 'bt-arrow', d: `M${x1} ${sentenceY + 50} Q${x1} ${sentenceY + 120} ${x2} ${sentenceY + 40}`, pathLength: 1 }, arc);
+    svg('path', { class: 'bt-arrow', d: `M${x0} ${sentenceY + 50} Q${(x0 + x2) / 2} ${sentenceY + 100} ${x2} ${sentenceY + 40}`, pathLength: 1 }, arc);
     text(arc, x1, sentenceY + 96, label, { class: 'bt-context-label', 'text-anchor': 'middle' });
     return arc;
   };

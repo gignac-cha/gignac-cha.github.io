@@ -143,7 +143,8 @@ export const createGpt3LimitsScene = (): Scene => {
         setAttributes(group, { opacity: shownWord.toFixed(3) });
         const newest = i === 3 && time >= wordAt && time < wordAt + perWord && time < at.nextWordEnd;
         setAttributes(box, { opacity: newest ? 1 : 0 });
-        if (time >= wordAt) {
+        // 커서는 단어가 반쯤 나타났을 때 그 뒤로 옮긴다(아직 안 보이는 단어 뒤에 먼저 가 있지 않게).
+        if (shownWord >= .5) {
           last = { x: right + 6, y: lineY(i + 1) };
         }
       });

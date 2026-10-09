@@ -132,7 +132,7 @@ export const createAlphaFoldThree = (): SceneLayer => {
       setAttributes(pocketGlow, { cx: pocketScreen.x.toFixed(1), cy: pocketScreen.y.toFixed(1) });
     }
     if (pocketLabel) {
-      setAttributes(pocketLabel, { x: (pocketScreen.x + 70).toFixed(1), y: (pocketScreen.y - 120).toFixed(1) });
+      setAttributes(pocketLabel, { x: (pocketScreen.x + 150).toFixed(1), y: (pocketScreen.y - 155).toFixed(1) });
     }
     if (drugLabel) {
       const center = atomPositions.reduce((sum, [x, y, z]) => sum.add(new THREE.Vector3(x, y, z)), new THREE.Vector3()).divideScalar(atomPositions.length);

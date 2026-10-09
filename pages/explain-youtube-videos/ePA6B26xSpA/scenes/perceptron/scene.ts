@@ -234,7 +234,14 @@ const createPerceptron = () => {
     }
     if (marked >= 0) {
       const { position } = dots[marked];
-      setAttributes(mark, { opacity: 1, x: position.x + 36, y: position.y - 30 });
+      // 맞힌 예제는 오른쪽 아래, 틀린 예제는 왼쪽 위에 둬서 이웃한 점과 경계선을 피한다.
+      const correct = marked === correctExample;
+      setAttributes(mark, {
+        opacity: 1,
+        x: position.x + (correct ? 24 : -30),
+        y: position.y + (correct ? 44 : -30),
+        'text-anchor': correct ? 'start' : 'end',
+      });
       mark.classList.toggle('wrong', symbol.startsWith('✕'));
       setText(mark, symbol);
     } else {

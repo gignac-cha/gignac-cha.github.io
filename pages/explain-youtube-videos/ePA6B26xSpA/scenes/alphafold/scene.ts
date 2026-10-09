@@ -186,7 +186,7 @@ export const createAlphaFoldSvg = ({ protein3d = false } = {}): Scene => {
     // 주머니(열쇠 구멍)와 약 이름. Three.js 판은 입체 위치에 맞춰 이 자리를 다시 옮긴다.
     const pocketScreen = project(pocketCenter(time));
     setAttributes(pocketGlow, { cx: pocketScreen.x.toFixed(1), cy: pocketScreen.y.toFixed(1), opacity: (state.pocket * (.45 + .25 * appear(time, at.lock, .3) - .4 * appear(time, at.key + .9, .4))).toFixed(3) });
-    setAttributes(pocketLabel, { x: (pocketScreen.x + 70).toFixed(1), y: (pocketScreen.y - 120).toFixed(1), opacity: (appear(time, at.lock, .4) * (1 - appear(time, at.problem - .6, .4))).toFixed(3) });
+    setAttributes(pocketLabel, { x: (pocketScreen.x + 150).toFixed(1), y: (pocketScreen.y - 155).toFixed(1), opacity: (appear(time, at.lock, .4) * (1 - appear(time, at.problem - .6, .4))).toFixed(3) });
     const drugCentroid = drugAtoms(time).map(project).reduce((sum, { x, y }) => ({ x: sum.x + x / drug.length, y: sum.y + y / drug.length }), { x: 0, y: 0 });
     setAttributes(drugLabel, { x: drugCentroid.x.toFixed(1), y: (drugCentroid.y + 110).toFixed(1), opacity: (state.medicine * (1 - appear(time, at.key + .6, .4))).toFixed(3) });
 

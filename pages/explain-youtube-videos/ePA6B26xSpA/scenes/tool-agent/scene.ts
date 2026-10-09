@@ -193,7 +193,7 @@ const createShift = (root: SVGElement) => {
   const runner = svg('circle', { class: 'ta-head', r: 10 }, loop);
 
   return (time: number) => {
-    setAttributes(group, { opacity: (appear(time, at.shift + .3, .5) * (1 - appear(time, at.browser, .5))).toFixed(3) });
+    setAttributes(group, { opacity: (appear(time, at.shift + .3, .5) * (1 - appear(time, at.browser - .3, .3))).toFixed(3) });
     answeringLabel.update(time, (t) => (t < at.answering ? '' : '대답하는 기계'));
     workingLabel.update(time, (t) => (t < at.working ? '' : '일하는 기계'));
 
@@ -331,7 +331,7 @@ const createWork = (root: SVGElement) => {
     status.toggleClass('pass', time >= at.fix + .1);
     const giving = ease(progress(time, at.giveBack, .6));
     setAttributes(diff, {
-      transform: `translate(${f(lerp(1200, 1340, giving))} 588)`,
+      transform: `translate(${f(lerp(1250, 1340, giving))} 588)`,
       opacity: appear(time, at.giveBack, .3).toFixed(3),
     });
   };

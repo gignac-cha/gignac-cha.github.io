@@ -1,5 +1,5 @@
 import './gpt4o.scss';
-import { appear, between, createDiagram, lerp, setAttributes, svg, text } from '../../../shared/diagram';
+import { appear, between, clamp, createDiagram, lerp, setAttributes, svg, text } from '../../../shared/diagram';
 import type { Scene } from '../../../shared/scenes';
 import { createSwapText } from '../../../shared/swap-text';
 
@@ -165,6 +165,9 @@ export const createGpt4oScene = (): Scene => {
     // 나뉜 정도: 0 = 한 상자, 1 = 세 상자.
     const split = appear(time, at.before, .7) * (1 - appear(time, at.merge, .9));
     const modelIn = appear(time, at.voice - .3, .5);
+    // 상자가 모양을 바꾸는 동안 글자가 겹치지 않게, 세 상자의 글자는 나뉜 뒤 절반에서만, 합친 글자는 합쳐진 뒤 절반에서만 보인다.
+    const splitLabel = clamp(split * 2 - 1);
+    const mergedText = clamp(1 - split * 2);
     const boxRects = stages.map(({ x, at: lit }, i) => {
       const left = lerp(merged.x, x, split);
       const width = lerp(merged.width, stageWidth, split);
@@ -172,14 +175,14 @@ export const createGpt4oScene = (): Scene => {
       // 합쳐진 상태에선 가운데 상자 하나만 보인다.
       setAttributes(group, { opacity: (modelIn * (i === 1 ? 1 : split)).toFixed(3) });
       setAttributes(box, { x: left.toFixed(1), width: width.toFixed(1) });
-      setAttributes(titleView, { x: (left + width / 2).toFixed(1), opacity: (split * appear(time, lit, .3)).toFixed(3) });
-      setAttributes(subView, { x: (left + width / 2).toFixed(1), opacity: (split * appear(time, lit, .3)).toFixed(3) });
+      setAttributes(titleView, { x: (left + width / 2).toFixed(1), opacity: (splitLabel * appear(time, lit, .3)).toFixed(3) });
+      setAttributes(subView, { x: (left + width / 2).toFixed(1), opacity: (splitLabel * appear(time, lit, .3)).toFixed(3) });
       box.classList.toggle('lit', split > .5 && between(time, lit, at.apart));
       return { left, right: left + width };
     });
     boxes[1].box.classList.toggle('merged', split < .5);
-    setAttributes(mergedLabel, { opacity: (modelIn * (1 - split)).toFixed(3) });
-    textChips.forEach((chip, i) => setAttributes(chip, { opacity: (split * appear(time, stages[i + 1].at, .3)).toFixed(3) }));
+    setAttributes(mergedLabel, { opacity: (modelIn * mergedText).toFixed(3) });
+    textChips.forEach((chip, i) => setAttributes(chip, { opacity: (splitLabel * appear(time, stages[i + 1].at, .3)).toFixed(3) }));
     bandLabel.update(time, (t) => (t < at.before ? '' : t < at.one ? '예전 음성 모드: 모델 셋이 따로' : 'GPT-4o: 하나의 모델로'));
     bandLabel.toggleClass('lit', time >= at.one);
 

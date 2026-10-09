@@ -330,9 +330,10 @@ export const createWord2VecThree = (): SceneLayer => {
       setAttributes(label, { x: x.toFixed(1), y: (y - 30).toFixed(1), opacity: states[name].label.toFixed(3), class: `w2v3-label ${role(name)}`.trim() });
     }
     const appleSpot = screen(states.사과.position);
+    // 좌표 글자는 막대(아래로 내려가는 줄기)를 가로지르지 않게 공 왼쪽 아래에 둔다.
     setAttributes(vectorReadout, {
-      x: appleSpot.x.toFixed(1),
-      y: (appleSpot.y + 48).toFixed(1),
+      x: (appleSpot.x - 22).toFixed(1),
+      y: (appleSpot.y + 44).toFixed(1),
       opacity: (appear(time, map.place + 1.1, .5) * (1 - appear(time, map.coffee - .6, .5))).toFixed(3),
     });
 

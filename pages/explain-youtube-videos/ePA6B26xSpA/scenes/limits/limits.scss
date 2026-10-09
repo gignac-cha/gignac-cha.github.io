@@ -133,6 +133,11 @@
 .lm-point-label {
   font-size: 19px;
   font-weight: 600;
+  // 점선이 글자를 지나도 읽히게 카드 바탕색 테두리를 두른다.
+  paint-order: stroke;
+  stroke: color-mix(in srgb, var(--d-text) 3%, var(--d-background));
+  stroke-width: 8px;
+  stroke-linejoin: round;
 }
 .lm-trend {
   fill: none;

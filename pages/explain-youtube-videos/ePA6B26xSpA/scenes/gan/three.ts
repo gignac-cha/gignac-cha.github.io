@@ -529,7 +529,8 @@ export const createGanThree = (): SceneLayer => {
     }
     const nobodyIn = appear(time, T.nobody, .5);
     anchor(counter, new THREE.Vector3(fakeSlot.position.x, fakeAt.y - slotFaceHeight / 2, 0), { x: 0, y: 40 });
-    setAttributes(counter, { opacity: (appear(time, T.faces + .6, .5) * (1 - nobodyIn)).toFixed(3) });
+    // 같은 자리에 "세상에 없는 얼굴"이 들어오므로, 횟수는 그보다 먼저 빠진다(두 글자가 겹쳐 보이지 않게).
+    setAttributes(counter, { opacity: (appear(time, T.faces + .6, .5) * (1 - appear(time, T.nobody - .3, .3))).toFixed(3) });
 
     // 세상에 없는 얼굴: 뒤에서 빛이 번진다.
     const shine = nobodyIn * (.45 + .55 * Math.max(0, Math.sin(((time - T.nobody) / 1.6) * Math.PI)) * (time < T.nobody + 1.6 ? 1 : 0)) * (1 - growth);

@@ -126,7 +126,7 @@ export const createTestTimeComputeScene = (): Scene => {
   const solved = text(notebook, 1252, 598, '답: 1,776 ✓', { class: 'ttc-hand ttc-solved', opacity: 0 });
 
   // 연산이 쓰이는 자리: 학습할 때 + 대답할 때.
-  const placeY = 790;
+  const placeY = 776;
   const trainGpu = gpu(root, knobs[0].x, placeY);
   const answerGpu = gpu(root, knobs[0].x, placeY);
   const placeLabels = knobs.map(({ x }, i) => text(root, x, placeY + 70, i === 0 ? '원래 자리' : '새 자리', { class: i === 0 ? 'ttc-place' : 'ttc-place ttc-place-new', opacity: 0 }));

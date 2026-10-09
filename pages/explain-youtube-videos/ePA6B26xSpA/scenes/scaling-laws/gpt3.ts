@@ -53,7 +53,8 @@ export const createGpt3ScaleScene = (): Scene => {
   const gpt3Name = svg('g', {}, root);
   text(gpt3Name, gpt3X + 34, gpt3Y - 24, 'GPT-3', { class: 'sl-marker-name big' });
   text(gpt3Name, gpt3X + 36, gpt3Y - 70, '2020년 5월', { class: 'sl-marker-date' });
-  const gpt3Count = text(root, gpt3X, gpt3Y + 76, '1,750억', { class: 'sl-marker-count big', 'text-anchor': 'middle' });
+  // 점 오른쪽 아래로 이어지는 예측 점선과 겹치지 않게 점의 왼쪽 아래에 둔다.
+  const gpt3Count = text(root, gpt3X + 36, gpt3Y + 76, '1,750억', { class: 'sl-marker-count big', 'text-anchor': 'end' });
 
   const ratio = svg('g', { class: 'sl-ratio' }, root);
   const ratioArc = svg('path', { d: `M${chart.toX(gpt2)} ${chart.toY(f(gpt2)) - 34} C${chart.toX(gpt2) + 60} ${chart.toY(f(gpt2)) - 190}, ${gpt3X - 120} ${gpt3Y - 190}, ${gpt3X - 26} ${gpt3Y - 30}`, pathLength: 1 }, ratio);

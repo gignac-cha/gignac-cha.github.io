@@ -146,8 +146,9 @@ export const createRlhfScene = (): Scene => {
   // ④ 다듬기: 모델의 답 → 채점 → 점수가 오르는 쪽으로.
   const loop = svg('g', {}, main);
   // 2차 베지어 곡선 [시작, 조절점, 끝]. 점의 위치를 직접 계산한다(숨은 장면에서도 같은 값).
-  const loopOut = [{ x: model.x + 60, y: model.y + 66 }, { x: model.x + 160, y: judge.y + 10 }, { x: judge.x - 160, y: judge.y }];
-  const loopBack = [{ x: judge.x - 40, y: judge.y + 52 }, { x: judge.x - 300, y: judge.y + 150 }, { x: model.x + 10, y: model.y + 120 }];
+  // 나가는 줄은 모델 상자 오른쪽에서, 돌아오는 줄은 점수 막대 오른쪽 끝으로(막대·'채점 점수' 글자를 지나지 않게).
+  const loopOut = [{ x: model.x + 120, y: model.y + 30 }, { x: model.x + 260, y: judge.y }, { x: judge.x - 160, y: judge.y }];
+  const loopBack = [{ x: judge.x - 40, y: judge.y + 52 }, { x: judge.x - 330, y: judge.y + 150 }, { x: model.x + 124, y: model.y + 104 }];
   const curve = ([a, c, b]: typeof loopOut) => `M${a.x} ${a.y} Q${c.x} ${c.y} ${b.x} ${b.y}`;
   svg('path', { class: 'rlhf-loop', d: curve(loopOut) }, loop);
   svg('path', { class: 'rlhf-loop back', d: curve(loopBack) }, loop);

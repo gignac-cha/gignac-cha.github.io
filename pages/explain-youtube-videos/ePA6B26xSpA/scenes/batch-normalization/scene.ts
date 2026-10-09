@@ -188,7 +188,8 @@ const createBatchNormalization = () => {
   text(training, chart.right + 20, chart.bottom + 40, '학습 단계 →', { class: 'bn-axis-label', 'text-anchor': 'end' });
   const targetY = chart.bottom - target * (chart.bottom - chart.top);
   svg('line', { class: 'bn-target', x1: chart.left, x2: chart.right, y1: targetY, y2: targetY }, training);
-  text(training, chart.right, targetY - 14, '같은 정확도', { class: 'bn-target-label', 'text-anchor': 'end' });
+  // 배치 정규화 곡선이 이 높이에서 오른쪽 끝까지 이어지므로, 글자는 선과 겹치지 않게 조금 더 위에 둔다.
+  text(training, chart.right, targetY - 24, '같은 정확도', { class: 'bn-target-label', 'text-anchor': 'end' });
   const curvePath = (reach: number, top: number) => {
     const points = Array.from({ length: 141 }, (_, i) => {
       const x = i / 140;

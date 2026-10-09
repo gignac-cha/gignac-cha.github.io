@@ -113,6 +113,13 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+// CUDA 를 지나가는 곱셈·덧셈 기호가 설명 글자 사이로 비치지 않게 바탕색 테두리를 두른다.
+.diagram .gpu-cuda text.gpu-sub {
+  paint-order: stroke;
+  stroke: var(--d-background);
+  stroke-width: 14px;
+  stroke-linejoin: round;
+}
 .gpu-cuda-box {
   fill: var(--d-background);
   stroke: var(--d-green);

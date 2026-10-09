@@ -89,11 +89,11 @@ export const createChatGptPiecesScene = (): Scene => {
     setAttributes(heading, { opacity: appear(time, at.notNew, .5).toFixed(3) });
     setAttributes(lab, { opacity: (appear(time, at.pieces[0] - .3, .5) * lerp(1, .35, appear(time, at.lab, .6))).toFixed(3) });
 
-    // 조각이 위에서 떨어져 차곡차곡 쌓인다(살짝 튀고 멈춘다).
+    // 조각이 위에서 떨어져 차곡차곡 쌓인다(살짝 튀고 멈춘다). 제목 글자를 가리지 않게 제목 아래에서 나타나 떨어진다.
     blocks.forEach((group, i) => {
       const fall = clamp((time - at.pieces[i]) / .55);
-      const y = fall < 1 ? lerp(-140, restY(i), fall * fall) : restY(i) - Math.abs(Math.sin((time - at.pieces[i] - .55) * 14)) * 16 * Math.exp(-(time - at.pieces[i] - .55) * 7);
-      setAttributes(group, { transform: `translate(${block.x} ${y.toFixed(1)})`, opacity: time >= at.pieces[i] ? 1 : 0 });
+      const y = fall < 1 ? lerp(170, restY(i), fall * fall) : restY(i) - Math.abs(Math.sin((time - at.pieces[i] - .55) * 14)) * 16 * Math.exp(-(time - at.pieces[i] - .55) * 7);
+      setAttributes(group, { transform: `translate(${block.x} ${y.toFixed(1)})`, opacity: clamp((time - at.pieces[i]) / .12).toFixed(3) });
       group.classList.toggle('settled', time >= at.stacked);
     });
 

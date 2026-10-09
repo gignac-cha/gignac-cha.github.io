@@ -159,7 +159,7 @@ export const createTimeline = (root: SVGElement, view: (time: number) => View, z
 
     // 오늘(9월 29일이 "바로 어제").
     const tx = x(today.date);
-    setAttributes(todayLine, { d: `M${f(tx)} ${axis.y - 26} L${f(tx)} ${axis.y + 26}` });
+    setAttributes(todayLine, { d: `M${f(tx)} ${axis.y - 26} L${f(tx)} ${axis.y + 8}` });
     setAttributes(todayLabel, { x: f(tx + 10) });
     setAttributes(todayMark, { opacity: appear(time, today.at, .4).toFixed(3) });
 

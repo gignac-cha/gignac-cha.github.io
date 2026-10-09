@@ -49,7 +49,7 @@ const setText = (element: SVGTextElement, content: string) => {
 const pair = (parent: SVGElement, y: number, word: string, answer: string, size: 'main' | 'extra' = 'main') => {
   const group = svg('g', { class: `fs-pair ${size}` }, parent);
   // 예시 줄만 '샘플 서류'로 테두리를 보인다(update에서).
-  const sheet = svg('rect', { class: 'fs-sheet', x: column.word - 26, y: y - 46, width: 600, height: 64, rx: 10, opacity: 0 }, group);
+  const sheet = svg('rect', { class: 'fs-sheet', x: column.word - 26, y: y - 46, width: 450, height: 64, rx: 10, opacity: 0 }, group);
   text(group, column.word, y, word, { class: 'fs-word' });
   text(group, column.arrow, y, '→', { class: 'fs-arrow' });
   const answerText = text(group, column.answer, y, answer, { class: 'fs-answer' });
@@ -81,8 +81,9 @@ export const createFewShotScene = (): Scene => {
   const instruction = text(prompt, column.word, rows.instruction, '영어로 번역하세요:', { class: 'fs-instruction' });
   const examples = [pair(prompt, rows.example[0], '사과', 'apple'), pair(prompt, rows.example[1], '바나나', 'banana')];
   const sampleTag = svg('g', { class: 'fs-sample-tag' }, prompt);
-  svg('rect', { x: 700, y: 336, width: 170, height: 44, rx: 22 }, sampleTag);
-  text(sampleTag, 785, 366, '샘플 2장', {});
+  // 두 예시 줄의 오른쪽, 두 줄 사이 높이에 붙인다(테두리와 겹치지 않게).
+  svg('rect', { x: 690, y: 374, width: 170, height: 44, rx: 22 }, sampleTag);
+  text(sampleTag, 775, 404, '샘플 2장', {});
   const query = pair(prompt, rows.query, '포도', '');
   const cursor = svg('rect', { class: 'fs-cursor', x: column.answer, y: rows.query - 34, width: 4, height: 40 }, prompt);
   const extraPairs = extras.map((extra, i) => ({ ...extra, ...pair(prompt, rows.extra[i], extra.word, '', 'extra') }));
