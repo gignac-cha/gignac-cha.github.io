@@ -6,13 +6,12 @@ import { createLogChart, lossOfCompute, lossOfData, lossOfLearning, lossOfParame
 
 export { createGpt3ScaleScene } from './gpt3';
 
-// 43:00.8 "2020년 1월 오픈AI에서 논문이 하나 나옵니다" ~ 43:45.2 "…눈에 보이기 시작했으니까요".
+// 43:14.5 "모델 크기와 데이터양 그리고 연산량이" ~ 43:45.2 "…눈에 보이기 시작했으니까요".
+// 그 앞의 논문·저자 소개(43:00.8~)는 역사 이야기라 장면으로 만들지 않는다.
 // 그래프의 선은 모두 논문의 실제 맞춤식으로 그린다(chart.ts). 측정 점은 옮기지 않았다.
-const start = 2580.8;
+const start = 2594.5;
 const end = 2625.2;
 const at = {
-  paper: 2582.1,
-  question: 2590.2,
   panels: 2594.7,
   size: 2595.2,
   data: 2595.8,
@@ -71,13 +70,6 @@ const formula = (parent: SVGElement, x: number, y: number, [base, power]: string
 
 export const createScalingLawsScene = (): Scene => {
   const { element, root } = createDiagram('sl', '스케일링 법칙');
-
-  // 논문과 질문
-  const intro = svg('g', { class: 'sl-intro' }, root);
-  svg('rect', { class: 'sl-card', x: 330, y: 300, width: 940, height: 200, rx: 22 }, intro);
-  text(intro, 800, 384, 'Scaling Laws for Neural Language Models', { class: 'sl-paper-title' });
-  text(intro, 800, 440, '재러드 캐플런 외 9명 · OpenAI · 2020년 1월', { class: 'sl-paper-meta' });
-  const question = text(intro, 800, 590, '모델을 키우면 → 성능이 얼마나 좋아질까?', { class: 'sl-question' });
 
   // 세 가지 그래프
   const trio = svg('g', {}, root);
@@ -183,10 +175,6 @@ export const createScalingLawsScene = (): Scene => {
   text(readout, 1315, 396, '→ 오차 −11%', { class: 'sl-readout-out', 'text-anchor': 'middle' });
 
   const update = (time: number) => {
-    const introShown = appear(time, at.paper, .5) * (1 - appear(time, at.panels - .2, .4));
-    setAttributes(intro, { opacity: introShown.toFixed(3) });
-    setAttributes(question, { opacity: appear(time, at.question, .4).toFixed(3) });
-
     const trioShown = 1 - appear(time, at.sample - .2, .4);
     setAttributes(trio, { opacity: trioShown.toFixed(3) });
     setAttributes(heading, { opacity: appear(time, at.law, .5).toFixed(3) });
@@ -255,8 +243,7 @@ export const createScalingLawsScene = (): Scene => {
     start,
     end,
     chapters: [
-      { time: start, title: '모델을 키우면 얼마나?' },
-      { time: at.size, title: '크기·데이터·연산' },
+      { time: start, title: '크기·데이터·연산' },
       { time: at.predict, title: '미리 계산할 수 있을 만큼' },
       { time: at.sample, title: '같은 글에서 더 많이' },
       { time: at.farm, title: '농사로 비유하면' },
