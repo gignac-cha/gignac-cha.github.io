@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 import { lerp, setAttributes } from '../../../shared/diagram';
 import { createThreeLayer } from '../../../shared/three-diagram';
-import type { Variant } from '../../../shared/variants';
+import type { SceneLayer } from '../../../shared/three-scene';
 import { count, drugAtoms, phase, pocketCenter, residueColors, residues, SCALE, truth, view, type Vec3 } from './model';
 import { drug, drugBonds, pocket } from './protein';
 import { createAlphaFoldSvg } from './scene';
 
-// Three.js 판 (임시 비교용): 글자·서열·숫자는 SVG 판 그대로 두고, 단백질 끈과 약만 정사영 입체로 그린다.
+// Three.js 판: 글자·서열·숫자는 SVG 판 그대로 두고, 단백질 끈과 약만 정사영 입체로 그린다.
 // 움직임은 SVG 판과 같은 model.ts 에서 계산하므로 박자와 자리가 같다. 끌어서 돌려 보면 실제 3차원 모양이 보인다.
 
 const up = new THREE.Vector3(0, 1, 0);
@@ -33,7 +33,7 @@ const setCylinder = (mesh: THREE.InstancedMesh, index: number, a: Vec3, b: Vec3,
 };
 const elementColor: Record<string, number> = { C: 0xc9ccd6, N: 0x5b9dff, O: 0xff6b6b };
 
-export const createAlphaFoldThree = (): Variant => {
+export const createAlphaFoldThree = (): SceneLayer => {
   const base = createAlphaFoldSvg({ protein3d: true });
   const { scene, camera, render, project, look } = createThreeLayer(base.element, { orthographic: {}, placement: 'front' });
 

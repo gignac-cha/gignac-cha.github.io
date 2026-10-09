@@ -2,12 +2,12 @@ import './three.scss';
 import * as THREE from 'three';
 import { appear, between, clamp, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
 import { createThreeDiagram } from '../../../shared/three-diagram';
-import type { Variant } from '../../../shared/variants';
+import type { SceneLayer } from '../../../shared/three-scene';
 import { FACE_HEIGHT, FACE_WIDTH, faceCanvas, faces, random } from './face';
 import { ganTimeline as T } from './timeline';
 import { GRID_HEIGHT, GRID_WIDTH, snapshots, trainingFrames, trainingStep } from './training';
 
-// Three.js 판 (임시 비교용). SVG 판(gan.ts)과 같은 시점에 같은 이야기를 하되,
+// Three.js 판. SVG 판(gan.ts)과 같은 시점에 같은 이야기를 하되,
 // 위조범·경찰은 입체 카드로, "잡음에서 얼굴로"는 같은 자리의 픽셀 타일이 학습할 때마다 새 값으로 칠해지는 판으로,
 // "해마다 선명해진 그림"은 점점 크고 선명해지는 입체 액자로 보여 준다.
 // 모든 움직임은 재생 시간만으로 정해진다(난수는 seed 고정).
@@ -172,7 +172,7 @@ const createPanel = (canvas: HTMLCanvasElement, width: number, height: number, p
   return group;
 };
 
-export const createGanThree = (): Variant => {
+export const createGanThree = (): SceneLayer => {
   // 시야각은 공통 기본값(35°)과 같다.
   const { element, root, scene, camera, render, project, look } = createThreeDiagram('gan gan-three', '생성적 적대 신경망(GAN)');
 

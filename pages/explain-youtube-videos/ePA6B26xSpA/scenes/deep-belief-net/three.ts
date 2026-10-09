@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 import { appear, lerp, progress, setAttributes } from '../../../shared/diagram';
 import { createThreeLayer } from '../../../shared/three-diagram';
-import type { Variant } from '../../../shared/variants';
+import type { SceneLayer } from '../../../shared/three-scene';
 import { createDeepBeliefNetSvg } from './scene';
 import { at, start } from './timing';
 
-// Three.js 판 (임시 비교용): 오른쪽 신경망은 SVG 판 그대로 두고,
+// Three.js 판: 오른쪽 신경망은 SVG 판 그대로 두고,
 // 왼쪽 "한꺼번에 올린 10층"만 정사영 3D 벽돌 탑으로 그려 실제로 무너지게 한다.
 // 무너짐은 층마다 미리 정한 궤적이라 재생 시간만으로 정해진다(탐색·일시정지해도 같은 장면).
 
@@ -128,7 +128,7 @@ const brickTexture = () => {
 // SVG 판에서 왼쪽 탑이 있던 자리(1600×900 좌표). 무너진 층이 왼쪽으로 흩어질 공간까지 포함한다.
 const region = { x: 0, y: 150, width: 720, height: 690 };
 
-export const createDeepBeliefNetThree = (): Variant => {
+export const createDeepBeliefNetThree = (): SceneLayer => {
   const base = createDeepBeliefNetSvg({ naiveTower: false });
   const { renderer, scene, camera, render, project, look } = createThreeLayer(base.element, { region, orthographic: {}, placement: 'front' });
   renderer.shadowMap.enabled = true;

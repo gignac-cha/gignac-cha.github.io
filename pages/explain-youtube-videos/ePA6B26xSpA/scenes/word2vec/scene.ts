@@ -1,7 +1,7 @@
 import './word2vec.scss';
 import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
 import type { Scene } from '../../../shared/scenes';
-import { withVariants } from '../../../shared/variants';
+import { withThree } from '../../../shared/three-scene';
 import { end, king, map, pixels, seoul, start, symbols, word } from './timing';
 
 // 단어 지도 위의 자리. 관계가 같은 방향으로 놓이도록 남자→여자 와 왕→여왕, 한국→일본 과 서울→도쿄 를 나란히 둔다.
@@ -261,8 +261,6 @@ export const createWord2VecSvg = (): Scene => {
   };
 };
 
-// 임시 비교용: 장면 오른쪽 위 탭으로 Three.js 판과 바꿔 본다. Three.js 는 이 탭을 고를 때만 불러온다.
+// Three.js 판으로 보여 준다(shared/three-scene.ts). three.js 를 불러오기 전에는 SVG 판을 보여 준다.
 export const createWord2VecScene = (): Scene =>
-  withVariants(createWord2VecSvg(), [
-    { id: 'three', label: 'Three.js', load: () => import('./three').then(({ createWord2VecThree }) => createWord2VecThree()) },
-  ]);
+  withThree(createWord2VecSvg(), () => import('./three').then(({ createWord2VecThree }) => createWord2VecThree));

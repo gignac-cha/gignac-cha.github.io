@@ -2,7 +2,7 @@ import './diffusion.scss';
 import { appear, between, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
 import type { Scene } from '../../../shared/scenes';
 import { createSwapText } from '../../../shared/swap-text';
-import { withVariants } from '../../../shared/variants';
+import { withThree } from '../../../shared/three-scene';
 import earthUrl from './earth.png';
 import { diffusedAt, inkClock, inkParticles, inkPosition, surface, tank, unit } from './ink';
 import { gaussian, paintStep } from './noise';
@@ -393,6 +393,4 @@ export const createDiffusionSvg = ({ ink3d = false } = {}): Scene => {
 };
 
 export const createDiffusionScene = (): Scene =>
-  withVariants(createDiffusionSvg(), [
-    { id: 'three', label: 'Three.js', load: () => import('./three').then(({ createDiffusionThree }) => createDiffusionThree()) },
-  ]);
+  withThree(createDiffusionSvg(), () => import('./three').then(({ createDiffusionThree }) => createDiffusionThree));

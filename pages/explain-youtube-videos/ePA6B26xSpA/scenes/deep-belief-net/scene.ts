@@ -1,7 +1,7 @@
 import './deep-belief-net.scss';
 import { appear, clamp, createDiagram, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
 import type { Scene } from '../../../shared/scenes';
-import { withVariants } from '../../../shared/variants';
+import { withThree } from '../../../shared/three-scene';
 import { at, end, start } from './timing';
 
 const centerX = 1100;
@@ -156,8 +156,6 @@ export const createDeepBeliefNetSvg = ({ naiveTower = true } = {}): Scene => {
   };
 };
 
-// 임시 비교용: 장면 오른쪽 위 탭으로 Three.js 판과 바꿔 본다. Three.js 는 이 탭을 고를 때만 불러온다.
+// Three.js 판으로 보여 준다(shared/three-scene.ts). three.js 를 불러오기 전에는 SVG 판을 보여 준다.
 export const createDeepBeliefNetScene = (): Scene =>
-  withVariants(createDeepBeliefNetSvg(), [
-    { id: 'three', label: 'Three.js', load: () => import('./three').then(({ createDeepBeliefNetThree }) => createDeepBeliefNetThree()) },
-  ]);
+  withThree(createDeepBeliefNetSvg(), () => import('./three').then(({ createDeepBeliefNetThree }) => createDeepBeliefNetThree));

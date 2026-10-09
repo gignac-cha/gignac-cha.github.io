@@ -2,7 +2,7 @@ import './alphafold.scss';
 import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
 import type { Scene } from '../../../shared/scenes';
 import { createSwapText } from '../../../shared/swap-text';
-import { withVariants } from '../../../shared/variants';
+import { withThree } from '../../../shared/three-scene';
 import { at, count, drugAtoms, end, mixRgb, phase, pocketCenter, rainbow, residueColors, residues, rgb, SCALE, start, truth as truthPositions, view } from './model';
 import { drug, drugBonds, pocket, rmsd, sequence } from './protein';
 
@@ -241,6 +241,4 @@ export const createAlphaFoldSvg = ({ protein3d = false } = {}): Scene => {
 };
 
 export const createAlphaFoldScene = (): Scene =>
-  withVariants(createAlphaFoldSvg(), [
-    { id: 'three', label: 'Three.js', load: () => import('./three').then(({ createAlphaFoldThree }) => createAlphaFoldThree()) },
-  ]);
+  withThree(createAlphaFoldSvg(), () => import('./three').then(({ createAlphaFoldThree }) => createAlphaFoldThree));

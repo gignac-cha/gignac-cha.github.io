@@ -2,11 +2,11 @@ import './three.scss';
 import * as THREE from 'three';
 import { appear, clamp, ease, HEIGHT, lerp, progress, setAttributes, svg, text, WIDTH } from '../../../shared/diagram';
 import { createThreeDiagram } from '../../../shared/three-diagram';
-import type { Variant } from '../../../shared/variants';
+import type { SceneLayer } from '../../../shared/three-scene';
 import { createWord2VecSvg, triangle } from './scene';
 import { end, king, map, seoul } from './timing';
 
-// Three.js 판 (임시 비교용): 지도가 나오기 전(사진은 숫자 · 단어는 기호 · 번호표)은 SVG 판을 그대로 보여 주고,
+// Three.js 판: 지도가 나오기 전(사진은 숫자 · 단어는 기호 · 번호표)은 SVG 판을 그대로 보여 주고,
 // "단어를 좌표로"부터 3D 좌표 공간으로 넘어간다. 처음엔 위에서 내려다봐 2D 격자처럼 보이다가 기울어지며 높이가 드러나고,
 // 번호표가 붙은 세 기호는 SVG 판의 자리에서 출발해 3D 좌표의 점이 된다.
 // 모든 움직임은 재생 시간만으로 정해지므로 탐색해도 같은 화면이 나온다.
@@ -80,7 +80,7 @@ const shownAt = (name: string) => {
 const vector = (v: Vec) => new THREE.Vector3(v[0], v[1], v[2]);
 const format = (n: number) => `${n < 0 ? '−' : ''}${Math.abs(n).toFixed(1)}`;
 
-export const createWord2VecThree = (): Variant => {
+export const createWord2VecThree = (): SceneLayer => {
   // 지도가 나오기 전은 SVG 판 그대로. 3D 층은 그 위에 겹쳐 두고 "단어를 좌표로"부터 보인다.
   const base = createWord2VecSvg();
   const { element, root, scene, camera, render, project, look } = createThreeDiagram('word2vec-three', '단어 좌표(Word2Vec)');

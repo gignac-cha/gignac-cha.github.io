@@ -2,10 +2,10 @@ import './depth.scss';
 import * as THREE from 'three';
 import { appear, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
 import { createThreeDiagram } from '../../../shared/three-diagram';
-import type { Variant } from '../../../shared/variants';
+import type { SceneLayer } from '../../../shared/three-scene';
 import { depthTimeline as timeline } from './timeline';
 
-// Three.js 판 (임시 비교용): 층을 실제 입체 판으로 쌓는다.
+// Three.js 판: 층을 실제 입체 판으로 쌓는다.
 // 1. 알렉스넷 8층이 한 장씩 쌓이고, 위에 "더 쌓으면?" 빈 판.
 // 2. 층마다 본 특징 지도가 판에서 빠져나와 옆에 펼쳐진다: 선·모서리 → 부품 → 전체 모양.
 // 3. 알렉스넷·VGG·구글넷 세 탑이 나란히 솟고, 꼭대기를 잇는 "깊이 = 실력?" 곡선.
@@ -138,7 +138,7 @@ const setSlab = (
   view.edges.opacity = opacity;
 };
 
-export const createDepthThree = (): Variant => {
+export const createDepthThree = (): SceneLayer => {
   // 정사영 카메라: 원근 없이 층의 두께와 높이를 그대로 비교한다.
   const { element, root, renderer, scene, camera, render, project, look } = createThreeDiagram('depth depth-three', '깊이와 계층 특징', { orthographic: {} });
   renderer.shadowMap.enabled = true;
