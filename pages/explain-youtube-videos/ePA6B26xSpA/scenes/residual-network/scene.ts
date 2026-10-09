@@ -1,7 +1,7 @@
 import './residual-network.scss';
-import { appear, between, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
+import { appear, between, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
 
 // 29:42 "그런데 여기서 이상한 일이" ~ 31:26 "믿기 힘든 속도였죠".
 const start = 1782.2;

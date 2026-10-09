@@ -1,6 +1,6 @@
 import './gpu.scss';
-import { appear, createDiagram, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 16:46 "아이들이 즐기던 컴퓨터 게임" ~ 17:36 "게임용 칩이 인공지능의 엔진으로".
 const start = 1006.633;

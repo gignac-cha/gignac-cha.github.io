@@ -1,6 +1,6 @@
 import './bert.scss';
-import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 40:44.8 "제이콥이 이끈 팀이 버트를 내놓았거든요" ~ 41:25.2 "일단 버트부터 써 보라는 말이 돌았죠".
 // 점수는 BERT 논문 초록 그대로: GLUE 80.5(+7.7), MultiNLI 86.7(+4.6), SQuAD v1.1 F1 93.2(+1.5), SQuAD v2.0 F1 83.1(+5.1).

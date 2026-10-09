@@ -1,5 +1,5 @@
 import './dock.scss';
-import { load, save } from './storage';
+import { load, save } from './storage.ts';
 
 type Side = 'right' | 'left';
 

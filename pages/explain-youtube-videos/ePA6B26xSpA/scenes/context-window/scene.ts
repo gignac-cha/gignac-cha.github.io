@@ -1,6 +1,6 @@
 import './context-window.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 59:42.2 "한 번에 100만 토큰이 넘는 글을 읽고 다룰 수 있는 모델입니다" ~ 59:52.4 (AGI 이야기까지).
 const start = 3581.8;

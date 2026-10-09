@@ -1,4 +1,4 @@
-import { clamp, ease, lerp, setAttributes, svg } from '../../../shared/diagram';
+import { clamp, ease, lerp, setAttributes, svg } from '../../../shared/diagram.ts';
 
 // 2017년 연구(사람의 선호로 배우는 강화 학습)의 가상 로봇 "호퍼": 몸통·허벅지·정강이·발로 된 외다리 로봇.
 // 발바닥 가운데를 원점(0, 0)으로 그리고, 자세는 재생 시간만으로 정한다.

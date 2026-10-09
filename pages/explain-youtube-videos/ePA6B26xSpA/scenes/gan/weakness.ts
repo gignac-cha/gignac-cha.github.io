@@ -1,6 +1,6 @@
 import './gan.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import { drawFace, FACE_HEIGHT, FACE_WIDTH, faces } from './face';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import { drawFace, FACE_HEIGHT, FACE_WIDTH, faces } from './face.ts';
 
 export interface GanWeaknessTimeline {
   balance: number;

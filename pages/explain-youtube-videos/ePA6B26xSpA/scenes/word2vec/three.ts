@@ -1,10 +1,10 @@
 import './three.scss';
 import * as THREE from 'three';
-import { appear, clamp, ease, HEIGHT, lerp, progress, setAttributes, svg, text, WIDTH } from '../../../shared/diagram';
-import { createThreeDiagram } from '../../../shared/three-diagram';
-import type { SceneLayer } from '../../../shared/three-scene';
-import { createWord2VecSvg, triangle } from './scene';
-import { end, king, map, seoul } from './timing';
+import { appear, clamp, ease, HEIGHT, lerp, progress, setAttributes, svg, text, WIDTH } from '../../../shared/diagram.ts';
+import { createThreeDiagram } from '../../../shared/three-diagram.ts';
+import type { SceneLayer } from '../../../shared/three-scene.ts';
+import { createWord2VecSvg, triangle } from './scene.ts';
+import { end, king, map, seoul } from './timing.ts';
 
 // Three.js 판: 지도가 나오기 전(사진은 숫자 · 단어는 기호 · 번호표)은 SVG 판을 그대로 보여 주고,
 // "단어를 좌표로"부터 3D 좌표 공간으로 넘어간다. 처음엔 위에서 내려다봐 2D 격자처럼 보이다가 기울어지며 높이가 드러나고,

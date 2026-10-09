@@ -1,4 +1,4 @@
-import { svg } from '../../../shared/diagram';
+import { svg } from '../../../shared/diagram.ts';
 
 // "아보카도 모양 안락의자" 설명용 그림(실제 DALL·E 결과물이 아니라 직접 그린 그림). 200×200 상자 안에 그린다.
 export interface Chair {

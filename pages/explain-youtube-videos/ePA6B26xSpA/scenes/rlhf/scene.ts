@@ -1,10 +1,10 @@
 import './rlhf.scss';
-import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
-import { backflip, createHopper, motions } from './hopper';
+import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
+import { backflip, createHopper, motions } from './hopper.ts';
 
-export { createInstructGptScene } from './instruct-gpt';
+export { createInstructGptScene } from './instruct-gpt.ts';
 
 // 50:19 "오픈AI는 이 간극을 메우고 싶었어요" ~ 51:04 "간식 대신 사람의 점수가 쓰인 겁니다".
 const start = 3019.6;

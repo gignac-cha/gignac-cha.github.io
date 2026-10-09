@@ -1,9 +1,9 @@
 import '../alphago/alphago.scss';
 import './alphago-zero.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
-import { createBoard, createReplay, records } from '../alphago/go';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
+import { createBoard, createReplay, records } from '../alphago/go.ts';
 
 // 35:16 "알파고 제로라는 새 버전이었어요" ~ 35:34 "보여준 거죠".
 const start = 2115.8;

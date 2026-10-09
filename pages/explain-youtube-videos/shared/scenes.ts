@@ -1,5 +1,5 @@
 import './scenes.scss';
-import type { Playback } from './playback';
+import type { Playback } from './playback.ts';
 
 export interface Chapter {
   time: number;

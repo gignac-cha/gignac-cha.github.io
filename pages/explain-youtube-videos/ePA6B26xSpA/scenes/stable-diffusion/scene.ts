@@ -1,7 +1,7 @@
 import './stable-diffusion.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
 
 // 49:02 "스테빌리티 AI가 스테이블 디퓨전을 공개한 거예요" ~ 49:33 "주인공이 GAN에서 확산으로 바뀝니다".
 const start = 2942.6;

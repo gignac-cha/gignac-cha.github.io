@@ -1,7 +1,7 @@
 import './backpropagation.scss';
-import { appear, between, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
+import { appear, between, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
 
 // 6:10 "주제는 오차를 거꾸로 전파해 배우는 법" ~ 7:02 "스스로 쓸모 있는 특징을 찾아냈거든요".
 // 그 뒤 "학계의 분위기는 다시 달아올랐습니다"부터는 역사 이야기라 장면을 끈다.

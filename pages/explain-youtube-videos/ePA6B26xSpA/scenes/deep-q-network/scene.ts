@@ -1,9 +1,9 @@
 import './deep-q-network.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
-import { BRICKS, FIELD, frameAt, PADDLE, type Run } from './breakout';
-import { createGames } from './games';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
+import { BRICKS, FIELD, frameAt, PADDLE, type Run } from './breakout.ts';
+import { createGames } from './games.ts';
 
 // 32:43 "논문으로 세상을 놀라게 합니다" ~ 33:23 "합성곱 신경망이라는 눈을 붙인 겁니다".
 const start = 1963.5;

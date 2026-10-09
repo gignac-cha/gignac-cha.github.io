@@ -1,6 +1,6 @@
 import './timeline.scss';
-import type { Playback } from './playback';
-import type { Coverage, Scene } from './scenes';
+import type { Playback } from './playback.ts';
+import type { Coverage, Scene } from './scenes.ts';
 
 const formatTime = (time: number) => {
   const total = Math.max(Math.floor(time), 0);

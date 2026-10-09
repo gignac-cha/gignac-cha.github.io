@@ -1,8 +1,8 @@
 import './gpt2.scss';
-import { appear, clamp, createDiagram, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
-import { continuation, prompt, promptGloss, continuationGloss } from './unicorn';
+import { appear, clamp, createDiagram, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
+import { continuation, prompt, promptGloss, continuationGloss } from './unicorn.ts';
 
 // 41:41.6 "같은 해 2월, 오픈AI는 조금 다른 길을 갑니다" ~ 42:09.0 "…가짜 기사를 그럴싸하게 이어썼거든요".
 // 매개변수: GPT-1 1억 1,700만 개, GPT-2 15억 4,200만 개. 손잡이 하나를 1,000만 개로 쳐서 12개와 154개로 그린다.

@@ -1,7 +1,7 @@
 import './gan.scss';
-import { appear, between, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import { drawFace, FACE_HEIGHT, FACE_WIDTH, faceImage, faces, random } from './face';
-import { frameImage, snapshots, trainingFrames, trainingStep } from './training';
+import { appear, between, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import { drawFace, FACE_HEIGHT, FACE_WIDTH, faceImage, faces, random } from './face.ts';
+import { frameImage, snapshots, trainingFrames, trainingStep } from './training.ts';
 
 export interface GanTimeline {
   name: number;

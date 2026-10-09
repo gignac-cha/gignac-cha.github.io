@@ -1,6 +1,6 @@
 import './transformer-translation.scss';
-import { appear, createDiagram, ease, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, ease, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 37:56.6 "처음 시험 무대는 번역이었습니다" ~ 38:12.6 "빠르면서 더 잘하는 흔치 않은 조합이었죠".
 // 숫자는 논문 "Attention Is All You Need" 표 2 그대로다(WMT 2014, BLEU 와 학습 계산량 FLOPs).

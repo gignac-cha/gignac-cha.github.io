@@ -1,4 +1,4 @@
-import type { DepthTimeline } from './depth';
+import type { DepthTimeline } from './depth.ts';
 
 // 28:55 "신경망을 깊게 쌓으면 더 똑똑해질 줄" ~ 29:42 "깊이가 곧 실력이라는 믿음".
 // SVG 판(depth.ts)과 Three.js 판(three.ts)이 같은 시점을 쓴다.

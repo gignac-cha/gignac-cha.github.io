@@ -1,6 +1,6 @@
 import './gpt5-router.scss';
-import { appear, createDiagram, ease, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, ease, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 57:31.8 "8월 7일 GPT-5가 나옵니다" ~ 57:43.4 "모든 ChatGPT 사용자가 쓸 수 있게 열렸고요".
 const start = 3451.6;

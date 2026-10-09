@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createPlayback } from './playback';
+import { createPlayback } from './playback.ts';
 
 const PLAYING = 1;
 const PAUSED = 2;

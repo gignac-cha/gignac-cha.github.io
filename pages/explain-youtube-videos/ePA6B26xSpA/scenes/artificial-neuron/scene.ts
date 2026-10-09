@@ -1,7 +1,7 @@
 import './artificial-neuron.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
 
 // 3:03 "뉴런에 주목했어요" ~ 3:37 "기계가 스스로 배우지는 못했던 겁니다".
 const start = 183.133;

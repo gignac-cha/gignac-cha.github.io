@@ -1,6 +1,6 @@
 import './cnn.scss';
-import { appear, createDiagram, ease, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, ease, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 9:43 "사람마다 글씨체가 제각각" ~ 10:58 "사람의 시각 피질도 층층이 일한다".
 const start = 583.633;

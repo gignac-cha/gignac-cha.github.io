@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import { appear, lerp, progress, setAttributes } from '../../../shared/diagram';
-import { createThreeLayer } from '../../../shared/three-diagram';
-import type { SceneLayer } from '../../../shared/three-scene';
-import { createDeepBeliefNetSvg } from './scene';
-import { at, start } from './timing';
+import { appear, lerp, progress, setAttributes } from '../../../shared/diagram.ts';
+import { createThreeLayer } from '../../../shared/three-diagram.ts';
+import type { SceneLayer } from '../../../shared/three-scene.ts';
+import { createDeepBeliefNetSvg } from './scene.ts';
+import { at, start } from './timing.ts';
 
 // Three.js 판: 오른쪽 신경망은 SVG 판 그대로 두고,
 // 왼쪽 "한꺼번에 올린 10층"만 정사영 3D 벽돌 탑으로 그려 실제로 무너지게 한다.

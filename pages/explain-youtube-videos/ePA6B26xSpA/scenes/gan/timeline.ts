@@ -1,4 +1,4 @@
-import type { GanTimeline } from './gan';
+import type { GanTimeline } from './gan.ts';
 
 // 26:34 "생성적 적대 신경망" ~ 27:40 "해마다 더 크고 더 선명해졌어요".
 // SVG 판(gan.ts)과 Three.js 판(three.ts)이 같은 시점을 쓴다.

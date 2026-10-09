@@ -1,6 +1,6 @@
 import './chatgpt-pieces.scss';
-import { appear, clamp, createDiagram, ease, lerp, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, clamp, createDiagram, ease, lerp, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 52:09 "사실 기술만 보면 완전히 새로운 건 아니었습니다" ~ 52:24 "보통 사람 손에 쥐어진 겁니다".
 const start = 3129;

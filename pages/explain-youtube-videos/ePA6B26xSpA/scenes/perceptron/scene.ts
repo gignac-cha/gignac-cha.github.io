@@ -1,6 +1,6 @@
 import './perceptron.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 3:46 "이름은 퍼셉트론" ~ 4:11 "스스로 조정했습니다" (Mark 1 기계 이야기 전까지).
 // 영상은 3:52 "처음엔 각 입력에 아무렇게나 무게를"에서야 입력과 무게를 꺼내므로 도식도 그때 채운다.

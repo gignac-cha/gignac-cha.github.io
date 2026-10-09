@@ -1,6 +1,6 @@
-import type { Scene } from '../../../shared/scenes';
-import { answer } from './answer';
-import { createChatGPT } from './chatgpt';
+import type { Scene } from '../../../shared/scenes.ts';
+import { answer } from './answer.ts';
+import { createChatGPT } from './chatgpt.ts';
 
 const timeline = {
   question: 'AI는 어떻게 여기까지 왔을까?',

@@ -1,5 +1,5 @@
-import { renderPreview } from '../shared/preview';
-import type { Scene } from '../shared/scenes';
+import { renderPreview } from '../shared/preview.ts';
+import type { Scene } from '../shared/scenes.ts';
 
 // scenes/*/scene.ts 의 create*Scene 을 전부 모아, main.ts 에 등록하기 전인 장면도 미리볼 수 있게 한다.
 const modules = import.meta.glob<Record<string, unknown>>('./scenes/*/scene.ts', { eager: true });

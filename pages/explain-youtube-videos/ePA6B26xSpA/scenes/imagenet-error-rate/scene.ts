@@ -1,6 +1,6 @@
 import './imagenet-error-rate.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 19:30 "천 가지 종류로 나뉜 사진" ~ 20:04 "컴퓨터 비전의 분명한 전환점".
 const start = 1170.367;

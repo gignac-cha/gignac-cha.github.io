@@ -1,6 +1,6 @@
 import './vanishing-gradient.scss';
-import { appear, between, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, between, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 7:11 "그런데 여기서 또 한 벽이" ~ 7:39 "멍청해지는 이상한 상황이었습니다".
 const start = 431.4;

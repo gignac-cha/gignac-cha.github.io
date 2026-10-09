@@ -1,4 +1,4 @@
-import { clamp, ease, setAttributes, svg, text } from './diagram';
+import { clamp, ease, setAttributes, svg, text } from './diagram.ts';
 
 type Attributes = Record<string, string | number>;
 

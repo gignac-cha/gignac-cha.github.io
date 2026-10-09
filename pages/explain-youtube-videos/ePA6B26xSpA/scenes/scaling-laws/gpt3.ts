@@ -1,7 +1,7 @@
 import './scaling-laws.scss';
-import { appear, createDiagram, ease, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createLogChart, lossOfParameters } from './chart';
+import { appear, createDiagram, ease, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createLogChart, lossOfParameters } from './chart.ts';
 
 // 43:45.2 "그리고 넉 달 뒤, 그 표를 믿고 지은 모델이 공개됩니다" ~ 44:02.0 "…큰돈을 투자한 참이었거든요".
 // 스케일링 법칙 논문이 잰 범위(매개변수 10만~10억)의 선을 그대로 늘리면 GPT-3(1,750억)가 놓일 자리가 나온다.

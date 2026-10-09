@@ -1,4 +1,4 @@
-import { setAttributes, svg, text } from '../../../shared/diagram';
+import { setAttributes, svg, text } from '../../../shared/diagram.ts';
 
 // 스케일링 법칙 논문(Kaplan 외, OpenAI, 2020년 1월)의 실제 맞춤식. L은 테스트 손실(오차, 낮을수록 좋다).
 // 식 1.1~1.3: 매개변수 N, 데이터 D(토큰), 연산량 C(PF-일)를 각각 늘릴 때.

@@ -1,7 +1,7 @@
 import './limits.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
 
 // 61:57.7 "반대 목소리도 분명히 있습니다" ~ 62:26.4 "정답은 아무도 모릅니다".
 // 다섯 가지 반론이 하나씩 가운데에 크게 나왔다가 아래 줄로 물러나고, 마지막에 "세 번째 겨울?" 위로 눈이 내린다.

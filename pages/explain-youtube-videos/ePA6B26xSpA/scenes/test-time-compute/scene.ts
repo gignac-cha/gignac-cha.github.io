@@ -1,7 +1,7 @@
 import './test-time-compute.scss';
-import { appear, between, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
+import { appear, between, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
 
 // 56:10 "이게 왜 중요할까요?" ~ 56:30 "연산이 쓰이는 자리가 하나 더 늘어난 거죠".
 // 성능 눈금에는 숫자를 달지 않는다. 두 손잡이 모두 성능을 꾸준히 올린다는 것은 o1 발표문(2024.9)의 그래프 설명 그대로다.

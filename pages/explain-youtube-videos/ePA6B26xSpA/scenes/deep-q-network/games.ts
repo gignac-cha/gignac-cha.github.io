@@ -1,4 +1,4 @@
-import { BRICKS, bounce, FIELD, fullWall, PADDLE, reachX, simulate, type Run } from './breakout';
+import { BRICKS, bounce, FIELD, fullWall, PADDLE, reachX, simulate, type Run } from './breakout.ts';
 
 // 세 단계의 판(데모 영상의 학습 10분·120분·240분 모습을 재연).
 // 시각은 각 단계가 시작한 뒤의 초.

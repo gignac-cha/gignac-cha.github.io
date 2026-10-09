@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { createDiagram, HEIGHT, WIDTH } from './diagram';
-import { createViewControls } from './view-controls';
+import { createDiagram, HEIGHT, WIDTH } from './diagram.ts';
+import { createViewControls } from './view-controls.ts';
 
 export interface Region {
   x: number;

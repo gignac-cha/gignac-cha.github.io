@@ -1,6 +1,6 @@
 import './rnn.scss';
-import { appear, clamp, createDiagram, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, clamp, createDiagram, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 12:23 "그림이 아니라, 시간을 따라 흐르는 정보" ~ 13:02 "처음 단어는 거의 기억하지 못했습니다".
 const start = 743.767;

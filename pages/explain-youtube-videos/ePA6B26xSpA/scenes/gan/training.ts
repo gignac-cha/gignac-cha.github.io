@@ -1,6 +1,6 @@
-import { clamp, lerp, progress } from '../../../shared/diagram';
-import { faceCanvas, faces, random } from './face';
-import { ganTimeline as T } from './timeline';
+import { clamp, lerp, progress } from '../../../shared/diagram.ts';
+import { faceCanvas, faces, random } from './face.ts';
+import { ganTimeline as T } from './timeline.ts';
 
 // "잡음에서 얼굴로": 위조범(생성자)은 학습할 때마다 같은 크기의 그림을 통째로 새로 칠한다.
 // 점이 날아와 모이는 게 아니라, 같은 픽셀 칸의 값이 바뀌어 얼룩덜룩한 잡음 → 큰 덩어리 → 눈·코·입 → 얼굴이 된다.

@@ -1,7 +1,7 @@
 import './gpt4o.scss';
-import { appear, between, clamp, createDiagram, lerp, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
+import { appear, between, clamp, createDiagram, lerp, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
 
 // 55:11 "2024년 5월 오픈AI는 GPT-4o를" ~ 55:33 "무료 사용자에게도 열렸어요".
 // 예전 음성 모드의 세 모델 구성과 응답 시간(GPT-4 평균 5.4초, GPT-4o 평균 0.32초·최소 0.232초)은

@@ -1,7 +1,7 @@
 import './transformer-everywhere.scss';
-import { appear, createDiagram, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createDecoder, createEncoder, createPaper, crossPath } from './blueprint';
+import { appear, createDiagram, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createDecoder, createEncoder, createPaper, crossPath } from './blueprint.ts';
 
 // 38:32.4 "그런데 몇 년 사이에 이 구조는 모든 곳으로 퍼져 나갑니다" ~ 38:48.8 "ChatGPT의 T도 바로 이 트랜스포머의 머리글자예요".
 const start = 2312.4;

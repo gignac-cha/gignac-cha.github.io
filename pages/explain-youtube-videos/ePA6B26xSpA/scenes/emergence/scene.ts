@@ -1,7 +1,7 @@
 import './emergence.scss';
-import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
+import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
 
 // 44:54.1 "여기서 흥미로운 논쟁이 하나 생겨납니다" ~ 45:20.4 "…크게 만들면 무언가 확실히 달라진다는 것이었죠".
 // 그래프는 측정값이 아니라 반론(Schaeffer 외, 2023)의 원리를 보여 주는 개념도다.

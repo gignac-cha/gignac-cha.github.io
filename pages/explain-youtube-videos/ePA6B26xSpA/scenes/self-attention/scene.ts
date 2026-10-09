@@ -1,7 +1,7 @@
 import './self-attention.scss';
-import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
+import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
 
 // 36:25.9 "그때까지 언어를 다루는 주인공은" ~ 37:48.8 "GPU의 수천 개 계산기가 전부 일하기 시작했습니다".
 const start = 2185.9;

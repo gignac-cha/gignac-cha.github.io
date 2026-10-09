@@ -1,8 +1,8 @@
 import './recent-history.scss';
-import { appear, createDiagram, lerp, setAttributes, svg } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { fullView, zoomView } from './events';
-import { createTimeline } from './timeline';
+import { appear, createDiagram, lerp, setAttributes, svg } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { fullView, zoomView } from './events.ts';
+import { createTimeline } from './timeline.ts';
 
 // 57:44 "이때 ChatGPT를 매주 쓰는 사람이 7억 명" ~ 59:41.6 "GPT-6 아스트라를 공개했어요" (그다음은 100만 토큰 장면).
 const first = { start: 3464.4, end: 3581.6 };

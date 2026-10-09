@@ -1,7 +1,7 @@
 import './encoder-decoder.scss';
-import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createDecoder, createEncoder, createPaper, crossPath, towerShape } from '../transformer-everywhere/blueprint';
+import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createDecoder, createEncoder, createPaper, crossPath, towerShape } from '../transformer-everywhere/blueprint.ts';
 
 // 39:09.4 "그런데 말이죠. 트랜스포머에는 두 개의 반쪽이" ~ 39:36.2 "이 뼈대의 무엇을 어떻게 가르칠 것인가?".
 // 층 수는 실제 모델 그대로: 원래 트랜스포머 6층, BERT(Large) 인코더 24층, GPT-1 디코더 12층.

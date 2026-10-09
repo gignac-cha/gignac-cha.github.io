@@ -1,4 +1,4 @@
-import { load, save } from './storage';
+import { load, save } from './storage.ts';
 
 // 그 시점으로 이동해 멈춘 상태로 둔다. 시작 전의 영상은 이동하면 재생이 시작되는데,
 // 소리가 켜진 자동 재생은 막히므로 잠깐 음소거했다가 멈춘 뒤 원래대로 돌린다.

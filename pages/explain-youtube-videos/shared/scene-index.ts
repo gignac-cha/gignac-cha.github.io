@@ -1,7 +1,7 @@
 import './scene-index.scss';
-import type { Playback } from './playback';
-import type { Coverage, Scene } from './scenes';
-import { load, save } from './storage';
+import type { Playback } from './playback.ts';
+import type { Coverage, Scene } from './scenes.ts';
+import { load, save } from './storage.ts';
 
 // 0.1초 단위. 1시간이 넘으면 YouTube처럼 h:mm:ss.s 로 쓴다.
 const formatTime = (time: number) => {

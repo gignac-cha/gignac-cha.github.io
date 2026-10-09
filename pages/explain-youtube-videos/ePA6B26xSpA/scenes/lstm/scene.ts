@@ -1,6 +1,6 @@
 import './lstm.scss';
-import { appear, between, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, between, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 13:21 "이름은 장단기 기억, LSTM" ~ 14:09 "훨씬 긴 맥락을 붙잡게 됐습니다".
 const start = 801.467;

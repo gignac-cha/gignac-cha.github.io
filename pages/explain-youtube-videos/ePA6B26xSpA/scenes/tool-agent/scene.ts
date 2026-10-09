@@ -1,7 +1,7 @@
 import './tool-agent.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
 
 // 57:03.7 "4월에는 o3가 나왔습니다" ~ 57:22.9 "이 기능들을 합친 ChatGPT 에이전트가 나왔어요".
 const start = 3423.5;

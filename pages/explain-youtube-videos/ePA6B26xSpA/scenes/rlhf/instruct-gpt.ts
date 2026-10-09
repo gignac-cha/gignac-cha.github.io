@@ -1,6 +1,6 @@
 import './rlhf.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 51:05 "2022년 초 그 결과물이 인스트럭트GPT였어요" ~ 51:20 "크기만이 전부는 아니라는 게 드러난 순간이었습니다".
 const start = 3065.3;

@@ -1,5 +1,5 @@
 import './go.scss';
-import { setAttributes, svg, text } from '../../../shared/diagram';
+import { setAttributes, svg, text } from '../../../shared/diagram.ts';
 
 // 실제 기보(SGF 좌표를 이어 붙인 것: 두 글자가 한 수, a=1 … s=19, 왼쪽 위부터). 흑이 먼저 둔다.
 // 출처: Andries Brouwer 의 AlphaGo 기보 모음(homepages.cwi.nl/~aeb/go/games/games/AlphaGo/).

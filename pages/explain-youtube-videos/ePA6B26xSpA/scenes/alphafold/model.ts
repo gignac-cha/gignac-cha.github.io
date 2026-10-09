@@ -1,5 +1,5 @@
-import { appear, clamp, ease, lerp, progress } from '../../../shared/diagram';
-import { drug, experiment, plddt, predicted, sequence } from './protein';
+import { appear, clamp, ease, lerp, progress } from '../../../shared/diagram.ts';
+import { drug, experiment, plddt, predicted, sequence } from './protein.ts';
 
 // 45:26 "이번 상대는 바둑이 아니라 단백질" ~ 46:24 "AI가 과학의 한복판으로 걸어 들어간 순간이었습니다".
 // SVG 판(scene.ts)과 Three.js 판(three.ts)이 같은 박자, 같은 움직임을 쓰도록 위치·색은 여기서 시간만으로 계산한다.

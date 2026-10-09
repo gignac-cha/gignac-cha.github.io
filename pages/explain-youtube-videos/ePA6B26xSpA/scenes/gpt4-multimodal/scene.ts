@@ -1,6 +1,6 @@
 import './gpt4-multimodal.scss';
-import { appear, createDiagram, lerp, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, lerp, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 53:28 "GPT-4를 내놓습니다" ~ 53:45 "다른 물건이었습니다".
 // 시연은 실제 GPT-4 발표 라이브(2023.3.14)의 손그림 스케치 → 웹사이트. 스케치 글씨, 요청 문장, 코드, 완성된 페이지 글자는 그 화면 그대로 옮겼다.

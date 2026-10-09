@@ -1,5 +1,5 @@
 import './blueprint.scss';
-import { svg, text } from '../../../shared/diagram';
+import { svg, text } from '../../../shared/diagram.ts';
 
 // 논문 "Attention Is All You Need" 그림 1의 트랜스포머 설계도. 왼쪽이 인코더, 오른쪽이 디코더다.
 // 각 탑은 자기 바닥 가운데를 원점으로 그리고(위쪽이 음수), 놓을 자리와 크기는 transform 으로 정한다.

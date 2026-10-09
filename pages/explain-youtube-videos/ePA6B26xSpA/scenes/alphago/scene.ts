@@ -1,8 +1,8 @@
 import './alphago.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
-import { createBoard, createReplay, EMPTY, records, SIZE } from './go';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
+import { createBoard, createReplay, EMPTY, records, SIZE } from './go.ts';
 
 // 33:27 "다음 목표로 바둑을 골라요" ~ 33:56 "자기 자신과 수없이 대국하며 실력을 키웠어요".
 const start = 2006.8;

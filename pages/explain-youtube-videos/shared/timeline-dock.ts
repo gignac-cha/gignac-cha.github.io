@@ -1,6 +1,6 @@
 import './dock.scss';
-import { clamp, onDrag } from './drag';
-import { load, save } from './storage';
+import { clamp, onDrag } from './drag.ts';
+import { load, save } from './storage.ts';
 
 type Dock = 'top' | 'bottom' | 'floating';
 

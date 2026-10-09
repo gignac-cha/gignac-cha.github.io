@@ -1,10 +1,10 @@
 import './scaling-laws.scss';
-import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
-import { createLogChart, lossOfCompute, lossOfData, lossOfLearning, lossOfParameters } from './chart';
+import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
+import { createLogChart, lossOfCompute, lossOfData, lossOfLearning, lossOfParameters } from './chart.ts';
 
-export { createGpt3ScaleScene } from './gpt3';
+export { createGpt3ScaleScene } from './gpt3.ts';
 
 // 43:14.5 "모델 크기와 데이터양 그리고 연산량이" ~ 43:45.2 "…눈에 보이기 시작했으니까요".
 // 그 앞의 논문·저자 소개(43:00.8~)는 역사 이야기라 장면으로 만들지 않는다.

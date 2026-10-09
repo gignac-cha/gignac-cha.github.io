@@ -1,4 +1,4 @@
-import { svg } from '../../../shared/diagram';
+import { svg } from '../../../shared/diagram.ts';
 
 // 사진 대신 쓰는 단순한 얼굴 그림. 200×240 상자 안에 그린다.
 export const FACE_WIDTH = 200;

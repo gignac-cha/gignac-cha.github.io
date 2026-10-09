@@ -1,7 +1,7 @@
 import './reasoning-model.scss';
-import { appear, between, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { answer, chainOfThought, gpt4oAnswer, question, thoughtSeconds } from './cipher';
+import { appear, between, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { answer, chainOfThought, gpt4oAnswer, question, thoughtSeconds } from './cipher.ts';
 
 // 55:41 "하지만 이 모든 모델에는 공통된 약점이" ~ 56:10 "성적이 크게 뛰었습니다".
 // 대화와 풀이 과정은 OpenAI 가 o1 을 발표하며 공개한 실제 예시(cipher.ts), 성적은 같은 발표문의 수치다.

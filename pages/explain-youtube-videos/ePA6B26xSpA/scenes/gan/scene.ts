@@ -1,8 +1,8 @@
-import type { Scene } from '../../../shared/scenes';
-import { withThree } from '../../../shared/three-scene';
-import { createGan } from './gan';
-import { ganEnd, ganStart, ganTimeline } from './timeline';
-import { createGanWeakness } from './weakness';
+import type { Scene } from '../../../shared/scenes.ts';
+import { withThree } from '../../../shared/three-scene.ts';
+import { createGan } from './gan.ts';
+import { ganEnd, ganStart, ganTimeline } from './timeline.ts';
+import { createGanWeakness } from './weakness.ts';
 
 // 26:34 "생성적 적대 신경망" ~ 27:40 "해마다 더 크고 더 선명해졌어요". 시점은 timeline.ts 에서 Three.js 판과 함께 쓴다.
 const createGanBase = (): Scene => {
@@ -48,4 +48,4 @@ export const createGanWeaknessScene = (): Scene => {
 
 // Three.js 판으로 보여 준다(shared/three-scene.ts). three.js 를 불러오기 전에는 SVG 판을 보여 준다.
 export const createGanScene = (): Scene =>
-  withThree(createGanBase(), () => import('./three').then(({ createGanThree }) => createGanThree));
+  withThree(createGanBase(), () => import('./three.ts').then(({ createGanThree }) => createGanThree));

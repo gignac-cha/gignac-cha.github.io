@@ -1,6 +1,6 @@
 import './seq2seq.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 24:00.7 "번역은 오랫동안 규칙과 통계로" ~ 24:47.9 "통째로 외워서 옮기라는 셈이니까요".
 const start = 1440.667;

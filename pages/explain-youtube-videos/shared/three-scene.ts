@@ -1,5 +1,5 @@
 import './three-scene.scss';
-import type { Scene } from './scenes';
+import type { Scene } from './scenes.ts';
 
 // 장면을 그리는 층. element 를 장면 영역에 채우고 update(time) 으로 그린다.
 export interface SceneLayer {

@@ -1,6 +1,6 @@
 import './svm.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 7:55 "그 사이 강력한 경쟁자가 나타났습니다" ~ 8:15 "설명하기 어려웠거든요".
 const start = 475.933;

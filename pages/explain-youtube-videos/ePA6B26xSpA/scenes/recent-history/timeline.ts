@@ -1,5 +1,5 @@
-import { appear, lerp, setAttributes, svg, text } from '../../../shared/diagram';
-import { events, landscapeAt, monthlyAt, monthlySpan, month, type TimelineEvent, yearAt } from './events';
+import { appear, lerp, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import { events, landscapeAt, monthlyAt, monthlySpan, month, type TimelineEvent, yearAt } from './events.ts';
 
 // 가로 시간축 하나: 위에는 오픈AI, 아래에는 경쟁사. 방금 말한 사건만 밝고, 지나간 사건은 흐려진다.
 // 아래 카드에는 지금 사건의 날짜·이름·설명이 나온다. 모든 값은 재생 시간만으로 정해진다.

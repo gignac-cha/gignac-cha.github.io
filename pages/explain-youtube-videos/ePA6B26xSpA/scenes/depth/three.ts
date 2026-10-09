@@ -1,9 +1,9 @@
 import './depth.scss';
 import * as THREE from 'three';
-import { appear, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import { createThreeDiagram } from '../../../shared/three-diagram';
-import type { SceneLayer } from '../../../shared/three-scene';
-import { depthTimeline as timeline } from './timeline';
+import { appear, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import { createThreeDiagram } from '../../../shared/three-diagram.ts';
+import type { SceneLayer } from '../../../shared/three-scene.ts';
+import { depthTimeline as timeline } from './timeline.ts';
 
 // Three.js 판: 층을 실제 입체 판으로 쌓는다.
 // 1. 알렉스넷 8층이 한 장씩 쌓이고, 위에 "더 쌓으면?" 빈 판.

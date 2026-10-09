@@ -1,6 +1,6 @@
 import './bert-search.scss';
-import { appear, createDiagram, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 41:30.4 "검색어 속 작은 단어 하나의 뜻까지 문맥으로 읽게 된 겁니다" ~ 41:40.9 "…영향을 준다고 밝혔죠".
 // 구글이 2019년 10월 검색에 BERT를 넣으며 직접 든 예: "2019 brazil traveler to usa need a visa".

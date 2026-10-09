@@ -1,6 +1,6 @@
 import './alexnet-tricks.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 20:52.8 "알렉스넷에는 작지만 중요한 요령이 세 가지" ~ 21:27.6 "여기서 세 바퀴가 처음으로".
 const start = 1252.833;

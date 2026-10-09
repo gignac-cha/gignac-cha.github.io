@@ -1,6 +1,6 @@
 import './gpt3-limits.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 49:59 "GPT-3는 똑똑했지만 이상한 구석이" ~ 50:19 "해로운 말을 아무렇지 않게 내뱉기도 했습니다".
 const start = 2999.2;

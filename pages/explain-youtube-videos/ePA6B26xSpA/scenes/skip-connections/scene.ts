@@ -1,7 +1,7 @@
 import './skip-connections.scss';
-import { appear, createDiagram, ease, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
+import { appear, createDiagram, ease, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
 
 // 31:59 "지름길 연결은 이후 거의 모든 거대 신경망에" ~ 32:06 "숨어 있어요".
 const start = 1919.0;

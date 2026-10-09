@@ -1,9 +1,9 @@
 import '../alphago/alphago.scss';
 import './alphago-moves.scss';
-import { appear, createDiagram, ease, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
-import { createBoard, createReplay, pointName, records, SIZE } from '../alphago/go';
+import { appear, createDiagram, ease, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
+import { createBoard, createReplay, pointName, records, SIZE } from '../alphago/go.ts';
 
 // 34:10 "둘째 판 37번째 수가 나옵니다" ~ 35:01 "이세돌이 따낸 그 한 판이었죠".
 const start = 2050.5;

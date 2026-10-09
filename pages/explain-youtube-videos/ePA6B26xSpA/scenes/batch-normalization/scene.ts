@@ -1,7 +1,7 @@
 import './batch-normalization.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
 
 // 31:26 "같은 해 또 하나의 중요한 요령이 구글에서" ~ 31:49 "훈련할 수 있게 됐습니다".
 const start = 1886.6;

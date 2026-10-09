@@ -1,8 +1,8 @@
 import './deep-belief-net.scss';
-import { appear, clamp, createDiagram, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { withThree } from '../../../shared/three-scene';
-import { at, end, start } from './timing';
+import { appear, clamp, createDiagram, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { withThree } from '../../../shared/three-scene.ts';
+import { at, end, start } from './timing.ts';
 
 const centerX = 1100;
 const layers = [
@@ -158,4 +158,4 @@ export const createDeepBeliefNetSvg = ({ naiveTower = true } = {}): Scene => {
 
 // Three.js 판으로 보여 준다(shared/three-scene.ts). three.js 를 불러오기 전에는 SVG 판을 보여 준다.
 export const createDeepBeliefNetScene = (): Scene =>
-  withThree(createDeepBeliefNetSvg(), () => import('./three').then(({ createDeepBeliefNetThree }) => createDeepBeliefNetThree));
+  withThree(createDeepBeliefNetSvg(), () => import('./three.ts').then(({ createDeepBeliefNetThree }) => createDeepBeliefNetThree));

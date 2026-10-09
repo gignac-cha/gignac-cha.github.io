@@ -1,8 +1,8 @@
 import './clip.scss';
-import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
-import { chairs, drawChair } from './avocado';
+import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
+import { chairs, drawChair } from './avocado.ts';
 
 // 47:53 "오픈AI는 이 모델에 클립이라는 이름을" ~ 48:26 "사진인지 그림인지 헷갈릴 정도였습니다".
 const start = 2873.8;

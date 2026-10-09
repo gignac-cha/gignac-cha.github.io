@@ -1,5 +1,5 @@
 import './depth.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
 
 export interface DepthTimeline {
   alexnet: number;

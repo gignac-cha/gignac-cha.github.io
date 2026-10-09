@@ -1,4 +1,4 @@
-import type { Scene } from './scenes';
+import type { Scene } from './scenes.ts';
 
 // preview.html?t=초 : YouTube 없이 그 시점에 보이는 장면만 그린다. 헤드리스 브라우저 스크린샷 검수용.
 export const renderPreview = (container: HTMLElement, scenes: Scene[]) => {

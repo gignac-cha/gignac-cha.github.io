@@ -1,6 +1,6 @@
 import './next-word.scss';
-import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 39:54.2 "그는 아주 단순한 과제 하나에 주목합니다" ~ 40:40.3 "의대생이 기초 의학을 다 배운 뒤 전공을 고르는 셈이죠".
 // GPT-1 논문(2018): BooksCorpus(7,000권이 넘는 미출간 책)로 다음 단어 맞히기를 사전 학습하고,

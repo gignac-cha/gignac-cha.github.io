@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import { appear, clamp, ease, lerp, progress } from '../../../shared/diagram';
-import { createThreeLayer } from '../../../shared/three-diagram';
-import type { SceneLayer } from '../../../shared/three-scene';
-import { DEPTH, diffusedAt, inkClock, inkPosition3d, PARTICLES, surface, tank } from './ink';
-import { gaussian } from './noise';
-import { createDiffusionSvg } from './scene';
-import { at, start } from './timing';
+import { appear, clamp, ease, lerp, progress } from '../../../shared/diagram.ts';
+import { createThreeLayer } from '../../../shared/three-diagram.ts';
+import type { SceneLayer } from '../../../shared/three-scene.ts';
+import { DEPTH, diffusedAt, inkClock, inkPosition3d, PARTICLES, surface, tank } from './ink.ts';
+import { gaussian } from './noise.ts';
+import { createDiffusionSvg } from './scene.ts';
+import { at, start } from './timing.ts';
 
 // Three.js 판: 잉크 수조만 정사영 입체로 그린다. 사진·잡음 사슬과 글자는 SVG 판 그대로다.
 // 입자는 SVG 판과 같은 잉크 시계·씨앗으로 움직이고(정면에서 보면 SVG 판과 같은 모양), 앞뒤로도 펼쳐져 수조 안을 채운다.

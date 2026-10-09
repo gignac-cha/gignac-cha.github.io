@@ -1,7 +1,7 @@
 import './few-shot.scss';
-import { appear, createDiagram, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
+import { appear, createDiagram, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
 
 // 44:02.0 "논문 제목은 '언어 모델은 퓨샷 학습자'였습니다" ~ 44:31.8 "…말로 부탁하기만 하면 됐어요".
 // GPT-3 논문(OpenAI, 2020년 5월)이 보인 방식: 가중치는 그대로 두고, 프롬프트에 예시 몇 개(퓨샷)나 설명만(제로샷) 넣는다.

@@ -1,6 +1,6 @@
 import './attention.scss';
-import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 24:47.9 "같은 해 몬트리올의 요슈아 벤지오 연구실에서" ~ 25:15.8 "이 작은 아이디어가 몇 년 뒤 모든 걸 바꾸게 됩니다".
 const start = 1487.933;

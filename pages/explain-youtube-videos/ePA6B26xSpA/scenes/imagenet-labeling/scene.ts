@@ -1,6 +1,6 @@
 import './imagenet-labeling.scss';
-import { appear, createDiagram, lerp, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, lerp, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 17:47 "좋은 알고리즘보다 먼저 좋은 데이터" ~ 18:41 "천 가지 사물을 누가 가장 정확히 맞히는지".
 const start = 1067.733;

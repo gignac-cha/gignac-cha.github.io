@@ -1,10 +1,10 @@
 import './alphafold.scss';
-import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
-import { withThree } from '../../../shared/three-scene';
-import { at, count, drugAtoms, end, mixRgb, phase, pocketCenter, rainbow, residueColors, residues, rgb, SCALE, start, truth as truthPositions, view } from './model';
-import { drug, drugBonds, pocket, rmsd, sequence } from './protein';
+import { appear, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
+import { withThree } from '../../../shared/three-scene.ts';
+import { at, count, drugAtoms, end, mixRgb, phase, pocketCenter, rainbow, residueColors, residues, rgb, SCALE, start, truth as truthPositions, view } from './model.ts';
+import { drug, drugBonds, pocket, rmsd, sequence } from './protein.ts';
 
 // 45:26 "이번 상대는 바둑이 아니라 단백질" ~ 46:24 "AI가 과학의 한복판으로 걸어 들어간 순간이었습니다".
 // 실제 단백질(사람 DHFR, PDB 1U72)과 실제 약(메토트렉세이트), 실제 알파폴드 예측(AlphaFold DB)을 그대로 그린다.
@@ -241,4 +241,4 @@ export const createAlphaFoldSvg = ({ protein3d = false } = {}): Scene => {
 };
 
 export const createAlphaFoldScene = (): Scene =>
-  withThree(createAlphaFoldSvg(), () => import('./three').then(({ createAlphaFoldThree }) => createAlphaFoldThree));
+  withThree(createAlphaFoldSvg(), () => import('./three.ts').then(({ createAlphaFoldThree }) => createAlphaFoldThree));

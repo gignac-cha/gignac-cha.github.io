@@ -1,5 +1,5 @@
-import { clamp, onDrag } from './drag';
-import { load, save } from './storage';
+import { clamp, onDrag } from './drag.ts';
+import { load, save } from './storage.ts';
 
 // YouTube 임베드는 200×200 보다 작으면 안 되므로 16:9 영상 높이가 200 이 되는 폭에 패널 테두리를 더한 360px 를 최소로 둔다.
 const videoMinimum = 360;

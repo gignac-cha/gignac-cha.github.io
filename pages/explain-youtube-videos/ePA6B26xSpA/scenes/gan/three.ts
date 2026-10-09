@@ -1,11 +1,11 @@
 import './three.scss';
 import * as THREE from 'three';
-import { appear, between, clamp, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import { createThreeDiagram } from '../../../shared/three-diagram';
-import type { SceneLayer } from '../../../shared/three-scene';
-import { FACE_HEIGHT, FACE_WIDTH, faceCanvas, faces, random } from './face';
-import { ganTimeline as T } from './timeline';
-import { GRID_HEIGHT, GRID_WIDTH, snapshots, trainingFrames, trainingStep } from './training';
+import { appear, between, clamp, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import { createThreeDiagram } from '../../../shared/three-diagram.ts';
+import type { SceneLayer } from '../../../shared/three-scene.ts';
+import { FACE_HEIGHT, FACE_WIDTH, faceCanvas, faces, random } from './face.ts';
+import { ganTimeline as T } from './timeline.ts';
+import { GRID_HEIGHT, GRID_WIDTH, snapshots, trainingFrames, trainingStep } from './training.ts';
 
 // Three.js 판. SVG 판(gan.ts)과 같은 시점에 같은 이야기를 하되,
 // 위조범·경찰은 입체 카드로, "잡음에서 얼굴로"는 같은 자리의 픽셀 타일이 학습할 때마다 새 값으로 칠해지는 판으로,

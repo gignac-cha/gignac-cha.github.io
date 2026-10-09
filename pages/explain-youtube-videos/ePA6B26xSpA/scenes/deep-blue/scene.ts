@@ -1,6 +1,6 @@
 import './deep-blue.scss';
-import { appear, createDiagram, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
+import { appear, createDiagram, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
 
 // 14:46 "작은 반전" ~ 15:28 "그 벽을 넘은 건 결국 신경망".
 const start = 886.4;

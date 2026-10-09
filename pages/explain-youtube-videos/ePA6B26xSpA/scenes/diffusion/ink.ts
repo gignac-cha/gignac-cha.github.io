@@ -1,6 +1,6 @@
-import { clamp, ease, lerp, progress } from '../../../shared/diagram';
-import { gaussian } from './noise';
-import { at } from './timing';
+import { clamp, ease, lerp, progress } from '../../../shared/diagram.ts';
+import { gaussian } from './noise.ts';
+import { at } from './timing.ts';
 
 // 잉크: 물보다 무거운 잉크 방울은 한 덩어리로 들어가 소용돌이 고리를 이루며 가라앉고(꼬리와 가닥을 남기며 말려 들어간다),
 // 그 뒤 브라운 운동(무작위 걸음)으로 천천히 번져 물 전체가 뿌옇게 된다. 모든 위치는 '잉크 시계' 하나로 정해진다.

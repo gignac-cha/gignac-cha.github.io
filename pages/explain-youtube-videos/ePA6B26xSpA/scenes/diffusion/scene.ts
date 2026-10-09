@@ -1,12 +1,12 @@
 import './diffusion.scss';
-import { appear, between, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram';
-import type { Scene } from '../../../shared/scenes';
-import { createSwapText } from '../../../shared/swap-text';
-import { withThree } from '../../../shared/three-scene';
+import { appear, between, clamp, createDiagram, ease, lerp, progress, setAttributes, svg, text } from '../../../shared/diagram.ts';
+import type { Scene } from '../../../shared/scenes.ts';
+import { createSwapText } from '../../../shared/swap-text.ts';
+import { withThree } from '../../../shared/three-scene.ts';
 import earthUrl from './earth.png';
-import { diffusedAt, inkClock, inkParticles, inkPosition, surface, tank, unit } from './ink';
-import { gaussian, paintStep } from './noise';
-import { at, end, start } from './timing';
+import { diffusedAt, inkClock, inkParticles, inkPosition, surface, tank, unit } from './ink.ts';
+import { gaussian, paintStep } from './noise.ts';
+import { at, end, start } from './timing.ts';
 
 // 잉크 확산은 실제 브라운 운동(무작위 걸음)으로, 사진에 뿌리는 잡음은 DDPM 의 실제 잡음 일정으로 계산한다.
 // 사진: 아폴로 17호가 찍은 지구(NASA, 퍼블릭 도메인)를 96×96 으로 줄였다.
@@ -393,4 +393,4 @@ export const createDiffusionSvg = ({ ink3d = false } = {}): Scene => {
 };
 
 export const createDiffusionScene = (): Scene =>
-  withThree(createDiffusionSvg(), () => import('./three').then(({ createDiffusionThree }) => createDiffusionThree));
+  withThree(createDiffusionSvg(), () => import('./three.ts').then(({ createDiffusionThree }) => createDiffusionThree));
