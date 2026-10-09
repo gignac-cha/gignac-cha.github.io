@@ -36,17 +36,19 @@ export const renderTimeline = (playback: Playback, container: HTMLElement, scene
   track.setAttribute('role', 'slider');
   track.setAttribute('aria-label', '재생 위치');
   track.tabIndex = 0;
-  const rail = create('div', 'timeline-rail', track);
-  const played = create('div', 'timeline-played', rail);
-  const segments = scenes.map((scene) => ({ scene, element: create('div', 'timeline-segment', rail) }));
-  // 아직 장면 작업을 하지 않은 구간: 빗금으로 표시한다.
-  const unexplored = exploredUntil === undefined ? undefined : create('div', 'timeline-unexplored', rail);
+  // 막대는 canvas 에 그린다. 현재 위치와 마우스 주변이 렌즈처럼 부풀어 그 근처 장면 구간이 크게 보인다.
+  const canvas = create('canvas', 'timeline-canvas', track) as HTMLCanvasElement;
+  const context = canvas.getContext('2d')!;
   const head = create('div', 'timeline-head', track);
   const hover = create('div', 'timeline-hover', track);
   const tooltip = create('div', 'timeline-tooltip', track);
 
   let duration = 0;
   let scrub: number | undefined;
+  // 마우스 렌즈: 올리면 부드럽게 커지고 떠나면 줄어든다.
+  let pointerX: number | undefined;
+  let lens = 0;
+  let lastFrame = performance.now();
 
   const sceneAt = (time: number) => scenes.find((scene) => scene.start <= time && time < scene.end);
   const isUnexplored = (time: number) => exploredUntil !== undefined && time >= exploredUntil;
@@ -57,16 +59,105 @@ export const renderTimeline = (playback: Playback, container: HTMLElement, scene
   };
 
   const layout = () => {
-    for (const { scene, element } of segments) {
-      element.style.left = `${ratio(scene.start) * 100}%`;
-      element.style.width = `${(ratio(scene.end) - ratio(scene.start)) * 100}%`;
-    }
     setText(total, formatTime(duration));
-    if (unexplored && exploredUntil !== undefined) {
-      unexplored.style.left = `${ratio(exploredUntil) * 100}%`;
-      unexplored.style.width = `${(1 - ratio(exploredUntil)) * 100}%`;
+  };
+
+  // 색은 페이지 토큰에서 읽는다.
+  const style = getComputedStyle(container);
+  const token = (name: string, fallback: string) => style.getPropertyValue(name).trim() || fallback;
+  const colors = {
+    rail: token('--border', '#27272b'),
+    accent: token('--accent', '#5b9dff'),
+    played: 'rgba(255, 255, 255, .22)',
+  };
+  const hatch = (() => {
+    const tile = document.createElement('canvas');
+    tile.width = tile.height = 8;
+    const tileContext = tile.getContext('2d')!;
+    tileContext.strokeStyle = 'rgba(255, 255, 255, .16)';
+    tileContext.lineWidth = 3;
+    tileContext.beginPath();
+    tileContext.moveTo(-2, 10);
+    tileContext.lineTo(10, -2);
+    tileContext.stroke();
+    return context.createPattern(tile, 'repeat');
+  })();
+
+  // 막대 두께(절반): 기본 5px, 현재 위치에서 12px, 마우스 아래에서 10px까지. 가우스 곡선으로 부드럽게 이어진다.
+  const thickness = { base: 5, head: 7, headSpread: 64, lens: 5, lensSpread: 48 };
+  let halfAt = new Float32Array(0);
+  let drawn = '';
+
+  const draw = (time: number) => {
+    const width = track.clientWidth;
+    const height = track.clientHeight;
+    const scale = window.devicePixelRatio || 1;
+    const key = `${width}x${height}@${scale}:${Math.round(ratio(time) * width * 4)}:${pointerX === undefined ? '' : Math.round(pointerX)}:${lens.toFixed(3)}:${duration}`;
+    if (key === drawn || !width || !height) {
+      return;
+    }
+    drawn = key;
+    if (canvas.width !== Math.round(width * scale) || canvas.height !== Math.round(height * scale)) {
+      canvas.width = Math.round(width * scale);
+      canvas.height = Math.round(height * scale);
+    }
+    context.setTransform(scale, 0, 0, scale, 0, 0);
+    context.clearRect(0, 0, width, height);
+
+    const middle = height / 2;
+    const headX = ratio(time) * width;
+    if (halfAt.length !== width + 1) {
+      halfAt = new Float32Array(width + 1);
+    }
+    for (let x = 0; x <= width; x++) {
+      const nearHead = thickness.head * Math.exp(-((x - headX) ** 2) / (2 * thickness.headSpread ** 2));
+      const nearPointer = pointerX === undefined ? 0 : thickness.lens * lens * Math.exp(-((x - pointerX) ** 2) / (2 * thickness.lensSpread ** 2));
+      halfAt[x] = Math.min(thickness.base + Math.max(nearHead, nearPointer), middle - 1);
+    }
+    const band = (from: number, to: number, fill: string | CanvasPattern) => {
+      const left = Math.max(0, Math.min(from, width));
+      const right = Math.max(left + 2, Math.min(to, width));
+      context.beginPath();
+      context.moveTo(left, middle - halfAt[Math.round(left)]);
+      for (let x = Math.ceil(left); x <= Math.min(right, width); x++) {
+        context.lineTo(x, middle - halfAt[x]);
+      }
+      for (let x = Math.min(Math.floor(right), width); x >= left; x--) {
+        context.lineTo(x, middle + halfAt[x]);
+      }
+      context.closePath();
+      context.fillStyle = fill;
+      context.fill();
+    };
+
+    // 현재 위치 둘레의 은은한 빛(사건의 지평선처럼 주변이 휘어 보이게).
+    const glow = context.createRadialGradient(headX, middle, 0, headX, middle, 34);
+    glow.addColorStop(0, 'rgba(91, 157, 255, .28)');
+    glow.addColorStop(1, 'rgba(91, 157, 255, 0)');
+    context.fillStyle = glow;
+    context.fillRect(headX - 34, 0, 68, height);
+
+    band(0, width, colors.rail);
+    band(0, headX, colors.played);
+    const active = sceneAt(time);
+    for (const scene of scenes) {
+      context.globalAlpha = scene === active ? 1 : .45;
+      band(ratio(scene.start) * width, ratio(scene.end) * width, colors.accent);
+    }
+    context.globalAlpha = 1;
+    if (exploredUntil !== undefined && hatch) {
+      band(ratio(exploredUntil) * width, width, hatch);
     }
   };
+
+  track.addEventListener('pointerenter', (event) => {
+    pointerX = event.clientX - track.getBoundingClientRect().left;
+  });
+  track.addEventListener('pointerleave', () => {
+    if (scrub === undefined) {
+      pointerX = undefined;
+    }
+  });
 
   track.addEventListener('pointerdown', (event) => {
     if (duration <= 0) {
@@ -82,6 +173,7 @@ export const renderTimeline = (playback: Playback, container: HTMLElement, scene
     }
     const time = timeAt(event);
     const position = `${ratio(time) * 100}%`;
+    pointerX = event.clientX - track.getBoundingClientRect().left;
     hover.style.left = position;
     tooltip.style.left = position;
     const scene = sceneAt(time);
@@ -119,7 +211,6 @@ export const renderTimeline = (playback: Playback, container: HTMLElement, scene
     // 끄는 동안에는 플레이어가 따라오기 전이므로 손가락 위치를 보여 준다.
     const time = scrub ?? playback.time();
     const position = `${ratio(time) * 100}%`;
-    played.style.width = position;
     head.style.left = position;
     setText(current, formatTime(time));
     track.setAttribute('aria-valuenow', String(Math.floor(time)));
@@ -127,9 +218,17 @@ export const renderTimeline = (playback: Playback, container: HTMLElement, scene
     const outside = !active && isUnexplored(time);
     setText(sceneName, active?.title ?? (outside ? '준비 중인 구간' : ''));
     sceneName.classList.toggle('unexplored', outside);
-    for (const { scene, element } of segments) {
-      element.classList.toggle('active', scene === active);
+
+    // 마우스 렌즈는 0.15초 남짓에 걸쳐 커지고 줄어든다.
+    const now = performance.now();
+    const step = Math.min((now - lastFrame) / 150, 1);
+    lastFrame = now;
+    const target = pointerX === undefined ? 0 : 1;
+    lens += (target - lens) * step;
+    if (Math.abs(target - lens) < .002) {
+      lens = target;
     }
+    draw(time);
     requestAnimationFrame(update);
   };
   update();
