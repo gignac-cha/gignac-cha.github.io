@@ -391,6 +391,10 @@ body.pip {
     flex: none;
     aspect-ratio: 16 / 9;
   }
+  // 장면이 많아 목록이 길어지므로, 목록 안에서 스크롤하고 재생 바가 멀리 밀려나지 않게 한다.
+  .page-sidebar {
+    max-height: 60dvh;
+  }
   .page-timeline-slot {
     padding: 0px 16px;
   }
